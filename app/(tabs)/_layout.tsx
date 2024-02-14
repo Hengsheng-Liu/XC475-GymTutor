@@ -30,21 +30,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />
         }}
       />
       <Tabs.Screen
@@ -54,6 +40,14 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />
+    <Tabs.Screen
+      name = "SignUp"
+      options = {{
+        title: 'Sign Up',
+        tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+      }}
+      />
     </Tabs>
+
   );
 }
