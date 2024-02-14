@@ -56,18 +56,25 @@ export default function SignUpScreen() {
   }
   const handleSignUp = async () => {
     if(email && password && confirmPassword && password === confirmPassword) {
-        try {;
+        try {
           const userCredential = await createUserWithEmailAndPassword(auth, email, password);
           const user = userCredential.user;
           console.log(user);
           if (user) {
+            Alert.alert("Success", "User has been created");
             await AddUserToDB(userCredential);
-            router.navigate("Login");
+            router.navigate("LogIn");
           }
         }catch(error:any) {
           Alert.alert("Error", error.message);
         }
-  }}
+  }else{
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match")
+    }
+      Alert.alert("Error", "Please fill in all fields")
+  }
+}
   return (
     <Pressable style={styles.contentView} onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.contentView}>
@@ -102,7 +109,7 @@ export default function SignUpScreen() {
               <Text>Passwords do not match</Text>
             )}
             <Button title="Sign Up" onPress={handleSignUp} />
-            <Button title="Go Back" onPress={router.back} />
+            <Button title="Go Back" onPress={()=>router.navigate("LogIn")} />
           </View>
         </View>
       </SafeAreaView>
