@@ -1,5 +1,5 @@
 import { Text, View } from 'react-native'
-import React, { Component } from 'react'
+import React from 'react'
 import {
   Alert,
   Button,
@@ -11,21 +11,21 @@ import {
 } from "react-native";
 import { useState } from "react";
 import {router} from 'expo-router';
-import {auth} from "../../firebaseConfig"
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useAuth } from '../../Context/AuthContext';
 export default function LogInScreen() {
     const [email, setEmail] = useState<string | undefined>();
     const [password, setPassword] = useState<string | undefined>();
+    const {SignIn}= useAuth();
     const handleLogIn = async () => {
       if (email && password) {
         try {
-          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const userCredential = await SignIn(email, password);
           const user = userCredential.user;
           if (user) {
-            router.navigate("Home");
+            
+            router.replace("/");
           }
         } catch(error:any) {
-          const errorCode = error.code;
           const errorMessage = error.message;
           Alert.alert("Error", errorMessage);
         }
