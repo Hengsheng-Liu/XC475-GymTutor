@@ -1,13 +1,65 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Button, ScrollView, ActivityIndicator, TouchableOpacity, StyleSheet } from 'react-native';
 import {firestore} from '../firebaseConfig';
 import { limit, where, query, collection, addDoc, doc, getDocs, updateDoc, arrayUnion, setDoc, Query } from 'firebase/firestore';
+import { useAuth } from "../Context/AuthContext";
 
 const FirebaseDataDisplay = () => {
     const [gym, setGym] = useState<string>(''); // State to store the gym input
     const [users, setUsers] = useState<any[]>([]); // State to store users
     const [loading, setLoading] = useState<boolean>(false); // State to track loading state
     const [endReached, setEndReached] = useState<boolean>(false); // State to track if end of list is reached
+    const { User} = useAuth();
+    const [UserID, setUserId] = useState<string>('');
+
+    const styles = StyleSheet.create({
+        userContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: 10,
+            marginVertical: 5,
+            backgroundColor: '#eee',
+            borderRadius: 5,
+            borderBottomWidth: 1,
+            borderColor: 'lightgray',
+        },
+        profilePicture: {
+            width: 50,
+            height: 50,
+            borderRadius: 25,
+            backgroundColor: 'lightgray',
+            marginRight: 10,
+        },
+
+        userInfo: {
+            flex: 1,
+        },
+        userInfoText: {
+            marginBottom: 5,
+        },
+            addFriendButton: {
+            backgroundColor: 'lightblue',
+            width: 40,
+            height: 40,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 20,
+        },
+        addFriendButtonText: {
+            fontSize: 20,
+            fontWeight: 'bold',
+        },
+        scrollViewContent: {
+            flexGrow: 1,
+            justifyContent: 'flex-start',
+        },
+    });
+
+    const handleUserClick = (user: any) => {
+        // Do something when user is clicked
+    };
+
 
     // Fetch users when component mounts
     const fetchUsers = async () => {
@@ -48,10 +100,18 @@ const FirebaseDataDisplay = () => {
 
             querySnapshot.forEach(snap => {
                 const userData = snap.data();
-                usersData.push(userData);
+                const userId = snap.id;
+                if (User){
+                    if (userData.uid == User.uid){
+                        setUserId(userId);
+                        console.log(userId, userData);
+                    } else{
+                        usersData.push({ id: userId, ...userData });
+                    }
+                }
             });
 
-            console.log(usersData);
+            // console.log(usersData);
             return usersData; // Return the list of users
         } catch (error) {
             console.error('Error querying users:', error);
@@ -80,35 +140,48 @@ const FirebaseDataDisplay = () => {
         }
     };
 
-    const handleAddFriend = (userUid: string, friendUid: string) => {
-        addFriend(userUid, friendUid);
+    const handleAddFriend = (userId: string, friendId: string) => {
+        console.log(userId, friendId);
+        addFriend(userId, friendId);
     };
 
-    return (
-        <View>
-            <TextInput
-                placeholder="Enter your gym"
-                value={gym}
-                onChangeText={setGym}
-                style={{ borderWidth: 1, borderColor: 'gray', padding: 10, marginBottom: 10 }}
-            />
-            <Button title="Search" onPress={fetchUsers} />
+    let content = null;
+    if (User){
+        content = (
+            <View>
+                <TextInput
+                    placeholder="Enter your gym"
+                    value={gym}
+                    onChangeText={setGym}
+                    style={{ borderWidth: 1, borderColor: 'gray', padding: 10, marginBottom: 10 }}
+                />
+                <Button title="Search" onPress={fetchUsers} />
 
-            <Text> List of Users: </Text>
+                <Text> List of Users: </Text>
 
-            <ScrollView>
-                {users.map((user, index) => (
-                    <View key={index} style={{ marginBottom: 40 }}>
-                        <Text>Name: {user.name}</Text>
-                        <Text>Email: {user.email}</Text>
-                        <Text>Gym: {user.Gym}</Text>
-                        <Button title="Add Friend" onPress={() => handleAddFriend("123", user.uid)} />
-                    </View>
-                ))}
-                {loading && <ActivityIndicator size="large" color="#0000ff" />}
-            </ScrollView>
-        </View>
-    );
+                <ScrollView>
+                    {users.map((user, index) => (
+                        <TouchableOpacity key={index} style={styles.userContainer} onPress={() => handleUserClick(user)}>
+                            <View style={styles.profilePicture}></View>
+                            <View style={styles.userInfo}>
+                                <Text>Name: {user.name}</Text>
+                                <Text>Email: {user.email}</Text>
+                                <Text>Gym: {user.Gym}</Text>
+                            </View>
+                            <TouchableOpacity style={styles.addFriendButton} onPress={() => handleAddFriend(UserID, user.id)}>
+                                <Text style={styles.addFriendButtonText}>+</Text>
+                            </TouchableOpacity>
+                        </TouchableOpacity>
+                    ))}
+                    {loading && <ActivityIndicator size="large" color="#0000ff" />}
+                </ScrollView>
+            </View>
+        );
+    }   else {
+        content = <Text>No user signed in.</Text>;
+    }
+
+    return <View>{content}</View>;
 };
 export default FirebaseDataDisplay;
 
@@ -133,41 +206,6 @@ async function getUser(){
 
 }
 
-async function queryUsers(Gym?: string){
-    const db = firestore;
-    let usersQuery;
-
-    if (Gym) {
-        usersQuery = query(
-            collection(db, "Users"),
-            where("Gym", "==", Gym),
-            limit(10)
-        )
-    } else {
-        usersQuery = query(
-            collection(db, "Users"),
-            limit(10)
-        )
-    }
-
-    try {
-        const queries = await getDocs(usersQuery);
-        const names: string[] = []; // Initialize an array to store names
-
-        queries.forEach((snap) => {
-            const name = snap.data()["name"];
-            if (name) {
-                names.push(name); // Push name to the array
-            }
-        });
-
-        console.log(names); // Output the list of names
-        return names; // Return the list of names
-    } catch (error) {
-        console.error('Error querying users:', error);
-        return []; // Return an empty array in case of error
-    }
-}
 
 
 // TO DO: Add interface
