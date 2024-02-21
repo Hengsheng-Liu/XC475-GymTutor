@@ -24,6 +24,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="Home"
       />  
+      <Tabs.Screen
+        name="Profile"
+      /> 
     </Tabs>
     );
   }
