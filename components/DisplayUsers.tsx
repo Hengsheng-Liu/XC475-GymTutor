@@ -1,7 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, ScrollView, ActivityIndicator, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, 
+    Text, 
+    TextInput, 
+    Button, 
+    ScrollView, 
+    ActivityIndicator, 
+    TouchableOpacity, 
+    StyleSheet } from 'react-native';
 import {firestore} from '../firebaseConfig';
-import { limit, where, query, collection, addDoc, doc, getDocs, updateDoc, arrayUnion, setDoc, Query } from 'firebase/firestore';
+import { 
+    limit, 
+    where, 
+    query, 
+    collection, 
+    addDoc, 
+    doc, 
+    getDocs, 
+    updateDoc, 
+    arrayUnion, 
+    setDoc, 
+    Query } from 'firebase/firestore';
 import { useAuth } from "../Context/AuthContext";
 
 const FirebaseDataDisplay = () => {
@@ -9,9 +27,12 @@ const FirebaseDataDisplay = () => {
     const [users, setUsers] = useState<any[]>([]); // State to store users
     const [loading, setLoading] = useState<boolean>(false); // State to track loading state
     const [endReached, setEndReached] = useState<boolean>(false); // State to track if end of list is reached
+    // TODO: Switch User to currUser
     const { User} = useAuth();
+    // TODO: Get this ID from useAuth instead?) of the whole user
     const [UserID, setUserId] = useState<string>('');
 
+    // Temporary designs for UI
     const styles = StyleSheet.create({
         userContainer: {
             flexDirection: 'row',
@@ -56,22 +77,27 @@ const FirebaseDataDisplay = () => {
         },
     });
 
-    const handleUserClick = (user: any) => {
+    // TO DO: Display user preview when clicked, switch typeof thing
+    const handleUserClick = (user: typeof User) => {
         // Do something when user is clicked
+        // Open Profile
     };
 
-
-    // Fetch users when component mounts
+    // Function to fetch users 
     const fetchUsers = async () => {
-        //if (loading || endReached) return;
+        if (loading || endReached) return;
 
         setLoading(true);
         try {
+            // Fetch users and save them
             const fetchedUsers = await queryUsers(gym);
-            setUsers(fetchedUsers); // Append fetched names to existing names
-            if (fetchedUsers.length < 1) {
-                setEndReached(true); // Set endReached to true if no more names to fetch
-            }
+            setUsers(fetchedUsers);
+
+            // TODO: Should this number be relative to screen size?
+            // Also has error, won't display more users once there is less than 5
+            // if (fetchedUsers.length < 5) { 
+            //     setEndReached(true); // Set endReached to true if no more names to fetch
+            // }
         } catch (error) {
             console.error('Error fetching names:', error);
         } finally {
@@ -84,48 +110,64 @@ const FirebaseDataDisplay = () => {
         const db = firestore;
         let usersQuery;
 
+        // Query users from a specific gym, or all users if none is given
+        // TODO: Only query some of them
         if (gym) {
             usersQuery = query(
                 collection(db, 'Users'),
                 where('Gym', '==', gym),
-                limit(10)
+                // limit(10)
             );
         } else {
-            usersQuery = query(collection(db, 'Users'), limit(10));
+            usersQuery = query(
+                collection(db, 'Users'), 
+                //limit(10)
+            );
         }
 
         try {
+            // Query each user and retrieve their data
             const querySnapshot = await getDocs(usersQuery);
-            const usersData: any[] = []; // Initialize an array to store names
+            const usersData: any[] = []; 
 
             querySnapshot.forEach(snap => {
                 const userData = snap.data();
                 const userId = snap.id;
+
+                // Do not show current user
                 if (User){
-                    if (userData.uid == User.uid){
-                        setUserId(userId);
-                        console.log(userId, userData);
-                    } else{
+                    if (userData.uid !== User.uid){
                         usersData.push({ id: userId, ...userData });
                     }
+                    // if (userData.uid == User.uid){
+                    //     // TODO: May not have to do this once we have UserID
+                    //     setUserId(userId); 
+                    //     console.log(userId, userData);
+                    // } else{
+                    //     usersData.push({ id: userId, ...userData });
+                    // }
                 }
             });
 
-            // console.log(usersData);
-            return usersData; // Return the list of users
+            // Return list of Users
+            return usersData; 
+
         } catch (error) {
+            // Throw error for handling in the caller function
             console.error('Error querying users:', error);
-            throw error; // Throw error for handling in the caller function
+            throw error; 
         }
     };
 
     // Function to handle end of list reached
+    // TODO: Doesn't work right
     const handleEndReached = () => {
         if (!endReached) {
             fetchUsers();
         }
     };
 
+    // Function to add Friends
     const addFriend = async (userUid: string, friendUid: string) => {
         const db = firestore;
         const userRef = doc(db, 'Users', userUid);
@@ -141,12 +183,14 @@ const FirebaseDataDisplay = () => {
     };
 
     const handleAddFriend = (userId: string, friendId: string) => {
-        console.log(userId, friendId);
+        console.log("Congratulations, you've successfully added: ", userId, friendId);
         addFriend(userId, friendId);
     };
 
+    
+    
     let content = null;
-    if (User){
+    if (User){ // Necessary? display info if there is a user.
         content = (
             <View>
                 <TextInput
@@ -163,12 +207,17 @@ const FirebaseDataDisplay = () => {
                     {users.map((user, index) => (
                         <TouchableOpacity key={index} style={styles.userContainer} onPress={() => handleUserClick(user)}>
                             <View style={styles.profilePicture}></View>
+                            {/* Once we have an image, I can put this */}
+                            {/* <Image
+                                source={{ uri: user.profilePictureURL }}
+                                style={styles.profilePicture}
+                            /> */}
                             <View style={styles.userInfo}>
                                 <Text>Name: {user.name}</Text>
                                 <Text>Email: {user.email}</Text>
                                 <Text>Gym: {user.Gym}</Text>
                             </View>
-                            <TouchableOpacity style={styles.addFriendButton} onPress={() => handleAddFriend(UserID, user.id)}>
+                            <TouchableOpacity style={styles.addFriendButton} onPress={() => handleAddFriend(User.uid, user.uid)}>
                                 <Text style={styles.addFriendButtonText}>+</Text>
                             </TouchableOpacity>
                         </TouchableOpacity>
@@ -205,16 +254,3 @@ async function getUser(){
     const db = firestore;
 
 }
-
-
-
-// TO DO: Add interface
-// export interface IUniversityClass {
-//     classId: string;
-//     title: string;
-//     description: string;
-//     meetingTime: string;
-//     meetingLocation: string;
-//     status: string;
-//     semester: string;
-//   }
