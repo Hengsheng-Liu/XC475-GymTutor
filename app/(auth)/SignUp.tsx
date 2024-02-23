@@ -53,6 +53,7 @@ export default function SignUpScreen() {
         icon: "",
         Achievement: [],
         GymExperience: "0",
+        uid: user.uid,  
       });
   
       console.log("Document written for user: ", user.uid);
