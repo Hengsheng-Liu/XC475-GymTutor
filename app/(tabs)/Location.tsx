@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Platform, Text, View, StyleSheet } from 'react-native';
 import * as Location from 'expo-location';
-
 export default function App() {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -29,6 +28,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+
       <Text style={styles.paragraph}>{text}</Text>
     </View>
   );

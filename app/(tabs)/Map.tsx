@@ -1,18 +1,24 @@
 import { Text, View,StyleSheet } from 'react-native'
 import React, { Component } from 'react'
-import {Mapbox,LocationPuck} from '@rnmapbox/maps';
+import Mapbox from '@rnmapbox/maps';
+import { useState } from 'react';
 
-Mapbox.setAccessToken("pk.eyJ1IjoiNTI0ODc2NDY2IiwiYSI6ImNsc3V3ZHV4MzA0ODQycXBpMmpra2FrcGcifQ.i8l-tVX4t7vwLo5nabrBhg");
+Mapbox.setAccessToken("sk.eyJ1IjoiNTI0ODc2NDY2IiwiYSI6ImNsc3doZzh4eDBkaWwybGxhN2l1dXVicTUifQ.WRqz-s1fU1St1FQAuQsmDA")
+export default function Map()  {
+  const [location, setLocation] = useState<Location>();
 
-export class Map extends Component {
-  render() {
     return (
         <View style={styles.container}>
-          <Mapbox.MapView style={styles.map} />
+      <Mapbox.MapView style={styles.map}>
+        <Mapbox.UserLocation
+          onUpdate={(newLocation) => setLocation(newLocation)}
+        />
+        <Mapbox.Camera followUserLocation followZoomLevel={16} />
+      </Mapbox.MapView>
         </View>
     )
   }
-}
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -21,4 +27,3 @@ const styles = StyleSheet.create({
       flex: 1,
     }
   });
-export default Map
