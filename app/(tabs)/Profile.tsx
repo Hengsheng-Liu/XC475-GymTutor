@@ -1,10 +1,12 @@
-import { Text, View } from 'react-native'
-import React, { Component } from 'react'
+import { StyleSheet, Text, View, SafeAreaView, Image, Button, Alert, Dimensions } from 'react-native'
+import React, { Component, useEffect, useState } from 'react'
+import { firestore, auth } from "../../firebaseConfig";
+import ProfilePage from '@/components/UserProfilePage'
 
-export default function HomeScreen() {
+export default function Profile() {
     return (
         <View>
-            <Text>Hello  asdfiuhauifhai uodsousf uias  asfdi</Text>
+            <ProfilePage/>
         </View>
-    )
+    ) 
 }

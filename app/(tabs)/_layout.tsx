@@ -4,6 +4,8 @@ import { Link, Redirect, Tabs } from 'expo-router'; // Removed Stack import, as 
 
 import { useAuth } from '../../Context/AuthContext';
 
+import UserProfilePage from '../../components/UserProfilePage'
+
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
