@@ -28,10 +28,15 @@ Navigate to your project directory:
 ```bash 
 cd SpotMe
 ```
-Then, start your Expo project by running:
+Since our App contain Native Code, Please run the Following Code to build Native Version.
 
+## IOS
 ```
-npx expo start
+expo run:ios
+```
+## Android
+```
+expo run:android
 ```
 # Testing Your Project
 
