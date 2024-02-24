@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, SafeAreaView, Image, Button, Alert, Dimensions 
 import React, { Component, useEffect, useState } from 'react'
 import { firestore,auth} from "../firebaseConfig";
 import { limit, where, query, collection, addDoc, doc, getDocs, getDoc, updateDoc, arrayUnion, setDoc, Query } from 'firebase/firestore';
-import {getAuth} from "firebase/auth";
+import {useAuth} from"../Context/AuthContext";
 
     // const fetch = async () => {
     //     const [users, setUsers] = useState([]);
@@ -101,33 +101,50 @@ import {getAuth} from "firebase/auth";
         //     };
         //     fetchUserData();
         // }, []);
+
+
+// // most recent one
+
         const [userName, setUserName] = useState<string>("");
-        const auth = getAuth();
-        const user = auth.currentUser;
+        const {User} = useAuth(); 
+        console.log('user', User);
 
 
         useEffect(() => {
 
-        if (user) {
-            const email = user.email;
-            console.log("email", email);
-            console.log("uid", user.uid );
-            const docRef = doc(firestore, "Users", user.uid);
-            console.log("docref", docRef);
-
+        if (User?.uid) {
+            //const email = user.email;
+            //console.log("email", email);
+            //console.log("uid", user.uid );
+            const docRef = doc(firestore, "Users", User.uid);
+            console.log("uid", User.uid);
+            
+            
+            
             const getDocument = async() => {
+                console.log("docRef", docRef);
+
                 const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
+                console.log("docSnap", docSnap.data());
+
+                if (docSnap && docSnap.exists()) {
                     console.log("docSnap", docSnap.data());
                 }
                 else {
-                    console.log("docSnaap doesnt exist");
+                    console.log("docSnap doesnt exist");
                 }
             };
+
+            // after i figure out docSnap, I can get name by doing docSnap.getString("name");
+            // https://stackoverflow.com/questions/48492993/firestore-get-documentsnapshots-fields-value
+            // https://firebase.google.com/docs/reference/js/v8/firebase.firestore.DocumentSnapshot
+            
+
             getDocument();
 
         }
-       }, [user]);
+       }, [User]);
+
 
    //         <Text style={styles.nameText}>{displayName ? displayName : "Loading..."}</Text>
 
