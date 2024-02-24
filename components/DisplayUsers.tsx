@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, 
     Text, 
     TextInput, 
     Button, 
+    FlatList,
     ScrollView, 
     ActivityIndicator, 
     TouchableOpacity, 
@@ -21,16 +22,14 @@ import {
     setDoc, 
     Query } from 'firebase/firestore';
 import { useAuth } from "../Context/AuthContext";
+import { IUser, getUsers, addFriend} from './FirebaseDataService';
 
 const FirebaseDataDisplay = () => {
     const [gym, setGym] = useState<string>(''); // State to store the gym input
-    const [users, setUsers] = useState<any[]>([]); // State to store users
+    const [users, setUsers] = useState<IUser[]>([]); // State to store users
     const [loading, setLoading] = useState<boolean>(false); // State to track loading state
-    const [endReached, setEndReached] = useState<boolean>(false); // State to track if end of list is reached
-    // TODO: Switch User to currUser
+    // TODO: Switch User to currUser?
     const { User} = useAuth();
-    // TODO: Get this ID from useAuth instead?) of the whole user
-    const [UserID, setUserId] = useState<string>('');
 
     // Temporary designs for UI
     const styles = StyleSheet.create({
@@ -77,27 +76,21 @@ const FirebaseDataDisplay = () => {
         },
     });
 
-    // TO DO: Display user preview when clicked, switch typeof thing
-    const handleUserClick = (user: typeof User) => {
+    // TO DO: Display user preview when clicked
+    const handleUserClick = (user: IUser) => {
         // Do something when user is clicked
         // Open Profile
     };
 
     // Function to fetch users 
     const fetchUsers = async () => {
-        if (loading || endReached) return;
+        if (loading) return;
 
         setLoading(true);
         try {
             // Fetch users and save them
-            const fetchedUsers = await queryUsers(gym);
+            const fetchedUsers = await getUsers(gym);
             setUsers(fetchedUsers);
-
-            // TODO: Should this number be relative to screen size?
-            // Also has error, won't display more users once there is less than 5
-            // if (fetchedUsers.length < 5) { 
-            //     setEndReached(true); // Set endReached to true if no more names to fetch
-            // }
         } catch (error) {
             console.error('Error fetching names:', error);
         } finally {
@@ -105,92 +98,13 @@ const FirebaseDataDisplay = () => {
         }
     };
 
-    // Function to query users from Firestore
-    const queryUsers = async (gym?: string) => {
-        const db = firestore;
-        let usersQuery;
-
-        // Query users from a specific gym, or all users if none is given
-        // TODO: Only query some of them
-        if (gym) {
-            usersQuery = query(
-                collection(db, 'Users'),
-                where('Gym', '==', gym),
-                // limit(10)
-            );
-        } else {
-            usersQuery = query(
-                collection(db, 'Users'), 
-                //limit(10)
-            );
-        }
-
-        try {
-            // Query each user and retrieve their data
-            const querySnapshot = await getDocs(usersQuery);
-            const usersData: any[] = []; 
-
-            querySnapshot.forEach(snap => {
-                const userData = snap.data();
-                const userId = snap.id;
-
-                // Do not show current user
-                if (User){
-                    if (userData.uid !== User.uid){
-                        usersData.push({ id: userId, ...userData });
-                    }
-                    // if (userData.uid == User.uid){
-                    //     // TODO: May not have to do this once we have UserID
-                    //     setUserId(userId); 
-                    //     console.log(userId, userData);
-                    // } else{
-                    //     usersData.push({ id: userId, ...userData });
-                    // }
-                }
-            });
-
-            // Return list of Users
-            return usersData; 
-
-        } catch (error) {
-            // Throw error for handling in the caller function
-            console.error('Error querying users:', error);
-            throw error; 
-        }
+    // Handle add friend function
+    const handleAddFriend = (userUID: string, friendUID: string) => {
+        addFriend(userUID, friendUID);
     };
 
-    // Function to handle end of list reached
-    // TODO: Doesn't work right
-    const handleEndReached = () => {
-        if (!endReached) {
-            fetchUsers();
-        }
-    };
-
-    // Function to add Friends
-    const addFriend = async (userUid: string, friendUid: string) => {
-        const db = firestore;
-        const userRef = doc(db, 'Users', userUid);
-        const friendRef = doc(db, 'Users', friendUid);
-
-        try {
-            await updateDoc(userRef, { friends: arrayUnion(friendUid) });
-            await updateDoc(friendRef, { friends: arrayUnion(userUid) });
-            console.log('Friend added successfully');
-        } catch (error) {
-            console.error('Error adding friend:', error);
-        }
-    };
-
-    const handleAddFriend = (userId: string, friendId: string) => {
-        console.log("Congratulations, you've successfully added: ", userId, friendId);
-        addFriend(userId, friendId);
-    };
-
-    
-    
     let content = null;
-    if (User){ // Necessary? display info if there is a user.
+    if (User){
         content = (
             <View>
                 <TextInput
@@ -203,7 +117,9 @@ const FirebaseDataDisplay = () => {
 
                 <Text> List of Users: </Text>
 
-                <ScrollView>
+                <ScrollView
+                contentContainerStyle={styles.scrollViewContent}
+                scrollEnabled={true}>
                     {users.map((user, index) => (
                         <TouchableOpacity key={index} style={styles.userContainer} onPress={() => handleUserClick(user)}>
                             <View style={styles.profilePicture}></View>

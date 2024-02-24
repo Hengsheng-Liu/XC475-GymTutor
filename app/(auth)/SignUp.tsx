@@ -66,7 +66,7 @@ export default function SignUpScreen() {
       try {
         const userCredential = await CreateUser(email, password);
         const user = userCredential.user;
-        console.log(user);
+        // console.log(user);
         if (user) {
           Alert.alert("Success", "User has been created");
           await AddUserToDB(userCredential);
