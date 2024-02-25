@@ -4,7 +4,6 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { getUser, IUser } from '@/components/FirebaseDataService'; 
 import { useAuth } from "@/Context/AuthContext";
 import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -12,10 +11,9 @@ type Props = {
 
 const FriendListScreen: React.FC<Props> = ({ navigation }) => {
   const [friends, setFriends] = useState<IUser[]>([]); // State to store friends' data
-  const {User} = useAuth();
+  const {User} = useAuth(); 
   const [loading, setLoading] = useState<boolean>(true); // State to track loading status
   const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
-  const nav = useNavigation(); // Use useNavigation hook
   
   if (!User) return; // Check if user is null
 
@@ -52,13 +50,6 @@ const FriendListScreen: React.FC<Props> = ({ navigation }) => {
         setLoading(false);
     }
   };
-
-  // Set the title of the screen using useNavigation hook
-  useEffect(() => {
-    nav.setOptions({
-      title: 'My Friends', // Change the title here
-    });
-  }, [nav]);
 
   return (
     <View style={styles.container}>

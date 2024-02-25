@@ -3,7 +3,8 @@ import { useEffect } from "react";
 import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
 import { router } from "expo-router";
-import { useAuth } from "../../Context/AuthContext";
+import { useAuth } from "../../../Context/AuthContext";
+
 export default function TabOneScreen() {
   const { User, SignOut } = useAuth();
   const handleSignOut = async () => {

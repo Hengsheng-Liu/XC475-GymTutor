@@ -8,5 +8,7 @@ export default function HomeScreen() {
             {/* <Text>Hello</Text> */}
             <FirebaseDataDisplay/>
         </View>
+
+        
     )
 }
