@@ -72,7 +72,7 @@ const FirebaseDataDisplay = () => {
                 <View style={styles.buttonContainer}>
                     <Button title="Search" onPress={handleGetUsers} />
                     <View style={styles.buttonSeparator} />
-                    <Button title="Friend List" onPress={() => router.navigate("/Friends")} />
+                    <Button title="Friend List" onPress={() => router.push("/Friends")} />
                 </View>                
                 <Text> Explore new users! </Text>
                     {users.map((user, index) => (
