@@ -12,6 +12,14 @@ export const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: 'lightgray',
     },
+    buttonContainer: {
+        flexDirection: 'row', // Align buttons horizontally
+        justifyContent: 'center', // Center the buttons horizontally
+        marginBottom: 10, // Add some margin to separate from the next content
+      },
+      buttonSeparator: {
+        width: 10, // Adjust the width according to your preference
+      },
     profilePicture: {
         width: 50,
         height: 50,

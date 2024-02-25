@@ -24,37 +24,31 @@ import {
 import { useAuth } from "../Context/AuthContext";
 import { IUser, getUsers, addFriend} from './FirebaseDataService';
 import { styles } from './DisplayUsersStyles';
+import { router } from "expo-router";
 
 const FirebaseDataDisplay = () => {
     const [gym, setGym] = useState<string>(''); // State to store the gym input
     const [users, setUsers] = useState<IUser[]>([]); // State to store users
     const [loading, setLoading] = useState<boolean>(false); // State to track loading state
-    // TODO: Switch User to currUser?
-    const { User} = useAuth();
-
-    // TO DO: Display user preview when clicked
+    const {User} = useAuth();
+    if (!User) return;
+    
+    // TODO: Display user preview when clicked
     const handleUserClick = (user: IUser) => {
         // Do something when user is clicked
         // Open Profile
     };
 
-    // Function to fetch users 
-    const fetchUsers = async () => {
-        if (loading) return;
-
+    // Get users from database using filters
+    const handleGetUsers = async () => {
         setLoading(true);
-        try {
-            // Fetch users and save them
-            const fetchedUsers = await getUsers(gym);
-            setUsers(fetchedUsers);
-        } catch (error) {
-            console.error('Error fetching names:', error);
-        } finally {
-            setLoading(false);
-        }
+        const fetchedUsers = await getUsers(User.uid, gym);
+        setUsers(fetchedUsers);
+        setLoading(false);
     };
 
-    // Handle add friend function
+    // Add friends given their UIDs
+    // TODO: Turn this into sending friend request. Once accepted, they can be added.
     const handleAddFriend = (userUID: string, friendUID: string) => {
         addFriend(userUID, friendUID);
     };
@@ -69,9 +63,12 @@ const FirebaseDataDisplay = () => {
                     onChangeText={setGym}
                     style={{ borderWidth: 1, borderColor: 'gray', padding: 10, marginBottom: 10 }}
                 />
-                <Button title="Search" onPress={fetchUsers} />
-
-                <Text> List of Users: </Text>
+                <View style={styles.buttonContainer}>
+                    <Button title="Search" onPress={handleGetUsers} />
+                    <View style={styles.buttonSeparator} />
+                    <Button title="Friend List" onPress={() => router.navigate("FriendListScreen")} />
+                </View>                
+                <Text> Explore new users! </Text>
 
                 <ScrollView
                 contentContainerStyle={styles.scrollViewContent}
@@ -105,24 +102,3 @@ const FirebaseDataDisplay = () => {
     return <View>{content}</View>;
 };
 export default FirebaseDataDisplay;
-
-async function addUser(uid:String, email:String){
-    const db = firestore;
-    const User = addDoc(collection(db, "Users"), {
-        uid: uid,
-        email: email,
-        name: "",
-        friends: [],
-        Gym: "",
-        CheckInHistory: [],
-        icon: "",
-        Achievement: [],
-        GymExperience: "0",
-      });
-
-}
-
-async function getUser(){
-    const db = firestore;
-
-}

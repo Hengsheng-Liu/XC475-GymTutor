@@ -6,6 +6,7 @@ import {
     collection, 
     addDoc, 
     doc, 
+    getDoc,
     getDocs, 
     updateDoc, 
     arrayUnion} from 'firebase/firestore';
@@ -24,30 +25,33 @@ export interface IUser {
     GymExperience: string;
 }
 
-// Function to retrieve users data from Firestore
-export async function getUsers(gym?: string): Promise<IUser[]> {
+// Function to retrieve users data from Firestore with a filter of gym or any other
+export const getUsers = async (UID: string, gym?: string, 
+    filters?: [string, string, any][]): Promise<IUser[]> => {
     const db = firestore;
-    let usersQuery;
 
     // Query users from a specific gym, or all users if none is given
+    let usersQuery = gym ? query(collection(db, 'Users'), where('Gym', '==', gym)) : 
+        collection(db, 'Users');
+
+    // Query users based on given filters
     // TODO: Only query some of them
-    if (gym) {
-        usersQuery = query(
-            collection(db, 'Users'),
-            where('Gym', '==', gym)
-        );
-    } else {
-        usersQuery = collection(db, 'Users');
+    if (filters && filters.length > 0) {
+        filters.forEach(([filterName, symbol, value]) => {
+            usersQuery = query(usersQuery, where(filterName, symbol as any, value));
+        });
     }
 
-    // Get
+    // Get each user and save their data
     try {
         const querySnapshot = await getDocs(usersQuery);
         const usersData: IUser[] = []; 
 
         querySnapshot.forEach(snap => {
             const userData = snap.data() as IUser;
-            usersData.push(userData);
+            if (userData.uid != UID){
+                usersData.push(userData);
+            };
         });
 
         return usersData;
@@ -56,7 +60,27 @@ export async function getUsers(gym?: string): Promise<IUser[]> {
         console.error('Error querying users:', error);
         throw error; 
     }
-}
+};
+
+// Function to retrieve a user given their UID
+export const getUser = async (uid: string): Promise<IUser | null> => {
+    try {
+        const db = firestore;
+        const userDocRef = doc(db, 'Users', uid);
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        if (userDocSnapshot.exists()) {
+            const userData = userDocSnapshot.data() as IUser;
+            return userData;
+        } else {
+            console.error('User not found');
+            return null;
+        }
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        return null;
+    }
+};
 
 // Function to add friends
 export async function addFriend(userUID: string, friendUID: string): Promise<void> {
