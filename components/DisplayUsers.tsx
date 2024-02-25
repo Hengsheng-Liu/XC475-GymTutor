@@ -56,7 +56,13 @@ const FirebaseDataDisplay = () => {
     let content = null;
     if (User){
         content = (
-            <View>
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollViewContent}
+                scrollEnabled={true}
+                keyboardShouldPersistTaps="handled" // Ensures taps outside of text inputs dismiss the keyboard
+                keyboardDismissMode="on-drag" // Dismisses the keyboard when dragging the ScrollView
+                >
                 <TextInput
                     placeholder="Enter your gym"
                     value={gym}
@@ -69,10 +75,6 @@ const FirebaseDataDisplay = () => {
                     <Button title="Friend List" onPress={() => router.navigate("/Friends")} />
                 </View>                
                 <Text> Explore new users! </Text>
-
-                <ScrollView
-                contentContainerStyle={styles.scrollViewContent}
-                scrollEnabled={true}>
                     {users.map((user, index) => (
                         <TouchableOpacity key={index} style={styles.userContainer} onPress={() => handleUserClick(user)}>
                             <View style={styles.profilePicture}></View>
@@ -92,8 +94,7 @@ const FirebaseDataDisplay = () => {
                         </TouchableOpacity>
                     ))}
                     {loading && <ActivityIndicator size="large" color="#0000ff" />}
-                </ScrollView>
-            </View>
+            </ScrollView>
         );
     }   else {
         content = <Text>No user signed in.</Text>;

@@ -12,6 +12,10 @@ export const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: 'lightgray',
     },
+    scrollView: {
+        height: '100%',
+        width: '100%',
+    },
     buttonContainer: {
         flexDirection: 'row', // Align buttons horizontally
         justifyContent: 'center', // Center the buttons horizontally
