@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState} from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, User, UserCredential } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-
 type AuthContextValue = {
     CreateUser: (email: string, password: string) => Promise<UserCredential>;
     SignIn: (email: string, password: string) => Promise<UserCredential>;
@@ -12,6 +11,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [userRef, setUserRef] = useState(null);
     const CreateUser = async (email: string, password: string) => {
         return await createUserWithEmailAndPassword(auth, email, password);
     }
@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const unsubscribe = auth.onAuthStateChanged((CurrUser) => {
             // console.log("user", CurrUser);
             setUser(CurrUser);
+
         });
         return unsubscribe;
     }, []);

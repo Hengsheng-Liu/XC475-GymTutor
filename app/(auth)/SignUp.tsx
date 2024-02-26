@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text } from "@/components/Themed";
+import { View, Text } from "../../components/Themed";
 import {
   Alert,
   Button,

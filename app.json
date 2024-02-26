@@ -16,7 +16,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.SpotMe",
+      "infoPlist": {
+        "UIBackgroundModes": ["location", "fetch", "remote-notification"]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +34,19 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsDownloadToken": "sk.eyJ1IjoiNTI0ODc2NDY2IiwiYSI6ImNsc3doZzh4eDBkaWwybGxhN2l1dXVicTUifQ.WRqz-s1fU1St1FQAuQsmDA"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Spot Me to use your location."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
