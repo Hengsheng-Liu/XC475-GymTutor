@@ -32,19 +32,6 @@ allprojects {
             // Android JSC is installed from npm
             url(new File(['node', '--print', "require.resolve('jsc-android/package.json', { paths: [require.resolve('react-native/package.json')] })"].execute(null, rootDir).text.trim(), '../dist'))
         }
-        maven {
-            url 'https://api.mapbox.com/downloads/v2/releases/maven'
-            authentication {
-                basic(BasicAuthentication)
-            }
-            credentials {
-                // Do not change the username below.
-                // This should always be `mapbox` (not your username).
-                username = 'mapbox'
-                // Use the secret token you stored in gradle.properties as the password
-                password = project.properties["sk.eyJ1IjoiNTI0ODc2NDY2IiwiYSI6ImNsc3doZzh4eDBkaWwybGxhN2l1dXVicTUifQ.WRqz-s1fU1St1FQAuQsmDA"] ?: ""
-            }
-        }
 
         google()
         mavenCentral()
