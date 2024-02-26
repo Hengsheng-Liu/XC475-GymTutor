@@ -4,104 +4,8 @@ import { firestore,auth} from "../firebaseConfig";
 import { limit, where, query, collection, addDoc, doc, getDocs, getDoc, updateDoc, arrayUnion, setDoc, Query } from 'firebase/firestore';
 import {useAuth} from"../Context/AuthContext";
 
-    // const fetch = async () => {
-    //     const [users, setUsers] = useState([]);
-    //     const usersCollection =  (firestore as any).collection('Users');
-
-    //     const querySnapshot = await usersCollection.get();
-    //     console.log(querySnapshot);
-    //     querySnapshot.forEach((doc: any) => {
-    //         console.log(doc.id, ' => ', doc.data());
-       
-    //     });
-
-    // }
-
-    // const fetchUserData = async () => {
-    //     try {
-    //         const currentUser = auth.currentUser;
-    //         if (currentUser) {
-    //             const userId = currentUser.uid;
-                
-    //             const userRef = (firestore as any).collection('Users').doc(userId);
-    //             const userDoc = await userRef.get();
-    //             if (userDoc.exists) {
-    //                 console.log('User data:', userDoc.data());
-    //                 const userData = userDoc.data();
-    //                 const userName = userData.name;
-    //                 console.log('name', userName);
-    //                 return userName;
-                    
-    //             } else {
-    //                 console.log('No such user document!');
-    //             }
-    //         } else {
-    //             console.log('No user signed in');
-    //         }
-    //     return null;
-    //     } catch (error) {
-    //         console.error('Error fetching user data:', error);
-    //     }
-    // }
-
-    // const fetch = () => {
-    //     const [userName, setUserName] = useState<string>("");
-    //     console.log('check1');
-    //     useEffect(() => {
-    //         const fetchData = async () => {
-    //             try {
-    //                 const name = await fetchUserData();
-    //                 if (name) {
-    //                     console.log('aasdfasdf', name);
-    //                     setUserName(name);
-    //                 }
-    //             } catch (error) {
-    //                 console.error('Error fetching user data:', error);
-    //             }
-    //         };
-    //         fetchData();
-    //     }, []);
-
-    //     return (
-    //         <View style={styles.container}>
-
-    //         userName
-    //         </View>
-    //     );
-    // };
 
     const ProfilePage = () => {
-        // const [userName, setUserName] = useState("");
-
-        // useEffect(() => {
-        //     const fetchUserData = async () => {
-        //         try {
-        //             const currentUser = auth.currentUser;
-        //             if (currentUser) {
-                        
-        //                 const userId = currentUser.uid;
-        //                 // const userName = userId
-
-        //           //  https://firebase.google.com/docs/auth/web/manage-users#get_the_currently_signed-in_userhttps://firebase.google.com/docs/auth/web/manage-users#get_the_currently_signed-in_user
-        //                 const userRef = collection(firestore, "Users", userId);
-        //                 const userDoc = await userRef.getDoc();
-        //                 if (userDoc.exists) {
-        //                     const userData = userDoc.data();
-        //                     const userName = userData.name;
-        //                     setUserName(userName); 
-        //                 } else {
-        //                     console.log('No such user document');
-        //                 }
-        //             } else {
-        //                 console.log('No user signed in');
-        //          }
-        //         } catch (error) {
-        //             console.error('Error fetching user data:', error);
-        //         }
-        //     };
-        //     fetchUserData();
-        // }, []);
-
 
 // // most recent one
 
@@ -129,6 +33,10 @@ import {useAuth} from"../Context/AuthContext";
 
                 if (docSnap && docSnap.exists()) {
                     console.log("docSnap", docSnap.data());
+                    const name = await docSnap.get("name");
+
+                    setUserName(name);
+                    
                 }
                 else {
                     console.log("docSnap doesnt exist");
@@ -145,14 +53,14 @@ import {useAuth} from"../Context/AuthContext";
         }
        }, [User]);
 
+       console.log("username is ", userName);
 
-   //         <Text style={styles.nameText}>{displayName ? displayName : "Loading..."}</Text>
 
 
     return (
     <View style={styles.container}>
 
-   
+        <Text style={styles.nameText}>{userName ? userName : "Loading..."}</Text>
 
         <Image 
         source={ 
@@ -163,23 +71,21 @@ import {useAuth} from"../Context/AuthContext";
 
         <Text style={styles.description}>Description: </Text>
 
-
         <Button 
         color="orange"
-        title="Send friend request (its a button btw)"
+        title="Settings"
         onPress={() => Alert.alert("Friend request sent!", "epic moment", [
             {text: "nice", onPress: () => console.log("pressed 'nice'")},
             {text: "amazing"}
         ])}
         >
-    
         </Button>
-
-    </View>
-
-        
+    </View> 
     )
-}
+};
+
+export default ProfilePage;
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -198,24 +104,20 @@ const styles = StyleSheet.create({
     titleContainer: {
         flex: 1.2,
         justifyContent: "center",
+        color: "black",
       },
       nameText: {
         fontSize: 45,
         textAlign: "center",
         fontWeight: "200",
+        color: "black",
       },
       description: {
         fontSize: 20,
         textAlign: "center",
+        color: "black",
       },
-      loginTextField: {
-        borderBottomWidth: 1,
-        height: 60,
-        fontSize: 30,
-        marginVertical: 10,
-        fontWeight: "300",
-        marginBottom: 20,
-      },
+  
       mainContent: {
         flex: 6,
       },
@@ -223,9 +125,9 @@ const styles = StyleSheet.create({
         backgroundColor: "orange",
         fontSize: 20,
         textAlign: "center",
+        color: "black",
         
       }
 });
 
 
-export default ProfilePage;
