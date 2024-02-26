@@ -4,6 +4,8 @@ import { Link, Redirect, Tabs } from "expo-router"; // Removed Stack import, as 
 
 import { useAuth } from "../../Context/AuthContext";
 
+import UserProfilePage from '../../components/UserProfilePage'
+
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;
@@ -22,6 +24,7 @@ export default function TabLayout() {
           name="index"
         />  
       <Tabs.Screen
+      
         name="(FriendPage)"
         options = {{
           title: "Home",
@@ -42,6 +45,10 @@ export default function TabLayout() {
         headerShown: false,
       }}
       />
+            <Tabs.Screen
+        name="Profile"
+      /> 
+
     </Tabs>
     );
   }

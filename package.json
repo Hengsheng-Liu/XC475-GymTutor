@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
+    "@expo/webpack-config": "~19.0.1",
+    "@firebase/firestore-types": "^3.0.0",
     "@firebase/storage": "^0.12.1",
     "@react-navigation/native": "^6.0.2",
     "@rnmapbox/maps": "^10.1.15",
