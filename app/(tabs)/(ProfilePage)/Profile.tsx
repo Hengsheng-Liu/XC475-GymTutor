@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, SafeAreaView, Image, Button, Alert, Dimensions } from 'react-native'
 import React, { Component, useEffect, useState } from 'react'
-import { firestore,auth} from "../../firebaseConfig";
+import { firestore,auth} from "../../../firebaseConfig";
 import { limit, where, query, collection, addDoc, doc, getDocs, getDoc, updateDoc, arrayUnion, setDoc, Query } from 'firebase/firestore';
-import {useAuth} from"../../Context/AuthContext";
+import {useAuth} from"../../../Context/AuthContext";
 
     // note - I originally wrote everything below in UserProfilePage.tsx under 'components', and tried importing
     // it from there, but for some reason that didn't work. So for now, I put the code in UserProfilePage in this file
@@ -69,7 +69,7 @@ import {useAuth} from"../../Context/AuthContext";
 
         <Image 
         source={ 
-            require('../../assets/images/bob.png')}
+            require('../../../assets/images/bob.png')}
         style={styles.image}
         />
         <Text style={styles.description}>Location: </Text>

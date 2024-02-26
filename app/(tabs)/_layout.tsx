@@ -3,9 +3,6 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Redirect, Tabs } from "expo-router"; // Removed Stack import, as it's not used
 
 import { useAuth } from "../../Context/AuthContext";
-
-import UserProfilePage from '../../components/UserProfilePage'
-
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;
@@ -21,35 +18,27 @@ export default function TabLayout() {
     return (
       <Tabs>
         <Tabs.Screen
-          name="index"
-        />  
-      <Tabs.Screen
-      
-        name="(FriendPage)"
-        options = {{
-          title: "Home",
-          headerShown: false,
-        }}
-      />
-      <Tabs.Screen 
-        name = "Location"
-        options = {{
-          title: "Location",
-          headerShown: false,
-        }}
-      />
-      <Tabs.Screen
-      name = "Map"
-      options = {{
-        title: "Map",
-        headerShown: false,
-      }}
-      />
-            <Tabs.Screen
-        name="Profile"
-      /> 
-
-    </Tabs>
+          name="(FriendPage)"
+          options={{
+            title: "Home",
+            headerShown: false,
+          }}
+        />
+        <Tabs.Screen
+          name="(MapPage)"
+          options={{
+            title: "Map",
+            headerShown: false,
+          }}
+        />
+        <Tabs.Screen
+          name="(ProfilePage)"
+          options={{
+            title: "Profile",
+            headerShown: false,
+          }}
+        />
+      </Tabs>
     );
   }
 }
