@@ -24,11 +24,17 @@ export default function TabLayout() {
           name="index"
         />  
       <Tabs.Screen
-        name="Home"
-      />  
-      <Tabs.Screen
+      
+        name="(FriendPage)"
+        options = {{
+          title: "Home",
+          headerShown: false,
+        }}
+      />
+            <Tabs.Screen
         name="Profile"
       /> 
+
     </Tabs>
     );
   }

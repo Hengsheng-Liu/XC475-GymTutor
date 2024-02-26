@@ -1,0 +1,21 @@
+[debug] [2024-02-19T22:57:44.371Z] ----------------------------------------------------------------------
+[debug] [2024-02-19T22:57:44.374Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\axel0\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2024-02-19T22:57:44.374Z] CLI Version:   13.3.0
+[debug] [2024-02-19T22:57:44.375Z] Platform:      win32
+[debug] [2024-02-19T22:57:44.375Z] Node Version:  v20.11.1
+[debug] [2024-02-19T22:57:44.375Z] Time:          Mon Feb 19 2024 17:57:44 GMT-0500 (Eastern Standard Time)
+[debug] [2024-02-19T22:57:44.375Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-02-19T22:57:44.382Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-02-19T22:57:44.383Z] > authorizing via signed-in user (aalmag22@bu.edu)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\axel0\Desktop\SpotMe App\XC475-GymTutor
+
