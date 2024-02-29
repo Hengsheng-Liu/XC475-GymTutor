@@ -18,6 +18,11 @@
         "distribution": "internal"
       },
       "developmentClient":true
+    },
+    "IosSimulator":{
+      "ios": {
+        "simulator": true
+      }
     }
   },
 
