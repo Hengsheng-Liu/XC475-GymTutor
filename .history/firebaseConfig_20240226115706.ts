@@ -3,7 +3,6 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import Constants from 'expo-constants';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -18,9 +17,6 @@ const firebaseConfig = {
   appId: "1:725476446782:web:d91ecceb72c74f98ffb76f",
   measurementId: "G-EBWDJ625HL"
 };
-
-export const expoClientId = Constants.expoConfig?.extra?.EXPO_CLIENT_ID;
-export const iosClientId = Constants.expoConfig?.extra?.IOS_CLIENT_ID;
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

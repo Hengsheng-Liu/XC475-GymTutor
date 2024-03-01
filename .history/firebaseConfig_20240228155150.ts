@@ -20,7 +20,8 @@ const firebaseConfig = {
 };
 
 export const expoClientId = Constants.expoConfig?.extra?.EXPO_CLIENT_ID;
-export const iosClientId = Constants.expoConfig?.extra?.IOS_CLIENT_ID;
+export const iosClientId = Constants.expoConfig?.extra?.ANDROID_CLIENT_ID;
+export const androidClientId = Constants.expoConfig?.extra?.IOS_CLIENT_ID;
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

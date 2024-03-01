@@ -9,16 +9,11 @@ import {
   Keyboard,
   TextInput,
 } from "react-native";
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { router } from 'expo-router';
 import { useAuth } from '../../Context/AuthContext';
 import { useIdTokenAuthRequest as useGoogleIdTokenAuthRequest } from 'expo-auth-session/providers/google';
-// In anotherFile.js
-import { expoClientId, iosClientId, auth } from '../../firebaseConfig';
-import { signInWithCredential, GoogleAuthProvider, OAuthCredential } from "firebase/auth";
-
 export default function LogInScreen() {
-
 
   // Hook that gives us the function to authenticate our Google OAuth provider
   const [, googleResponse, promptAsyncGoogle] = useGoogleIdTokenAuthRequest({
@@ -44,25 +39,6 @@ export default function LogInScreen() {
       }
     }
   }
-  // Handles the login via the Google Provider
-  const handleLoginGoogle = async () => {
-    await promptAsyncGoogle();
-  };
-
-  // Function that logs into firebase using the credentials from an OAuth provider
-  const loginToFirebase = useCallback(async (credentials: OAuthCredential) => {
-    const signInResponse = await signInWithCredential(auth, credentials);
-  }, []);
-
-  useEffect(() => {
-    if (googleResponse?.type === 'success') {
-      const credentials = GoogleAuthProvider.credential(
-        googleResponse.params.id_token
-      );
-      loginToFirebase(credentials);
-    }
-  }, [googleResponse]);
-
   return (
     <Pressable style={styles.contentView} onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.contentView}>
@@ -87,7 +63,6 @@ export default function LogInScreen() {
               secureTextEntry />
             <Button title="Log In" onPress={handleLogIn} />
             <Button title="Sign Up" onPress={() => router.navigate("SignUp")} />
-            <Button title={'Google Login'} onPress={handleLoginGoogle} />
           </View>
         </View>
       </SafeAreaView>
