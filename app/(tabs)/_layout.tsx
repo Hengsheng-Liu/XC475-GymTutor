@@ -17,6 +17,13 @@ export default function TabLayout() {
   } else {
     return (
       <Tabs>
+        <Tabs.Screen 
+        name = "index"
+        options = {{
+          title: "Home",
+          tabBarIcon: (props) => <TabBarIcon {...props} name="home" />,
+        }}
+        />
         <Tabs.Screen
           name="(FriendPage)"
           options={{
