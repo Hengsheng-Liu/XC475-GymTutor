@@ -15,7 +15,7 @@ import { useAuth } from '../../Context/AuthContext';
 import { useIdTokenAuthRequest as useGoogleIdTokenAuthRequest } from 'expo-auth-session/providers/google';
 // In anotherFile.js
 import { expoClientId, iosClientId, auth } from '../../firebaseConfig';
-import { signInWithCredential, User, GoogleAuthProvider, OAuthCredential } from "firebase/auth";
+import { signInWithCredential, GoogleAuthProvider, OAuthCredential } from "firebase/auth";
 
 export default function LogInScreen() {
 
@@ -26,7 +26,6 @@ export default function LogInScreen() {
     expoClientId,
     iosClientId,
   });
-  const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
   const { SignIn } = useAuth();
@@ -63,15 +62,6 @@ export default function LogInScreen() {
       GoogleloginToFirebase(credentials);
     }
   }, [googleResponse]);
-
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      setUser(user);
-      if (user) {
-        router.replace("/");
-      }
-    });
-  }, []);
 
   return (
     <Pressable style={styles.contentView} onPress={Keyboard.dismiss}>
