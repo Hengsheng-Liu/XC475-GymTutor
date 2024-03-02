@@ -5,6 +5,7 @@ export default function authLayout() {
         <Stack>
         <Stack.Screen name="Home" options= {{headerShown: true}}/>
         <Stack.Screen name="Friends" options= {{headerTitle: "My Friends"}}/>
+        <Stack.Screen name="Notifications" options= {{headerTitle: "Notifications"}}/>
         
         </Stack>
     )

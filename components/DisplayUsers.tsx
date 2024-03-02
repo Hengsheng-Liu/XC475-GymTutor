@@ -22,7 +22,7 @@ import {
     setDoc, 
     Query } from 'firebase/firestore';
 import { useAuth } from "../Context/AuthContext";
-import { IUser, getUsers, addFriend, sendFriendRequest, updateUsers} from './FirebaseDataService';
+import { IUser, getUsers, addFriend, sendFriendRequest, canAddFriend, updateUsers} from './FirebaseDataService';
 import { styles } from './DisplayUsersStyles';
 import { router } from "expo-router";
 
@@ -51,9 +51,11 @@ const FirebaseDataDisplay = () => {
     // Add friends given their UIDs
     // TODO: Turn this into sending friend request. Once accepted, they can be added.
     const handleAddFriend = (userUID: string, friendUID: string, 
-            friendRequests: string[], rejectedList: string[], blockedList: string[]) => {
-        // Check if userUID is not in friendRequests, rejectedList, and blockedList
+            friendsList: string[], friendRequests: string[], 
+            rejectedList: string[], blockedList: string[]) => {
+        // Check if userUID is not in friendsList, friendRequests, rejectedList, and blockedList
         if (
+            friendsList.indexOf(userUID) === -1 &&
             friendRequests.indexOf(userUID) === -1 &&
             rejectedList.indexOf(userUID) === -1 &&
             blockedList.indexOf(userUID) === -1
@@ -84,6 +86,8 @@ const FirebaseDataDisplay = () => {
                     <Button title="Search" onPress={handleGetUsers} />
                     <View style={styles.buttonSeparator} />
                     <Button title="Friends List" onPress={() => router.push("/Friends")} />
+                    <View style={styles.buttonSeparator} />
+                    <Button title="Notification List" onPress={() => router.push("/Notifications")} />
                 </View>                
                 <Text> Explore new users! </Text>
                     {users.map((user, index) => (
@@ -98,10 +102,16 @@ const FirebaseDataDisplay = () => {
                                 <Text>Name: {user.name}</Text>
                                 <Text>Email: {user.email}</Text>
                                 <Text>Gym: {user.gym}</Text>
+                                <Text>UID: {user.uid}</Text>
                             </View>
-                            <TouchableOpacity style={styles.addFriendButton} onPress={() => handleAddFriend(User.uid, user.uid, user.friendRequests, user.rejectedRequests, user.blockedUsers)}>
-                                <Text style={styles.addFriendButtonText}>+</Text>
-                            </TouchableOpacity>
+                            {/* Conditionally render the add friend button */}
+                            {canAddFriend(User.uid, user) && (
+                                <TouchableOpacity 
+                                    style={styles.addFriendButton} 
+                                    onPress={() => handleAddFriend(User.uid, user.uid, user.friends, user.friendRequests, user.rejectedRequests, user.blockedUsers)}>
+                                    <Text style={styles.addFriendButtonText}>+</Text>
+                                </TouchableOpacity>
+                            )}
                         </TouchableOpacity>
                     ))}
                     {loading && <ActivityIndicator size="large" color="#0000ff" />}
