@@ -4,7 +4,8 @@ import {
     where, 
     query, 
     collection, 
-    addDoc, 
+    addDoc,
+    setDoc, 
     doc, 
     getDoc,
     getDocs, 
@@ -99,17 +100,35 @@ export async function addFriend(userUID: string, friendUID: string): Promise<voi
 }
 
 // Function to add a new user to Firestore
-export async function addUser(uid: string, email: string = "email.com", gym: string = "gym", name: string = "name"): Promise<void> {
+export async function addUser(
+        uid: string, 
+        email: string = "", 
+        gym: string = "", 
+        name: string = "", 
+        age: string = "", 
+        bio: string = "",
+        sex: string = "", 
+        tags: string[] = []): Promise<void> {
     const db = firestore;
-    await addDoc(collection(db, "Users"), {
-        uid: uid,
-        email: email,
-        name: name,
-        friends: [],
-        Gym: gym,
-        CheckInHistory: [],
-        icon: "",
-        Achievement: [],
-        GymExperience: "0",
-    });
-}
+    try {
+        await setDoc(doc(db, "Users", uid), {
+            uid: uid,
+            email: email,
+            name: name,
+            age: age,
+            sex: sex,
+            tags: tags,
+            biography: bio,
+            friends: [],
+            friendRequests: [],
+            Gym: gym,
+            CheckInHistory: [],
+            icon: "",
+            Achievement: [],
+            GymExperience: "0",
+        });
+        console.log("Document written for user: ", uid);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+};

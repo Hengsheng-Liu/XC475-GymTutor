@@ -14,7 +14,7 @@ import { router } from "expo-router";
 import { UserCredential } from "firebase/auth";
 import { collection, addDoc,setDoc,doc } from "firebase/firestore";
 import { useAuth} from "../../Context/AuthContext";
-
+import { addUser} from "@/components/FirebaseDataService"
 
 
 export default function SignUpScreen() {
@@ -42,24 +42,9 @@ export default function SignUpScreen() {
 
   const AddUserToDB = async (response: UserCredential) => {
     const user = response.user;
-    const db = firestore;
-    try {
-      await setDoc(doc(db, "Users", user.uid), {
-        email: user.email,
-        name: "",
-        friends: [],
-        Gym: "",
-        CheckInHistory: [],
-        icon: "",
-        Achievement: [],
-        GymExperience: "0",
-        uid: user.uid,  
-      });
-  
-      console.log("Document written for user: ", user.uid);
-    } catch (error) {
-      console.error("Error adding document: ", error);
-    }
+
+    await addUser(user.uid, user.email || "");
+    
   };
   const handleSignUp = async () => {
     if (email && password && confirmPassword && password === confirmPassword) {
