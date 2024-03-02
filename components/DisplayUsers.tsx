@@ -22,7 +22,7 @@ import {
     setDoc, 
     Query } from 'firebase/firestore';
 import { useAuth } from "../Context/AuthContext";
-import { IUser, getUsers, addFriend} from './FirebaseDataService';
+import { IUser, getUsers, addFriend, updateUsers} from './FirebaseDataService';
 import { styles } from './DisplayUsersStyles';
 import { router } from "expo-router";
 
@@ -41,6 +41,7 @@ const FirebaseDataDisplay = () => {
 
     // Get users from database using filters
     const handleGetUsers = async () => {
+        // updateUsers(); // Uncomment when we want to use it to add fields
         setLoading(true);
         const fetchedUsers = await getUsers(User.uid, gym);
         setUsers(fetchedUsers);
@@ -86,7 +87,7 @@ const FirebaseDataDisplay = () => {
                             <View style={styles.userInfo}>
                                 <Text>Name: {user.name}</Text>
                                 <Text>Email: {user.email}</Text>
-                                <Text>Gym: {user.Gym}</Text>
+                                <Text>Gym: {user.gym}</Text>
                             </View>
                             <TouchableOpacity style={styles.addFriendButton} onPress={() => handleAddFriend(User.uid, user.uid)}>
                                 <Text style={styles.addFriendButtonText}>+</Text>
