@@ -108,6 +108,22 @@ export async function addFriend(userUID: string, friendUID: string): Promise<voi
     }
 }
 
+// Function to send friend request
+export async function sendFriendRequest(userUID: string, friendUID: string): Promise<void> {
+    const db = firestore;
+    const userRef = doc(db, 'Users', userUID);
+    const friendRef = doc(db, 'Users', friendUID);
+
+    // Append user's uid to each other in friends section
+    try {
+        await updateDoc(userRef, { friends: arrayUnion(friendUID) });
+        await updateDoc(friendRef, { friends: arrayUnion(userUID) });
+        console.log('Friend added successfully: ', friendUID, userUID);
+    } catch (error) {
+        console.error('Error adding friend:', error);
+    }
+}
+
 // Function to add a new user to Firestore
 export async function addUser(
         uid: string, 
@@ -172,7 +188,7 @@ export async function updateUsers(): Promise<void> {
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
-                
+                friendRequests: []
             };
 
             // Update document if any field is missing

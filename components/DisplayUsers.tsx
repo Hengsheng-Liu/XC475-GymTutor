@@ -22,7 +22,7 @@ import {
     setDoc, 
     Query } from 'firebase/firestore';
 import { useAuth } from "../Context/AuthContext";
-import { IUser, getUsers, addFriend, updateUsers} from './FirebaseDataService';
+import { IUser, getUsers, addFriend, sendFriendRequest, updateUsers} from './FirebaseDataService';
 import { styles } from './DisplayUsersStyles';
 import { router } from "expo-router";
 
@@ -47,11 +47,21 @@ const FirebaseDataDisplay = () => {
         setUsers(fetchedUsers);
         setLoading(false);
     };
-
+    
     // Add friends given their UIDs
     // TODO: Turn this into sending friend request. Once accepted, they can be added.
-    const handleAddFriend = (userUID: string, friendUID: string) => {
-        addFriend(userUID, friendUID);
+    const handleAddFriend = (userUID: string, friendUID: string, 
+            friendRequests: string[], rejectedList: string[], blockedList: string[]) => {
+        // Check if userUID is not in friendRequests, rejectedList, and blockedList
+        if (
+            friendRequests.indexOf(userUID) === -1 &&
+            rejectedList.indexOf(userUID) === -1 &&
+            blockedList.indexOf(userUID) === -1
+        ) {
+            // If userUID is not in any of the lists, send a friend request
+            sendFriendRequest(userUID, friendUID);
+        }
+        // addFriend(userUID, friendUID);
     };
 
     let content = null;
@@ -89,7 +99,7 @@ const FirebaseDataDisplay = () => {
                                 <Text>Email: {user.email}</Text>
                                 <Text>Gym: {user.gym}</Text>
                             </View>
-                            <TouchableOpacity style={styles.addFriendButton} onPress={() => handleAddFriend(User.uid, user.uid)}>
+                            <TouchableOpacity style={styles.addFriendButton} onPress={() => handleAddFriend(User.uid, user.uid, user.friendRequests, user.rejectedRequests, user.blockedUsers)}>
                                 <Text style={styles.addFriendButtonText}>+</Text>
                             </TouchableOpacity>
                         </TouchableOpacity>
