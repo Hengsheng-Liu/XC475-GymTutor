@@ -47,13 +47,7 @@ export default function LogInScreen() {
       }
     }
   }
-
-
-
-
-
-
-  // Code below handles the login via the Google Provider
+  // Handles the login via the Google Provider
   const handleLoginGoogle = async () => {
     try {
       await promptAsyncGoogle();
