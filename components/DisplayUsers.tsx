@@ -42,7 +42,7 @@ const FirebaseDataDisplay = () => {
 
     // Get users from database using filters
     const handleGetUsers = async () => {
-        updateUsers(); // Uncomment when we want to use it to add fields
+        //updateUsers(); // Uncomment when we want to use it to add fields
         setLoading(true);
         const fetchedUsers = await getUsers(currUser.uid, gym);
         setUsers(fetchedUsers);
