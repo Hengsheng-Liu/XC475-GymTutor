@@ -23,6 +23,8 @@ import {
     Query } from 'firebase/firestore';
 import { useAuth } from "../Context/AuthContext";
 import { IUser, getUsers, addFriend, sendFriendRequest, canAddFriend, updateUsers} from './FirebaseDataService';
+
+import { addFriend, sendFriendRequest, canAddFriend, updateUsers} from './HandleFriends';
 import { styles } from './DisplayUsersStyles';
 import { router } from "expo-router";
 
