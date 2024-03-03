@@ -22,7 +22,8 @@ import {
     setDoc, 
     Query } from 'firebase/firestore';
 import { useAuth } from "../Context/AuthContext";
-import { IUser, getUsers, addFriend} from './FirebaseDataService';
+import { IUser, getUsers, updateUsers} from './FirebaseDataService';
+import { handleSendFriendRequest, canAddFriend, sendFriendRequest} from "./HandleFriends"
 import { styles } from './DisplayUsersStyles';
 import { router } from "expo-router";
 
@@ -30,8 +31,8 @@ const FirebaseDataDisplay = () => {
     const [gym, setGym] = useState<string>(''); // State to store the gym input
     const [users, setUsers] = useState<IUser[]>([]); // State to store users
     const [loading, setLoading] = useState<boolean>(false); // State to track loading state
-    const {User} = useAuth();
-    if (!User) return;
+    const {currUser} = useAuth();
+    if (!currUser) return;
     
     // TODO: Display user preview when clicked
     const handleUserClick = (user: IUser) => {
@@ -41,20 +42,21 @@ const FirebaseDataDisplay = () => {
 
     // Get users from database using filters
     const handleGetUsers = async () => {
+        updateUsers(); // Uncomment when we want to use it to add fields
         setLoading(true);
-        const fetchedUsers = await getUsers(User.uid, gym);
+        const fetchedUsers = await getUsers(currUser.uid, gym);
         setUsers(fetchedUsers);
         setLoading(false);
     };
 
-    // Add friends given their UIDs
-    // TODO: Turn this into sending friend request. Once accepted, they can be added.
-    const handleAddFriend = (userUID: string, friendUID: string) => {
-        addFriend(userUID, friendUID);
+    // Send friend Requests
+    const handleSendRequest = (userUID: string, friend: IUser) => {
+        handleSendFriendRequest(userUID, friend);
+        handleGetUsers();
     };
 
     let content = null;
-    if (User){
+    if (currUser){
         content = (
             <ScrollView
                 style={styles.scrollView}
@@ -73,6 +75,8 @@ const FirebaseDataDisplay = () => {
                     <Button title="Search" onPress={handleGetUsers} />
                     <View style={styles.buttonSeparator} />
                     <Button title="Friends List" onPress={() => router.push("/Friends")} />
+                    <View style={styles.buttonSeparator} />
+                    <Button title="Notification List" onPress={() => router.push("/Notifications")} />
                 </View>                
                 <Text> Explore new users! </Text>
                     {users.map((user, index) => (
@@ -86,11 +90,17 @@ const FirebaseDataDisplay = () => {
                             <View style={styles.userInfo}>
                                 <Text>Name: {user.name}</Text>
                                 <Text>Email: {user.email}</Text>
-                                <Text>Gym: {user.Gym}</Text>
+                                <Text>Gym: {user.gym}</Text>
+                                <Text>UID: {user.uid}</Text>
                             </View>
-                            <TouchableOpacity style={styles.addFriendButton} onPress={() => handleAddFriend(User.uid, user.uid)}>
-                                <Text style={styles.addFriendButtonText}>+</Text>
-                            </TouchableOpacity>
+                            {/* Conditionally render the add friend button */}
+                            {canAddFriend(currUser.uid, user) && (
+                                <TouchableOpacity 
+                                    style={styles.addFriendButton} 
+                                    onPress={() => handleSendRequest(currUser.uid, user)}>
+                                    <Text style={styles.addFriendButtonText}>+</Text>
+                                </TouchableOpacity>
+                            )}
                         </TouchableOpacity>
                     ))}
                     {loading && <ActivityIndicator size="large" color="#0000ff" />}

@@ -66,7 +66,6 @@ import {useAuth} from"../../../Context/AuthContext";
     <View style={styles.container}>
 
         <Text style={styles.nameText}>{userName ? userName : "Loading..."}</Text>
-
         <Image 
         source={ 
             require('../../../assets/images/bob.png')}
