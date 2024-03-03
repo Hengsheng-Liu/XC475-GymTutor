@@ -15,7 +15,7 @@ import { useAuth } from '../../Context/AuthContext';
 import { useIdTokenAuthRequest as useGoogleIdTokenAuthRequest } from 'expo-auth-session/providers/google';
 // In anotherFile.js
 import { expoClientId, iosClientId, auth } from '../../firebaseConfig';
-import { signInWithCredential, User, GoogleAuthProvider, OAuthCredential, AuthError } from "firebase/auth";
+import { signInWithCredential, User, GoogleAuthProvider, OAuthCredential } from "firebase/auth";
 
 export default function LogInScreen() {
 
@@ -57,33 +57,7 @@ export default function LogInScreen() {
 
   // Function that logs into firebase using the credentials from an OAuth provider
   const GoogleloginToFirebase = useCallback(async (credentials: OAuthCredential) => {
-    try {
-      const signInResponse = await signInWithCredential(auth, credentials);
-
-      // Handle successful sign-in
-      if (signInResponse.additionalUserInfo?.isNewUser) {
-        // Handle the new user case
-        console.log("This is a new user.");
-      } else {
-        // Handle the existing user case
-        console.log("This is an existing user.");
-      }
-    } catch (error) {
-
-      const firebaseError = error as AuthError; // Type assertion
-
-      if (firebaseError.code === 'auth/account-exists-with-different-credential') {
-        // An account already exists with the same email address but different sign-in credentials
-        Alert.alert("Account Exists", "An account already exists with the same email address but with a different sign-in method.");
-      } else if (firebaseError.code === 'auth/email-already-in-use') {
-        // The email address is already in use by another account
-        Alert.alert("Email In Use", "This email address is already in use by another account.");
-      } else {
-        // Handle other errors
-        Alert.alert("Login Error", firebaseError.message);
-      }
-      console.error("Firebase Sign-In Error:", error);
-    }
+    const signInResponse = await signInWithCredential(auth, credentials);
   }, []);
 
   useEffect(() => {
