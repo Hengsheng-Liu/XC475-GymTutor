@@ -33,6 +33,7 @@ export interface IUser {
     icon: string;
     achievements: string[]; // Add proper type
     gymExperience: string;
+    currentlyMessaging: string[];
 }
 
 // Function to retrieve users data from Firestore with a filter of gym or any other
@@ -123,6 +124,7 @@ export async function addUser(
             icon: "",
             achievements: [],
             gymExperience: "0",
+            currentlyMessaging: []
         });
         console.log("Document written for user: ", uid);
     } catch (error) {
@@ -156,7 +158,7 @@ export async function updateUsers(): Promise<void> {
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
-                friendRequests: []
+                currentlyMessaging: []
             };
 
             // Update document if any field is missing
