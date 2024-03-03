@@ -22,9 +22,8 @@ import {
     setDoc, 
     Query } from 'firebase/firestore';
 import { useAuth } from "../Context/AuthContext";
-import { IUser, getUsers, addFriend, sendFriendRequest, canAddFriend, updateUsers} from './FirebaseDataService';
-
-import { addFriend, sendFriendRequest, canAddFriend, updateUsers} from './HandleFriends';
+import { IUser, getUsers, updateUsers} from './FirebaseDataService';
+import { handleSendFriendRequest, canAddFriend, sendFriendRequest} from "./HandleFriends"
 import { styles } from './DisplayUsersStyles';
 import { router } from "expo-router";
 
@@ -32,8 +31,8 @@ const FirebaseDataDisplay = () => {
     const [gym, setGym] = useState<string>(''); // State to store the gym input
     const [users, setUsers] = useState<IUser[]>([]); // State to store users
     const [loading, setLoading] = useState<boolean>(false); // State to track loading state
-    const {User} = useAuth();
-    if (!User) return;
+    const {currUser} = useAuth();
+    if (!currUser) return;
     
     // TODO: Display user preview when clicked
     const handleUserClick = (user: IUser) => {
@@ -45,31 +44,19 @@ const FirebaseDataDisplay = () => {
     const handleGetUsers = async () => {
         // updateUsers(); // Uncomment when we want to use it to add fields
         setLoading(true);
-        const fetchedUsers = await getUsers(User.uid, gym);
+        const fetchedUsers = await getUsers(currUser.uid, gym);
         setUsers(fetchedUsers);
         setLoading(false);
     };
-    
-    // Add friends given their UIDs
-    // TODO: Turn this into sending friend request. Once accepted, they can be added.
-    const handleAddFriend = (userUID: string, friendUID: string, 
-            friendsList: string[], friendRequests: string[], 
-            rejectedList: string[], blockedList: string[]) => {
-        // Check if userUID is not in friendsList, friendRequests, rejectedList, and blockedList
-        if (
-            friendsList.indexOf(userUID) === -1 &&
-            friendRequests.indexOf(userUID) === -1 &&
-            rejectedList.indexOf(userUID) === -1 &&
-            blockedList.indexOf(userUID) === -1
-        ) {
-            // If userUID is not in any of the lists, send a friend request
-            sendFriendRequest(userUID, friendUID);
-        }
-        // addFriend(userUID, friendUID);
+
+    // Send friend Requests
+    const handleSendRequest = (userUID: string, friend: IUser) => {
+        handleSendFriendRequest(userUID, friend);
+        handleGetUsers();
     };
 
     let content = null;
-    if (User){
+    if (currUser){
         content = (
             <ScrollView
                 style={styles.scrollView}
@@ -107,10 +94,10 @@ const FirebaseDataDisplay = () => {
                                 <Text>UID: {user.uid}</Text>
                             </View>
                             {/* Conditionally render the add friend button */}
-                            {canAddFriend(User.uid, user) && (
+                            {canAddFriend(currUser.uid, user) && (
                                 <TouchableOpacity 
                                     style={styles.addFriendButton} 
-                                    onPress={() => handleAddFriend(User.uid, user.uid, user.friends, user.friendRequests, user.rejectedRequests, user.blockedUsers)}>
+                                    onPress={() => handleSendRequest(currUser.uid, user)}>
                                     <Text style={styles.addFriendButtonText}>+</Text>
                                 </TouchableOpacity>
                             )}
