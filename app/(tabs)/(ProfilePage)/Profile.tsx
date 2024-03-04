@@ -76,7 +76,7 @@ import {useAuth} from"../../../Context/AuthContext";
     
             <Image 
             source={ 
-                require('../../assets/images/bob.png')}
+                require('bob.png')}
             style={styles.image}
             />
             <Text style={styles.description}>Gender: {userGender ? userGender : "Loading..."} </Text>
