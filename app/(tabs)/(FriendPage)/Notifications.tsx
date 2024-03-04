@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { View, Text, Button, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
+import { View, Text, Button, ScrollView, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { getUser, IUser } from '@/components/FirebaseDataService'; 
 import { useAuth } from "@/Context/AuthContext";
 import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
 import { addFriend, removeFriendRequest, rejectRequest } from '@/components/HandleFriends'
+import { styles } from "@/components/NotificationsStyles"
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -89,72 +90,41 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
   );
 
   return (
-    <View style={styles.container}>
+    <View>
       <Text style={styles.title}>Notifications</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : requests.length === 0 ? (
         <Text>No notifications</Text>
       ) : (
-        <FlatList
-          data={requests}
-          keyExtractor={(item) => item.uid}
-          renderItem={renderItem}
-        />
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollViewContent}
+          scrollEnabled={true}
+          keyboardShouldPersistTaps="handled" // Ensures taps outside of text inputs dismiss the keyboard
+          keyboardDismissMode="on-drag" // Dismisses the keyboard when dragging the ScrollView
+        >
+          {requests.map((user, index) => (
+            <TouchableOpacity key={index} style={styles.userContainer}>
+              <View style={styles.profilePicture}></View>
+              <View style={styles.userInfo}>
+                <Text style={styles.nameStyle}>{user.name}</Text>
+              </View>
+              <View>
+                <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={() => acceptFriendRequest(user)}>
+                  <Text style={styles.buttonText}>Accept</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.button, styles.rejectButton]} onPress={() => rejectFriendRequest(user)}>
+                  <Text style={styles.buttonText}>Reject</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          ))}
+
+          
+        </ScrollView>
       )}
     </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  friendContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 10,
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  friendName: {
-    fontSize: 18,
-    marginLeft: 10,
-  },
-  friendEmail: {
-    marginLeft: 'auto',
-    marginRight: 10,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-  },
-  button: {
-    borderRadius: 5,
-    padding: 10,
-    marginTop: 5,
-    width: 80,
-  },
-  buttonText: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  acceptButton: {
-    backgroundColor: 'green',
-  },
-  rejectButton: {
-    backgroundColor: 'red',
-  },
-});
+)};
 
 export default NotificationScreen;
