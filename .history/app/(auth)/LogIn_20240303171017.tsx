@@ -18,7 +18,6 @@ import { expoClientId, iosClientId, auth } from '../../firebaseConfig';
 import { signInWithCredential, User, GoogleAuthProvider, OAuthCredential, AuthError, getAdditionalUserInfo, UserCredential } from "firebase/auth";
 import { firestore } from "../../firebaseConfig";
 import { collection, addDoc, setDoc, doc } from "firebase/firestore";
-import { AddUserToDB } from './SignUp';
 
 export default function LogInScreen() {
 
@@ -48,13 +47,7 @@ export default function LogInScreen() {
       }
     }
   }
-
-
-
-
-
-
-  // Code below handles the login via the Google Provider
+  // Handles the login via the Google Provider
   const handleLoginGoogle = async () => {
     try {
       await promptAsyncGoogle();
@@ -64,6 +57,28 @@ export default function LogInScreen() {
     }
   };
 
+  // Copied from SignUp.tsx
+  const AddUserToDB = async (response: UserCredential) => {
+    const user = response.user;
+    const db = firestore;
+    try {
+      await setDoc(doc(db, "Users", user.uid), {
+        email: user.email,
+        name: "",
+        friends: [],
+        Gym: "",
+        CheckInHistory: [],
+        icon: "",
+        Achievement: [],
+        GymExperience: "0",
+        uid: user.uid,
+      });
+
+      console.log("Document written for user: ", user.uid);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
 
   // Function that logs into firebase using the credentials from an OAuth provider
   const GoogleloginToFirebase = useCallback(async (credentials: OAuthCredential) => {

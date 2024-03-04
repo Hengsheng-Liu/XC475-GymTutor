@@ -15,10 +15,7 @@ import { useAuth } from '../../Context/AuthContext';
 import { useIdTokenAuthRequest as useGoogleIdTokenAuthRequest } from 'expo-auth-session/providers/google';
 // In anotherFile.js
 import { expoClientId, iosClientId, auth } from '../../firebaseConfig';
-import { signInWithCredential, User, GoogleAuthProvider, OAuthCredential, AuthError, getAdditionalUserInfo, UserCredential } from "firebase/auth";
-import { firestore } from "../../firebaseConfig";
-import { collection, addDoc, setDoc, doc } from "firebase/firestore";
-import { AddUserToDB } from './SignUp';
+import { signInWithCredential, GoogleAuthProvider, OAuthCredential } from "firebase/auth";
 
 export default function LogInScreen() {
 
@@ -29,7 +26,6 @@ export default function LogInScreen() {
     expoClientId,
     iosClientId,
   });
-  const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
   const { SignIn } = useAuth();
@@ -48,53 +44,14 @@ export default function LogInScreen() {
       }
     }
   }
-
-
-
-
-
-
-  // Code below handles the login via the Google Provider
+  // Handles the login via the Google Provider
   const handleLoginGoogle = async () => {
-    try {
-      await promptAsyncGoogle();
-    } catch (error) {
-      console.error("Google Sign-In Error:", error);
-      Alert.alert("Login Error", "Failed to sign in with Google. Please try again.");
-    }
+    await promptAsyncGoogle();
   };
-
 
   // Function that logs into firebase using the credentials from an OAuth provider
   const GoogleloginToFirebase = useCallback(async (credentials: OAuthCredential) => {
-    try {
-      const signInResponse = (await signInWithCredential(auth, credentials));
-
-      // Handle successful sign-in
-      if (getAdditionalUserInfo(signInResponse)?.isNewUser) {
-        // Handle the new user case
-        console.log("This is a new user.");
-        await AddUserToDB(signInResponse);
-      } else {
-        // Handle the existing user case
-        console.log("This is an existing user.");
-      }
-    } catch (error) {
-
-      const firebaseError = error as AuthError; // Type assertion
-
-      if (firebaseError.code === 'auth/account-exists-with-different-credential') {
-        // An account already exists with the same email address but different sign-in credentials
-        Alert.alert("Account Exists", "An account already exists with the same email address but with a different sign-in method.");
-      } else if (firebaseError.code === 'auth/email-already-in-use') {
-        // The email address is already in use by another account
-        Alert.alert("Email In Use", "This email address is already in use by another account.");
-      } else {
-        // Handle other errors
-        Alert.alert("Login Error", firebaseError.message);
-      }
-      console.error("Firebase Sign-In Error:", error);
-    }
+    const signInResponse = await signInWithCredential(auth, credentials);
   }, []);
 
   useEffect(() => {
@@ -105,15 +62,6 @@ export default function LogInScreen() {
       GoogleloginToFirebase(credentials);
     }
   }, [googleResponse]);
-
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      setUser(user);
-      if (user) {
-        router.replace("/");
-      }
-    });
-  }, []);
 
   return (
     <Pressable style={styles.contentView} onPress={Keyboard.dismiss}>
