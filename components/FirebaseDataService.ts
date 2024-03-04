@@ -42,7 +42,7 @@ export const getUsers = async (UID: string, gym?: string,
     const db = firestore;
 
     // Query users from a specific gym, or all users if none is given
-    let usersQuery = gym ? query(collection(db, 'Users'), where('Gym', '==', gym)) : 
+    let usersQuery = gym ? query(collection(db, 'Users'), where('gym', '==', gym)) : 
         collection(db, 'Users');
 
     // Query users based on given filters
