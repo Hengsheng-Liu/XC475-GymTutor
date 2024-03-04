@@ -17,6 +17,7 @@
     "@expo/webpack-config": "~19.0.1",
     "@firebase/firestore-types": "^3.0.0",
     "@firebase/storage": "^0.12.1",
+    "@react-native-community/datetimepicker": "^7.6.2",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.3.25",
     "@rnmapbox/maps": "^10.1.15",
