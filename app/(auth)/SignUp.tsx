@@ -50,11 +50,18 @@ export default function SignUpScreen() {
       try {
         const userCredential = await CreateUser(email, password);
         const user = userCredential.user;
-        // console.log(user);
         if (user) {
-          Alert.alert("Success", "User has been created");
-          await AddUserToDB(userCredential);
-          router.navigate("LogIn");
+
+          router.navigate({
+            pathname: "SignUp2",
+            params: {
+              uid: user.uid,
+              email: user.email,
+              user: user,
+            }
+          });
+
+
         }
       } catch (error: any) {
         Alert.alert("Error", error.message);
@@ -66,6 +73,7 @@ export default function SignUpScreen() {
       Alert.alert("Error", "Please fill in all fields");
     }
   };
+
   return (
     <Pressable style={styles.contentView} onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.contentView}>
