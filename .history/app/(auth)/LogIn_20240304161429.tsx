@@ -80,7 +80,7 @@ export default function LogInScreen() {
             uid: signInResponse.user.uid,
             email: signInResponse.user.email,
           }
-        });
+        })
       } else {
         // Handle the existing user case
         console.log("This is an existing user.");
