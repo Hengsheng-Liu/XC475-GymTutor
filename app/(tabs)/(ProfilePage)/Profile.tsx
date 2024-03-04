@@ -10,6 +10,8 @@ import {useAuth} from"../../../Context/AuthContext";
 
     const ProfilePage = () => {
    
+        const [userBio, setUserBio] = useState<string>("");
+        const [userGender, setUserGender] = useState<string>("");
         const [userName, setUserName] = useState<string>(""); // state that finds the current user's name
         const {User} = useAuth(); // gets current user's authentication data (in particular UID) 
         console.log('user', User);
@@ -37,15 +39,20 @@ import {useAuth} from"../../../Context/AuthContext";
 
 
                 const docSnap = await getDoc(docRef);
-                console.log("docSnap", docSnap.data());
 
                 if (docSnap && docSnap.exists()) {
                     console.log("docSnap", docSnap.data());
                     const name = await docSnap.get("name");
+                    const bio = await docSnap.get("bio");
+            //      const age = await docSnap.get("age");
+                    const gender = await docSnap.get("sex");
+                    console.log(name, bio, gender);
 
 
                     // assigns name to variable userName
                     setUserName(name);
+                    setUserBio(bio);
+                    setUserGender(gender);
                     
                 }
                 else {
@@ -62,30 +69,31 @@ import {useAuth} from"../../../Context/AuthContext";
 
 
 
-    return (
-    <View style={styles.container}>
-
-        <Text style={styles.nameText}>{userName ? userName : "Loading..."}</Text>
-        <Image 
-        source={ 
-            require('../../../assets/images/bob.png')}
-        style={styles.image}
-        />
-        <Text style={styles.description}>Location: </Text>
-
-        <Text style={styles.description}>Description: </Text>
-
-        <Button 
-        color="orange"
-        title="Settings"
-        onPress={() => Alert.alert("Settings", "under progress", [
-            {text: "nice", onPress: () => console.log("pressed 'nice'")},
-            {text: "amazing"}
-        ])}
-        >
-        </Button>
-    </View> 
-    )
+       return (
+        <View style={styles.container}>
+    
+            <Text style={styles.nameText}>{userName ? userName : "Loading..."}</Text>
+    
+            <Image 
+            source={ 
+                require('../../assets/images/bob.png')}
+            style={styles.image}
+            />
+            <Text style={styles.description}>Gender: {userGender ? userGender : "Loading..."} </Text>
+    
+            <Text style={styles.description}>Bio: {userBio ? userBio : "Loading..."} </Text>
+    
+            <Button 
+            color="orange"
+            title="Settings"
+            onPress={() => Alert.alert("Settings", "under progress", [
+                {text: "nice", onPress: () => console.log("pressed 'nice'")},
+                {text: "amazing"}
+            ])}
+            >
+            </Button>
+        </View> 
+        )
 };
 
 export default ProfilePage;
