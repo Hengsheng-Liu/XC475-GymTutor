@@ -74,11 +74,11 @@ import {useAuth} from"../../../Context/AuthContext";
     
             <Text style={styles.nameText}>{userName ? userName : "Loading..."}</Text>
     
-            <Image 
+            {/* <Image 
             source={ 
                 require('bob.png')}
             style={styles.image}
-            />
+            /> */}
             <Text style={styles.description}>Gender: {userGender ? userGender : "Loading..."} </Text>
     
             <Text style={styles.description}>Bio: {userBio ? userBio : "Loading..."} </Text>
