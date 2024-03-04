@@ -46,7 +46,7 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="(MessageList)"
+          name="(MessagePage)"
           options={{
             title: "MessageList",
             headerShown: false,
