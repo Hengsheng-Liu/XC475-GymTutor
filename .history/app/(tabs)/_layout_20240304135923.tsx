@@ -1,6 +1,7 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Redirect, Tabs } from 'expo-router'; // Removed Stack import, as it's not used
+
 import { useAuth } from "../../Context/AuthContext";
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
@@ -45,7 +46,7 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="(MessageList)"
+          name="(MessagePage)"
           options={{
             title: "MessageList",
             headerShown: false,

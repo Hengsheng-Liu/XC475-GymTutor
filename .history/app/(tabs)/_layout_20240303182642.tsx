@@ -1,6 +1,7 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Redirect, Tabs } from 'expo-router'; // Removed Stack import, as it's not used
+
 import { useAuth } from "../../Context/AuthContext";
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
@@ -16,12 +17,12 @@ export default function TabLayout() {
   } else {
     return (
       <Tabs>
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Home",
-            tabBarIcon: (props) => <TabBarIcon {...props} name="home" />,
-          }}
+        <Tabs.Screen 
+        name = "index"
+        options = {{
+          title: "Home",
+          tabBarIcon: (props) => <TabBarIcon {...props} name="home" />,
+        }}
         />
         <Tabs.Screen
           name="(FriendPage)"
@@ -41,13 +42,6 @@ export default function TabLayout() {
           name="(ProfilePage)"
           options={{
             title: "Profile",
-            headerShown: false,
-          }}
-        />
-        <Tabs.Screen
-          name="(MessageList)"
-          options={{
-            title: "MessageList",
             headerShown: false,
           }}
         />
