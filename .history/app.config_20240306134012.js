@@ -41,7 +41,7 @@ export const expoConfig = {
   android: {
     package: 'com.anonymous.SpotMe',
     adaptiveIcon: {
-      foregroundImage: './assets/images/adaptive-icon.png',
+      foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#ffffff',
     },
     permissions: [
