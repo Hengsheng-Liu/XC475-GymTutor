@@ -5,7 +5,6 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { AuthProvider } from '@/Context/AuthContext';
-import { useColorScheme } from '@/components/useColorScheme';
 import { Slot } from 'expo-router';
 export {
   // Catch any errors thrown by the Layout component.
@@ -47,7 +46,6 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
 
   return (
       <AuthProvider>

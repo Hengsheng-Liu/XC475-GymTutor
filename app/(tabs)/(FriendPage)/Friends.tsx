@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, FlatList, StyleSheet, Dimensions} from 'react-native';
+import { View, Text, Button, ScrollView, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { getUser, IUser } from '@/components/FirebaseDataService'; 
 import { useAuth } from "@/Context/AuthContext";
 import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
+
+import { styles } from "@/components/NotificationsStyles"
+
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -52,21 +55,29 @@ const FriendListScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Friends List</Text>
+    <View>
+      <Text style={styles.title}>Friends</Text>
       {loading ? (
-        <Text>Loading...</Text>
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : friends.length === 0 ? (
+        <Text>No friends. Try connecting with some users!</Text>
       ) : (
-        <FlatList
-          data={friends}
-          keyExtractor={(item) => item.uid} // Assuming each user's UID is unique
-          renderItem={({ item }) => (
-            <View style={styles.friendContainer}>
-              <Text style={styles.friendName}>{item.name}</Text>
-              <Text style={styles.friendName}>{item.email}</Text>
-            </View>
-          )}
-        />
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollViewContent}
+          scrollEnabled={true}
+          keyboardShouldPersistTaps="handled" // Ensures taps outside of text inputs dismiss the keyboard
+          keyboardDismissMode="on-drag" // Dismisses the keyboard when dragging the ScrollView
+        >
+          {friends.map((user, index) => (
+            <TouchableOpacity key={index} style={styles.userContainer}>
+              <View style={styles.profilePicture}></View>
+              <View style={styles.userInfo}>
+                <Text style={styles.nameStyle}>{user.name}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       )}
     </View>
   );
@@ -76,7 +87,7 @@ const { width } = Dimensions.get('window');
 const containerMargin = 20;
 const friendContainerWidth = width - 2 * containerMargin;
 
-const styles = StyleSheet.create({
+const stylez = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',

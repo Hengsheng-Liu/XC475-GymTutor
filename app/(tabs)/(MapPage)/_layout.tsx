@@ -3,7 +3,7 @@ import { Stack } from "expo-router"
 export default function authLayout() {
     return(
         <Stack>
-        <Stack.Screen name="Map" options= {{headerShown: true}}/>
+        <Stack.Screen name="Location" options= {{headerShown: true}}/>
         
         
         </Stack>

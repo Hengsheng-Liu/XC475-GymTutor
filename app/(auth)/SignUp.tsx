@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text } from "../../components/Themed";
+import { View, Text } from "react-native";
 import {
   Alert,
   Button,
@@ -12,17 +12,22 @@ import {
 import { firestore } from "../../firebaseConfig";
 import { router } from "expo-router";
 import { UserCredential } from "firebase/auth";
-import { collection, addDoc,setDoc,doc } from "firebase/firestore";
-import { useAuth} from "../../Context/AuthContext";
-import { addUser} from "@/components/FirebaseDataService"
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { useAuth } from "../../Context/AuthContext";
+import { addUser } from "@/components/FirebaseDataService"
 
+export const AddUserToDB = async (response: UserCredential) => {
+  const user = response.user;
 
+  await addUser(user.uid, user.email || "");
+
+};
 export default function SignUpScreen() {
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
   const [confirmPassword, setConfirmPassword] = useState<string | undefined>();
   const [passwordMatchError, setPasswordMatchError] = useState<boolean>(false);
-  const {CreateUser}= useAuth(); 
+  const { CreateUser } = useAuth();
   const handlePasswordChange = (text: string) => {
     setPassword(text);
     if (text !== confirmPassword) {
@@ -40,24 +45,23 @@ export default function SignUpScreen() {
     }
   };
 
-
   const handleSignUp = async () => {
     if (email && password && confirmPassword && password === confirmPassword) {
       try {
         const userCredential = await CreateUser(email, password);
         const user = userCredential.user;
         if (user) {
-      
-      router.navigate({
-        pathname: "SignUp2",
-        params: {
-          uid: user.uid,
-          email: user.email,
-          user: user,
-        }
-    });
 
-      
+          router.navigate({
+            pathname: "SignUp2",
+            params: {
+              uid: user.uid,
+              email: user.email,
+              user: user,
+            }
+          });
+
+
         }
       } catch (error: any) {
         Alert.alert("Error", error.message);
@@ -69,7 +73,7 @@ export default function SignUpScreen() {
       Alert.alert("Error", "Please fill in all fields");
     }
   };
-  
+
   return (
     <Pressable style={styles.contentView} onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.contentView}>

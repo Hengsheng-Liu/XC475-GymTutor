@@ -1,7 +1,5 @@
-import { StyleSheet, Button } from "react-native";
+import { StyleSheet, Button,Text, View } from "react-native";
 import { useEffect } from "react";
-import EditScreenInfo from "@/components/EditScreenInfo";
-import { Text, View } from "@/components/Themed";
 import { router } from "expo-router";
 import { useAuth } from "../../Context/AuthContext";
 export default function TabOneScreen() {
@@ -19,10 +17,7 @@ export default function TabOneScreen() {
       <Text style={styles.title}>Tab One</Text>
       <View
         style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
       />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
       <Button title="Sign Out" onPress={handleSignOut} />
     </View>
   );
