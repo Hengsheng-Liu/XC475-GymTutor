@@ -3,6 +3,7 @@ import React, { Component, useEffect, useState } from 'react'
 import { firestore,auth} from "../../../firebaseConfig";
 import { limit, where, query, collection, addDoc, doc, getDocs, getDoc, updateDoc, arrayUnion, setDoc, Query } from 'firebase/firestore';
 import {useAuth} from"../../../Context/AuthContext";
+import { Box } from 'native-base';
 
     // note - I originally wrote everything below in UserProfilePage.tsx under 'components', and tried importing
     // it from there, but for some reason that didn't work. So for now, I put the code in UserProfilePage in this file
@@ -70,29 +71,9 @@ import {useAuth} from"../../../Context/AuthContext";
 
 
        return (
-        <View style={styles.container}>
-    
-            <Text style={styles.nameText}>{userName ? userName : "Loading..."}</Text>
-    
-            {/* <Image 
-            source={ 
-                require('bob.png')}
-            style={styles.image}
-            /> */}
-            <Text style={styles.description}>Gender: {userGender ? userGender : "Loading..."} </Text>
-    
-            <Text style={styles.description}>Bio: {userBio ? userBio : "Loading..."} </Text>
-    
-            <Button 
-            color="orange"
-            title="Settings"
-            onPress={() => Alert.alert("Settings", "under progress", [
-                {text: "nice", onPress: () => console.log("pressed 'nice'")},
-                {text: "amazing"}
-            ])}
-            >
-            </Button>
-        </View> 
+        <Box>
+
+        </Box>
         )
 };
 

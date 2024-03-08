@@ -2,6 +2,7 @@ import { StyleSheet, Button,Text, View } from "react-native";
 import { useEffect } from "react";
 import { router } from "expo-router";
 import { useAuth } from "../../Context/AuthContext";
+import * as Location from 'expo-location';
 export default function TabOneScreen() {
   const { User, SignOut } = useAuth();
   const handleSignOut = async () => {
@@ -12,6 +13,14 @@ export default function TabOneScreen() {
       console.log(error);
     }
   };
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission to access location was denied');
+      }
+    })();
+  }, []);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tab One</Text>
