@@ -31,15 +31,6 @@ export default function SelectGym() {
             <Gym/>
             <Gym/>
             <Gym/>
-            <Gym/>
-            <Gym/>
-            <Gym/>
-            <Gym/>
-            <Gym/>
-            <Gym/>
-            <Gym/>
-            <Gym/>
-
           </SafeAreaView>
           </ScrollView>
         </NativeBaseProvider>
@@ -48,7 +39,7 @@ export default function SelectGym() {
 }
 const styles = StyleSheet.create({
   conatiner:{
-    flex: 1,
+    flex:1, 
     backgroundColor: "#0369A1", 
   }
 })
