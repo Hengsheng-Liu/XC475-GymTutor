@@ -14,7 +14,7 @@ import { router } from 'expo-router';
 import { useAuth } from '../../Context/AuthContext';
 import { useIdTokenAuthRequest as useGoogleIdTokenAuthRequest } from 'expo-auth-session/providers/google';
 // In anotherFile.js
-import { expoClientId, iosClientId, auth } from '../../firebaseConfig';
+import { expoClientId, iosClientId, androidClientId, auth } from '../../firebaseConfig';
 import { signInWithCredential, User, GoogleAuthProvider, OAuthCredential, AuthError, getAdditionalUserInfo, UserCredential } from "firebase/auth";
 import { firestore } from "../../firebaseConfig";
 import { collection, addDoc, setDoc, doc } from "firebase/firestore";
@@ -28,6 +28,7 @@ export default function LogInScreen() {
     selectAccount: true,
     expoClientId,
     iosClientId,
+    androidClientId
   });
   const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState<string | undefined>();
