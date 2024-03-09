@@ -21,10 +21,11 @@ export default function HomeScreen() {
             },
         }
     });
-
     return (
         <NativeBaseProvider theme = {theme}>
+            <View>
                 <FirebaseDataDisplay/>
+            </View>
         </NativeBaseProvider>
 
         
