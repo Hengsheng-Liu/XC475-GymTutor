@@ -15,11 +15,22 @@ import {
   Query,
 } from "firebase/firestore";
 import { useAuth } from "../../../Context/AuthContext";
-import { Box, Button, NativeBaseProvider, Pressable, Spacer, Tag,extendTheme} from "native-base";
+import {
+  Box,
+  Button,
+  NativeBaseProvider,
+  Pressable,
+  ScrollView,
+  Spacer,
+  Tag,
+  extendTheme,
+} from "native-base";
 import Header from "./ProfileComponents/Header";
-import Tags from "./ProfileComponents/Tags";
-import { Flex } from "native-base";
 import ButtonGroup from "./ProfileComponents/ButtonGroup";
+import Description from "./ProfileComponents/Description";
+import Achievement from "./ProfileComponents/Achievement";
+import Attribute from "./ProfileComponents/Attribute";
+import Calendar from "./ProfileComponents/Calendar";
 // note - I originally wrote everything below in UserProfilePage.tsx under 'components', and tried importing
 // it from there, but for some reason that didn't work. So for now, I put the code in UserProfilePage in this file
 
@@ -28,7 +39,15 @@ const ProfilePage = () => {
   const [userGender, setUserGender] = useState<string>("");
   const [userName, setUserName] = useState<string>(""); // state that finds the current user's name
   const { User } = useAuth(); // gets current user's authentication data (in particular UID)
-  const description = ["GymNewbie", "YogaLover", "CardioKing", "WeightLifter","GymNewbie", "YogaLover", "CardioKing", "WeightLifter"]
+  const description:string[]= [
+    "GymNewbie",
+    "YogaLover",
+    "CardioKing",
+    "WeightLifter",
+    "YogaLover",
+    "CardioKing",
+    "WeightLifter",
+  ];
   console.log("user", User);
 
   // finds the current user's data (only name for now) via Users firestore database.
@@ -71,31 +90,29 @@ const ProfilePage = () => {
   }, [User]);
 
   const theme = extendTheme({
-    components:{
-    Button:{
-        baseStyle:{
-            color: "#0369A1",
-            rounded: "full",
-        }
-    }
-    }
-});
+    components: {
+      Button: {
+        baseStyle: {
+          color: "#0369A1",
+          rounded: "full",
+        },
+      },
+    },
+  });
+
 
   return (
     <NativeBaseProvider theme={theme}>
-      <Box backgroundColor={"#FFFFFF"} >
-        <Header/>
-        <Flex flexDirection ="row" wrap="wrap" justifyContent={"space-evenly"} mt = {3}>
-            {description.map((str, index) =>
-            <Tags key = {index} title={str}/>
-            )}
-            <Pressable onPress={() => (console.log("add"))} >
-             <Tags title = {"+"}/>
-            </Pressable>
-        </Flex>
-        <ButtonGroup/>
-       
-      </Box>
+      <ScrollView backgroundColor={"#FFFFFF"}>
+        <Box ml={"3"} mr={"3"}>
+          <Header />
+          <Attribute description = {description} />
+          <ButtonGroup />
+          <Description />
+          <Achievement/>
+          <Calendar />
+        </Box>
+      </ScrollView>
     </NativeBaseProvider>
   );
 };

@@ -5,7 +5,7 @@ interface TagsProps {
     title: string;
 }
 
-export default function Tags({ title }: TagsProps) { // Destructure the props directly
+export default function Tags({ title }: TagsProps) { 
     return (
         <Badge mt = {2} colorScheme={"blue"}>
             {title}
