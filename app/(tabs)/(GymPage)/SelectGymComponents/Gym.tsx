@@ -2,6 +2,7 @@
 import { FontAwesome5 } from '@expo/vector-icons';
 import React from 'react'
 import { Avatar, Box,Flex,Heading, Row, Text} from 'native-base'
+import { Pressable } from 'react-native';
 export default function Gym () {
     return (
         <Box mt = {1} borderBottomColor={"#075985"} borderBottomWidth={"1"} p={5} mb ={1}>
@@ -12,7 +13,9 @@ export default function Gym () {
                     <Text fontSize ="sm">915 Cmmonwealth Ave, Boston</Text>
                 </Flex>
                 <Box>
-                <FontAwesome5 name="chevron-right" size={24} color="#F0F9FF" />
+                    <Pressable onPress={() => console.log("gym pressed")}>
+                        <FontAwesome5 name="chevron-right" size={24} color="#F0F9FF" />
+                    </Pressable>
                 </Box>
             </Flex>
         </Box>
