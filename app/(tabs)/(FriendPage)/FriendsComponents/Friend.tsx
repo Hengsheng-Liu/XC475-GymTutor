@@ -7,7 +7,7 @@ interface FriendProps {
     index: number;
 }
 
-const Friend: React.FC<FriendProps> = ({ friend, index }) => {
+const Friend: React.FC<FriendProps> = ({ friend }) => {
     const [isPressed, setIsPressed] = useState<boolean>(false);
 
     // TODO: Display user preview when clicked

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ScrollView, ActivityIndicator} from 'react-native';
 import { getUser, IUser } from '@/components/FirebaseDataService'; 
 import { useAuth } from "@/Context/AuthContext";
-import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
 import { NativeBaseProvider,extendTheme } from 'native-base';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Flex, Text} from "native-base";
@@ -11,25 +10,14 @@ import Friend from './FriendsComponents/Friend'
 
 export default function FriendListScreen () {
   const [friends, setFriends] = useState<IUser[]>([]); // State to store friends' data
-  const {User} = useAuth(); 
+  const {currUser} = useAuth(); 
   const [loading, setLoading] = useState<boolean>(true); // State to track loading status
-  const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
   
-  if (!User) return; // Check if user is null
-
-  // Refetch data when the screen is focused
-  useEffect(() => {
-    if (isFocused) {
-      fetchFriends();
-    }
-  }, [isFocused]);
+  if (!currUser) return; // Check if user is null
 
   // Function to fetch friends
   const fetchFriends = async () => {
-    const currUser = await getUser(User.uid);
     const fetchedFriends: IUser[] = [];
-
-    if (!currUser) return; // Check if user is null
 
     setLoading(true);
     
@@ -78,7 +66,7 @@ export default function FriendListScreen () {
         ) : (
           <Flex>
             {friends.map((user, index) => (
-              < Friend key={index} friend= {user} index={index}/>
+              < Friend friend= {user}/>
             ))}
           </Flex>  
         )}

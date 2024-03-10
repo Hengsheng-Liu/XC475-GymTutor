@@ -9,7 +9,7 @@ interface FriendProps {
     index: number;
 }
 
-const FriendRequest: React.FC<FriendProps> = ({ friend, index }) => {
+const FriendRequest: React.FC<FriendProps> = ({ friend }) => {
     const [isPressed, setIsPressed] = useState<boolean>(false);
     const {currUser} = useAuth();
     if (!currUser) return;
