@@ -56,26 +56,6 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
     }
   };
 
-  // Function to accept friend request
-  const acceptFriendRequest = async (friend: IUser) => {
-    // Add friend to the user's friend list
-    await addFriend(User.uid, friend.uid);
-    // Remove friend request from user's friend requests list
-    await removeFriendRequest(User.uid, friend.uid);
-    // Refetch friend requests
-    fetchRequests();
-  };
-
-  // Function to reject friend request
-  const rejectFriendRequest = async (friend: IUser) => {
-    // Remove friend request from user's friend requests list
-    await removeFriendRequest(User.uid, friend.uid);
-
-    await rejectRequest(User.uid, friend.uid);
-    // Refetch friend requests
-    fetchRequests();
-  };
-
   const theme = extendTheme({
 
     components:{
