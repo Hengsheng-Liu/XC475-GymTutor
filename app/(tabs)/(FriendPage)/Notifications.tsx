@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { View, Text, Button, ScrollView, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
+import { ScrollView, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { getUser, IUser } from '@/components/FirebaseDataService'; 
 import { useAuth } from "@/Context/AuthContext";
 import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
 import { addFriend, removeFriendRequest, rejectRequest } from '@/components/HandleFriends'
-import { styles } from "@/components/NotificationsStyles"
+import FriendRequest from './FriendsComponents/FriendRequest';
+import { NativeBaseProvider, extendTheme } from 'native-base';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Flex, Text} from "native-base";
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -74,57 +76,42 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
     fetchRequests();
   };
 
-  // Render item component for FlatList
-  const renderItem = ({ item }: { item: IUser }) => (
-    <View style={styles.friendContainer}>
-      <Text style={styles.friendName}>{item.name}</Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={() => acceptFriendRequest(item)}>
-          <Text style={styles.buttonText}>Accept</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.rejectButton]} onPress={() => rejectFriendRequest(item)}>
-          <Text style={styles.buttonText}>Reject</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+  const theme = extendTheme({
+
+    components:{
+        Text:{
+            baseStyle:{
+                color: "#171717",
+            },
+        },
+        Heading:{
+            baseStyle:{
+                color: "#171717",
+                
+            }
+        },
+    }
+  });
 
   return (
-    <View>
-      <Text style={styles.title}>Notifications</Text>
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : requests.length === 0 ? (
-        <Text>No notifications</Text>
-      ) : (
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollViewContent}
-          scrollEnabled={true}
-          keyboardShouldPersistTaps="handled" // Ensures taps outside of text inputs dismiss the keyboard
-          keyboardDismissMode="on-drag" // Dismisses the keyboard when dragging the ScrollView
-        >
-          {requests.map((user, index) => (
-            <TouchableOpacity key={index} style={styles.userContainer}>
-              <View style={styles.profilePicture}></View>
-              <View style={styles.userInfo}>
-                <Text style={styles.nameStyle}>{user.name}</Text>
-              </View>
-              <View>
-                <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={() => acceptFriendRequest(user)}>
-                  <Text style={styles.buttonText}>Accept</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, styles.rejectButton]} onPress={() => rejectFriendRequest(user)}>
-                  <Text style={styles.buttonText}>Reject</Text>
-                </TouchableOpacity>
-              </View>
-            </TouchableOpacity>
-          ))}
+    <NativeBaseProvider theme = {theme} >
+      <ScrollView style= {{backgroundColor: "#FFF", flex:1}}>
+      <SafeAreaView>
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : requests.length === 0 ? (
+          <Text>No Notifications</Text>
+        ) : (
+          <Flex>
+            {requests.map((user, index) => (
+              < FriendRequest key={index} friend= {user} index={index}/>
+            ))}
+          </Flex>  
+        )}
+      </SafeAreaView>
+      </ScrollView>
+    </NativeBaseProvider>
 
-          
-        </ScrollView>
-      )}
-    </View>
 )};
 
 export default NotificationScreen;

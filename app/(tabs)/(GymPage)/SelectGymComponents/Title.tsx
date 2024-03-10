@@ -8,7 +8,7 @@ export default function Title() {
     <Box margin={2}>
       <Flex justifyContent={"space-between"} flexDirection={"row"}>
         <Box>
-          <Heading> Select you gym </Heading>
+          <Heading> Select your gym </Heading>
           <Text> Please select your gym to continue </Text>
         </Box>
         <FontAwesome name="map-o" size={50} color="#F0F9FF" />
