@@ -2,9 +2,9 @@ import { Heading, NativeBaseProvider, Box } from "native-base";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import React from "react";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-
-const GOOGLE_PLACES_API_KEY = "AIzaSyCinQxFbZ_Grs4vfMMA4ZPAYwjhtLqkUQY";
+import 'dotenv/config';
 export default function Test() {
+    const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
   return (
     <NativeBaseProvider>
       <SafeAreaView style={styles.container}>
