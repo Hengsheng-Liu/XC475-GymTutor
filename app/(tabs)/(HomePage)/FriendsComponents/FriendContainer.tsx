@@ -6,7 +6,7 @@ interface FriendProps {
     friend: IUser;
 }
 
-const Friend: React.FC<FriendProps> = ({ friend }) => {
+const friendContainer: React.FC<FriendProps> = ({ friend }) => {
     const [isPressed, setIsPressed] = useState<boolean>(false);
 
     // TODO: Display user preview when clicked
@@ -38,4 +38,4 @@ const Friend: React.FC<FriendProps> = ({ friend }) => {
     );
   };
 
-  export default Friend;
+  export default friendContainer;

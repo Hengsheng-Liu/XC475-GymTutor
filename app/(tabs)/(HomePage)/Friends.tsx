@@ -5,8 +5,9 @@ import { useAuth } from "@/Context/AuthContext";
 import { NativeBaseProvider } from 'native-base';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Flex, Text} from "native-base";
-import Friend from './FriendsComponents/Friend';
-import fetchUsers from './FriendsComponents/FetchFriends';
+
+import FriendContainer from './FriendsComponents/FriendContainer';
+import fetchUsers from './FriendsComponents/FetchUsers';
 import theme from '@/components/theme';
 
 export default function FriendListScreen () {
@@ -43,7 +44,7 @@ export default function FriendListScreen () {
         ) : (
           <Flex>
             {friends.map((user) => (
-              < Friend friend = {user} key={user.uid}/>
+              < FriendContainer friend= {user} key={user.uid}/>
             ))}
           </Flex>  
         )}

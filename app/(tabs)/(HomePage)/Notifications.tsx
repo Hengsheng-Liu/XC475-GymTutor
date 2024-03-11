@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { getUser, IUser } from '@/components/FirebaseDataService'; 
+import { IUser } from '@/components/FirebaseDataService'; 
 import { useAuth } from "@/Context/AuthContext";
-import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
-import FriendRequest from './FriendsComponents/FriendRequest';
+import FriendRequest from './FriendsComponents/RequestContainer';
 import { NativeBaseProvider } from 'native-base';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Flex, Text} from "native-base";
 import theme from '@/components/theme';
-import fetchUsers from './FriendsComponents/FetchFriends';
+import fetchUsers from './FriendsComponents/FetchUsers';
 
 
 type Props = {
@@ -20,7 +19,6 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
   const [requests, setRequests] = useState<IUser[]>([]); // State to store friends requests
   const {currUser} = useAuth(); 
   const [loading, setLoading] = useState<boolean>(true); // State to track loading status
-  const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
   
   if (!currUser) return; // Check if user is null
 
@@ -50,7 +48,7 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
         ) : (
           <Flex>
             {requests.map((user) => (
-              < FriendRequest friend= {user}/>
+              < FriendRequest friend= {user} key={user.uid}/>
             ))}
           </Flex>  
         )}

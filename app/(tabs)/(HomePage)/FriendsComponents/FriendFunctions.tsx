@@ -1,11 +1,11 @@
 // Import necessary modules for Firestore operations
-import { firestore } from '../firebaseConfig';
+import { firestore } from '../../../../firebaseConfig';
 import { 
     doc,
     updateDoc, 
     arrayUnion,
     arrayRemove } from 'firebase/firestore';
-import {IUser} from "./FirebaseDataService"
+import {IUser} from "../../../../components/FirebaseDataService"
 
 // Function to check whether it should be able to add friends
 export const canAddFriend = (userUID: string, Friend: IUser): boolean => {

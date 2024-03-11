@@ -4,7 +4,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { getUsers, IUser, updateUsers } from '@/components/FirebaseDataService';
 import { useAuth } from "@/Context/AuthContext";
 import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
-import { styles } from '../../../components/DisplayUsersStyles';
+import { styles } from '../(HomePage)/HomeComponents/DisplayUsersStyles';
 import { router } from "expo-router";
 
 type Props = {

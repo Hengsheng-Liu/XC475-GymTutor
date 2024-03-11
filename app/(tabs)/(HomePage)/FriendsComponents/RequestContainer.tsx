@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import { Flex, Spacer, Button, Row, Column, Pressable, Text, Avatar} from 'native-base'
 import { IUser } from '@/components/FirebaseDataService'; 
 import { useAuth } from "@/Context/AuthContext";
-import { addFriend, removeFriendRequest, rejectRequest } from '@/components/HandleFriends'
+import { addFriend, removeFriendRequest, rejectRequest } from '@/app/(tabs)/(HomePage)/FriendsComponents/FriendFunctions'
 
 interface FriendProps {
     friend: IUser;
@@ -58,10 +58,10 @@ const FriendRequest: React.FC<FriendProps> = ({ friend }) => {
                 </Column>
                 <Spacer/>
                 <Column>
-                <Button m="1" backgroundColor= "red.500" onPress={() => acceptFriendRequest(friend)}>
+                <Button m="1" backgroundColor= "green.500" onPress={() => acceptFriendRequest(friend)}>
                   <Text>Accept</Text>
                 </Button>
-                <Button m="1" backgroundColor= "green.500" onPress={() => rejectFriendRequest(friend)}>
+                <Button m="1" backgroundColor= "red.500" onPress={() => rejectFriendRequest(friend)}>
                   <Text>Reject</Text>
                 </Button>
                 </Column>
