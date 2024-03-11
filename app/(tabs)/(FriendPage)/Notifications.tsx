@@ -4,11 +4,13 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { getUser, IUser } from '@/components/FirebaseDataService'; 
 import { useAuth } from "@/Context/AuthContext";
 import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
-import { addFriend, removeFriendRequest, rejectRequest } from '@/components/HandleFriends'
 import FriendRequest from './FriendsComponents/FriendRequest';
-import { NativeBaseProvider, extendTheme } from 'native-base';
+import { NativeBaseProvider } from 'native-base';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Flex, Text} from "native-base";
+import theme from '@/components/theme';
+import fetchUsers from './FriendsComponents/FetchFriends';
+
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -16,62 +18,26 @@ type Props = {
 
 const NotificationScreen: React.FC<Props> = ({ navigation }) => {
   const [requests, setRequests] = useState<IUser[]>([]); // State to store friends requests
-  const {User} = useAuth(); 
+  const {currUser} = useAuth(); 
   const [loading, setLoading] = useState<boolean>(true); // State to track loading status
   const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
   
-  if (!User) return; // Check if user is null
+  if (!currUser) return; // Check if user is null
 
-  // Refetch data when the screen is focused
   useEffect(() => {
-    if (isFocused) {
-      fetchRequests();
-    }
-  }, [isFocused]);
-
-  // Function to fetch friends
-  const fetchRequests = async () => {
-    const currUser = await getUser(User.uid);
-    const fetchedRequests: IUser[] = [];
-
-    if (!currUser) return; // Check if user is null
-
-    setLoading(true);
-    
-    try {
-        // Iterate over each friend Request UID
-        for (const RequestUID of currUser.friendRequests) {
-            // Fetch user data for the current friend UID
-            const RequestData = await getUser(RequestUID);
-            if (RequestData !== null) {
-              fetchedRequests.push(RequestData);
-          }
-        }
-        // Set the fetched friends array
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const fetchedRequests = await fetchUsers(currUser, currUser.friendRequests);
         setRequests(fetchedRequests);
-    } catch (error) {
-        console.error('Error fetching friend requests:', error);
-    } finally {
-        setLoading(false);
-    }
-  };
-
-  const theme = extendTheme({
-
-    components:{
-        Text:{
-            baseStyle:{
-                color: "#171717",
-            },
-        },
-        Heading:{
-            baseStyle:{
-                color: "#171717",
-                
-            }
-        },
-    }
-  });
+      } catch (error) {
+          console.error('Error fetching friend requests:', error);
+      }
+      setLoading(false);
+    };
+    
+    fetchData();
+  }, [currUser]);
 
   return (
     <NativeBaseProvider theme = {theme} >
@@ -83,8 +49,8 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
           <Text>No Notifications</Text>
         ) : (
           <Flex>
-            {requests.map((user, index) => (
-              < FriendRequest key={index} friend= {user} index={index}/>
+            {requests.map((user) => (
+              < FriendRequest friend= {user}/>
             ))}
           </Flex>  
         )}

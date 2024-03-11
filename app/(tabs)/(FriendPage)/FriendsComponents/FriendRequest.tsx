@@ -6,7 +6,6 @@ import { addFriend, removeFriendRequest, rejectRequest } from '@/components/Hand
 
 interface FriendProps {
     friend: IUser;
-    index: number;
 }
 
 const FriendRequest: React.FC<FriendProps> = ({ friend }) => {

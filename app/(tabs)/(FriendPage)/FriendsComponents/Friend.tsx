@@ -4,7 +4,6 @@ import { IUser } from '@/components/FirebaseDataService';
 
 interface FriendProps {
     friend: IUser;
-    index: number;
 }
 
 const Friend: React.FC<FriendProps> = ({ friend }) => {
