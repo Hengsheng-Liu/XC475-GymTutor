@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, ScrollView, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
+import { View, Button, ScrollView, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { getUser, IUser } from '@/components/FirebaseDataService'; 
 import { useAuth } from "@/Context/AuthContext";
 import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
+
+import { NativeBaseProvider,extendTheme } from 'native-base';
+import { Flex, Heading, Input, Row, Text, Box } from "native-base";
+
 
 import { styles } from "@/components/NotificationsStyles"
 
@@ -13,6 +17,21 @@ type Props = {
 };
 
 const FriendListScreen: React.FC<Props> = ({ navigation }) => {
+  const theme = extendTheme({
+    components:{
+        Text:{
+            baseStyle:{
+                color: "#F0F9FF",
+            }
+        },
+        Heading:{
+            baseStyle:{
+                color: "#F0F9FF",
+            }
+        },
+    }
+  });
+
   const [friends, setFriends] = useState<IUser[]>([]); // State to store friends' data
   const {User} = useAuth(); 
   const [loading, setLoading] = useState<boolean>(true); // State to track loading status
@@ -55,31 +74,34 @@ const FriendListScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <View>
-      <Text style={styles.title}>Friends</Text>
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : friends.length === 0 ? (
-        <Text>No friends. Try connecting with some users!</Text>
-      ) : (
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollViewContent}
-          scrollEnabled={true}
-          keyboardShouldPersistTaps="handled" // Ensures taps outside of text inputs dismiss the keyboard
-          keyboardDismissMode="on-drag" // Dismisses the keyboard when dragging the ScrollView
-        >
-          {friends.map((user, index) => (
-            <TouchableOpacity key={index} style={styles.userContainer}>
-              <View style={styles.profilePicture}></View>
-              <View style={styles.userInfo}>
-                <Text style={styles.nameStyle}>{user.name}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      )}
-    </View>
+    <NativeBaseProvider theme = {theme}>
+      <View>
+        <Text style={styles.title}>Friends</Text>
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : friends.length === 0 ? (
+          <Text>No friends. Try connecting with some users!</Text>
+        ) : (
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollViewContent}
+            scrollEnabled={true}
+            keyboardShouldPersistTaps="handled" // Ensures taps outside of text inputs dismiss the keyboard
+            keyboardDismissMode="on-drag" // Dismisses the keyboard when dragging the ScrollView
+          >
+            {friends.map((user, index) => (
+              <TouchableOpacity key={index} style={styles.userContainer}>
+                <View style={styles.profilePicture}></View>
+                <View style={styles.userInfo}>
+                  <Text style={styles.nameStyle}>{user.name}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
+      </View>
+    </NativeBaseProvider>
+    
   );
 };
 

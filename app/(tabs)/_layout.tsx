@@ -11,7 +11,7 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const { User } = useAuth(); 
+  const { User } = useAuth(); // Changed User to user
   if (!User) {
     return <Redirect href="/LogIn" />;
   } else {
