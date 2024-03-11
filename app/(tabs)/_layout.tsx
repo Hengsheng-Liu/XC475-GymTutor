@@ -2,6 +2,7 @@ import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Redirect, Tabs } from "expo-router"; // Removed Stack import, as it's not used
 import { useAuth } from "../../Context/AuthContext";
+
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;
@@ -10,8 +11,8 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const { User } = useAuth(); // Changed User to user
-  if (User) {
+  const { User } = useAuth(); 
+  if (!User) {
     return <Redirect href="/LogIn" />;
   } else {
     return (
@@ -20,14 +21,15 @@ export default function TabLayout() {
           name="index"
           options={{
             title: "Home",
-            tabBarIcon: (props) => <TabBarIcon {...props} name="home" />,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="home"/>,
           }}
         />
         <Tabs.Screen
           name="(FriendPage)"
           options={{
-            title: "Home",
+            title: "Friend",
             headerShown: false,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="users" />,
           }}
         />
         <Tabs.Screen
@@ -35,19 +37,28 @@ export default function TabLayout() {
           options={{
             title: "Profile",
             headerShown: false,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="user" />,
           }}
         />
         <Tabs.Screen
           name="(MessagePage)"
           options={{
-            title: "MessageList",
+            title: "Message",
             headerShown: false,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="comments" />,
           }}
         />
         <Tabs.Screen
           name="(GymPage)"
           options={{
             title: "SelectGym",
+            headerShown: false,
+          }}
+        />
+        <Tabs.Screen
+          name = "Test"
+          options={{
+            title: "Test",
             headerShown: false,
           }}
         />
