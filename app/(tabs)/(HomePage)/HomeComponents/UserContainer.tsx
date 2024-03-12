@@ -2,7 +2,9 @@ import React, {useState, useEffect} from 'react'
 import { Flex, Spacer, Button, Row, Column, Pressable, Text, Avatar} from 'native-base'
 import { IUser } from '@/components/FirebaseUserFunctions'; 
 import { useAuth } from "@/Context/AuthContext";
-import { handleSendFriendRequest, canAddFriend } from "../FriendsComponents/FriendFunctions"
+import { sendFriendRequest, canAddFriend } from "../FriendsComponents/FriendFunctions"
+import { firestore } from '@/firebaseConfig';
+import { doc, onSnapshot } from 'firebase/firestore';
 
 interface FriendProps {
     friend: IUser;
@@ -10,9 +12,26 @@ interface FriendProps {
 
 const UserPreview: React.FC<FriendProps> = ({ friend }) => {
     const [isPressed, setIsPressed] = useState<boolean>(false);
-    const [friendRequestSent, setFriendRequestSent] = useState<boolean>(false);
+    const [updatedFriend, setUpdatedFriend] = useState<IUser>(friend); // State to hold updated friend data
     const {currUser} = useAuth();
     if (!currUser) return;
+
+    useEffect(() => {
+        const fetchUpdatedFriend = async () => {
+            const userDocRef = doc(firestore, 'Users', friend.uid);
+            const unsubscribe = onSnapshot(userDocRef, (snapshot) => {
+                const updatedUserData = snapshot.data() as IUser | undefined;
+                if (updatedUserData) {
+                    setUpdatedFriend(updatedUserData);
+                }
+            });
+            return unsubscribe; // Cleanup function
+        };
+
+        if (currUser) {
+            fetchUpdatedFriend();
+        }
+    }, [currUser, friend.uid]); // Depend on currUser and friend.uid
 
     // TODO: Display user preview when clicked
     const handleUserClick  = async () =>{
@@ -21,33 +40,7 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
         // Do something when user is clicked
         // Open Profile
     };
-
-    // Send friend Requests
-    const handleSendRequest = (userUID: string, friend: IUser) => {
-        handleSendFriendRequest(userUID, friend);
-        setFriendRequestSent(true);
-        // handleGetUsers();
-    };
-
-    useEffect(() => {
-        // Check if a friend request has already been sent
-        const checkFriendRequestStatus = async () => {
-            const isRequestSent = await hasFriendRequestSent();
-            console.log(isRequestSent);
-            setFriendRequestSent(isRequestSent);
-        };
-        if (currUser && friend) {
-            checkFriendRequestStatus();
-        }
-    }, [currUser, friend]);
-
-    // Function to check if a friend request has been sent
-    const hasFriendRequestSent = async (): Promise<boolean> => {
-        // Implement logic to check if a friend request has been sent from userUID to friendUID
-        // Return true if a request has been sent, otherwise return false
-        return friend.uid in currUser.friendRequests
-    };
-
+    
     return (
         <Pressable 
             onPress = {() => handleUserClick()}
@@ -66,9 +59,9 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
                     <Text color= "trueGray.900" fontSize="sm">{friend.gym}</Text>
                 </Column>
                 <Spacer/>
-                {canAddFriend(currUser.uid, friend) && (
-                <Button m="1" backgroundColor= "blue.500" rounded="full" onPress={() => handleSendRequest(currUser.uid, friend)}>
-                  <Text fontSize="md" fontWeight="bold">+</Text>
+                {canAddFriend(currUser, updatedFriend) && (
+                <Button m="1" backgroundColor= "blue.500" rounded="full" onPress={() => sendFriendRequest(currUser.uid, friend.uid)}>
+                  <Text fontSize="lg" fontWeight="bold">+</Text>
                 </Button>
                 )}
             </Row>

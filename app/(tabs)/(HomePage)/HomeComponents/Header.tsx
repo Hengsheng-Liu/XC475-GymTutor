@@ -12,7 +12,7 @@ const Header: React.FC<FriendProps> = ({ currUser }) => {
   const [isPressed, setIsPressed] = useState<boolean>(false);
 
   return (
-    <Box mt={5} mb={3}>
+    <Box mb={3}>
       <Row alignItems="center" justifyContent="left">
         <Pressable
             onPress = {() => router.push("/(tabs)/(GymPage)/SelectGym")}

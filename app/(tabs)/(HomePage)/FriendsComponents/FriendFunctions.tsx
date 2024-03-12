@@ -8,21 +8,24 @@ import {
 import {IUser} from "../../../../components/FirebaseUserFunctions"
 
 // Function to check whether it should be able to add friends
-export const canAddFriend = (userUID: string, Friend: IUser): boolean => {
+export const canAddFriend = (User: IUser, Friend: IUser): boolean => {
+    const userUID = User.uid;
+    
     const isFriend = Friend.friends.includes(userUID);
     const hasSentRequest = Friend.friendRequests.includes(userUID);
+    const hasRequest = User.friendRequests.includes(Friend.uid);
     const isRejected = Friend.rejectedRequests.includes(userUID);
     const isBlocked = Friend.blockedUsers.includes(userUID);
 
-    return !isFriend && !hasSentRequest && !isRejected && !isBlocked;
+    return !isFriend && !hasSentRequest && !hasRequest && !isRejected && !isBlocked;
 };
 
 // Send friend Requests
-export const handleSendFriendRequest = (userUID: string, friend: IUser) => {
+export const handleSendFriendRequest = (User: IUser, friend: IUser) => {
     // Check if userUID is not in friendsList, friendRequests, rejectedList, and blockedList
-    if (canAddFriend(userUID, friend)) {
+    if (canAddFriend(User, friend)) {
         // If userUID is not in any of the lists, send a friend request
-        sendFriendRequest(userUID, friend.uid);
+        sendFriendRequest(User.uid, friend.uid);
     }
     // addFriend(userUID, friendUID);
 };
@@ -30,7 +33,9 @@ export const handleSendFriendRequest = (userUID: string, friend: IUser) => {
 // Function to send friend request
 export async function sendFriendRequest(userUID: string, friendUID: string): Promise<void> {
     const db = firestore;
+    const userRef = doc(db, 'Users', userUID);
     const friendRef = doc(db, 'Users', friendUID);
+    
 
     // Append user uid to the friend requested
     try {
@@ -49,11 +54,27 @@ export async function addFriend(userUID: string, friendUID: string): Promise<voi
 
     // Append user's uid to each other in friends section
     try {
+        await removeFriendRequest(userUID, friendUID);
         await updateDoc(userRef, { friends: arrayUnion(friendUID) });
         await updateDoc(friendRef, { friends: arrayUnion(userUID) });
         console.log('Friend added successfully: ', friendUID, userUID);
     } catch (error) {
         console.error('Error adding friend:', error);
+    }
+}
+
+// Function to remember rejected requests
+export async function rejectRequest(userUID: string, friendUID: string): Promise<void> {
+    const db = firestore;
+    const userRef = doc(db, 'Users', userUID);
+
+    // Append user uid to the rejected request list
+    try {
+        await removeFriendRequest(userUID, friendUID);
+        await updateDoc(userRef, { rejectedRequests: arrayUnion(userUID) });
+        console.log('Added User on friends rejection list: ', friendUID, userUID);
+    } catch (error) {
+        console.error('Error adding user on rejection list: ', error);
     }
 }
 
@@ -72,17 +93,3 @@ export const removeFriendRequest = async (userId: string, friendUid: string) => 
         throw error;
     }
 };
-
-// Function to remember rejected requests
-export async function rejectRequest(userUID: string, friendUID: string): Promise<void> {
-    const db = firestore;
-    const userRef = doc(db, 'Users', userUID);
-
-    // Append user uid to the rejected request list
-    try {
-        await updateDoc(userRef, { rejectedRequests: arrayUnion(userUID) });
-        console.log('Added User on friends rejection list: ', friendUID, userUID);
-    } catch (error) {
-        console.error('Error adding user on rejection list: ', error);
-    }
-}

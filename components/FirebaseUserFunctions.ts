@@ -134,10 +134,7 @@ export async function addUser(
 
 // Function to get Current user given their uid.
 export async function getCurrUser(uid: string): Promise<IUser | null> {
-    const {User} = useAuth();
-    if (!User) return null;
-
-    const currUser = await getUser(User.uid);
+    const currUser = await getUser(uid);
     return currUser;
 }
 
@@ -158,7 +155,6 @@ export async function updateUsers(): Promise<void> {
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
-                currentlyMessaging: []
             };
 
             // Update document if any field is missing
@@ -173,6 +169,25 @@ export async function updateUsers(): Promise<void> {
         throw error;
     }
 }
+
+export async function  removeFieldFromUsers(): Promise<void> {
+    const db = firestore;
+    const usersRef = collection(db, 'Users');
+    
+    const snapshot = await getDocs(usersRef);
+    console.log("remove in progress");
+    // Iterate over each user document
+    snapshot.forEach(async (doc) => {
+      // Remove the specified field from the user document
+      const userData = doc.data();
+      delete userData.sentRequests;
+      console.log(userData);
+
+      // Update the document without the specified field
+      // await updateDoc(doc.ref, userData)
+      console.log(`Field removed from user document '${doc.id}'`);
+    });
+  };
 
 // Ways to randomize some things
 export async function randomIt(): Promise<void> {
