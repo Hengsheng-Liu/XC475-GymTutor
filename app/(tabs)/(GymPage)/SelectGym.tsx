@@ -82,8 +82,6 @@ export default function SelectGym() {
           title="Select Gym"
           subtitle="Select the gym you want to go to"
           Icon={<FontAwesome name="map-o" size={50} color="#F0F9FF" />}
-          SearchFeature={(e: string) => console.log("e")}
-          SearchBarText="Search for a gym"
         />
         <Box m={2}>
           <GooglePlacesAutocomplete
