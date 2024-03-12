@@ -1,20 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, 
     Image,
-    Text, 
-    TextInput, 
     ScrollView, 
     ActivityIndicator, 
     TouchableOpacity } from 'react-native';
-import {firestore} from '../../../../firebaseConfig';
-import { doc, updateDoc, } from 'firebase/firestore';
 import { useAuth } from "../../../../Context/AuthContext";
-import { IUser, getUsers, updateUsers} from '../../../../components/FirebaseDataService';
-import { handleSendFriendRequest, canAddFriend } from "../FriendsComponents/FriendFunctions"
-import { styles } from './DisplayUsersStyles';
+import { IUser, getUsers, updateUsers} from '../../../../components/FirebaseUserFunctions';
 import { router } from "expo-router";
-import UserPreview from './UserPreview';
-import { NativeBaseProvider } from 'native-base';
+import UserPreview from './UserContainer';
+import { NativeBaseProvider, Input, IconButton, Row, Flex } from 'native-base';
 import theme from '@/components/theme';
 import Header from '../../(HomePage)/HomeComponents/Header';
 
@@ -31,26 +25,20 @@ const FirebaseDataDisplay = () => {
             // Fetch gym name for current user
             const userGym = currUser.gym || "Default Gym"; // Use default name if user has no gym
             setGym(userGym);
+            handleSearchUsers();
         }
     }, [currUser]);
 
-    // TODO: Function to handle gym click
-    const handleGymClick = async () => {
-        // Placeholder function to change gym
-        setGym(searchTerm);
-        const userDocRef = doc(firestore, 'Users', currUser.uid);
-        await updateDoc(userDocRef, {gym: searchTerm});
-    };
-
     // TODO: Display user preview when clicked
-    const handleUserClick = (user: IUser) => {
+    const handlePreviewClick = (user: IUser) => {
         // Do something when user is clicked
         // Open Profile
     };
 
-    // Get users from database using filters
+    // Get users from database from gym
     const handleGetUsers = async () => {
         //updateUsers(); // Uncomment when we want to use it to add fields
+        setUsers([]);
         setLoading(true);
         const fetchedUsers = await getUsers(currUser.uid, gym);
         setUsers(fetchedUsers);
@@ -59,53 +47,47 @@ const FirebaseDataDisplay = () => {
 
     // Search users by name
     const handleSearchUsers = async () => {
+        setUsers([]);
         setLoading(true);
         // const fetchedUsers = await getUsers(currUser.uid, gym, [['name', '>=', searchTerm]]);
-        const fetchedUsers = await getUsers(currUser.uid);
+        let fetchedUsers: IUser[];
+        if (searchTerm==""){
+            fetchedUsers = await getUsers(currUser.uid);
+        } else {
+            fetchedUsers = await getUsers(currUser.uid);
+            // const fetchedUsers = await getUsers(currUser.uid, gym, [['name', '>=', searchTerm]]);
+        }
         setUsers(fetchedUsers);
         setLoading(false);
     };
 
-    // Send friend Requests
-    const handleSendRequest = (userUID: string, friend: IUser) => {
-        handleSendFriendRequest(userUID, friend);
-        handleGetUsers();
-    };
-
-    let content = null;
-    if (currUser){
-        content = (
+    return (
+        <Flex p={3} backgroundColor= "#FFF">
             <ScrollView>
                 <Header currUser={currUser}/>
-                <View style={styles.searchBarContainer}>
-                    <TouchableOpacity onPress={handleSearchUsers} >
-                        <Image source={require('@/assets/images/search_icon.png')} style={styles.searchIcon} />
-                    </TouchableOpacity>
-                    <TextInput
-                        placeholder="Spot someone in this gym"
-                        value= {searchTerm}
-                        onChangeText={setSearchTerm}
-                        style={styles.searchBar}
+                <Input
+                    InputLeftElement={
+                        <IconButton size="xs" onPress={handleSearchUsers}
+                        icon={<Image source={require("@/assets/images/search_icon.png")}/>}/>
+                        }
+                    placeholder="Spot someone in this gym"
+                    bgColor="trueGray.100" 
+                    onChangeText={setSearchTerm}
+                    borderRadius="md" borderWidth={1} 
                     />
-                </View>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity onPress={handleGetUsers} >
-                        <Image source={require('@/assets/images/filter_icon.png')} style={styles.filterIcon} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => router.push("/Friends")} >
-                        <Image source={require('@/assets/images/profile_icon.png')} style={styles.profileIcon} />
-                    </TouchableOpacity>
-                </View>                
-                    {users.map((user, index) => (
+                <Row mb={1}>  
+                    <IconButton size="xs" onPress={handleGetUsers}
+                        icon={<Image source={require("@/assets/images/filter_icon.png")}/>}/>
+                    <IconButton size="xs" onPress={() => router.push("/Friends")}
+                        icon={<Image source={require("@/assets/images/profile_icon.png")}/>}/>
+                </Row>           
+                    {users.map((user) => (
                         < UserPreview friend={user} key={user.uid}/>
                     ))}
                     {loading && <ActivityIndicator size="large" color="#0000ff" />}
             </ScrollView>
-        );
-    }   else {
-        content = <Text>No user signed in.</Text>;
-    }
-
-    return <View>{content}</View>;
+        </Flex>
+            
+    );
 };
 export default FirebaseDataDisplay;

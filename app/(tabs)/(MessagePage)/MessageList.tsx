@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, FlatList, StyleSheet, Dimensions } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { getUsers, IUser, updateUsers } from '@/components/FirebaseDataService';
+import { getUsers, IUser, updateUsers } from '@/components/FirebaseUserFunctions';
 import { useAuth } from "@/Context/AuthContext";
 import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
 import { styles } from '../(HomePage)/HomeComponents/DisplayUsersStyles';

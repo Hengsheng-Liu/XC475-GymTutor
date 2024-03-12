@@ -5,7 +5,7 @@ import {
     updateDoc, 
     arrayUnion,
     arrayRemove } from 'firebase/firestore';
-import {IUser} from "../../../../components/FirebaseDataService"
+import {IUser} from "../../../../components/FirebaseUserFunctions"
 
 // Function to check whether it should be able to add friends
 export const canAddFriend = (userUID: string, Friend: IUser): boolean => {

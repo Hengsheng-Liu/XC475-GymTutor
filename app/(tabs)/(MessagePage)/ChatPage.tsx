@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, FlatList, StyleSheet, Dimensions } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { getUser, IUser } from '@/components/FirebaseDataService';
+import { getUser, IUser } from '@/components/FirebaseUserFunctions';
 import { useAuth } from "@/Context/AuthContext";
 import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
 

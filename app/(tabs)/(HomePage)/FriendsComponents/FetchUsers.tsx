@@ -1,4 +1,4 @@
-import { getUser, IUser } from '@/components/FirebaseDataService'; 
+import { getUser, IUser } from '@/components/FirebaseUserFunctions'; 
 
 export default async function fetchUsers(currUser: IUser, requests: string[]): Promise<IUser[]> {
     const fetchedUsers: IUser[] = [];

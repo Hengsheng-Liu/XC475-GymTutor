@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, ActivityIndicator} from 'react-native';
-import { IUser } from '@/components/FirebaseDataService'; 
+import { IUser } from '@/components/FirebaseUserFunctions'; 
 import { useAuth } from "@/Context/AuthContext";
 import { NativeBaseProvider } from 'native-base';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -42,7 +42,7 @@ export default function FriendListScreen () {
         ) : friends.length === 0 ? (
           <Text>No friends. Try connecting with some users!</Text>
         ) : (
-          <Flex>
+          <Flex mt={3}>
             {friends.map((user) => (
               < FriendContainer friend= {user} key={user.uid}/>
             ))}

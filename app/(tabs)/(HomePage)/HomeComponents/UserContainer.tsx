@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { Flex, Spacer, Button, Row, Column, Pressable, Text, Avatar} from 'native-base'
-import { IUser } from '@/components/FirebaseDataService'; 
+import { IUser } from '@/components/FirebaseUserFunctions'; 
 import { useAuth } from "@/Context/AuthContext";
 import { handleSendFriendRequest, canAddFriend } from "../FriendsComponents/FriendFunctions"
 
@@ -10,6 +10,7 @@ interface FriendProps {
 
 const UserPreview: React.FC<FriendProps> = ({ friend }) => {
     const [isPressed, setIsPressed] = useState<boolean>(false);
+    const [friendRequestSent, setFriendRequestSent] = useState<boolean>(false);
     const {currUser} = useAuth();
     if (!currUser) return;
 
@@ -24,18 +25,38 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
     // Send friend Requests
     const handleSendRequest = (userUID: string, friend: IUser) => {
         handleSendFriendRequest(userUID, friend);
+        setFriendRequestSent(true);
         // handleGetUsers();
+    };
+
+    useEffect(() => {
+        // Check if a friend request has already been sent
+        const checkFriendRequestStatus = async () => {
+            const isRequestSent = await hasFriendRequestSent();
+            console.log(isRequestSent);
+            setFriendRequestSent(isRequestSent);
+        };
+        if (currUser && friend) {
+            checkFriendRequestStatus();
+        }
+    }, [currUser, friend]);
+
+    // Function to check if a friend request has been sent
+    const hasFriendRequestSent = async (): Promise<boolean> => {
+        // Implement logic to check if a friend request has been sent from userUID to friendUID
+        // Return true if a request has been sent, otherwise return false
+        return friend.uid in currUser.friendRequests
     };
 
     return (
         <Pressable 
-            onPressIn = {() => handleUserClick()}
+            onPress = {() => handleUserClick()}
             onPressOut={() => setIsPressed(false)}
-            p = {3} // This okay?
-            borderBottomColor="trueGray.300" borderBottomWidth= "1" shadow="3"
+            p = {3} mb ={3} ml={1} mr={1} // This okay?
+            borderRadius="xl" borderWidth={1} borderColor="trueGray.50" shadow="3"
             bg={isPressed ? "trueGray.200" : "trueGray.50"} // Change background color on hover
             >
-        <Flex            >
+        <Flex>
             <Row alignItems="center" justifyContent="left" space="sm">
                 {/* Replace 'friend.icon' with the actual profile picture source */}
                 <Avatar size= "xl" source={require("../bob.png")} />

@@ -14,7 +14,7 @@ import { router } from "expo-router";
 import { UserCredential } from "firebase/auth";
 import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { useAuth } from "../../Context/AuthContext";
-import { addUser } from "@/components/FirebaseDataService"
+import { addUser } from "@/components/FirebaseUserFunctions"
 
 export const AddUserToDB = async (response: UserCredential) => {
   const user = response.user;

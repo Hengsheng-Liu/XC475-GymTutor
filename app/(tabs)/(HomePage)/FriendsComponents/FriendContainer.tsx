@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import { Flex, Row, Column, Pressable, Text, Avatar} from 'native-base'
-import { IUser } from '@/components/FirebaseDataService';
+import { IUser } from '@/components/FirebaseUserFunctions';
 
 interface FriendProps {
     friend: IUser;
@@ -18,10 +18,10 @@ const friendContainer: React.FC<FriendProps> = ({ friend }) => {
     };
     return (
         <Pressable 
-            onPressIn = {() => handleUserClick()}
+            onPress = {() => handleUserClick()}
             onPressOut={() => setIsPressed(false)}
-            p = {3} // This okay?
-            borderBottomColor="trueGray.200" shadow="3"
+            p = {3} mb ={3} ml={1} mr={1} // This okay?
+            borderRadius="xl" borderWidth={1} borderColor="trueGray.50" shadow="3"
             bg={isPressed ? "trueGray.200" : "trueGray.50"} // Change background color on hover
             >
         <Flex            >

@@ -1,8 +1,7 @@
-import React from "react";
-import { Flex, Spacer, IconButton, Pressable, Column, Input, Row, Text, Box } from "native-base";
+import React, {useState} from "react";
+import { Flex, Spacer, IconButton, Pressable, Column, Row, Text, Box } from "native-base";
 import {Image} from 'react-native';
-import { FontAwesome } from "@expo/vector-icons";
-import { IUser } from '@/components/FirebaseDataService';
+import { IUser } from '@/components/FirebaseUserFunctions';
 import { router } from "expo-router";
 
 interface FriendProps {
@@ -10,10 +9,16 @@ interface FriendProps {
 }
 
 const Header: React.FC<FriendProps> = ({ currUser }) => {
+  const [isPressed, setIsPressed] = useState<boolean>(false);
+
   return (
-    <Box margin={2}>
+    <Box mt={5} mb={3}>
       <Row alignItems="center" justifyContent="left">
-        <Pressable>
+        <Pressable
+            onPress = {() => router.push("/(tabs)/(GymPage)/SelectGym")}
+            onPressOut={() => setIsPressed(false)}
+            bg={isPressed ? "trueGray.200" : "#FFF"} // Change background color on hover
+            >
             <Column>    
             <Text color= "trueGray.900" fontSize="xl" fontWeight="bold">{currUser.gym}</Text>
             <Text textDecorationLine="underline" color= "trueGray.900" 
@@ -26,16 +31,6 @@ const Header: React.FC<FriendProps> = ({ currUser }) => {
         onPress={() => router.push("./Notifications")}
         icon={<Image source={require("@/assets/images/bell_icon.png")} />} />
       </Row>
-      <Box marginTop={4}> 
-        <Input
-          InputLeftElement={
-            <FontAwesome name="search" size={24} color ="#075985"/> 
-            }
-          placeholder="Enter your address to search "
-          bgColor={"#F5F5F5"} 
-          
-        />
-      </Box>
     </Box>
   );
 }

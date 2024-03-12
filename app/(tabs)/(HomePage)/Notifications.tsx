@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { IUser } from '@/components/FirebaseDataService'; 
+import { IUser } from '@/components/FirebaseUserFunctions'; 
 import { useAuth } from "@/Context/AuthContext";
 import FriendRequest from './FriendsComponents/RequestContainer';
 import { NativeBaseProvider } from 'native-base';
@@ -39,14 +39,14 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <NativeBaseProvider theme = {theme} >
-      <ScrollView style= {{backgroundColor: "#FFF", flex:1}}>
+      <ScrollView style= {{backgroundColor: "#FFF", flex:1, padding:3}}>
       <SafeAreaView>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : requests.length === 0 ? (
           <Text>No Notifications</Text>
         ) : (
-          <Flex>
+          <Flex mt={3}>
             {requests.map((user) => (
               < FriendRequest friend= {user} key={user.uid}/>
             ))}

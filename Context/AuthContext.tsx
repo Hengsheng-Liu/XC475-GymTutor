@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState} from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, User, UserCredential } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import {IUser, getUser} from "../components/FirebaseDataService"
+import {IUser, getUser} from "../components/FirebaseUserFunctions"
 
 type AuthContextValue = {
     CreateUser: (email: string, password: string) => Promise<UserCredential>;
