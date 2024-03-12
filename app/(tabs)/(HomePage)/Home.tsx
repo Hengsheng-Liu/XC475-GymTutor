@@ -51,8 +51,9 @@ export default function HomeScreen() {
         if (searchTerm==""){
             fetchedUsers = await getUsers(currUser.uid);
         } else {
+            // fetchedUsers = await getUsers(currUser.uid);
             fetchedUsers = await getUsers(currUser.uid);
-            // const fetchedUsers = await getUsers(currUser.uid, gym, [['name', '>=', searchTerm]]);
+            console.log(fetchedUsers);
         }
         setUsers(fetchedUsers);
         setLoading(false);
