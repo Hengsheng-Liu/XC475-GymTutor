@@ -21,14 +21,15 @@ export default function TabLayout() {
           name="index"
           options={{
             title: "Home",
-            tabBarIcon: (props) => <TabBarIcon {...props} name="home" />,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="home"/>,
           }}
         />
         <Tabs.Screen
           name="(HomePage)"
           options={{
-            title: "Home",
+            title: "Friend",
             headerShown: false,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="users" />,
           }}
         />
         <Tabs.Screen
@@ -36,19 +37,28 @@ export default function TabLayout() {
           options={{
             title: "Profile",
             headerShown: false,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="user" />,
           }}
         />
         <Tabs.Screen
           name="(MessagePage)"
           options={{
-            title: "MessageList",
+            title: "Message",
             headerShown: false,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="comments" />,
           }}
         />
         <Tabs.Screen
           name="(GymPage)"
           options={{
             title: "SelectGym",
+            headerShown: false,
+          }}
+        />
+        <Tabs.Screen
+          name = "Test"
+          options={{
+            title: "Test",
             headerShown: false,
           }}
         />
