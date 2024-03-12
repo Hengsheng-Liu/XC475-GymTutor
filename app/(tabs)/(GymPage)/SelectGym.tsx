@@ -7,6 +7,8 @@ import {
   Box,
   Flex,
   FlatList,
+  Heading,
+  Text,
 } from "native-base";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Gym from "./SelectGymComponents/GymComponent";
@@ -17,7 +19,7 @@ import {
   Point,
 } from "react-native-google-places-autocomplete";
 
-interface GymIcon{
+interface GymIcon {
   photoURL: string;
   height: number;
   width: number;
@@ -25,31 +27,40 @@ interface GymIcon{
 interface Gym {
   name: string;
   vicinity: string;
-  photo: GymIcon | undefined; 
+  photo: GymIcon | undefined;
   place_id: string;
 }
 export default function SelectGym() {
-  const [SearchLocation, setSearchLocation] = useState<Point | undefined>(undefined);
+  const [SearchLocation, setSearchLocation] = useState<Point | undefined>(
+    undefined
+  );
   const [NearbyGyms, setNearbyGyms] = useState<Gym[]>([]); // [name, address, photoURL, rating, openNow, distance,
   useEffect(() => {
     // Make sure SearchLocation is defined and has the necessary properties
-    if (!SearchLocation || SearchLocation.lat === undefined || SearchLocation.lng === undefined) return;
+    if (
+      !SearchLocation ||
+      SearchLocation.lat === undefined ||
+      SearchLocation.lng === undefined
+    )
+      return;
     const fetchNearbyGyms = async () => {
       const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${SearchLocation.lat},${SearchLocation.lng}&rankby=distance&type=gym&key=${process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY}`;
-  
+
       try {
         const response = await fetch(url);
-        if (!response.ok) throw new Error('Failed to fetch');
+        if (!response.ok) throw new Error("Failed to fetch");
         const Gymdata = await response.json();
-  
-        const newGyms = Gymdata.results.map((place:any) => ({
+
+        const newGyms = Gymdata.results.map((place: any) => ({
           name: place.name,
           vicinity: place.vicinity,
-          photo: place.photos ? {
-            photoURL: place.photos[0].photo_reference,
-            height: place.photos[0].height,
-            width: place.photos[0].width,
-          } : undefined, 
+          photo: place.photos
+            ? {
+                photoURL: place.photos[0].photo_reference,
+                height: place.photos[0].height,
+                width: place.photos[0].width,
+              }
+            : undefined,
           place_id: place.place_id,
         }));
         setNearbyGyms(newGyms);
@@ -59,8 +70,8 @@ export default function SelectGym() {
     };
     setNearbyGyms([]);
     fetchNearbyGyms();
-  }, [SearchLocation]); 
-  
+  }, [SearchLocation]);
+
   const theme = extendTheme({
     components: {
       Text: {
@@ -78,11 +89,16 @@ export default function SelectGym() {
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView style={styles.container}>
-        <GeneralHeading
-          title="Select Gym"
-          subtitle="Select the gym you want to go to"
-          Icon={<FontAwesome name="map-o" size={50} color="#F0F9FF" />}
-        />
+        <Box margin={2}>
+          <Flex justifyContent={"space-between"} flexDirection={"row"}>
+            <Box>
+              <Heading> Select Your Gym </Heading>
+              <Text> Find the gym that you go most often </Text>
+            </Box>
+            <FontAwesome name="map-o" size={50} color="#F0F9FF" />
+          </Flex>
+          <Box marginTop={4}></Box>
+        </Box>
         <Box m={2}>
           <GooglePlacesAutocomplete
             placeholder="Enter your zip code to search"
@@ -104,9 +120,7 @@ export default function SelectGym() {
         <FlatList
           data={NearbyGyms}
           renderItem={({ item }) => (
-            <Gym title={item.name} Address={item.vicinity} 
-            photo = {item.photo}
-            />
+            <Gym title={item.name} Address={item.vicinity} photo={item.photo} />
           )}
           keyExtractor={(item) => item.place_id}
         ></FlatList>
