@@ -9,7 +9,7 @@ import {
   FlatList,
 } from "native-base";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Gym from "./SelectGymComponents/Gym";
+import Gym from "./SelectGymComponents/GymComponent";
 import GeneralHeading from "@/components/GeneralHeading";
 import { FontAwesome } from "@expo/vector-icons";
 import {
@@ -17,42 +17,50 @@ import {
   Point,
 } from "react-native-google-places-autocomplete";
 
+interface GymIcon{
+  photoURL: string;
+  height: number;
+  width: number;
+}
+interface Gym {
+  name: string;
+  vicinity: string;
+  photo: GymIcon | undefined; 
+  place_id: string;
+}
 export default function SelectGym() {
-  const [SearchLocation, setSearchLocation] = useState<Point | undefined>(
-    undefined
-  );
-  const fetchNearbyGyms = async (url: string) => {
-    const response = await fetch(url);
-    const data = await response.json();
-    return data;
-  };
-  const DATA = [
-    {
-      id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-      title: "Back Bay Fitness Center",
-      Address: "915 Commonwealth Ave, Boston",
-    },
-    {
-      id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-      title: "BU Fitrec Center",
-      Address: "915 Commonwealth Ave, Boston",
-    },
-    {
-      id: "58694a0f-3da1-471f-bd96-145571e29d72",
-      title: "Planet Fitness",
-      Address: "915 Commonwealth Ave, Boston",
-    },
-  ];
+  const [SearchLocation, setSearchLocation] = useState<Point | undefined>(undefined);
+  const [NearbyGyms, setNearbyGyms] = useState<Gym[]>([]); // [name, address, photoURL, rating, openNow, distance,
   useEffect(() => {
-    if (SearchLocation === undefined) return;
-
-    const getNearbyGyms = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${SearchLocation.lat},${SearchLocation.lng}
-&rankby=distance&type=gym&key=${process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY}`;
-    fetchNearbyGyms(getNearbyGyms).then((data) => {
-      console.log(data);
-      
-    });
-  }, [SearchLocation]);
+    // Make sure SearchLocation is defined and has the necessary properties
+    if (!SearchLocation || SearchLocation.lat === undefined || SearchLocation.lng === undefined) return;
+    const fetchNearbyGyms = async () => {
+      const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${SearchLocation.lat},${SearchLocation.lng}&rankby=distance&type=gym&key=${process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY}`;
+  
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Failed to fetch');
+        const Gymdata = await response.json();
+  
+        const newGyms = Gymdata.results.map((place:any) => ({
+          name: place.name,
+          vicinity: place.vicinity,
+          photo: place.photos ? {
+            photoURL: place.photos[0].photo_reference,
+            height: place.photos[0].height,
+            width: place.photos[0].width,
+          } : undefined, 
+          place_id: place.place_id,
+        }));
+        setNearbyGyms(newGyms);
+      } catch (error) {
+        console.error("Error fetching nearby gyms:", error);
+      }
+    };
+    setNearbyGyms([]);
+    fetchNearbyGyms();
+  }, [SearchLocation]); 
+  
   const theme = extendTheme({
     components: {
       Text: {
@@ -81,10 +89,7 @@ export default function SelectGym() {
           <GooglePlacesAutocomplete
             placeholder="Enter your zip code to search"
             onPress={(data, details = null) => {
-              // 'details' is provided when fetchDetails = true
-
               setSearchLocation(details?.geometry.location);
-              console.log(SearchLocation);
             }}
             query={{
               key: process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
@@ -95,20 +100,17 @@ export default function SelectGym() {
                 flex: 0,
               },
             }}
-            nearbyPlacesAPI="GooglePlacesSearch"
-            GooglePlacesSearchQuery={{
-              rankby: "distance",
-              type: "cafe",
-            }}
             fetchDetails
           />
         </Box>
         <FlatList
-          data={DATA}
+          data={NearbyGyms}
           renderItem={({ item }) => (
-            <Gym title={item.title} Address={item.Address} />
+            <Gym title={item.name} Address={item.vicinity} 
+            photo = {item.photo}
+            />
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.place_id}
         ></FlatList>
       </SafeAreaView>
     </NativeBaseProvider>
