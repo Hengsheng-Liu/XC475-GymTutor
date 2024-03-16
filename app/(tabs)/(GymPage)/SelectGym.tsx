@@ -44,7 +44,8 @@ export default function SelectGym() {
     )
       return;
     const fetchNearbyGyms = async () => {
-      const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${SearchLocation.lat},${SearchLocation.lng}&rankby=distance&type=gym&key=${process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY}`;
+      
+      const url = process.env.EXPO_PUBLIC_FetchGym_URL+`?lat=${SearchLocation.lat}&lng=${SearchLocation.lng}`;
 
       try {
         const response = await fetch(url);
@@ -65,6 +66,7 @@ export default function SelectGym() {
         }));
         setNearbyGyms(newGyms);
       } catch (error) {
+        console.log(url);
         console.error("Error fetching nearby gyms:", error);
       }
     };

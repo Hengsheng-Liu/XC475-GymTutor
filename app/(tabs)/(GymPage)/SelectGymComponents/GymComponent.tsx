@@ -2,6 +2,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import React from "react";
 import { Avatar, Box, Flex, Heading, Row, Text } from "native-base";
 import { Pressable } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 interface GymIcon {
   photoURL: string;
   height: number;
@@ -12,13 +13,18 @@ interface props {
   Address: string;
   photo?: GymIcon;
 }
+
 function GetPhotoURL(photo: GymIcon | undefined) {
-  if (!photo) return "";
-  return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${photo.width}&photoreference=${photo.photoURL}&key=${process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY}`;
+  if (!photo) {
+    return <FontAwesome name="question-circle" size={60} color="white" style={{marginRight:2}}/>;
+  } else {
+    const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${photo.width}&photoreference=${photo.photoURL}&key=${process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY}`;
+    return <Avatar source={{ uri: url }} mr={2} />;
+  }
 }
 export default function Gym({ title, Address, photo }: props) {
   return (
-    <Pressable onPress={()=>console.log(title)}>
+    <Pressable onPress={() => console.log(title)}>
       <Box
         mt={1}
         borderBottomColor={"#075985"}
@@ -32,7 +38,7 @@ export default function Gym({ title, Address, photo }: props) {
           justifyContent={"space-between"}
         >
           <Flex flexDirection={"row"}>
-            <Avatar source={{ uri: GetPhotoURL(photo) }} mr={2} />
+            {GetPhotoURL(photo)}
             <Flex flex={1}>
               <Heading size="md"> {title}</Heading>
               <Text fontSize="sm">{Address}</Text>
