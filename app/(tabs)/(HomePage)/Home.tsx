@@ -11,6 +11,8 @@ import { IUser, getUsers, getCurrUser, updateUsers, removeFieldFromUsers} from '
 import UserPreview from "./HomeComponents/UserContainer";
 import Header from './HomeComponents/Header';
 import theme from '@/components/theme';
+import updateUser from '@/components/storage';
+
 
 export default function HomeScreen() {
     const [gym, setGym] = useState<string>(''); // State to store the gym input
@@ -35,6 +37,7 @@ export default function HomeScreen() {
 
     // Get users from database from gym
     const handleGetUsers = async () => {
+        // await updateUser(currUser.uid);
         // updateUsers(); // Uncomment when we want to use it to add fields
         setUsers([]);
         setLoading(true);
@@ -58,7 +61,7 @@ export default function HomeScreen() {
         setUsers(fetchedUsers);
         setLoading(false);
     };
-
+    
     return (
         <NativeBaseProvider theme = {theme}>
             <SafeAreaView style= {{backgroundColor: "#FFF", flex:1, padding:15, paddingTop:2}}>
