@@ -52,7 +52,7 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
         <Flex>
             <Row alignItems="center" justifyContent="left" space="sm">
                 {/* Replace 'friend.icon' with the actual profile picture source */}
-                <Avatar size= "xl" source={require("../bob.png")} />
+                <Avatar size= "xl" source={require("../../assets/images/bob.png")} />
                 <Column>    
                     <Text color= "trueGray.900" fontSize="md" fontWeight="bold">{friend.name}</Text>
                     <Text color= "trueGray.900" fontSize="sm">{friend.email}</Text>

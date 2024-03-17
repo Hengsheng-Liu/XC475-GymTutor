@@ -3,6 +3,7 @@ import React from "react";
 import { Avatar, Box, Flex, Heading, Row, Text } from "native-base";
 import { Pressable } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { router } from "expo-router";
 interface GymIcon {
   photoURL: string;
   height: number;
@@ -16,7 +17,7 @@ interface props {
 
 function GetPhotoURL(photo: GymIcon | undefined) {
   if (!photo) {
-    return <FontAwesome name="question-circle" size={60} color="white" style={{marginRight:2}}/>;
+    return <FontAwesome name="question-circle" size={55} color="white" style={{marginRight:4}}/>;
   } else {
     const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${photo.width}&photoreference=${photo.photoURL}&key=${process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY}`;
     return <Avatar source={{ uri: url }} mr={2} />;
@@ -24,7 +25,7 @@ function GetPhotoURL(photo: GymIcon | undefined) {
 }
 export default function Gym({ title, Address, photo }: props) {
   return (
-    <Pressable onPress={() => console.log(title)}>
+    <Pressable onPress={() => router.push("/(tabs)/(GymPage)/(HomePage)/Home")}>
       <Box
         mt={1}
         borderBottomColor={"#075985"}

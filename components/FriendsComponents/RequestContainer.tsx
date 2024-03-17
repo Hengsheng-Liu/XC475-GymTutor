@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import { Spacer, Button, Row, Column, Pressable, Text, Avatar} from 'native-base'
 import { IUser } from '@/components/FirebaseUserFunctions'; 
 import { useAuth } from "@/Context/AuthContext";
-import { addFriend, rejectRequest } from '@/app/(tabs)/(HomePage)/FriendsComponents/FriendFunctions'
+import { addFriend, rejectRequest } from '@/components/FriendsComponents/FriendFunctions'
 
 interface FriendProps {
     friend: IUser;
@@ -29,7 +29,7 @@ const FriendRequest: React.FC<FriendProps> = ({ friend }) => {
             >
             <Row alignItems="center" justifyContent="left" space="sm">
                 {/* Replace 'friend.icon' with the actual profile picture source */}
-                <Avatar size= "xl" source={require("../bob.png")} />
+                <Avatar size= "xl" source={require("../../assets/images/bob.png")} />
                 <Column>    
                     <Text color= "trueGray.900" fontSize="md" fontWeight="bold">{friend.name}</Text>
                     <Text/>

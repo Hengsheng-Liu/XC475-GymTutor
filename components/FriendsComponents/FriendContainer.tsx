@@ -25,7 +25,7 @@ const friendContainer: React.FC<FriendProps> = ({ friend }) => {
             >
             <Row alignItems="center" space="sm">
                 {/* Replace 'friend.icon' with the actual profile picture source */}
-                <Avatar size= "md" source={require("../bob.png")} />
+                <Avatar size= "md" source={require("../../assets/images/bob.png")} />
                 <Column>    
                     <Text color= "trueGray.900" fontSize="md" fontWeight="bold">{friend.name}</Text>
                     <Text/>

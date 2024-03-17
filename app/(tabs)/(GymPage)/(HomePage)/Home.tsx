@@ -8,8 +8,8 @@ import { doc, onSnapshot } from 'firebase/firestore';
 
 import { useAuth } from "@/Context/AuthContext";
 import { IUser, getUsers, getCurrUser, updateUsers, removeFieldFromUsers} from '@/components/FirebaseUserFunctions';
-import UserPreview from "./HomeComponents/UserContainer";
-import Header from './HomeComponents/Header';
+import UserPreview from "../../../../components/HomeComponents/UserContainer";
+import Header from '../../../../components/HomeComponents/Header';
 import theme from '@/components/theme';
 
 export default function HomeScreen() {
