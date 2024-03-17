@@ -25,12 +25,12 @@ import {
   Tag,
   extendTheme,
 } from "native-base";
-import Header from "./ProfileComponents/Header";
-import ButtonGroup from "./ProfileComponents/ButtonGroup";
-import Description from "./ProfileComponents/Description";
-import Achievement from "./ProfileComponents/Achievement";
-import Attribute from "./ProfileComponents/Attribute";
-import Calendar from "./ProfileComponents/Calendar";
+import Header from "../../../components/ProfileComponents/Header";
+import ButtonGroup from "../../../components/ProfileComponents/ButtonGroup";
+import Description from "../../../components/ProfileComponents/Description";
+import Achievement from "../../../components/ProfileComponents/Achievement";
+import Attribute from "../../../components/ProfileComponents/Attribute";
+import Calendar from "../../../components/ProfileComponents/Calendar";
 // note - I originally wrote everything below in UserProfilePage.tsx under 'components', and tried importing
 // it from there, but for some reason that didn't work. So for now, I put the code in UserProfilePage in this file
 
