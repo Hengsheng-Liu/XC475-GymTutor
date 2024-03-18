@@ -12,7 +12,6 @@ import {
 } from "native-base";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Gym from "../../../components/SelectGymComponents/GymComponent";
-import GeneralHeading from "@/components/GeneralHeading";
 import { FontAwesome } from "@expo/vector-icons";
 import {
   GooglePlacesAutocomplete,
