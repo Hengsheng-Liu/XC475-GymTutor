@@ -24,6 +24,7 @@ import {
   Spacer,
   Tag,
   extendTheme,
+  Flex,
 } from "native-base";
 import Header from "../../../components/ProfileComponents/Header";
 import ButtonGroup from "../../../components/ProfileComponents/ButtonGroup";
@@ -31,15 +32,22 @@ import Description from "../../../components/ProfileComponents/Description";
 import Achievement from "../../../components/ProfileComponents/Achievement";
 import Attribute from "../../../components/ProfileComponents/Attribute";
 import Calendar from "../../../components/ProfileComponents/Calendar";
+import {
+  getUser,
+  IUser,
+  getCurrUser,
+} from "../../../components/FirebaseUserFunctions";
+import { SafeAreaView } from "react-native";
 // note - I originally wrote everything below in UserProfilePage.tsx under 'components', and tried importing
 // it from there, but for some reason that didn't work. So for now, I put the code in UserProfilePage in this file
 
 const ProfilePage = () => {
+  const [userInfo, setUserInfo] = useState<IUser>();
   const [userBio, setUserBio] = useState<string>("");
   const [userGender, setUserGender] = useState<string>("");
   const [userName, setUserName] = useState<string>(""); // state that finds the current user's name
   const { User } = useAuth(); // gets current user's authentication data (in particular UID)
-  const description:string[]= [
+  const description: string[] = [
     "GymNewbie",
     "YogaLover",
     "CardioKing",
@@ -49,40 +57,19 @@ const ProfilePage = () => {
     "WeightLifter",
   ];
 
-
   // finds the current user's data (only name for now) via Users firestore database.
 
   useEffect(() => {
-    if (User?.uid) {
-      //const email = user.email;
-      //console.log("email", email);
-      //console.log("uid", user.uid );
-
-      // Finds the UID of the current user in 'Users' firestore database
-
-      const docRef = doc(firestore, "Users", User.uid);
-
-      const getDocument = async () => {
-
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap && docSnap.exists()) {
-          const name = await docSnap.get("name");
-          const bio = await docSnap.get("bio");
-          //      const age = await docSnap.get("age");
-          const gender = await docSnap.get("sex");
-
-          // assigns name to variable userName
-          setUserName(name);
-          setUserBio(bio);
-          setUserGender(gender);
-        } else {
-          console.log("docSnap doesnt exist");
+    if (!User) return;
+    const fetchUser = async () => {
+      if (User.uid) {
+        const userData = await getCurrUser(User.uid);
+        if (userData) {
+          setUserInfo(userData);
         }
-      };
-
-      getDocument();
-    }
+      }
+    };
+    fetchUser();
   }, [User]);
 
   const theme = extendTheme({
@@ -96,19 +83,25 @@ const ProfilePage = () => {
     },
   });
 
-
   return (
     <NativeBaseProvider theme={theme}>
+      <SafeAreaView>
       <ScrollView backgroundColor={"#FFFFFF"}>
         <Box ml={"3"} mr={"3"}>
-          <Header />
-          <Attribute description = {description} />
-          <ButtonGroup />
-          <Description />
-          <Achievement/>
-          <Calendar />
+          {userInfo && (
+            <Flex>
+              <Header name={userInfo.name} gym={userInfo.gym} />
+
+              <Attribute description={description} />
+              <ButtonGroup />
+              <Description />
+              <Achievement />
+              <Calendar />
+            </Flex>
+          )}
         </Box>
       </ScrollView>
+      </SafeAreaView>
     </NativeBaseProvider>
   );
 };

@@ -4,7 +4,8 @@ import {
   getUser,
   IUser,
   getCurrUser,
-} from "@/components/FirebaseUserFunctions";
+} from "../../../components/FirebaseUserFunctions";
+import * as React from "react";
 import { useEffect, useState } from "react";
 
 export default function authLayout() {
