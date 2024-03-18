@@ -29,7 +29,6 @@ const Header: React.FC<FriendProps> = ({ currUser, GymName }) => {
           justifyContent={"space-between"}
           flexDirection={"row"}
           alignItems={"center"}
-          
         >
           <Box>
             <Pressable
@@ -37,9 +36,11 @@ const Header: React.FC<FriendProps> = ({ currUser, GymName }) => {
               onPressOut={() => setIsPressed(false)}
               bg={isPressed ? "trueGray.200" : "#FFF"} // Change background color on hover
             >
-              <Heading underline size="md">
-                {GymName}
-              </Heading>
+              <Box>
+                <Heading underline size="md">
+                  {GymName}
+                </Heading>
+              </Box>
             </Pressable>
             <Text> Click to change your gym </Text>
           </Box>
