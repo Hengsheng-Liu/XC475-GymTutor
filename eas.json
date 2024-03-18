@@ -5,7 +5,13 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env":{
+        "EXPO_CLIENT_ID":"725476446782-ian4dcclsu5n6ji11vrddr50u071e0qs.apps.googleusercontent.com",
+        "IOS_CLIENT_ID":"725476446782-e5gdolfnnp9fll6fbe9uo7h4ofv2ce05.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_PLACES_API_KEY":"AIzaSyCinQxFbZ_Grs4vfMMA4ZPAYwjhtLqkUQY",
+        "ANDROID_CLIENT_ID":"725476446782-bvpifq7t6ku8sj7kags9475oubbr1tfh.apps.googleusercontent.com"
+      }
     },
     "preview": {
       "distribution": "internal"
