@@ -40,6 +40,7 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
     userName: {
       fontWeight: 'bold',
       fontSize: 18,
+      justifyContent: 'center', // This centers the child elements horizontally within the row
     },
     chatContainer: {
       flex: 1,

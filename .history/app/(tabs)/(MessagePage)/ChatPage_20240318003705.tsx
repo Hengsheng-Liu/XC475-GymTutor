@@ -4,7 +4,6 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { getUser, IUser } from '@/components/FirebaseUserFunctions';
 import { useAuth } from "@/Context/AuthContext";
 import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
-import { router } from "expo-router";
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -21,9 +20,6 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
   };
 
   const styles = StyleSheet.create({
-    keyboardAvoidingView: {
-      flex: 1,
-    },
     container: {
       flex: 1,
       backgroundColor: '#f5f5f5',
@@ -92,8 +88,11 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
   });
 
   return (
-    <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          {/* Icon for back navigation */}
+        </TouchableOpacity>
         <Text style={styles.userName}>Bob</Text>
         <TouchableOpacity>
           {/* Icon for additional options */}

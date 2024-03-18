@@ -94,6 +94,9 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
   return (
     <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.navigate("MessageList")}>
+          <Text style={styles.sendButton}>Go Back</Text>
+        </TouchableOpacity>
         <Text style={styles.userName}>Bob</Text>
         <TouchableOpacity>
           {/* Icon for additional options */}
