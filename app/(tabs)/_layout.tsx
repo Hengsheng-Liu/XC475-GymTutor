@@ -17,14 +17,7 @@ export default function TabLayout() {
   } else {
     return (
       <Tabs>
-        <Tabs.Screen
-          name="(ProfilePage)"
-          options={{
-            title: "Profile",
-            headerShown: false,
-            tabBarIcon: (props) => <TabBarIcon {...props} name="user" />,
-          }}
-        />
+
         <Tabs.Screen
           name="(MessagePage)"
           options={{
@@ -45,6 +38,14 @@ export default function TabLayout() {
           options={{
             title: "Test",
             headerShown: false,
+          }}
+        />
+        <Tabs.Screen
+          name="(ProfilePage)"
+          options={{
+            title: "Profile",
+            headerShown: false,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="user" />,
           }}
         />
       </Tabs>

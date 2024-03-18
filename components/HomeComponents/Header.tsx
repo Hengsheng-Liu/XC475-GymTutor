@@ -16,13 +16,14 @@ import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 interface FriendProps {
   currUser: IUser;
+  GymName: string;
 }
 
-const Header: React.FC<FriendProps> = ({ currUser }) => {
+const Header: React.FC<FriendProps> = ({ currUser, GymName }) => {
   const [isPressed, setIsPressed] = useState<boolean>(false);
 
   return (
-    <Box mb={3}>
+    <Flex mb={3}>
       <Box>
         <Flex
           justifyContent={"space-between"}
@@ -35,16 +36,20 @@ const Header: React.FC<FriendProps> = ({ currUser }) => {
               onPressOut={() => setIsPressed(false)}
               bg={isPressed ? "trueGray.200" : "#FFF"} // Change background color on hover
             >
-              <Heading underline> Back Bay Fitness Center </Heading>
+              <Box>
+                <Heading underline size="md">
+                  {GymName}
+                </Heading>
+              </Box>
             </Pressable>
-            <Text > Click to change your gym </Text>
+            <Text> Click to change your gym </Text>
           </Box>
           <Pressable onPress={() => router.push("./Notifications")}>
-          <FontAwesome name="bell" size={45} color="#0C4A6E" />
+            <FontAwesome name="bell" size={40} color="#0C4A6E" />
           </Pressable>
         </Flex>
       </Box>
-    </Box>
+    </Flex>
   );
 };
 /*

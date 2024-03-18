@@ -28,8 +28,7 @@ const FriendRequest: React.FC<FriendProps> = ({ friend }) => {
             bg={isPressed ? "trueGray.200" : "trueGray.50"} // Change background color on hover
             >
             <Row alignItems="center" justifyContent="left" space="sm">
-                {/* Replace 'friend.icon' with the actual profile picture source */}
-                <Avatar size= "xl" source={require("../../assets/images/bob.png")} />
+                <Avatar size= "xl" source={friend.icon ? {uri: friend.icon} : require("@/assets/images/default-profile-pic.png")} />
                 <Column>    
                     <Text color= "trueGray.900" fontSize="md" fontWeight="bold">{friend.name}</Text>
                     <Text/>

@@ -48,7 +48,7 @@ const ProfilePage = () => {
     "CardioKing",
     "WeightLifter",
   ];
-  console.log("user", User);
+
 
   // finds the current user's data (only name for now) via Users firestore database.
 
@@ -61,20 +61,16 @@ const ProfilePage = () => {
       // Finds the UID of the current user in 'Users' firestore database
 
       const docRef = doc(firestore, "Users", User.uid);
-      console.log("uid", User.uid);
 
       const getDocument = async () => {
-        console.log("docRef", docRef);
 
         const docSnap = await getDoc(docRef);
 
         if (docSnap && docSnap.exists()) {
-          console.log("docSnap", docSnap.data());
           const name = await docSnap.get("name");
           const bio = await docSnap.get("bio");
           //      const age = await docSnap.get("age");
           const gender = await docSnap.get("sex");
-          console.log(name, bio, gender);
 
           // assigns name to variable userName
           setUserName(name);
