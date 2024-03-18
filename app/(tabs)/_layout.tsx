@@ -18,21 +18,6 @@ export default function TabLayout() {
     return (
       <Tabs>
         <Tabs.Screen
-          name="index"
-          options={{
-            title: "Home",
-            tabBarIcon: (props) => <TabBarIcon {...props} name="home"/>,
-          }}
-        />
-        <Tabs.Screen
-          name="(HomePage)"
-          options={{
-            title: "Friend",
-            headerShown: false,
-            tabBarIcon: (props) => <TabBarIcon {...props} name="users" />,
-          }}
-        />
-        <Tabs.Screen
           name="(ProfilePage)"
           options={{
             title: "Profile",

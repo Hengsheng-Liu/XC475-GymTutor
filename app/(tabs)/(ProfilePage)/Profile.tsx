@@ -25,12 +25,12 @@ import {
   Tag,
   extendTheme,
 } from "native-base";
-import Header from "./ProfileComponents/Header";
-import ButtonGroup from "./ProfileComponents/ButtonGroup";
-import Description from "./ProfileComponents/Description";
-import Achievement from "./ProfileComponents/Achievement";
-import Attribute from "./ProfileComponents/Attribute";
-import Calendar from "./ProfileComponents/Calendar";
+import Header from "../../../components/ProfileComponents/Header";
+import ButtonGroup from "../../../components/ProfileComponents/ButtonGroup";
+import Description from "../../../components/ProfileComponents/Description";
+import Achievement from "../../../components/ProfileComponents/Achievement";
+import Attribute from "../../../components/ProfileComponents/Attribute";
+import Calendar from "../../../components/ProfileComponents/Calendar";
 // note - I originally wrote everything below in UserProfilePage.tsx under 'components', and tried importing
 // it from there, but for some reason that didn't work. So for now, I put the code in UserProfilePage in this file
 
@@ -48,7 +48,7 @@ const ProfilePage = () => {
     "CardioKing",
     "WeightLifter",
   ];
-  console.log("user", User);
+
 
   // finds the current user's data (only name for now) via Users firestore database.
 
@@ -61,20 +61,16 @@ const ProfilePage = () => {
       // Finds the UID of the current user in 'Users' firestore database
 
       const docRef = doc(firestore, "Users", User.uid);
-      console.log("uid", User.uid);
 
       const getDocument = async () => {
-        console.log("docRef", docRef);
 
         const docSnap = await getDoc(docRef);
 
         if (docSnap && docSnap.exists()) {
-          console.log("docSnap", docSnap.data());
           const name = await docSnap.get("name");
           const bio = await docSnap.get("bio");
           //      const age = await docSnap.get("age");
           const gender = await docSnap.get("sex");
-          console.log(name, bio, gender);
 
           // assigns name to variable userName
           setUserName(name);
