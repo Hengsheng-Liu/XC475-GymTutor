@@ -30,6 +30,7 @@ export default function ChooseGym({
     const userDocRef = doc(db, "Users", User.uid);
     await updateDoc(userDocRef, {
       gym: title,
+      gymId: place_id,
     });
   };
   const updateGym = async () => {

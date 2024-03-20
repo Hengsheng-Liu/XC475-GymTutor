@@ -18,7 +18,7 @@ import {
   Point,
   Geometry
 } from "react-native-google-places-autocomplete";
-
+import * as Location from "expo-location";
 interface GymIcon {
   photoURL: string;
   height: number;
@@ -35,9 +35,22 @@ export default function SelectGym() {
   const [SearchLocation, setSearchLocation] = useState<Point | undefined>(
     undefined
   );
-  const [NearbyGyms, setNearbyGyms] = useState<Gym[]>([]); // [name, address, photoURL, rating, openNow, distance,
+  const [NearbyGyms, setNearbyGyms] = useState<Gym[]>([]);
+  const getPermission = async () => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission to access location was denied');
+        return true;
+      }
+    } catch (error) {
+      console.log("Error fetching location:", error);
+    }
+  }
+
   useEffect(() => {
     // Make sure SearchLocation is defined and has the necessary properties
+
     if (
       !SearchLocation ||
       SearchLocation.lat === undefined ||

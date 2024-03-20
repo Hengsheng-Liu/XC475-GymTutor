@@ -12,7 +12,7 @@ import {
     updateDoc, 
     arrayUnion} from 'firebase/firestore';
 import { useAuth } from "../Context/AuthContext";
-
+import { Geometry } from 'react-native-google-places-autocomplete';
 // Update this and addUsers function when adding new fields
 // Use updateUsers function to initialize new fields on all users.
 // Define User interface
@@ -34,6 +34,13 @@ export interface IUser {
     achievements: string[]; // Add proper type
     gymExperience: string;
     currentlyMessaging: string[];
+    gymId: string;
+}
+export interface Gym{
+    name: string;
+    members: string[];
+    Geometry: Geometry;
+
 }
 
 // Function to retrieve users data from Firestore with a filter of gym or any other
@@ -133,7 +140,7 @@ export async function addUser(
 };
 
 // Function to get Current user given their uid.
-export async function getCurrUser(uid: string): Promise<IUser | null> {
+export async function getCurrUser(uid: string): Promise<IUser> {
     const currUser = await getUser(uid);
     return currUser;
 }

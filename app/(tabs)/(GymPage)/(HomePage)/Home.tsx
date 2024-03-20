@@ -26,17 +26,23 @@ import {
   getCurrUser,
   updateUsers,
   removeFieldFromUsers,
+  Gym,
 } from "@/components/FirebaseUserFunctions";
 import UserPreview from "../../../../components/HomeComponents/UserContainer";
 import Header from "../../../../components/HomeComponents/Header";
 import theme from "@/components/theme";
 import updateUser from "@/components/storage";
-
+import { doc, getDoc } from "firebase/firestore";
+import { firestore } from "@/firebaseConfig";
+import * as Location from "expo-location";
 export default function HomeScreen() {
-  const [gym, setGym] = useState<string>(""); // State to store the gym input
+  const [gym, setGym] = useState<Gym>(); // State to store the gym input
+  const [user, setUser] = useState<IUser>(); // State to store the current user
+  const [gymId, setGymId] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [users, setUsers] = useState<IUser[]>([]); // State to store users
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
+  const [location, setLocation] = useState<Location.LocationObjectCoords>(); 
   const { User } = useAuth();
   if (!User) return;
 
@@ -44,11 +50,13 @@ export default function HomeScreen() {
     // Fetch gym name for current user
     const fetchGym = async () => {
       const user = await getCurrUser(User.uid);
-      const userGym = user?.gym || "Default Gym"; // Use default name if user has no gym
+      setUser(user);
+      const gymDocRef = doc(firestore, "Gyms", user.gymId);
+      const userGym = (await getDoc(gymDocRef)).data() as Gym;
       setGym(userGym);
+      console.log(user);
       handleGetUsers();
     };
-
     fetchGym();
   }, [User]);
 
@@ -64,7 +72,7 @@ export default function HomeScreen() {
     // updateUsers(); // Uncomment when we want to use it to add fields
     setUsers([]);
     setLoading(true);
-    const fetchedUsers = await getUsers(User.uid, gym);
+    const fetchedUsers = await getUsers(User.uid);
     setUsers(fetchedUsers);
     setLoading(false);
   };
@@ -83,14 +91,37 @@ export default function HomeScreen() {
     setUsers(fetchedUsers);
     setLoading(false);
   };
+  const getPermission = async () => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission to access location was denied');
+        return true;
+      }
+    } catch (error) {
+      console.log("Error fetching location:", error);
+    }
+  }
+  const getUserlocation = () => {
+    setTimeout(async () => {
+      const location = await Location.getCurrentPositionAsync({});
+      setLocation(location.coords);
+    }, 1000);
+  }
+  useEffect(() => {
+    getPermission().then((status) => {
+      if (status) return;
+      getUserlocation();
+    });
 
+  }, [location]);
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView
         style={{ backgroundColor: "#FFF", flex: 1, padding: 15, paddingTop: 2 }}
       >
         <ScrollView>
-          <Header currUser={User} GymName={gym} />
+          <Header currUser={User} GymName={user?.gym} />
           <Input
             InputLeftElement={
               <IconButton
@@ -124,10 +155,18 @@ export default function HomeScreen() {
           ))}
           {loading && <ActivityIndicator size="large" color="#0000ff" />}
         </ScrollView>
-          <Button size ={"lg"} borderRadius={30} position={"absolute"} top={675} left={280}
+        <Button
+          size={"lg"}
+          borderRadius={30}
+          position={"absolute"}
+          top={675}
+          left={280}
           background={"#0284C7"}
           onPress={() => console.log("hello")}
-          > Check In</Button>
+        >
+          {" "}
+          Check In
+        </Button>
       </SafeAreaView>
     </NativeBaseProvider>
   );
