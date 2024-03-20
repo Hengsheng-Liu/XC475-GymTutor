@@ -13,6 +13,7 @@ import {
   arrayUnion,
   setDoc,
   Query,
+  onSnapshot,
 } from "firebase/firestore";
 import { useAuth } from "../../../Context/AuthContext";
 import {
@@ -43,9 +44,6 @@ import { SafeAreaView } from "react-native";
 
 const ProfilePage = () => {
   const [userInfo, setUserInfo] = useState<IUser>();
-  const [userBio, setUserBio] = useState<string>("");
-  const [userGender, setUserGender] = useState<string>("");
-  const [userName, setUserName] = useState<string>(""); // state that finds the current user's name
   const { User } = useAuth(); // gets current user's authentication data (in particular UID)
   const description: string[] = [
     "GymNewbie",
@@ -62,15 +60,12 @@ const ProfilePage = () => {
   useEffect(() => {
     if (!User) return;
     const fetchUser = async () => {
-      if (User.uid) {
-        const userData = await getCurrUser(User.uid);
-        if (userData) {
-          setUserInfo(userData);
-        }
-      }
+      const unsub = onSnapshot(doc(firestore, "Users", User.uid), (doc) => {
+        setUserInfo(doc.data() as IUser);
+      });
     };
     fetchUser();
-  }, [User]);
+  }, []);
 
   const theme = extendTheme({
     components: {
@@ -86,21 +81,21 @@ const ProfilePage = () => {
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView>
-      <ScrollView backgroundColor={"#FFFFFF"}>
-        <Box ml={"3"} mr={"3"}>
-          {userInfo && (
-            <Flex>
-              <Header name={userInfo.name} gym={userInfo.gym} />
+        <ScrollView backgroundColor={"#FFFFFF"}>
+          <Box ml={"3"} mr={"3"}>
+            {userInfo && (
+              <Flex>
+                <Header name={userInfo.name} gym={userInfo.gym} />
 
-              <Attribute description={description} />
-              <ButtonGroup />
-              <Description />
-              <Achievement />
-              <Calendar />
-            </Flex>
-          )}
-        </Box>
-      </ScrollView>
+                <Attribute description={description} />
+                <ButtonGroup />
+                <Description />
+                <Achievement />
+                <Calendar />
+              </Flex>
+            )}
+          </Box>
+        </ScrollView>
       </SafeAreaView>
     </NativeBaseProvider>
   );

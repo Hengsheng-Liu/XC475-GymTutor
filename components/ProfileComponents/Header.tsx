@@ -1,4 +1,4 @@
-import { Avatar, Box, Flex, Heading, Row, Text } from "native-base";
+import { Avatar, Box, Flex, Heading, Row, Text,Column } from "native-base";
 import React from "react";
 import { useAuth } from "@/Context/AuthContext";
 interface HeaderProps {
@@ -12,7 +12,7 @@ export default function Header({ name, icon, gym }: HeaderProps) {
 
   return (
     <Flex>
-      <Flex alignItems={"center"} marginBottom={2}>
+      <Flex alignItems={"center"} marginBottom={2} flexDir={"row"}>
         <Avatar
           size="2xl"
           source={
@@ -21,8 +21,10 @@ export default function Header({ name, icon, gym }: HeaderProps) {
               : require("@/assets/images/default-profile-pic.png")
           }
         />
-        <Heading size="lg">{name}</Heading>
-        <Text>{gym}</Text>
+        <Column marginLeft={2}>
+          <Heading size="lg">{name}</Heading>
+          <Text isTruncated maxW="280" w="80%">{gym}</Text>
+        </Column>
       </Flex>
     </Flex>
   );

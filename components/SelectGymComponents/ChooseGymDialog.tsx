@@ -4,36 +4,65 @@ import { router } from "expo-router";
 import { getCurrUser } from "@/components/FirebaseUserFunctions";
 import { useAuth } from "../../Context/AuthContext";
 import { firestore } from "../../firebaseConfig";
-import {
-  doc,
-  updateDoc,
-} from "firebase/firestore";
+import { doc, setDoc, updateDoc,getDoc} from "firebase/firestore";
+import { Geometry } from "react-native-google-places-autocomplete";
 interface props {
-  gym: string;
+  title: string;
   handleOpenGymDialog: (open: boolean) => void;
   OpenGymDialog: boolean;
   closeGymDialog: () => void;
+  place_id: string;
+  Geometry: Geometry;
 }
 export default function ChooseGym({
-  gym,
+  title,
   handleOpenGymDialog,
   closeGymDialog,
   OpenGymDialog,
+  place_id,
+  Geometry,
 }: props) {
   const cancelRef = React.useRef(null);
   const { User } = useAuth();
-  const handleSubmit = async () => {
-    handleOpenGymDialog(false);
-    updateGym();
-    router.push("/(tabs)/(GymPage)/(HomePage)/Home");
+  const db = firestore;
+  const updateUserGym = async () => {
+    if (!User) return;
+    const userDocRef = doc(db, "Users", User.uid);
+    await updateDoc(userDocRef, {
+      gym: title,
+    });
   };
   const updateGym = async () => {
     if (!User) return;
-    const db = firestore;
-    const userDocRef = doc(db, "Users", User.uid);
-    await updateDoc(userDocRef, {
-      gym: gym,
-    });
+    const gymDocRef = doc(db, "Gyms", place_id);
+    try {
+      const docSnap = await getDoc(gymDocRef);
+  
+      let members:string[] = [];
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        members = data.members ? [...data.members] : [];
+      }
+      if (!members.includes(User.uid)) {
+        members.push(User.uid);
+      }
+  
+      await setDoc(gymDocRef, {
+        name: title,
+        members: members,
+        Geometry: Geometry,
+      }, { merge: true });
+  
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  
+  const handleSubmit = async () => {
+    handleOpenGymDialog(false);
+    updateUserGym();
+    updateGym();
+    router.push("/(tabs)/(GymPage)/(HomePage)/Home");
   };
   return (
     <AlertDialog
@@ -46,7 +75,7 @@ export default function ChooseGym({
         <AlertDialog.Header>
           Want Choose this Gym as your Gym?
         </AlertDialog.Header>
-        <AlertDialog.Body>{gym}</AlertDialog.Body>
+        <AlertDialog.Body>{title}</AlertDialog.Body>
         <AlertDialog.Footer>
           <Button.Group space={2}>
             <Button

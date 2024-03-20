@@ -16,6 +16,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import {
   GooglePlacesAutocomplete,
   Point,
+  Geometry
 } from "react-native-google-places-autocomplete";
 
 interface GymIcon {
@@ -28,6 +29,7 @@ interface Gym {
   vicinity: string;
   photo: GymIcon | undefined;
   place_id: string;
+  geometry: Geometry;
 }
 export default function SelectGym() {
   const [SearchLocation, setSearchLocation] = useState<Point | undefined>(
@@ -62,6 +64,7 @@ export default function SelectGym() {
               }
             : undefined,
           place_id: place.place_id,
+          geometry: place.geometry,
         }));
         setNearbyGyms(newGyms);
       } catch (error) {
@@ -121,7 +124,7 @@ export default function SelectGym() {
         <FlatList
           data={NearbyGyms}
           renderItem={({ item }) => (
-            <Gym title={item.name} Address={item.vicinity} photo={item.photo} />
+            <Gym title={item.name} Address={item.vicinity} photo={item.photo} Geometry={item.geometry} place_id={item.place_id}/>
           )}
           keyExtractor={(item) => item.place_id}
         ></FlatList>
