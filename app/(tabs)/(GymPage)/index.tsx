@@ -16,8 +16,9 @@ import { FontAwesome } from "@expo/vector-icons";
 import {
   GooglePlacesAutocomplete,
   Point,
+  Geometry
 } from "react-native-google-places-autocomplete";
-
+import * as Location from "expo-location";
 interface GymIcon {
   photoURL: string;
   height: number;
@@ -28,14 +29,28 @@ interface Gym {
   vicinity: string;
   photo: GymIcon | undefined;
   place_id: string;
+  geometry: Geometry;
 }
 export default function SelectGym() {
   const [SearchLocation, setSearchLocation] = useState<Point | undefined>(
     undefined
   );
-  const [NearbyGyms, setNearbyGyms] = useState<Gym[]>([]); // [name, address, photoURL, rating, openNow, distance,
+  const [NearbyGyms, setNearbyGyms] = useState<Gym[]>([]);
+  const getPermission = async () => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission to access location was denied');
+        return true;
+      }
+    } catch (error) {
+      console.log("Error fetching location:", error);
+    }
+  }
+
   useEffect(() => {
     // Make sure SearchLocation is defined and has the necessary properties
+
     if (
       !SearchLocation ||
       SearchLocation.lat === undefined ||
@@ -62,6 +77,7 @@ export default function SelectGym() {
               }
             : undefined,
           place_id: place.place_id,
+          geometry: place.geometry,
         }));
         setNearbyGyms(newGyms);
       } catch (error) {
@@ -121,7 +137,7 @@ export default function SelectGym() {
         <FlatList
           data={NearbyGyms}
           renderItem={({ item }) => (
-            <Gym title={item.name} Address={item.vicinity} photo={item.photo} />
+            <Gym title={item.name} Address={item.vicinity} photo={item.photo} Geometry={item.geometry} place_id={item.place_id}/>
           )}
           keyExtractor={(item) => item.place_id}
         ></FlatList>

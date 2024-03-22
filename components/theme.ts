@@ -1,4 +1,5 @@
 import { extendTheme } from 'native-base';
+import { background } from 'native-base/lib/typescript/theme/styled-system';
 
 const theme = extendTheme({
     components:{

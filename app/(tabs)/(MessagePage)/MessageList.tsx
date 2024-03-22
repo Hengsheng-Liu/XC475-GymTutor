@@ -1,19 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Button, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, FlatList, StyleSheet, Dimensions } from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { getUsers, IUser, updateUsers } from '@/components/FirebaseUserFunctions';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Button,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import {
+  getUsers,
+  IUser,
+  updateUsers,
+} from "@/components/FirebaseUserFunctions";
 import { useAuth } from "@/Context/AuthContext";
-import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
-import { styles } from '../../../components/HomeComponents/DisplayUsersStyles';
+import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
+import { styles } from "../../../components/HomeComponents/DisplayUsersStyles";
 import { router } from "expo-router";
 
 type Props = {
   navigation: StackNavigationProp<any>;
 };
 
-
 const MessageList: React.FC<Props> = ({ navigation }) => {
-
   const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
   const [users, setUsers] = useState<IUser[]>([]); // State to store users
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
@@ -30,7 +43,6 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
     // Do something when user is clicked
     // Open Profile
   };
-
 
   // Get users from database using filters
   const handleGetUsers = async () => {
@@ -53,11 +65,20 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
       >
         <TextInput
           placeholder="Looking for your chat history"
-          style={{ borderWidth: 1, borderColor: 'gray', padding: 10, marginBottom: 10 }}
+          style={{
+            borderWidth: 1,
+            borderColor: "gray",
+            padding: 10,
+            marginBottom: 10,
+          }}
         />
         <Text> Explore new users! </Text>
         {users.map((user, index) => (
-          <TouchableOpacity key={index} style={styles.userContainer} onPress={() => router.navigate("ChatPage")}>
+          <TouchableOpacity
+            key={index}
+            style={styles.userContainer}
+            onPress={() => router.navigate("ChatPage")}
+          >
             <View style={styles.profilePicture}></View>
             {/* Once we have an image, I can put this */}
             {/* <Image
