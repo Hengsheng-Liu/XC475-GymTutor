@@ -38,10 +38,18 @@ export default function Description({bio, onSave}: DescriptionProps) {
           </Pressable>
         )}
       </HStack>
-      <Box shadow={3} backgroundColor={"gray.100"} mt={2} borderRadius={10}>
+      <Box 
+      flexDirection="column"
+      alignItems="flex-start"
+      shadow={3} 
+      backgroundColor={"gray.100"} 
+      mt={2} 
+      borderRadius={10}>
+        
         {editMode ? (
           <Input
-          color={"lightBlue.900"} mt={2} padding={3}
+            multiline={true}
+            color={"lightBlue.900"} mt={2} padding={3}
             value={newBio}
             onChangeText={setNewBio}
             placeholder="Enter your description"
