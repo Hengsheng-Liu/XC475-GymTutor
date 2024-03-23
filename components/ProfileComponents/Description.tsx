@@ -63,8 +63,14 @@ export default function Description({bio, onSave}: DescriptionProps) {
       {editMode && (
 
               <Button
+              alignSelf="left"
+              mt={2}
+              width="auto"
+              justifyContent="center"
+              alignItems="center"
+              px={6}
+
               onPress={handleSave}
-              flexGrow={"1"}
               backgroundColor={"#0284C7"}
               leftIcon={<AntDesign name="check" size={24} color="white" />}
             >
