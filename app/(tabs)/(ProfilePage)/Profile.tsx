@@ -45,6 +45,8 @@ import { SafeAreaView } from "react-native";
 const ProfilePage = () => {
   const [userInfo, setUserInfo] = useState<IUser>();
   const { User } = useAuth(); // gets current user's authentication data (in particular UID)
+ 
+  // this used to be dummy data for 'tags'
   const description: string[] = [
     "GymNewbie",
     "YogaLover",
@@ -68,6 +70,17 @@ const ProfilePage = () => {
 
   }, []);
 
+  const updateBio = async (newBio) => {
+    if (User) {
+      try {
+        await updateDoc(doc(firestore, "Users", User.uid), { bio: newBio });
+      } catch (error) {
+        console.error("Error updating bio: ", error);
+      }
+  }
+
+  };
+
   const theme = extendTheme({
     components: {
       Button: {
@@ -90,7 +103,7 @@ const ProfilePage = () => {
 
                 <Attribute description={userInfo.tags} />
                 <ButtonGroup />
-                <Description bio={userInfo.bio} />
+                <Description bio={userInfo.bio} onSave={updateBio}/>
                 <Achievement />
                 <Calendar />
               </Flex>
