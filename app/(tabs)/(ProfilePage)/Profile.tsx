@@ -62,7 +62,6 @@ const ProfilePage = () => {
     const fetchUser = async () => {
       const unsub = onSnapshot(doc(firestore, "Users", User.uid), (doc) => {
         setUserInfo(doc.data() as IUser);
-        console.log("user info", userInfo)
       });
     };
     fetchUser();
@@ -89,7 +88,7 @@ const ProfilePage = () => {
               <Flex>
                 <Header name={userInfo.name} gym={userInfo.gym} />
 
-                <Attribute description={description} />
+                <Attribute description={userInfo.tags} />
                 <ButtonGroup />
                 <Description bio={userInfo.bio} />
                 <Achievement />
