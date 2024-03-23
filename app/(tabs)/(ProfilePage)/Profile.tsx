@@ -62,9 +62,11 @@ const ProfilePage = () => {
     const fetchUser = async () => {
       const unsub = onSnapshot(doc(firestore, "Users", User.uid), (doc) => {
         setUserInfo(doc.data() as IUser);
+        console.log("user info", userInfo)
       });
     };
     fetchUser();
+
   }, []);
 
   const theme = extendTheme({
@@ -89,7 +91,7 @@ const ProfilePage = () => {
 
                 <Attribute description={description} />
                 <ButtonGroup />
-                <Description />
+                <Description bio={userInfo.bio} />
                 <Achievement />
                 <Calendar />
               </Flex>

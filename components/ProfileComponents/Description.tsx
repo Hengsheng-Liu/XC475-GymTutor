@@ -9,7 +9,12 @@ import {
 } from "native-base";
 import { FontAwesome6 } from "@expo/vector-icons";
 
-export default function Description() {
+interface DescriptionProps{
+  bio: string;
+}
+
+export default function Description({bio}: DescriptionProps) {
+  console.log("bio is", bio);
   return (
     <VStack mt={"4"}>
       <HStack>
@@ -24,10 +29,8 @@ export default function Description() {
           mt={2}
           padding={3}
         >
-          Hi! I am a recent college entrant who happens to be a little
-          introverted. Upon arriving at college, I notice impressive physiques
-          and I want to training but I don’t not know how to. So I am looking
-          for solutions and I am willing to even pay for one.
+          {bio}
+
         </Text>
       </Box>
     </VStack>
