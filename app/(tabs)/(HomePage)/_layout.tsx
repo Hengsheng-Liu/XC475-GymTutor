@@ -3,11 +3,11 @@ import { Stack } from "expo-router"
 export default function authLayout() {
     return(
         <Stack>
-        <Stack.Screen name="Home" options= {{headerShown: false, headerTitle: ""}}/>
+        <Stack.Screen name="index" options= {{headerShown: false, headerTitle: ""}}/>
         <Stack.Screen name="Friends" options= {{headerTitle: "My Friends"}}/>
         <Stack.Screen name="Notifications" options= {{headerTitle: "Notifications"}}/>
         <Stack.Screen name="Filter" options= {{headerTitle: "Filters"}}/>
-        <Stack.Screen name="index" options= {{headerShown: false, headerTitle: "Select Your Gym"}}/>
+        <Stack.Screen name="SelectGym" options= {{headerTitle: "Select Your Gym"}}/>
 
         </Stack>
     )
