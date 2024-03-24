@@ -17,6 +17,7 @@
     "@expo/webpack-config": "~19.0.1",
     "@firebase/firestore-types": "^3.0.0",
     "@firebase/storage": "^0.12.1",
+    "@ptomasroos/react-native-multi-slider": "^2.2.2",
     "@react-native-community/datetimepicker": "^7.6.2",
     "@react-native-community/geolocation": "^3.2.0",
     "@react-native-firebase/app": "^19.0.0",

@@ -17,6 +17,9 @@ import { Geometry } from 'react-native-google-places-autocomplete';
 // Update this and addUsers function when adding new fields
 // Use updateUsers function to initialize new fields on all users.
 // Define User interface
+
+type filter = [string, string, any];
+
 export interface IUser {
     uid: string;
     email: string;
@@ -36,7 +39,9 @@ export interface IUser {
     gymExperience: string;
     currentlyMessaging: string[];
     gymId: string;
+    filters: filter[];
 }
+
 export interface Gym{
     name: string;
     members: string[];
@@ -45,7 +50,8 @@ export interface Gym{
 }
 
 // Function to retrieve users data from Firestore with a filter of gym or any other
-export const getUsers = async (UID: string, gymId?: string, filters?: [string, string, any][]): Promise<IUser[]> => {
+export const getUsers = async (UID: string, gymId?: string, 
+        filters?: { field: string, operator: string, value: any }[]): Promise<IUser[]> => {
     const db = firestore;
 
     try {
@@ -67,12 +73,22 @@ export const getUsers = async (UID: string, gymId?: string, filters?: [string, s
         let usersQuery = memberIds.length > 0 ? 
             query(collection(db, 'Users'), where('uid', 'in', memberIds)):
             query(collection(db, 'Users'));
-
+        
         // Apply additional filters if provided
         if (filters && filters.length > 0) {
-            filters.forEach(([filterName, symbol, value]) => {
-                usersQuery = query(usersQuery, where(filterName, symbol as any, value));
-            });
+            for (const filter of filters) {
+                if (filter.value == ""){
+                    continue
+                }
+                if (filter.field == "gymExperience"){
+                    if (filter.operator == "<="){
+                        continue
+                    }
+                }
+                console.log("filter", filter.field, filter.operator, filter.value);
+                usersQuery = query(usersQuery, where(filter.field, filter.operator as any, filter.value as string));
+                
+            }
         }
 
         // Get each user and save their data
@@ -98,19 +114,27 @@ export const getUsers = async (UID: string, gymId?: string, filters?: [string, s
 
 // Function to retrieve users data from Firestore with a filter of gym or any other
 export const getUsers2 = async (UID: string, gym?: string, 
-    filters?: [string, string, any][]): Promise<IUser[]> => {
+    filters?: { field: string, operator: string, value: any }[]): Promise<IUser[]> => {
     const db = firestore;
-
+    
     // Query users from a specific gym, or all users if none is given
     let usersQuery = gym ? query(collection(db, 'Users'), where('gym', '==', gym)) : 
         collection(db, 'Users');
 
     // Query users based on given filters
     // TODO: Only query some of them
+    console.log("HEEEEEY", filters);
+    if (filters){
+        console.log("CHECKED")
+    }
     if (filters && filters.length > 0) {
-        filters.forEach(([filterName, symbol, value]) => {
-            usersQuery = query(usersQuery, where(filterName, symbol as any, value));
-        });
+        console.log("CHECKED");
+        for (const filter of filters) {
+            console.log("filter");
+            console.log(filter.field, filter.operator, filter.value);
+            usersQuery = query(usersQuery, where(filter.field, filter.operator as any, filter.value));
+            console.log(usersQuery);
+        }
     }
 
     // Get each user and save their data
@@ -163,6 +187,7 @@ export async function addUser(
         age: string = "", 
         bio: string = "",
         sex: string = "", 
+        filters: filter[],
         tags: string[] = []): Promise<void> {
         
     const db = firestore;
@@ -186,7 +211,8 @@ export async function addUser(
             icon: "",
             achievements: [],
             gymExperience: "0",
-            currentlyMessaging: []
+            currentlyMessaging: [],
+            filters: [],
         });
         console.log("Document written for user: ", uid);
     } catch (error) {
@@ -212,29 +238,47 @@ export async function updateUsers(): Promise<void> {
         // Fetch all users
         const querySnapshot = await getDocs(usersRef);
 
-        // Assuming you have a list of gyms with their IDs
-        const gymsList: { gym: string, gymId: string }[] = [
-            { gym: 'Back Bay Fit', gymId: 'ChIJ1R1krgR644kRWNHhZ7Xfbjg' },
-            { gym: 'Boston University Fitness and Recreation Center', gymId: 'ChIJ4Whn6Oh544kRNbDs7r_lQ68' },
-            { gym: 'Boston YMC Union', gymId: 'ChIJFawAyHd644kRV9wDs0Puy-s' },
-            { gym: 'Invictus Boston - Fenway', gymId: 'ChIJSw7FxfV544kRedruTET0Sfc' },
-            { gym: 'Esplanade Outdoor Gym', gymId: 'ChIJf5s4Svh544kRh8KQMWEZcYg' },
-            // Add more gyms as needed
-        ];
-
         // Iterate over each user document
         for (const doc1 of querySnapshot.docs) {
             const userData = doc1.data() as IUser;
+            // Create random values for fields. Uncomment when used
+        const minAge = 18;
+        const maxAge = 60;
+        const randomAge = Math.floor(Math.random() * (maxAge - minAge + 1)) + minAge;
 
-            const randomIndex = Math.floor(Math.random() * gymsList.length);
-            const randomGym = gymsList[randomIndex].gym;
-            const randomGymId = gymsList[randomIndex].gymId;
+        const minExp = 0;
+        const maxExp = 10;
+        const randomExp = Math.floor(Math.random() * (maxExp - minExp + 1)) + minExp;
+
+        function generateRandomSex(): 'male' | 'female' {
+        // Generate a random number between 0 and 1
+            const randomValue = Math.random();
+            // If the random number is less than 0.5, return 'male', otherwise return 'female'
+            return randomValue < 0.5 ? 'male' : 'female';
+            }
+
+            const randomSex: 'male' | 'female' = generateRandomSex();
+
+            const maleNames: string[] = ['James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Joseph', 'Charles', 'Thomas', 'Christopher', 'Daniel', 'Matthew', 'Anthony', 'Donald', 'Mark', 'Paul', 'Steven', 'Andrew', 'Kenneth', 'George', 'Joshua', 'Kevin', 'Brian', 'Edward', 'Ronald', 'Timothy', 'Jason', 'Jeffrey', 'Ryan', 'Gary', 'Nicholas', 'Eric', 'Stephen', 'Jacob', 'Larry', 'Frank', 'Jonathan', 'Scott', 'Justin', 'Brandon', 'Raymond', 'Gregory', 'Samuel', 'Benjamin', 'Patrick', 'Jack', 'Alexander'];
+            const femaleNames: string[] = ['Mary', 'Jennifer', 'Linda', 'Patricia', 'Susan', 'Karen', 'Jessica', 'Nancy', 'Sarah', 'Emily', 'Megan', 'Ashley', 'Amanda', 'Melissa', 'Deborah', 'Stephanie', 'Heather', 'Nicole', 'Elizabeth', 'Laura', 'Michelle', 'Kimberly', 'Amy', 'Angela', 'Christine', 'Samantha', 'Donna', 'Tiffany', 'Carol', 'Cynthia', 'Patricia', 'Sharon', 'Margaret', 'Lisa', 'Rebecca', 'Kathleen', 'Andrea', 'Pamela', 'Anna', 'Marie', 'Debra', 'Emily', 'Kelly', 'Mary', 'Brenda', 'Kristen', 'Janet', 'Julie'];
+
+            // Function to generate a random name based on gender
+            function generateRandomName(gender: 'male' | 'female'): string {
+                const names = gender === 'male' ? maleNames : femaleNames;
+                const randomIndex = Math.floor(Math.random() * names.length);
+                return names[randomIndex];
+            }
+
+            // Example usage
+            const randomName: string = generateRandomName(randomSex);
 
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
-                gym: randomGym,
-                gymId: randomGymId
+                name: randomName,
+                sex: randomSex,
+                age: randomAge.toString(),
+                gymExperience: randomExp.toString(),
             };
 
             // Update document if any field is missing

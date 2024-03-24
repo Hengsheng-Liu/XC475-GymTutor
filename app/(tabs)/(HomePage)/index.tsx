@@ -1,139 +1,44 @@
-import React, { useState, useEffect } from "react";
-import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { StyleSheet } from "react-native";
 import {
+  View,
   NativeBaseProvider,
-  Input,
-  IconButton,
-  Row,
-  Flex,
+  extendTheme,
   Box,
-  Button,
+  Flex,
+  FlatList,
+  Heading,
   Text,
-  Badge,
 } from "native-base";
-import {
-  Image,
-  ScrollView,
-  ActivityIndicator,
-  Button as RButton,
-} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FontAwesome, Ionicons, FontAwesome5 } from "@expo/vector-icons";
-import { useAuth } from "@/Context/AuthContext";
+import Gym from "../../../components/SelectGymComponents/GymComponent";
+import { FontAwesome } from "@expo/vector-icons";
 import {
-  IUser,
-  getUsers,
-  getCurrUser,
-  updateUsers,
-  removeFieldFromUsers,
-  Gym,
-} from "@/components/FirebaseUserFunctions";
-import UserPreview from "../../../components/HomeComponents/UserContainer";
-import Header from "../../../components/HomeComponents/Header";
-import theme from "@/components/theme";
-import updateUser from "@/components/storage";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
-import { firestore } from "@/firebaseConfig";
+  GooglePlacesAutocomplete,
+  Point,
+  Geometry
+} from "react-native-google-places-autocomplete";
 import * as Location from "expo-location";
+import { useAuth } from "@/Context/AuthContext";
 
-export default function HomeScreen() {
-  const [gym, setGym] = useState<Gym>(); // State to store the gym 
-  const [gymName, setGymName] = useState<string>();
-  const [user, setUser] = useState<IUser>(); // State to store the current user
-  const [gymId, setGymId] = useState<string>("");
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [users, setUsers] = useState<IUser[]>([]); // State to store users
-  const [loading, setLoading] = useState<boolean>(false); // State to track loading state
-  const [location, setLocation] = useState<Location.LocationObjectCoords>(); 
-  const { currUser, User } = useAuth();
-  if (!User) return;
-  if (!currUser) return;
-
-  useEffect(() => {
-    // Fetch gym name for current user
-    if (!gymId && !gymName) {
-      console.log("Initialize gym: ", currUser.gymId, currUser.gym);
-      setGymId(currUser.gymId);
-      setGymName(currUser.gym);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Fetch gym name for current user
-    const fetchGym = async () => {
-      const gymDocRef = doc(firestore, "Gyms", gymId);
-      const userGym = (await getDoc(gymDocRef)).data() as Gym;
-      setGym(userGym);
-      // console.log(user);
-      handleGetUsers();
-    };
-
-    const unsubscribe = onSnapshot(doc(firestore, 'Users', User.uid), (snapshot) => {
-      const updatedUser = snapshot.data() as IUser;
-       // Update gymName state whenever the user document changes
-      const newGymId = updatedUser.gymId;
-      const newGymName = updatedUser.gym;
-
-       if (gymId && gymId != newGymId){
-          console.log("Listened gym change: ", gymName, newGymName);
-          setGymId(newGymId);  
-          setGymName(newGymName);
-      }
-    });
-
-    // Clean up the listener when the component unmounts
-    return () => {
-      unsubscribe();
-    };
-    
-  }, [User]);
-
-  useEffect(() => {
-    // Fetch gym name for current user
-    const fetchUsers = async () => {
-      console.log("Retrieving users of gym", gymId, gymName);
-      handleGetUsers();
-    }
-
-    if (gymId && gymName){
-      fetchUsers();
-    }
-    
-  }, [gymId]);
+interface GymIcon {
+  photoURL: string;
+  height: number;
+  width: number;
+}
+interface Gym {
+  name: string;
+  vicinity: string;
+  photo: GymIcon | undefined;
+  place_id: string;
+  geometry: Geometry;
+}
+export default function SelectGym() {
+  const [SearchLocation, setSearchLocation] = useState<Point | undefined>(
+    undefined
+  );
+  const [NearbyGyms, setNearbyGyms] = useState<Gym[]>([]);
   
-  // TODO: Display user preview when clicked
-  const handlePreviewClick = (user: IUser) => {
-    // Do something when user is clicked
-    // Open Profile
-  };
-
-  // Get users from database from gym
-  const handleGetUsers = async () => {
-    /// await updateUser(currUser.uid);
-    // updateUsers(); // Uncomment when we want to use it to add fields
-    setUsers([]);
-    setLoading(true);
-    const fetchedUsers = await getUsers(User.uid, gymId);
-    setUsers(fetchedUsers);
-    setLoading(false);
-  };
-
-  // Search users by name
-  const handleSearchUsers = async () => {
-    setUsers([]);
-    setLoading(true);
-    let fetchedUsers: IUser[];
-    if (searchTerm == "") {
-      fetchedUsers = await getUsers(User.uid, gymId);
-    } else  {
-      // fetchedUsers = await getUsers(currUser.uid);
-      fetchedUsers = await getUsers(User.uid);
-      console.log(fetchedUsers);
-    }
-    setUsers(fetchedUsers);
-    setLoading(false);
-  };
-
   const getPermission = async () => {
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -145,73 +50,107 @@ export default function HomeScreen() {
       console.log("Error fetching location:", error);
     }
   }
-  const getUserlocation = () => {
-    setTimeout(async () => {
-      const location = await Location.getCurrentPositionAsync({});
-      setLocation(location.coords);
-    }, 1000);
-  }
+
   useEffect(() => {
-    getPermission().then((status) => {
-      if (status) return;
-      getUserlocation();
-    });
+    // Make sure SearchLocation is defined and has the necessary properties
 
-  }, [location]);
+    if (
+      !SearchLocation ||
+      SearchLocation.lat === undefined ||
+      SearchLocation.lng === undefined
+    )
+      return;
+    const fetchNearbyGyms = async () => {
+      
+      const url = process.env.EXPO_PUBLIC_FetchGym_URL+`?lat=${SearchLocation.lat}&lng=${SearchLocation.lng}`;
 
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Failed to fetch");
+        const Gymdata = await response.json();
+
+        const newGyms = Gymdata.results.map((place: any) => ({
+          name: place.name,
+          vicinity: place.vicinity,
+          photo: place.photos
+            ? {
+                photoURL: place.photos[0].photo_reference,
+                height: place.photos[0].height,
+                width: place.photos[0].width,
+              }
+            : undefined,
+          place_id: place.place_id,
+          geometry: place.geometry,
+        }));
+        setNearbyGyms(newGyms);
+      } catch (error) {
+        console.log(url);
+        console.error("Error fetching nearby gyms:", error);
+      }
+    };
+    setNearbyGyms([]);
+    fetchNearbyGyms();
+  }, [SearchLocation]);
+
+  const theme = extendTheme({
+    components: {
+      Text: {
+        baseStyle: {
+          color: "#F0F9FF",
+        },
+      },
+      Heading: {
+        baseStyle: {
+          color: "#F0F9FF",
+        },
+      },
+    },
+  });
   return (
     <NativeBaseProvider theme={theme}>
-      <SafeAreaView
-        style={{ backgroundColor: "#FFF", flex: 1, padding: 15, paddingTop: 2 }}
-      >
-        <ScrollView>
-          <Header GymName={gymName? gymName : ""} />
-          <Input
-            InputLeftElement={
-              <IconButton
-                size="xs"
-                onPress={handleSearchUsers}
-                icon={<FontAwesome name="search" size={24} color="#075985" />}
-              />
-            }
-            placeholder="Spot someone in this gym"
-            bgColor="trueGray.100"
-            onChangeText={setSearchTerm}
-            borderRadius="md"
-            borderWidth={1}
+      <SafeAreaView style={styles.container}>
+        <Box margin={2}>
+          <Flex justifyContent={"space-between"} flexDirection={"row"}>
+            <Box>
+              <Heading> Select Your Gym </Heading>
+              <Text> Find the gym that you go most often </Text>
+            </Box>
+            <FontAwesome name="map-o" size={50} color="#F0F9FF" />
+          </Flex>
+          <Box marginTop={4}></Box>
+        </Box>
+        <Box m={2}>
+          <GooglePlacesAutocomplete
+            placeholder="Enter your zip code to search"
+            onPress={(data, details = null) => {
+              setSearchLocation(details?.geometry.location);
+            }}
+            query={{
+              key: process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
+              language: "en",
+            }}
+            styles={{
+              container: {
+                flex: 0,
+              },
+            }}
+            fetchDetails
           />
-          <Row mb={1}>
-            <IconButton
-              size="xs"
-              onPress={() => router.push("/Filter")}
-              icon={<Ionicons name="filter" size={24} color="#075985" />}
-            />
-            <IconButton
-              size="xs"
-              onPress={() => router.push("/Friends")}
-              icon={
-                <FontAwesome5 name="user-friends" size={24} color="#075985" />
-              }
-            />
-          </Row>
-          {users.map((user) => (
-            <UserPreview friend={user} key={user.uid} />
-          ))}
-          {loading && <ActivityIndicator size="large" color="#0000ff" />}
-        </ScrollView>
-        <Button
-          size={"lg"}
-          borderRadius={30}
-          position={"absolute"}
-          top={675}
-          left={280}
-          background={"#0284C7"}
-          onPress={() => console.log("hello")}
-        >
-          {" "}
-          Check In
-        </Button>
+        </Box>
+        <FlatList
+          data={NearbyGyms}
+          renderItem={({ item }) => (
+            <Gym title={item.name} Address={item.vicinity} photo={item.photo} Geometry={item.geometry} place_id={item.place_id}/>
+          )}
+          keyExtractor={(item) => item.place_id}
+        ></FlatList>
       </SafeAreaView>
     </NativeBaseProvider>
   );
 }
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#0369A1",
+  },
+});
