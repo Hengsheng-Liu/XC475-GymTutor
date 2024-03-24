@@ -43,8 +43,9 @@ export default function HomeScreen() {
   const [users, setUsers] = useState<IUser[]>([]); // State to store users
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
   const [location, setLocation] = useState<Location.LocationObjectCoords>(); 
-  const { User } = useAuth();
+  const { currUser, User } = useAuth();
   if (!User) return;
+  if (!currUser) return;
 
   useEffect(() => {
     // Fetch gym name for current user
@@ -54,7 +55,7 @@ export default function HomeScreen() {
       const gymDocRef = doc(firestore, "Gyms", user.gymId);
       const userGym = (await getDoc(gymDocRef)).data() as Gym;
       setGym(userGym);
-      console.log(user);
+      // console.log(user);
       handleGetUsers();
     };
     fetchGym();
@@ -68,14 +69,15 @@ export default function HomeScreen() {
 
   // Get users from database from gym
   const handleGetUsers = async () => {
-    // await updateUser(currUser.uid);
+    /// await updateUser(currUser.uid);
     // updateUsers(); // Uncomment when we want to use it to add fields
     setUsers([]);
     setLoading(true);
-    const fetchedUsers = await getUsers(User.uid);
+    const fetchedUsers = await getUsers(User.uid, currUser.gymId);
     setUsers(fetchedUsers);
     setLoading(false);
   };
+
   // Search users by name
   const handleSearchUsers = async () => {
     setUsers([]);
@@ -91,6 +93,7 @@ export default function HomeScreen() {
     setUsers(fetchedUsers);
     setLoading(false);
   };
+
   const getPermission = async () => {
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -121,7 +124,7 @@ export default function HomeScreen() {
         style={{ backgroundColor: "#FFF", flex: 1, padding: 15, paddingTop: 2 }}
       >
         <ScrollView>
-          <Header currUser={User} GymName={user?.gym} />
+          <Header GymName={currUser?.gym} />
           <Input
             InputLeftElement={
               <IconButton
@@ -139,7 +142,7 @@ export default function HomeScreen() {
           <Row mb={1}>
             <IconButton
               size="xs"
-              onPress={handleGetUsers}
+              onPress={() => router.push("/Filter")}
               icon={<Ionicons name="filter" size={24} color="#075985" />}
             />
             <IconButton

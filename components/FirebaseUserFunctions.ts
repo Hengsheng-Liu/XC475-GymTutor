@@ -13,6 +13,7 @@ import {
     arrayUnion} from 'firebase/firestore';
 import { useAuth } from "../Context/AuthContext";
 import { Geometry } from 'react-native-google-places-autocomplete';
+
 // Update this and addUsers function when adding new fields
 // Use updateUsers function to initialize new fields on all users.
 // Define User interface
@@ -44,7 +45,59 @@ export interface Gym{
 }
 
 // Function to retrieve users data from Firestore with a filter of gym or any other
-export const getUsers = async (UID: string, gym?: string, 
+export const getUsers = async (UID: string, gymId?: string, filters?: [string, string, any][]): Promise<IUser[]> => {
+    const db = firestore;
+
+    try {
+        // Get gym members if gym name is provided
+        let memberIds: string[] = [];
+        if (gymId) {
+            const gymSnapshot = await getDoc(doc(db, 'Gyms', gymId));
+            if (gymSnapshot.exists()) {
+                const gymData = gymSnapshot.data();
+                if (gymData && gymData.members) {
+                    memberIds = gymData.members;
+                }
+            } 
+
+        }
+
+        // Query  users from their gym. If they don't have one, query all users
+        // TODO: Maybe query only nearby users.
+        let usersQuery = memberIds.length > 0 ? 
+            query(collection(db, 'Users'), where('uid', 'in', memberIds)):
+            query(collection(db, 'Users'));
+
+        // Apply additional filters if provided
+        if (filters && filters.length > 0) {
+            filters.forEach(([filterName, symbol, value]) => {
+                usersQuery = query(usersQuery, where(filterName, symbol as any, value));
+            });
+        }
+
+        // Get each user and save their data
+        const querySnapshot = await getDocs(usersQuery);
+        const usersData: IUser[] = [];
+
+        // Save user data if it is not the current User
+        querySnapshot.forEach(snap => {
+            const userData = snap.data() as IUser;
+            if (userData.uid !== UID) {
+                usersData.push(userData);
+            }
+        });
+
+        return usersData;
+
+    } catch (error) {
+        // Throw error for handling in the caller function
+        console.error('Error querying users:', error);
+        throw error;
+    }
+};
+
+// Function to retrieve users data from Firestore with a filter of gym or any other
+export const getUsers2 = async (UID: string, gym?: string, 
     filters?: [string, string, any][]): Promise<IUser[]> => {
     const db = firestore;
 
@@ -105,6 +158,7 @@ export async function addUser(
         uid: string, 
         email: string = "", 
         gym: string = "", 
+        gymId: string = "",
         name: string = "", 
         age: string = "", 
         bio: string = "",
@@ -127,6 +181,7 @@ export async function addUser(
             rejectedRequests: [],
             blockedUsers: [],
             gym: gym,
+            gymId: gymId,
             checkInHistory: [],
             icon: "",
             achievements: [],
@@ -142,10 +197,13 @@ export async function addUser(
 // Function to get Current user given their uid.
 export async function getCurrUser(uid: string): Promise<IUser> {
     const currUser = await getUser(uid);
+    if (currUser === null) {
+        throw new Error(`User with UID ${uid} not found`);
+    }
     return currUser;
 }
 
-// Define a function to fetch all users and update them with missing fields
+
 export async function updateUsers(): Promise<void> {
     const db = firestore;
     const usersRef = collection(db, 'Users');
@@ -154,21 +212,108 @@ export async function updateUsers(): Promise<void> {
         // Fetch all users
         const querySnapshot = await getDocs(usersRef);
 
+        // Assuming you have a list of gyms with their IDs
+        const gymsList: { gym: string, gymId: string }[] = [
+            { gym: 'Back Bay Fit', gymId: 'ChIJ1R1krgR644kRWNHhZ7Xfbjg' },
+            { gym: 'Boston University Fitness and Recreation Center', gymId: 'ChIJ4Whn6Oh544kRNbDs7r_lQ68' },
+            { gym: 'Boston YMC Union', gymId: 'ChIJFawAyHd644kRV9wDs0Puy-s' },
+            { gym: 'Invictus Boston - Fenway', gymId: 'ChIJSw7FxfV544kRedruTET0Sfc' },
+            { gym: 'Esplanade Outdoor Gym', gymId: 'ChIJf5s4Svh544kRh8KQMWEZcYg' },
+            // Add more gyms as needed
+        ];
 
         // Iterate over each user document
-        querySnapshot.forEach(async (doc) => {
-            const userData = doc.data() as IUser;
+        for (const doc1 of querySnapshot.docs) {
+            const userData = doc1.data() as IUser;
+
+            const randomIndex = Math.floor(Math.random() * gymsList.length);
+            const randomGym = gymsList[randomIndex].gym;
+            const randomGymId = gymsList[randomIndex].gymId;
 
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
+                gym: randomGym,
+                gymId: randomGymId
             };
 
             // Update document if any field is missing
             if (Object.keys(newUserFields).length > 0) {
-                await updateDoc(doc.ref, newUserFields);
+                await updateDoc(doc1.ref, newUserFields);
             }
-        });
+        }
+
+        console.log('All users updated with missing fields successfully');
+    } catch (error) {
+        console.error('Error updating users with missing fields:', error);
+        throw error;
+    }
+}
+
+// Define a function to fetch all users and update them with missing fields
+export async function updateUsersandGym(): Promise<void> {
+    const db = firestore;
+    const usersRef = collection(db, 'Users');
+    const gymsRef = collection(db, "Gyms");
+
+    try {
+        // Fetch all users
+        const querySnapshot = await getDocs(usersRef);
+        const queryGymSnapshot = await getDocs(gymsRef);
+
+        // Empty members from gym
+        for (const doc of queryGymSnapshot.docs) {
+            const newGymFields: Partial<Gym> = {
+                members: []
+            };
+
+            // Update document if any field is missing
+            if (Object.keys(newGymFields).length > 0) {
+                await updateDoc(doc.ref, newGymFields);
+            }
+        }
+
+        // Assuming you have a list of gyms with their IDs
+        const gymsList: { gym: string, gymId: string }[] = [
+            { gym: 'Back Bay Fit', gymId: 'ChIJ1R1krgR644kRWNHhZ7Xfbjg' },
+            { gym: 'Boston University Fitness and Recreation Center', gymId: 'ChIJ4Whn6Oh544kRNbDs7r_lQ68' },
+            { gym: 'Boston YMC Union', gymId: 'ChIJFawAyHd644kRV9wDs0Puy-s' },
+            { gym: 'Invictus Boston - Fenway', gymId: 'ChIJSw7FxfV544kRedruTET0Sfc' },
+            { gym: 'Esplanade Outdoor Gym', gymId: 'ChIJf5s4Svh544kRh8KQMWEZcYg' },
+            // Add more gyms as needed
+        ];
+
+        // Iterate over each user document
+        for (const doc1 of querySnapshot.docs) {
+            const userData = doc1.data() as IUser;
+
+            const randomIndex = Math.floor(Math.random() * gymsList.length);
+            const randomGym = gymsList[randomIndex].gym;
+            const randomGymId = gymsList[randomIndex].gymId;
+
+            // Define an empty user object with all fields set to empty strings
+            // Add fields to update
+            const newUserFields: Partial<IUser> = {
+                gym: randomGym,
+                gymId: randomGymId
+            };
+
+            // Update document if any field is missing
+            if (Object.keys(newUserFields).length > 0) {
+                await updateDoc(doc1.ref, newUserFields);
+            }
+            
+            const gymRef = doc(db, 'Gyms', randomGymId);
+            const gymDocSnapshot = await getDoc(gymRef);
+
+            if (gymDocSnapshot.exists()) {
+                const gymData = gymDocSnapshot.data();
+                if (gymData && Array.isArray(gymData.members)) {
+                    const updatedMembers = [...gymData.members, doc1.data().uid];
+                    await updateDoc(gymDocSnapshot.ref, { members: updatedMembers });
+                }
+            }
+        }
 
         console.log('All users updated with missing fields successfully');
     } catch (error) {
@@ -206,10 +351,6 @@ export async function randomIt(): Promise<void> {
     const minExp = 0;
     const maxExp = 10;
     const randomExp = Math.floor(Math.random() * (maxExp - minExp + 1)) + minExp;
-
-    const gyms = ['Gym A', 'Gym B', 'Gym C', 'Gym D', 'Gym E'];
-    const randomGymIndex = Math.floor(Math.random() * gyms.length);
-    const randomGym = gyms[randomGymIndex];
 
     function generateRandomSex(): 'male' | 'female' {
         // Generate a random number between 0 and 1
