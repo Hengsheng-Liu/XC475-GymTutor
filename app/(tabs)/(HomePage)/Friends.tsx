@@ -8,8 +8,8 @@ import { Flex, Text} from "native-base";
 import { firestore } from '@/firebaseConfig';
 import { doc, onSnapshot } from 'firebase/firestore';
 
-import FriendContainer from '../../../../components/FriendsComponents/FriendContainer';
-import fetchUsers from '../../../../components/FriendsComponents/FetchUsers';
+import FriendContainer from '../../../components/FriendsComponents/FriendContainer';
+import fetchUsers from '../../../components/FriendsComponents/FetchUsers';
 import theme from '@/components/theme';
 import { getCurrUser } from '@/components/FirebaseUserFunctions';
 

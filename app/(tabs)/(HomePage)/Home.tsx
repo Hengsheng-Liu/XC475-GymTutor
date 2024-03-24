@@ -28,13 +28,14 @@ import {
   removeFieldFromUsers,
   Gym,
 } from "@/components/FirebaseUserFunctions";
-import UserPreview from "../../../../components/HomeComponents/UserContainer";
-import Header from "../../../../components/HomeComponents/Header";
+import UserPreview from "../../../components/HomeComponents/UserContainer";
+import Header from "../../../components/HomeComponents/Header";
 import theme from "@/components/theme";
 import updateUser from "@/components/storage";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { firestore } from "@/firebaseConfig";
 import * as Location from "expo-location";
+
 export default function HomeScreen() {
   const [gym, setGym] = useState<Gym>(); // State to store the gym input
   const [user, setUser] = useState<IUser>(); // State to store the current user
@@ -50,15 +51,29 @@ export default function HomeScreen() {
   useEffect(() => {
     // Fetch gym name for current user
     const fetchGym = async () => {
-      const user = await getCurrUser(User.uid);
-      setUser(user);
-      const gymDocRef = doc(firestore, "Gyms", user.gymId);
-      const userGym = (await getDoc(gymDocRef)).data() as Gym;
-      setGym(userGym);
-      // console.log(user);
-      handleGetUsers();
+      setUser(currUser);
+      if (user){
+        const gymDocRef = doc(firestore, "Gyms", user.gymId);
+        const userGym = (await getDoc(gymDocRef)).data() as Gym;
+        setGym(userGym);
+        // console.log(user);
+        handleGetUsers();
+      }
     };
+    
     fetchGym();
+
+    if (User){
+      const unsubscribe = onSnapshot(doc(firestore, 'Users', User.uid), (snapshot) => {
+        const updatedUser = snapshot.data() as IUser;
+        setUser(updatedUser);
+      });
+    
+      // Clean up the listener when the component unmounts
+      return () => {
+        unsubscribe();
+      };
+    }
   }, [User]);
 
   // TODO: Display user preview when clicked
@@ -73,8 +88,10 @@ export default function HomeScreen() {
     // updateUsers(); // Uncomment when we want to use it to add fields
     setUsers([]);
     setLoading(true);
-    const fetchedUsers = await getUsers(User.uid, currUser.gymId);
-    setUsers(fetchedUsers);
+    if (user){
+      const fetchedUsers = await getUsers(User.uid, user.gymId);
+      setUsers(fetchedUsers);
+    }
     setLoading(false);
   };
 
@@ -118,13 +135,14 @@ export default function HomeScreen() {
     });
 
   }, [location]);
+
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView
         style={{ backgroundColor: "#FFF", flex: 1, padding: 15, paddingTop: 2 }}
       >
         <ScrollView>
-          <Header GymName={currUser?.gym} />
+          <Header GymName={user? user.gym : ""} />
           <Input
             InputLeftElement={
               <IconButton

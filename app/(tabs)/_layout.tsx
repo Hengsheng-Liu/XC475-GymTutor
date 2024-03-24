@@ -27,9 +27,9 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="(GymPage)"
+          name="(HomePage)"
           options={{
-            title: "SelectGym",
+            title: "SpotMe",
             headerShown: false,
           }}
         />

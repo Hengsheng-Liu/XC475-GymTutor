@@ -7,7 +7,8 @@ export default function authLayout() {
         <Stack.Screen name="Friends" options= {{headerTitle: "My Friends"}}/>
         <Stack.Screen name="Notifications" options= {{headerTitle: "Notifications"}}/>
         <Stack.Screen name="Filter" options= {{headerTitle: "Filters"}}/>
-        
+        <Stack.Screen name="index" options= {{headerShown: false, headerTitle: "Select Your Gym"}}/>
+
         </Stack>
     )
 }
