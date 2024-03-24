@@ -13,6 +13,7 @@ import {
     arrayUnion} from 'firebase/firestore';
 import { useAuth } from "../Context/AuthContext";
 import { Geometry } from 'react-native-google-places-autocomplete';
+import { GeoPoint } from 'firebase/firestore';
 // Update this and addUsers function when adding new fields
 // Use updateUsers function to initialize new fields on all users.
 // Define User interface
@@ -40,7 +41,8 @@ export interface Gym{
     name: string;
     members: string[];
     Geometry: Geometry;
-
+    bounding: GeoPoint[];
+    Address: string;
 }
 
 // Function to retrieve users data from Firestore with a filter of gym or any other

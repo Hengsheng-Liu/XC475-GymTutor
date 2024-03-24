@@ -32,9 +32,13 @@ import UserPreview from "../../../../components/HomeComponents/UserContainer";
 import Header from "../../../../components/HomeComponents/Header";
 import theme from "@/components/theme";
 import updateUser from "@/components/storage";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, GeoPoint, getDoc } from "firebase/firestore";
 import { firestore } from "@/firebaseConfig";
 import * as Location from "expo-location";
+import { GetUserLocation } from "@/components/GeolocationFunction";
+import pointInPolygon from 'point-in-polygon';
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { Polygon } from "react-native-svg";
 export default function HomeScreen() {
   const [gym, setGym] = useState<Gym>(); // State to store the gym input
   const [user, setUser] = useState<IUser>(); // State to store the current user
@@ -42,24 +46,39 @@ export default function HomeScreen() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [users, setUsers] = useState<IUser[]>([]); // State to store users
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
-  const [location, setLocation] = useState<Location.LocationObjectCoords>(); 
+  const [location, setLocation] = useState<number[]>([]);
+  const [bound, setBound] = useState<number[][]>([]); // State to store the gym boundary
+  const today = new Date();
   const { User } = useAuth();
   if (!User) return;
 
   useEffect(() => {
-    // Fetch gym name for current user
-    const fetchGym = async () => {
-      const user = await getCurrUser(User.uid);
-      setUser(user);
-      const gymDocRef = doc(firestore, "Gyms", user.gymId);
-      const userGym = (await getDoc(gymDocRef)).data() as Gym;
-      setGym(userGym);
-      console.log(user);
-      handleGetUsers();
+    const fetchLocation = async () => {
+      const location = await GetUserLocation();
+      if (location)
+        setLocation(location);
     };
-    fetchGym();
+    const fetchGym = async () => {
+      try {
+        const user = await getCurrUser(User.uid);
+        setUser(user);
+        
+        const gymDocRef = doc(firestore, "Gyms", user.gymId);
+        const userGym = (await getDoc(gymDocRef)).data() as Gym;
+        userGym.bounding.forEach((point) => {
+          setBound((prev) => [...prev, [point.latitude, point.longitude]]);
+        })
+        setGym(userGym);
+      } catch (error) {
+        console.log("Error fetching user:", error);
+      }
+    };
+    if (User) {
+      fetchGym();
+      handleGetUsers();
+      fetchLocation();
+    }
   }, [User]);
-
   // TODO: Display user preview when clicked
   const handlePreviewClick = (user: IUser) => {
     // Do something when user is clicked
@@ -91,30 +110,20 @@ export default function HomeScreen() {
     setUsers(fetchedUsers);
     setLoading(false);
   };
-  const getPermission = async () => {
-    try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Permission to access location was denied');
-        return true;
+  const handleCheckIn =  async () =>{
+    const location = await GetUserLocation();
+    if (location){
+      setLocation(location);
+      if(pointInPolygon(location, bound)){
+      alert("Wooho seems like you at the location and check in is successful")
+      }else{
+        alert("You are not at the gym location, please check in at the gym location")
       }
-    } catch (error) {
-      console.log("Error fetching location:", error);
+    }else{
+      alert("Please enable location services to check in");
     }
-  }
-  const getUserlocation = () => {
-    setTimeout(async () => {
-      const location = await Location.getCurrentPositionAsync({});
-      setLocation(location.coords);
-    }, 1000);
-  }
-  useEffect(() => {
-    getPermission().then((status) => {
-      if (status) return;
-      getUserlocation();
-    });
 
-  }, [location]);
+  }
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView
@@ -162,12 +171,15 @@ export default function HomeScreen() {
           top={675}
           left={280}
           background={"#0284C7"}
-          onPress={() => console.log("hello")}
+          onPress={handleCheckIn}
         >
-          {" "}
           Check In
         </Button>
       </SafeAreaView>
     </NativeBaseProvider>
   );
 }
+//insde the gym: 42.352057232511406, -71.11682641206473
+// outside the gym: 42.35249135900813, -71.11565509642959
+//42.35193439884672, -71.11673198835226
+//42.352164385569864, -71.11695979401712
