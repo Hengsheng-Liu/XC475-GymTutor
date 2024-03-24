@@ -25,6 +25,7 @@ export default function ChooseGym({
   const cancelRef = React.useRef(null);
   const { User } = useAuth();
   const db = firestore;
+
   const updateUserGym = async () => {
     if (!User) return;
     const userDocRef = doc(db, "Users", User.uid);
@@ -33,6 +34,7 @@ export default function ChooseGym({
       gymId: place_id,
     });
   };
+
   const updateGym = async () => {
     if (!User) return;
     const gymDocRef = doc(db, "Gyms", place_id);
@@ -63,7 +65,7 @@ export default function ChooseGym({
     handleOpenGymDialog(false);
     updateUserGym();
     updateGym();
-    router.push("/(tabs)/(HomePage)/");
+    router.push("/(tabs)/(HomePage)/Home");
   };
   return (
     <AlertDialog

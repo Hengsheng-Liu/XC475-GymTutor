@@ -32,7 +32,7 @@ const Header: React.FC<FriendProps> = ({ GymName }) => {
         >
           <Box>
             <Pressable
-              onPress={() => router.push("/(tabs)/(HomePage)/Home")}
+              onPress={() => router.push("/(tabs)/(HomePage)/index")}
               onPressOut={() => setIsPressed(false)}
               bg={isPressed ? "trueGray.200" : "#FFF"} // Change background color on hover
             >
