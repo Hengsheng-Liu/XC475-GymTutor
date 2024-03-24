@@ -17,7 +17,6 @@ export default function TabLayout() {
   } else {
     return (
       <Tabs>
-
         <Tabs.Screen
           name="(MessagePage)"
           options={{
