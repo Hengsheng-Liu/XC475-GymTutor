@@ -65,7 +65,7 @@ export default function ChooseGym({
     handleOpenGymDialog(false);
     updateUserGym();
     updateGym();
-    router.push("/(tabs)/(HomePage)/Home");
+    router.push("/(tabs)/(HomePage)/");
   };
   return (
     <AlertDialog

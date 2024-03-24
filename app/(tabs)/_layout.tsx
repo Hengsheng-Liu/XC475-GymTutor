@@ -30,13 +30,7 @@ export default function TabLayout() {
           options={{
             title: "SpotMe",
             headerShown: false,
-          }}
-        />
-        <Tabs.Screen
-          name = "Test"
-          options={{
-            title: "Test",
-            headerShown: false,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="group" />,
           }}
         />
         <Tabs.Screen
@@ -45,6 +39,15 @@ export default function TabLayout() {
             title: "Profile",
             headerShown: false,
             tabBarIcon: (props) => <TabBarIcon {...props} name="user" />,
+          }}
+        />
+        <Tabs.Screen
+          name = "Test"
+          options={{
+            title: "Test",
+            headerShown: false,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="pencil" />,
+
           }}
         />
       </Tabs>
