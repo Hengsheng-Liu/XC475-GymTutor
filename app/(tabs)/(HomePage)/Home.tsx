@@ -51,13 +51,14 @@ export default function HomeScreen() {
 
   useEffect(() => {
     // Fetch gym name for current user
-    if (!gymId) {
-      console.log("Initialize gymId")
+    if (!gymId && !gymName) {
+      console.log("Initialize gym: ", currUser.gymId, currUser.gym);
       setGymId(currUser.gymId);
       setGymName(currUser.gym);
-      handleGetUsers();
     }
+  }, []);
 
+  useEffect(() => {
     // Fetch gym name for current user
     const fetchGym = async () => {
       const gymDocRef = doc(firestore, "Gyms", gymId);
@@ -70,23 +71,36 @@ export default function HomeScreen() {
     const unsubscribe = onSnapshot(doc(firestore, 'Users', User.uid), (snapshot) => {
       const updatedUser = snapshot.data() as IUser;
        // Update gymName state whenever the user document changes
-      console.log("Listened to user");
-       if (gymId != updatedUser.gymId){
-          console.log("New Id: ", gymId, updatedUser.gymId);
-          setGymId(updatedUser.gymId);  
-          setGymName(updatedUser.gym);
-          handleGetUsers();
+      const newGymId = updatedUser.gymId;
+      const newGymName = updatedUser.gym;
+
+       if (gymId && gymId != newGymId){
+          console.log("Listened gym change: ", gymName, newGymName);
+          setGymId(newGymId);  
+          setGymName(newGymName);
       }
     });
-    
 
     // Clean up the listener when the component unmounts
     return () => {
       unsubscribe();
     };
     
-  }, [User, gymId]);
+  }, [User]);
 
+  useEffect(() => {
+    // Fetch gym name for current user
+    const fetchUsers = async () => {
+      console.log("Retrieving users of gym", gymId, gymName);
+      handleGetUsers();
+    }
+
+    if (gymId && gymName){
+      fetchUsers();
+    }
+    
+  }, [gymId]);
+  
   // TODO: Display user preview when clicked
   const handlePreviewClick = (user: IUser) => {
     // Do something when user is clicked
