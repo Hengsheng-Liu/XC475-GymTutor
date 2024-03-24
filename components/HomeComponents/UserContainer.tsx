@@ -47,11 +47,11 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
         <Pressable 
             onPress = {() => handleUserClick()}
             onPressOut={() => setIsPressed(false)}
-            mb ={3} ml={1} mr={1} // This okay?
+            mb ={3} ml={1} mr={1} pr={1}// This okay?
             borderRadius="xl" borderWidth={1} borderColor="trueGray.50" shadow="3"
             bg={isPressed ? "trueGray.200" : "trueGray.50"} // Change background color on hover
             >
-        <Box>
+        <Flex>
             <Row alignItems="center" space="sm">
                 <Avatar m={2} size= "xl" source={friend.icon ? {uri: friend.icon} : require("@/assets/images/default-profile-pic.png")} />
                 <Column>
@@ -61,20 +61,20 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
                         <Text color= "trueGray.900" fontSize="sm" isTruncated maxW="160">{friend.gym}</Text>
                     </Column>
                     <Spacer/>
-                    <Box alignItems="center" w={20} h={10}>
-                        <Button 
-                            flex="auto"
+                    <Flex alignItems="center">
+                        <Button  
+                            p={1}
                             backgroundColor= {canAddFriend(currUser, updatedFriend)? "blue.500" : "gray.200"} rounded="md" 
                             onPress={() => canAddFriend(currUser, updatedFriend)? 
                                 sendFriendRequest(currUser.uid, friend.uid): handleUserClick()}>
                             <Text fontSize="xs" fontWeight="bold"> {canAddFriend(currUser, updatedFriend)? "  Add   " : "Added"}</Text>
                         </Button>
-                    </Box>  
+                    </Flex>  
                 </Row>
                 <Attribute description={friend.tags} />
                 </Column>
             </Row>
-        </Box>
+        </Flex>
         </Pressable>
     );
   };

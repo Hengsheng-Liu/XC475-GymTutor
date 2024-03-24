@@ -73,6 +73,7 @@ export default function Gym({ title, Address, photo,Geometry,place_id }: props) 
         handleOpenGymDialog={setOpenGymDialog}
         OpenGymDialog={OpenGymDialog}
         closeGymDialog={() => setOpenGymDialog(false)}
+        Address={Address}
         />
     </Box>
   );

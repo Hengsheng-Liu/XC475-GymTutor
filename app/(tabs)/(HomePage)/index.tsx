@@ -41,19 +41,6 @@ export default function SelectGym() {
     undefined
   );
   const [NearbyGyms, setNearbyGyms] = useState<Gym[]>([]);
-  
-  const getPermission = async () => {
-    try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Permission to access location was denied');
-        return true;
-      }
-    } catch (error) {
-      console.log("Error fetching location:", error);
-    }
-  }
-
   useEffect(() => {
     // Make sure SearchLocation is defined and has the necessary properties
 
@@ -83,7 +70,7 @@ export default function SelectGym() {
               }
             : undefined,
           place_id: place.place_id,
-          geometry: place.geometry,
+          geometry: place.geometry
         }));
         setNearbyGyms(newGyms);
       } catch (error) {

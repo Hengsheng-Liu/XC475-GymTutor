@@ -1,11 +1,12 @@
 import { AlertDialog, Button, Center } from "native-base";
-import React from "react";
+import React, { useEffect } from "react";
 import { router } from "expo-router";
 import { getCurrUser } from "@/components/FirebaseUserFunctions";
 import { useAuth } from "../../Context/AuthContext";
 import { firestore } from "../../firebaseConfig";
-import { doc, setDoc, updateDoc,getDoc} from "firebase/firestore";
+import { doc, setDoc, updateDoc, getDoc, GeoPoint } from "firebase/firestore";
 import { Geometry } from "react-native-google-places-autocomplete";
+import { nominatimGymSearch } from "../GeolocationFunction";
 interface props {
   title: string;
   handleOpenGymDialog: (open: boolean) => void;
@@ -13,6 +14,7 @@ interface props {
   closeGymDialog: () => void;
   place_id: string;
   Geometry: Geometry;
+  Address: string;
 }
 export default function ChooseGym({
   title,
@@ -21,11 +23,12 @@ export default function ChooseGym({
   OpenGymDialog,
   place_id,
   Geometry,
+  Address,
 }: props) {
   const cancelRef = React.useRef(null);
   const { User } = useAuth();
   const db = firestore;
-
+  const [gymBounding, setGymBounding] = React.useState<GeoPoint[]>();
   const updateUserGym = async () => {
     if (!User) return;
     const userDocRef = doc(db, "Users", User.uid);
@@ -40,33 +43,50 @@ export default function ChooseGym({
     const gymDocRef = doc(db, "Gyms", place_id);
     try {
       const docSnap = await getDoc(gymDocRef);
-  
-      let members:string[] = [];
+      let members: string[] = [];
       if (docSnap.exists()) {
         const data = docSnap.data();
+        const bound = await nominatimGymSearch(Geometry);
+        setGymBounding(bound);
         members = data.members ? [...data.members] : [];
+        if (!members.includes(User.uid)) {
+          members.push(User.uid);
+        }
+        await setDoc(
+          gymDocRef,
+          {
+            members: members,
+            bounding: bound,
+          },
+          { merge: true }
+        );
+      } else {
+        const bound = await nominatimGymSearch(Geometry);
+        setGymBounding(bound);
+        await setDoc(
+          gymDocRef,
+          {
+            name: title,
+            address: Address,
+            members: [User.uid],
+            geometry: Geometry,
+            bounding: bound,
+          },
+          { merge: true }
+        );
       }
-      if (!members.includes(User.uid)) {
-        members.push(User.uid);
-      }
-  
-      await setDoc(gymDocRef, {
-        name: title,
-        members: members,
-        Geometry: Geometry,
-      }, { merge: true });
-  
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.error("Error updating gym:", error);
     }
   };
-  
+
   const handleSubmit = async () => {
     handleOpenGymDialog(false);
     updateUserGym();
     updateGym();
     router.push("/(tabs)/(HomePage)/Home");
   };
+
   return (
     <AlertDialog
       leastDestructiveRef={cancelRef}

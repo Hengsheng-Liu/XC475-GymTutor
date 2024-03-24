@@ -32,10 +32,14 @@ import UserPreview from "../../../components/HomeComponents/UserContainer";
 import Header from "../../../components/HomeComponents/Header";
 import theme from "@/components/theme";
 import updateUser from "@/components/storage";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc,GeoPoint, onSnapshot } from "firebase/firestore";
 import { firestore } from "@/firebaseConfig";
 import * as Location from "expo-location";
 
+import { GetUserLocation } from "@/components/GeolocationFunction";
+import pointInPolygon from 'point-in-polygon';
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { Polygon } from "react-native-svg";
 export default function HomeScreen() {
   const [gym, setGym] = useState<Gym>(); // State to store the gym 
   const [gymName, setGymName] = useState<string>();
@@ -46,9 +50,11 @@ export default function HomeScreen() {
   const [useFilters, setUseFilters] = useState<boolean>(false);
   const [users, setUsers] = useState<IUser[]>([]); // State to store users
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
-  const [location, setLocation] = useState<Location.LocationObjectCoords>(); 
   const { currUser, User } = useAuth();
   
+  const [location, setLocation] = useState<number[]>([]);
+  const [bound, setBound] = useState<number[][]>([]); // State to store the gym boundary
+  const today = new Date();
   if (!User) return;
   if (!currUser) return;
 
@@ -96,7 +102,35 @@ export default function HomeScreen() {
       handleGetUsers();
     }
   }, [gymId, gymName]);
+useEffect(()=>{
+  const fetchLocation = async () => {
+    const location = await GetUserLocation();
+    if (location)
+      setLocation(location);
+  };
+  const fetchGym = async () => {
+    try {
+      const user = await getCurrUser(User.uid);
+      setUser(user);
+      
+      const gymDocRef = doc(firestore, "Gyms", user.gymId);
+      const userGym = (await getDoc(gymDocRef)).data() as Gym;
+      userGym.bounding.forEach((point) => {
+        setBound((prev) => [...prev, [point.latitude, point.longitude]]);
+      })
+      setGym(userGym);
+    } catch (error) {
+      console.log("Error fetching user:", error);
+    }
+  };
   
+  if (User) {
+    fetchGym();
+    handleGetUsers();
+    fetchLocation();
+  }
+},[User])
+
   // TODO: Display user preview when clicked
   const handlePreviewClick = (user: IUser) => {
     // Do something when user is clicked
@@ -106,7 +140,7 @@ export default function HomeScreen() {
   // Get users from database from gym
   const handleGetUsers = async () => {
     /// await updateUser(currUser.uid); // Individual update for when needed
-    updateUsers(); // Uncomment when we want to use it to add fields
+    // updateUsers(); // Uncomment when we want to use it to add fields
     setUsers([]);
     setLoading(true);
     const fetchedUsers = await getUsers(User.uid, gymId);
@@ -154,37 +188,25 @@ export default function HomeScreen() {
     setFilters(newFilters);
   };
 
-  const getPermission = async () => {
-    try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Permission to access location was denied');
-        return true;
+  const handleCheckIn =  async () =>{
+    const location = await GetUserLocation();
+    if (location){
+      setLocation(location);
+      if(pointInPolygon(location, bound)){
+      alert("Wooho seems like you at the location and check in is successful")
+      }else{
+        alert("You are not at the gym location, please check in at the gym location")
       }
-    } catch (error) {
-      console.log("Error fetching location:", error);
+    }else{
+      alert("Please enable location services to check in");
     }
-  }
-  const getUserlocation = () => {
-    setTimeout(async () => {
-      const location = await Location.getCurrentPositionAsync({});
-      setLocation(location.coords);
-    }, 1000);
-  }
-  useEffect(() => {
-    getPermission().then((status) => {
-      if (status) return;
-      getUserlocation();
-    });
 
-  }, [location]);
-
+  }
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView
         style={{ backgroundColor: "#FFF", flex: 1, padding: 15, paddingTop: 2 }}
       >
-        <ScrollView>
           <Header GymName={gymName? gymName : ""} />
           <Input
             InputLeftElement={
@@ -214,6 +236,7 @@ export default function HomeScreen() {
               }
             />
           </Row>
+        <ScrollView>
           {users.map((user) => (
             <UserPreview friend={user} key={user.uid} />
           ))}
@@ -226,12 +249,15 @@ export default function HomeScreen() {
           top={675}
           left={280}
           background={"#0284C7"}
-          onPress={() => console.log("hello")}
+          onPress={handleCheckIn}
         >
-          {" "}
           Check In
         </Button>
       </SafeAreaView>
     </NativeBaseProvider>
   );
 }
+//insde the gym: 42.352057232511406, -71.11682641206473
+// outside the gym: 42.35249135900813, -71.11565509642959
+//42.35193439884672, -71.11673198835226
+//42.352164385569864, -71.11695979401712
