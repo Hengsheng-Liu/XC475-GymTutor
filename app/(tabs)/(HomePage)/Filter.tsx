@@ -31,10 +31,10 @@ const FilterScreen = () => {
       // Construct the filters object
     const filters =  [
       { field: "sex", operator: "==", value: sex }, 
-      { field: "age", operator: ">=", value: ageRange[0].toString() },
-      { field: "age", operator: "<=", value: ageRange[1].toString() },
-      { field: "gymExperience", operator: ">=", value: experienceRange[0].toString() },
-      { field: "gymExperience", operator: "<=", value: experienceRange[1].toString() }
+      { field: "age", operator: ">=", value: ageRange[0] },
+      { field: "age", operator: "<=", value: ageRange[1] },
+      { field: "gymExperience", operator: ">=", value: experienceRange[0] },
+      { field: "gymExperience", operator: "<=", value: experienceRange[1] }
     ];
 
     const updateUserFilter = async () => {

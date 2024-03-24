@@ -24,7 +24,7 @@ export interface IUser {
     uid: string;
     email: string;
     name: string;
-    age: string;
+    age: number;
     bio: string;
     sex: string;
     tags: string[];
@@ -36,7 +36,7 @@ export interface IUser {
     checkInHistory: string[]; // Add proper type
     icon: string;
     achievements: string[]; // Add proper type
-    gymExperience: string;
+    gymExperience: number;
     currentlyMessaging: string[];
     gymId: string;
     filters: filter[];
@@ -81,12 +81,13 @@ export const getUsers = async (UID: string, gymId?: string,
                     continue
                 }
                 if (filter.field == "gymExperience"){
+                    continue
                     if (filter.operator == "<="){
                         continue
                     }
                 }
                 console.log("filter", filter.field, filter.operator, filter.value);
-                usersQuery = query(usersQuery, where(filter.field, filter.operator as any, filter.value as string));
+                usersQuery = query(usersQuery, where(filter.field, filter.operator as any, filter.value));
                 
             }
         }
@@ -184,7 +185,7 @@ export async function addUser(
         gym: string = "", 
         gymId: string = "",
         name: string = "", 
-        age: string = "", 
+        age: number = 21, 
         bio: string = "",
         sex: string = "", 
         filters: filter[],
@@ -210,7 +211,7 @@ export async function addUser(
             checkInHistory: [],
             icon: "",
             achievements: [],
-            gymExperience: "0",
+            gymExperience: 0,
             currentlyMessaging: [],
             filters: [],
         });
@@ -272,13 +273,19 @@ export async function updateUsers(): Promise<void> {
             // Example usage
             const randomName: string = generateRandomName(randomSex);
 
+            const tags = ['cardio', 'weightlift', 'yoga', 'crossfit', 'running', 'swim', 'cycle', 'boxing', 'pilates'];
+            
+            function getRandomSubset<T>(array: T[], size: number): T[] {
+                const shuffled = array.sort(() => 0.5 - Math.random());
+                return shuffled.slice(0, Math.min(size, array.length));
+            }
+
+            const userTags = getRandomSubset(tags, 3);
+            
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
-                name: randomName,
-                sex: randomSex,
-                age: randomAge.toString(),
-                gymExperience: randomExp.toString(),
+                tags: userTags
             };
 
             // Update document if any field is missing

@@ -106,7 +106,7 @@ export default function HomeScreen() {
   // Get users from database from gym
   const handleGetUsers = async () => {
     /// await updateUser(currUser.uid); // Individual update for when needed
-    // updateUsers(); // Uncomment when we want to use it to add fields
+    updateUsers(); // Uncomment when we want to use it to add fields
     setUsers([]);
     setLoading(true);
     const fetchedUsers = await getUsers(User.uid, gymId);
