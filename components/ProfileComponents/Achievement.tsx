@@ -10,6 +10,11 @@ import {
 } from "native-base";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { SvgAst} from "react-native-svg";
+import FitFriend from "../../assets/images/achievements/FitFriendship.svg";
+import SocialButterfly from "../../assets/images/achievements/SocialButterfly.svg";
+import CheckInChampion from "../../assets/images/achievements/CheckInChampion.svg";
+import { router } from "expo-router";
 export default function Achievement() {
   return (
     <VStack mt={4}>
@@ -20,10 +25,16 @@ export default function Achievement() {
         </Pressable>
       </HStack>
       <HStack justifyContent={"space-around"} mt={2} alignItems={"center"}>
-        <Center h="20" w="20" bg="primary.300" rounded="md" shadow={3} />
-        <Center h="20" w="20" bg="primary.500" rounded="md" shadow={3} />
-        <Center h="20" w="20" bg="primary.700" rounded="md" shadow={3} />
-        <Pressable onPress={() => console.log("Acheivement page pressed")}>
+        <Center h="20" w="20">
+          <FitFriend />
+        </Center>
+        <Center h="20" w="20">
+          <SocialButterfly />
+        </Center>
+        <Center h="20" w="20">
+          <CheckInChampion />
+        </Center>
+        <Pressable onPress={() => router.push("/AchievementPage")}>
           <FontAwesome5 name="chevron-right" size={24} color={"#737373"} />
         </Pressable>
       </HStack>

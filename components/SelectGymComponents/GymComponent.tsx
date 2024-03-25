@@ -5,6 +5,7 @@ import { Pressable } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
 import ChooseGym from "./ChooseGymDialog";
+import { Geometry } from "react-native-google-places-autocomplete";
 interface GymIcon {
   photoURL: string;
   height: number;
@@ -14,6 +15,8 @@ interface props {
   title: string;
   Address: string;
   photo?: GymIcon;
+  Geometry: Geometry;
+  place_id: string;
 }
 
 function GetPhotoURL(photo: GymIcon | undefined) {
@@ -31,7 +34,7 @@ function GetPhotoURL(photo: GymIcon | undefined) {
     return <Avatar source={{ uri: url }} mr={2} />;
   }
 }
-export default function Gym({ title, Address, photo }: props) {
+export default function Gym({ title, Address, photo,Geometry,place_id }: props) {
   const [OpenGymDialog, setOpenGymDialog] = React.useState(false);
   return (
     <Box>
@@ -64,10 +67,13 @@ export default function Gym({ title, Address, photo }: props) {
         </Box>
       </Pressable>
       <ChooseGym
-        gym={title}
+        title={title}
+        Geometry={Geometry}
+        place_id={place_id}
         handleOpenGymDialog={setOpenGymDialog}
         OpenGymDialog={OpenGymDialog}
         closeGymDialog={() => setOpenGymDialog(false)}
+        Address={Address}
         />
     </Box>
   );

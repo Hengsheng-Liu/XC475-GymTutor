@@ -6,6 +6,7 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
+      "channel": "main",
       "env":{
         "EXPO_CLIENT_ID":"725476446782-ian4dcclsu5n6ji11vrddr50u071e0qs.apps.googleusercontent.com",
         "IOS_CLIENT_ID":"725476446782-e5gdolfnnp9fll6fbe9uo7h4ofv2ce05.apps.googleusercontent.com",

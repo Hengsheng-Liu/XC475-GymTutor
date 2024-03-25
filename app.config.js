@@ -59,7 +59,7 @@ export const expoConfig = {
   web: {
     bundler: "metro",
     output: "static",
-    favicon: './assets/favicon.png',
+    favicon: './assets/images/favicon.png',
   },
   plugins: [
     "expo-router",

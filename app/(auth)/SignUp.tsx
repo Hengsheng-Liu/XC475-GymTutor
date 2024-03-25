@@ -51,7 +51,7 @@ export default function SignUpScreen() {
         const userCredential = await CreateUser(email, password);
         const user = userCredential.user;
         if (user) {
-
+          await AddUserToDB(userCredential);
           router.navigate({
             pathname: "SignUp2",
             params: {

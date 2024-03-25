@@ -3,8 +3,8 @@ import { Stack } from "expo-router"
 export default function authLayout() {
     return(
         <Stack>
-        <Stack.Screen name="Profile" options= {{headerShown: true}}/>
-        
+        <Stack.Screen name="ProfilePage" options= {{headerShown: false , title:"Profile"}}/>
+        <Stack.Screen name="AchievementPage" options= {{headerShown: true,title:"Your Badges" }}/>
         </Stack>
     )
 }

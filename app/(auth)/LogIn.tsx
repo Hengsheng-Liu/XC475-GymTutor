@@ -34,13 +34,13 @@ export default function LogInScreen() {
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
   const { SignIn } = useAuth();
+
   const handleLogIn = async () => {
     if (email && password) {
       try {
         const userCredential = await SignIn(email, password);
         const user = userCredential.user;
         if (user) {
-
           router.replace("/");
         }
       } catch (error: any) {
@@ -75,7 +75,13 @@ export default function LogInScreen() {
       if (getAdditionalUserInfo(signInResponse)?.isNewUser) {
         // Handle the new user case
         console.log("This is a new user.");
-        await AddUserToDB(signInResponse);
+        router.navigate({
+          pathname: "SignUp2",
+          params: {
+            uid: signInResponse.user.uid,
+            email: signInResponse.user.email,
+          }
+        });
       } else {
         // Handle the existing user case
         console.log("This is an existing user.");
