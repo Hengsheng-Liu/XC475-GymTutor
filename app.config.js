@@ -60,13 +60,13 @@ export const expoConfig = {
     "extra": {
       "eas": {
         "projectId": "22999ea1-0a5e-46c0-8465-f21aea1344fd"
-      },
-      "updates":{
-        "url": "https://u.expo.dev/22999ea1-0a5e-46c0-8465-f21aea1344fd"
-      },
-      "runtimeVersion":{
-        "policy":"appVersion"
-      },
+      }
+    },
+    "updates":{
+      "url": "https://u.expo.dev/22999ea1-0a5e-46c0-8465-f21aea1344fd"
+    },
+    "runtimeVersion":{
+      "policy":"appVersion"
     },
     "owner": "spot-me"
   },
