@@ -6,7 +6,6 @@ export const expoConfig = {
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   userInterfaceStyle: 'automatic',
-  owner:"spot-me", 
   splash: {
     image: './assets/images/splash.png',
     resizeMode: 'contain',
@@ -57,19 +56,20 @@ export const expoConfig = {
       }
     ]
   ],
-  extra: {
-    eas:{
-      projectId: "3186e2c8-81e3-436c-acf4-fdeb6eb6e851"
-    }
-  },
-  expo:{
-    updates:{
-      url:  "https://u.expo.dev/3186e2c8-81e3-436c-acf4-fdeb6eb6e851"
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "22999ea1-0a5e-46c0-8465-f21aea1344fd"
+      },
+      "updates":{
+        "url": "https://u.expo.dev/22999ea1-0a5e-46c0-8465-f21aea1344fd"
+      },
+      "runtimeVersion":{
+        "policy":"appVersion"
+      },
     },
-    runtimeVersion:{
-      policy:"appVersion"
-    }
-  }
+    "owner": "spot-me"
+  },
 };
 
 export default expoConfig;
