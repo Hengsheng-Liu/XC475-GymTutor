@@ -83,9 +83,9 @@ const ProfilePage = () => {
 
   return (
     <NativeBaseProvider theme={theme}>
-      <SafeAreaView>
+      <SafeAreaView >
         <ScrollView backgroundColor={"#FFFFFF"}>
-          <Box ml={"3"} mr={"3"}>
+          <Box ml={"3"} mr={"3"} paddingTop={"10"}>
             {userInfo && (
               <Flex>
                 <Header name={userInfo.name} gym={userInfo.gym} />
