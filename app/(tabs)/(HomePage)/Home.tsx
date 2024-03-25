@@ -102,12 +102,14 @@ export default function HomeScreen() {
       handleGetUsers();
     }
   }, [gymId, gymName]);
+
 useEffect(()=>{
   const fetchLocation = async () => {
     const location = await GetUserLocation();
     if (location)
       setLocation(location);
   };
+
   const fetchGym = async () => {
     try {
       const user = await getCurrUser(User.uid);
@@ -164,6 +166,15 @@ useEffect(()=>{
 
     } else if (searchTerm == "test") { // Testing keyword to test filters
       // filters: [["sex", "==", "male"], ["gymExperience", ">=", "1"]]);
+      if (filters){
+        fetchedUsers = await getUsers(User.uid, "", filters);
+        console.log("Fetched filtered users with the following filters: ", filters);
+      } else {
+        fetchedUsers = await getUsers(User.uid, gymId);
+        console.log("Couldn't filter users with following filters: ", filters);
+      }
+
+    } else if (searchTerm == "test2") { // Testing with gyms
       if (filters){
         fetchedUsers = await getUsers(User.uid, "", filters);
         console.log("Fetched filtered users with the following filters: ", filters);

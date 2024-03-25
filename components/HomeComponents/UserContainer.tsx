@@ -57,7 +57,7 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
                 <Column>
                 <Row justifyContent= {"space-between"} >
                     <Column overflow="hidden" width="170">    
-                        <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated maxW="160">{friend.name}</Text>
+                        <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated maxW="160">{friend.name}, {friend.age}</Text>
                         <Text color= "trueGray.900" fontSize="sm" isTruncated maxW="160">{friend.gym}</Text>
                     </Column>
                     <Spacer/>
