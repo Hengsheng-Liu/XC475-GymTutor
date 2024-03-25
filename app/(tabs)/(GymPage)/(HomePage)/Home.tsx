@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { router } from "expo-router";
 import {
   NativeBaseProvider,
@@ -32,13 +32,11 @@ import UserPreview from "../../../../components/HomeComponents/UserContainer";
 import Header from "../../../../components/HomeComponents/Header";
 import theme from "@/components/theme";
 import updateUser from "@/components/storage";
-import { doc, GeoPoint, getDoc } from "firebase/firestore";
+import { doc, GeoPoint, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "@/firebaseConfig";
 import * as Location from "expo-location";
 import { GetUserLocation } from "@/components/GeolocationFunction";
-import pointInPolygon from 'point-in-polygon';
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
-import { Polygon } from "react-native-svg";
+import pointInPolygon from "point-in-polygon";
 export default function HomeScreen() {
   const [gym, setGym] = useState<Gym>(); // State to store the gym input
   const [user, setUser] = useState<IUser>(); // State to store the current user
@@ -47,27 +45,29 @@ export default function HomeScreen() {
   const [users, setUsers] = useState<IUser[]>([]); // State to store users
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
   const [location, setLocation] = useState<number[]>([]);
-  const [bound, setBound] = useState<number[][]>([]); // State to store the gym boundary
-  const today = new Date();
+  const bound = useRef<number[][]>([]); // State to store the gym boundary
+  const [checkIn, setCheckIn] = useState<boolean>(false); // State to store the gym boundary
+  const Day = new Date();
+  const Today =
+    Day.getFullYear() + "-" + (Day.getMonth() + 1) + "-" + Day.getDate();
   const { User } = useAuth();
   if (!User) return;
 
   useEffect(() => {
-    const fetchLocation = async () => {
-      const location = await GetUserLocation();
-      if (location)
-        setLocation(location);
-    };
     const fetchGym = async () => {
       try {
         const user = await getCurrUser(User.uid);
         setUser(user);
-        
+        const History = user.checkInHistory;
+        if (History && History.includes(Today)) {
+          setCheckIn(true); // Check if user has checked in today
+        }
         const gymDocRef = doc(firestore, "Gyms", user.gymId);
         const userGym = (await getDoc(gymDocRef)).data() as Gym;
+        
         userGym.bounding.forEach((point) => {
-          setBound((prev) => [...prev, [point.latitude, point.longitude]]);
-        })
+          bound.current.push([point.latitude, point.longitude]);
+        });
         setGym(userGym);
       } catch (error) {
         console.log("Error fetching user:", error);
@@ -76,7 +76,6 @@ export default function HomeScreen() {
     if (User) {
       fetchGym();
       handleGetUsers();
-      fetchLocation();
     }
   }, [User]);
   // TODO: Display user preview when clicked
@@ -110,20 +109,42 @@ export default function HomeScreen() {
     setUsers(fetchedUsers);
     setLoading(false);
   };
-  const handleCheckIn =  async () =>{
-    const location = await GetUserLocation();
-    if (location){
-      setLocation(location);
-      if(pointInPolygon(location, bound)){
-      alert("Wooho seems like you at the location and check in is successful")
-      }else{
-        alert("You are not at the gym location, please check in at the gym location")
+  const AddDate = async () => {
+    if (user) {
+      try {
+        const userRef = doc(firestore, "Users", User.uid);
+        await updateDoc(userRef, {
+          checkInHistory: [...user.checkInHistory, Today],
+        });
+        setCheckIn(true);
+      } catch (error) {
+        console.error("Error updating bio: ", error);
       }
-    }else{
-      alert("Please enable location services to check in");
     }
-
-  }
+  };
+  const handleCheckIn = async () => {
+    const location = await GetUserLocation();
+    if (checkIn) {
+      alert("You have already checked in today");
+      return;
+    } else {
+      if (location) {
+        setLocation(location);
+        if (pointInPolygon(location, bound)) {
+          AddDate();
+          alert(
+            "Wooho seems like you at the location and check in is successful"
+          );
+        } else {
+          alert(
+            "You are not at the gym location, please check in at the gym location"
+          );
+        }
+      } else {
+        alert("Please enable location services to check in");
+      }
+    }
+  };
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView
