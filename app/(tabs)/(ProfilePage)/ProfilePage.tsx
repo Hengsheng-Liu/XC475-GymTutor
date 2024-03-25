@@ -46,17 +46,6 @@ const ProfilePage = () => {
   const [userInfo, setUserInfo] = useState<IUser>();
   const { User } = useAuth(); // gets current user's authentication data (in particular UID)
  
-  // this used to be dummy data for 'tags'
-  const description: string[] = [
-    "GymNewbie",
-    "YogaLover",
-    "CardioKing",
-    "WeightLifter",
-    "YogaLover",
-    "CardioKing",
-    "WeightLifter",
-  ];
-
   // finds the current user's data (only name for now) via Users firestore database.
 
   useEffect(() => {
@@ -70,7 +59,7 @@ const ProfilePage = () => {
 
   }, []);
 
-  const updateBio = async (newBio) => {
+  const updateBio = async (newBio:string) => {
     if (User) {
       try {
         await updateDoc(doc(firestore, "Users", User.uid), { bio: newBio });
