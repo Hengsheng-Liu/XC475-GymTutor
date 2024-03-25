@@ -62,6 +62,14 @@ export const expoConfig = {
       projectId: "3186e2c8-81e3-436c-acf4-fdeb6eb6e851"
     }
   },
+  expo:{
+    updates:{
+      url:  "https://u.expo.dev/3186e2c8-81e3-436c-acf4-fdeb6eb6e851"
+    },
+    runtimeVersion:{
+      policy:"appVersion"
+    }
+  }
 };
 
 export default expoConfig;
