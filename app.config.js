@@ -55,7 +55,12 @@ export const expoConfig = {
         "locationAlwaysAndWhenInUsePermission": "Allow Spot Me to use your location."
       }
     ]
-  ]
+  ],
+  extra: {
+    eas:{
+      projectId: "3186e2c8-81e3-436c-acf4-fdeb6eb6e851"
+    }
+  },
 };
 
 export default expoConfig;
