@@ -1,17 +1,3 @@
-import { ExpoConfig } from 'expo/config';
-import { config } from 'dotenv';
-import path from 'path';
-
-const env_file = path.join(__dirname, '.env');
-const env = config({
-  path: env_file,
-});
-
-if (env.error) {
-  console.log('ENV FILE ERROR: ', env_file);
-  throw env.error;
-}
-
 export const expoConfig = {
   scheme: 'myapp',
   name: 'SpotMe',
