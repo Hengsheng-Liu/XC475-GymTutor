@@ -143,8 +143,10 @@ export default function HomeScreen() {
     // updateUsers(); // Uncomment when we want to use it to add fields
     setUsers([]);
     setLoading(true);
-    const fetchedUsers = await getUsers(User.uid, gymId);
-    setUsers(fetchedUsers);
+    if (gymId){
+      const fetchedUsers = await getUsers(User.uid, gymId);
+      setUsers(fetchedUsers);
+    }
     setLoading(false);
   };
 
@@ -175,8 +177,15 @@ export default function HomeScreen() {
         fetchedUsers = await getUsers(User.uid, gymId);
         console.log("Couldn't filter users with following filters: ", filters);
       }
-    } else {
-      // TODO: Search by users (search term should be user name)
+    } else if (searchTerm == "test2") { // Testing with gyms
+      if (filters){
+        fetchedUsers = await getUsers(User.uid, gymId, filters);
+        console.log("Fetched filtered users with the following filters: ", filters);
+      } else {
+        fetchedUsers = await getUsers(User.uid, gymId);
+        console.log("Couldn't filter users with following filters: ", filters);
+      }
+    } else { // TODO: Search by users (search term should be user name)
       fetchedUsers = await getUsers(User.uid, gymId);
       console.log("Fetched users with name ", searchTerm);
     }
