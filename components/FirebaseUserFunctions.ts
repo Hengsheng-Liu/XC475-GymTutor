@@ -17,11 +17,14 @@ import { GeoPoint } from 'firebase/firestore';
 // Update this and addUsers function when adding new fields
 // Use updateUsers function to initialize new fields on all users.
 // Define User interface
+
+type filter = [string, string, any];
+
 export interface IUser {
     uid: string;
     email: string;
     name: string;
-    age: string;
+    age: number;
     bio: string;
     sex: string;
     tags: string[];
@@ -33,10 +36,12 @@ export interface IUser {
     checkInHistory: string[]; // Add proper type
     icon: string;
     achievements: string[]; // Add proper type
-    gymExperience: string;
+    gymExperience: number;
     currentlyMessaging: string[];
     gymId: string;
+    filters: filter[];
 }
+
 export interface Gym{
     name: string;
     members: string[];
@@ -46,20 +51,92 @@ export interface Gym{
 }
 
 // Function to retrieve users data from Firestore with a filter of gym or any other
-export const getUsers = async (UID: string, gym?: string, 
-    filters?: [string, string, any][]): Promise<IUser[]> => {
+export const getUsers = async (UID: string, gymId?: string, 
+        filters?: { field: string, operator: string, value: any }[]): Promise<IUser[]> => {
     const db = firestore;
 
+    try {
+        // Get gym members if gym name is provided
+        let memberIds: string[] = [];
+        if (gymId) {
+            const gymSnapshot = await getDoc(doc(db, 'Gyms', gymId));
+            if (gymSnapshot.exists()) {
+                const gymData = gymSnapshot.data();
+                if (gymData && gymData.members) {
+                    memberIds = gymData.members;
+                }
+            } 
+
+        }
+
+        // Query  users from their gym. If they don't have one, query all users
+        // TODO: Maybe query only nearby users.
+        let usersQuery = memberIds.length > 0 ? 
+            query(collection(db, 'Users'), where('uid', 'in', memberIds)):
+            query(collection(db, 'Users'));
+        
+        // Apply additional filters if provided
+        if (filters && filters.length > 0) {
+            for (const filter of filters) {
+                if (filter.value == ""){
+                    continue
+                }
+                if (filter.field == "gymExperience"){
+                    continue
+                    if (filter.operator == "<="){
+                        continue
+                    }
+                }
+                console.log("filter", filter.field, filter.operator, filter.value);
+                usersQuery = query(usersQuery, where(filter.field, filter.operator as any, filter.value));
+                
+            }
+        }
+
+        // Get each user and save their data
+        const querySnapshot = await getDocs(usersQuery);
+        const usersData: IUser[] = [];
+
+        // Save user data if it is not the current User
+        querySnapshot.forEach(snap => {
+            const userData = snap.data() as IUser;
+            if (userData.uid !== UID) {
+                usersData.push(userData);
+            }
+        });
+
+        return usersData;
+
+    } catch (error) {
+        // Throw error for handling in the caller function
+        console.error('Error querying users:', error);
+        throw error;
+    }
+};
+
+// Function to retrieve users data from Firestore with a filter of gym or any other
+export const getUsers2 = async (UID: string, gym?: string, 
+    filters?: { field: string, operator: string, value: any }[]): Promise<IUser[]> => {
+    const db = firestore;
+    
     // Query users from a specific gym, or all users if none is given
     let usersQuery = gym ? query(collection(db, 'Users'), where('gym', '==', gym)) : 
         collection(db, 'Users');
 
     // Query users based on given filters
     // TODO: Only query some of them
+    console.log("HEEEEEY", filters);
+    if (filters){
+        console.log("CHECKED")
+    }
     if (filters && filters.length > 0) {
-        filters.forEach(([filterName, symbol, value]) => {
-            usersQuery = query(usersQuery, where(filterName, symbol as any, value));
-        });
+        console.log("CHECKED");
+        for (const filter of filters) {
+            console.log("filter");
+            console.log(filter.field, filter.operator, filter.value);
+            usersQuery = query(usersQuery, where(filter.field, filter.operator as any, filter.value));
+            console.log(usersQuery);
+        }
     }
 
     // Get each user and save their data
@@ -107,10 +184,12 @@ export async function addUser(
         uid: string, 
         email: string = "", 
         gym: string = "", 
+        gymId: string = "",
         name: string = "", 
-        age: string = "", 
+        age: number = 21, 
         bio: string = "",
         sex: string = "", 
+        filters: filter[],
         tags: string[] = []): Promise<void> {
         
     const db = firestore;
@@ -129,11 +208,13 @@ export async function addUser(
             rejectedRequests: [],
             blockedUsers: [],
             gym: gym,
+            gymId: gymId,
             checkInHistory: [],
             icon: "",
             achievements: [],
-            gymExperience: "0",
-            currentlyMessaging: []
+            gymExperience: 0,
+            currentlyMessaging: [],
+            filters: [],
         });
         console.log("Document written for user: ", uid);
     } catch (error) {
@@ -144,10 +225,13 @@ export async function addUser(
 // Function to get Current user given their uid.
 export async function getCurrUser(uid: string): Promise<IUser> {
     const currUser = await getUser(uid);
+    if (currUser === null) {
+        throw new Error(`User with UID ${uid} not found`);
+    }
     return currUser;
 }
 
-// Define a function to fetch all users and update them with missing fields
+
 export async function updateUsers(): Promise<void> {
     const db = firestore;
     const usersRef = collection(db, 'Users');
@@ -156,21 +240,132 @@ export async function updateUsers(): Promise<void> {
         // Fetch all users
         const querySnapshot = await getDocs(usersRef);
 
-
         // Iterate over each user document
-        querySnapshot.forEach(async (doc) => {
-            const userData = doc.data() as IUser;
+        for (const doc1 of querySnapshot.docs) {
+            const userData = doc1.data() as IUser;
+            // Create random values for fields. Uncomment when used
+        const minAge = 18;
+        const maxAge = 60;
+        const randomAge = Math.floor(Math.random() * (maxAge - minAge + 1)) + minAge;
 
+        const minExp = 0;
+        const maxExp = 10;
+        const randomExp = Math.floor(Math.random() * (maxExp - minExp + 1)) + minExp;
+
+        function generateRandomSex(): 'male' | 'female' {
+        // Generate a random number between 0 and 1
+            const randomValue = Math.random();
+            // If the random number is less than 0.5, return 'male', otherwise return 'female'
+            return randomValue < 0.5 ? 'male' : 'female';
+            }
+
+            const randomSex: 'male' | 'female' = generateRandomSex();
+
+            const maleNames: string[] = ['James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Joseph', 'Charles', 'Thomas', 'Christopher', 'Daniel', 'Matthew', 'Anthony', 'Donald', 'Mark', 'Paul', 'Steven', 'Andrew', 'Kenneth', 'George', 'Joshua', 'Kevin', 'Brian', 'Edward', 'Ronald', 'Timothy', 'Jason', 'Jeffrey', 'Ryan', 'Gary', 'Nicholas', 'Eric', 'Stephen', 'Jacob', 'Larry', 'Frank', 'Jonathan', 'Scott', 'Justin', 'Brandon', 'Raymond', 'Gregory', 'Samuel', 'Benjamin', 'Patrick', 'Jack', 'Alexander'];
+            const femaleNames: string[] = ['Mary', 'Jennifer', 'Linda', 'Patricia', 'Susan', 'Karen', 'Jessica', 'Nancy', 'Sarah', 'Emily', 'Megan', 'Ashley', 'Amanda', 'Melissa', 'Deborah', 'Stephanie', 'Heather', 'Nicole', 'Elizabeth', 'Laura', 'Michelle', 'Kimberly', 'Amy', 'Angela', 'Christine', 'Samantha', 'Donna', 'Tiffany', 'Carol', 'Cynthia', 'Patricia', 'Sharon', 'Margaret', 'Lisa', 'Rebecca', 'Kathleen', 'Andrea', 'Pamela', 'Anna', 'Marie', 'Debra', 'Emily', 'Kelly', 'Mary', 'Brenda', 'Kristen', 'Janet', 'Julie'];
+
+            // Function to generate a random name based on gender
+            function generateRandomName(gender: 'male' | 'female'): string {
+                const names = gender === 'male' ? maleNames : femaleNames;
+                const randomIndex = Math.floor(Math.random() * names.length);
+                return names[randomIndex];
+            }
+
+            // Example usage
+            const randomName: string = generateRandomName(randomSex);
+
+            const tags = ['cardio', 'weightlift', 'yoga', 'crossfit', 'running', 'swim', 'cycle', 'boxing', 'pilates'];
+            
+            function getRandomSubset<T>(array: T[], size: number): T[] {
+                const shuffled = array.sort(() => 0.5 - Math.random());
+                return shuffled.slice(0, Math.min(size, array.length));
+            }
+
+            const userTags = getRandomSubset(tags, 3);
+            
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
+                tags: userTags
             };
 
             // Update document if any field is missing
             if (Object.keys(newUserFields).length > 0) {
-                await updateDoc(doc.ref, newUserFields);
+                await updateDoc(doc1.ref, newUserFields);
             }
-        });
+        }
+
+        console.log('All users updated with missing fields successfully');
+    } catch (error) {
+        console.error('Error updating users with missing fields:', error);
+        throw error;
+    }
+}
+
+// Define a function to fetch all users and update them with missing fields
+export async function updateUsersandGym(): Promise<void> {
+    const db = firestore;
+    const usersRef = collection(db, 'Users');
+    const gymsRef = collection(db, "Gyms");
+
+    try {
+        // Fetch all users
+        const querySnapshot = await getDocs(usersRef);
+        const queryGymSnapshot = await getDocs(gymsRef);
+
+        // Empty members from gym
+        for (const doc of queryGymSnapshot.docs) {
+            const newGymFields: Partial<Gym> = {
+                members: []
+            };
+
+            // Update document if any field is missing
+            if (Object.keys(newGymFields).length > 0) {
+                await updateDoc(doc.ref, newGymFields);
+            }
+        }
+
+        // Assuming you have a list of gyms with their IDs
+        const gymsList: { gym: string, gymId: string }[] = [
+            { gym: 'Back Bay Fit', gymId: 'ChIJ1R1krgR644kRWNHhZ7Xfbjg' },
+            { gym: 'Boston University Fitness and Recreation Center', gymId: 'ChIJ4Whn6Oh544kRNbDs7r_lQ68' },
+            { gym: 'Boston YMC Union', gymId: 'ChIJFawAyHd644kRV9wDs0Puy-s' },
+            { gym: 'Invictus Boston - Fenway', gymId: 'ChIJSw7FxfV544kRedruTET0Sfc' },
+            { gym: 'Esplanade Outdoor Gym', gymId: 'ChIJf5s4Svh544kRh8KQMWEZcYg' },
+            // Add more gyms as needed
+        ];
+
+        // Iterate over each user document
+        for (const doc1 of querySnapshot.docs) {
+            const userData = doc1.data() as IUser;
+
+            const randomIndex = Math.floor(Math.random() * gymsList.length);
+            const randomGym = gymsList[randomIndex].gym;
+            const randomGymId = gymsList[randomIndex].gymId;
+
+            // Define an empty user object with all fields set to empty strings
+            // Add fields to update
+            const newUserFields: Partial<IUser> = {
+                gym: randomGym,
+                gymId: randomGymId
+            };
+
+            // Update document if any field is missing
+            if (Object.keys(newUserFields).length > 0) {
+                await updateDoc(doc1.ref, newUserFields);
+            }
+            
+            const gymRef = doc(db, 'Gyms', randomGymId);
+            const gymDocSnapshot = await getDoc(gymRef);
+
+            if (gymDocSnapshot.exists()) {
+                const gymData = gymDocSnapshot.data();
+                if (gymData && Array.isArray(gymData.members)) {
+                    const updatedMembers = [...gymData.members, doc1.data().uid];
+                    await updateDoc(gymDocSnapshot.ref, { members: updatedMembers });
+                }
+            }
+        }
 
         console.log('All users updated with missing fields successfully');
     } catch (error) {
@@ -208,10 +403,6 @@ export async function randomIt(): Promise<void> {
     const minExp = 0;
     const maxExp = 10;
     const randomExp = Math.floor(Math.random() * (maxExp - minExp + 1)) + minExp;
-
-    const gyms = ['Gym A', 'Gym B', 'Gym C', 'Gym D', 'Gym E'];
-    const randomGymIndex = Math.floor(Math.random() * gyms.length);
-    const randomGym = gyms[randomGymIndex];
 
     function generateRandomSex(): 'male' | 'female' {
         // Generate a random number between 0 and 1

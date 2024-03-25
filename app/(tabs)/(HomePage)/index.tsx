@@ -9,6 +9,8 @@ import {
   FlatList,
   Heading,
   Text,
+  Pressable,
+  Spacer,
 } from "native-base";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Gym from "../../../components/SelectGymComponents/GymComponent";
@@ -19,6 +21,9 @@ import {
   Geometry
 } from "react-native-google-places-autocomplete";
 import * as Location from "expo-location";
+import { useAuth } from "@/Context/AuthContext";
+import { router } from "expo-router";
+
 interface GymIcon {
   photoURL: string;
   height: number;
@@ -94,15 +99,18 @@ export default function SelectGym() {
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView style={styles.container}>
-        <Box margin={2}>
-          <Flex justifyContent={"space-between"} flexDirection={"row"}>
-            <Box>
-              <Heading> Select Your Gym </Heading>
-              <Text> Find the gym that you go most often </Text>
-            </Box>
-            <FontAwesome name="map-o" size={50} color="#F0F9FF" />
-          </Flex>
-          <Box marginTop={4}></Box>
+        <Box margin={2} mt={3}>
+            <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"right"}>
+              <Pressable pr={2} onPress={() => router.push("./Home")}>
+                <FontAwesome name="chevron-left" size={30} color="#0C4A6E" />
+              </Pressable>
+              <Box>
+                <Heading> Select Your Gym </Heading>
+                <Text> Find the gym that you go most often </Text>
+              </Box>
+              <Spacer/>
+              <FontAwesome name="map-o" size={50} color="#F0F9FF" />
+            </Flex>
         </Box>
         <Box m={2}>
           <GooglePlacesAutocomplete

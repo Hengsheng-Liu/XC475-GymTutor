@@ -17,7 +17,6 @@ export default function TabLayout() {
   } else {
     return (
       <Tabs>
-
         <Tabs.Screen
           name="(MessagePage)"
           options={{
@@ -27,17 +26,11 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="(GymPage)"
+          name="(HomePage)"
           options={{
-            title: "SelectGym",
+            title: "SpotMe",
             headerShown: false,
-          }}
-        />
-        <Tabs.Screen
-          name = "Test"
-          options={{
-            title: "Test",
-            headerShown: false,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="group" />,
           }}
         />
         <Tabs.Screen
@@ -46,6 +39,15 @@ export default function TabLayout() {
             title: "Profile",
             headerShown: false,
             tabBarIcon: (props) => <TabBarIcon {...props} name="user" />,
+          }}
+        />
+        <Tabs.Screen
+          name = "Test"
+          options={{
+            title: "Test",
+            headerShown: false,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="pencil" />,
+
           }}
         />
       </Tabs>

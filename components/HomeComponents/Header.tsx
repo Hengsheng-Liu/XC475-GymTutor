@@ -14,12 +14,12 @@ import { Image } from "react-native";
 import { IUser } from "@/components/FirebaseUserFunctions";
 import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
+
 interface FriendProps {
-  currUser: IUser;
   GymName: string;
 }
 
-const Header: React.FC<FriendProps> = ({ currUser, GymName }) => {
+const Header: React.FC<FriendProps> = ({ GymName }) => {
   const [isPressed, setIsPressed] = useState<boolean>(false);
 
   return (
@@ -32,7 +32,7 @@ const Header: React.FC<FriendProps> = ({ currUser, GymName }) => {
         >
           <Box>
             <Pressable
-              onPress={() => router.push("/(tabs)/(GymPage)")}
+              onPress={() => router.push("/(tabs)/(HomePage)/")}
               onPressOut={() => setIsPressed(false)}
               bg={isPressed ? "trueGray.200" : "#FFF"} // Change background color on hover
             >

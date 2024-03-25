@@ -34,13 +34,13 @@ export default function LogInScreen() {
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
   const { SignIn } = useAuth();
+
   const handleLogIn = async () => {
     if (email && password) {
       try {
         const userCredential = await SignIn(email, password);
         const user = userCredential.user;
         if (user) {
-
           router.replace("/");
         }
       } catch (error: any) {
