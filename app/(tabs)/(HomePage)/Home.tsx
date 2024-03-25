@@ -281,8 +281,9 @@ export default function HomeScreen() {
           size={"lg"}
           borderRadius={30}
           position={"absolute"}
-          top={675}
-          left={280}
+          width={125}
+          top={700}
+          left={225}
           background={"#0284C7"}
           onPress={handleCheckIn}
         >
