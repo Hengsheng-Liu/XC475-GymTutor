@@ -55,13 +55,7 @@ export const expoConfig = {
         "locationAlwaysAndWhenInUsePermission": "Allow Spot Me to use your location."
       }
     ]
-  ],
-  experiments: {
-    typedRoutes: true
-  },
-  extra: {
-    ...env.parsed,
-  },
+  ]
 };
 
 export default expoConfig;
