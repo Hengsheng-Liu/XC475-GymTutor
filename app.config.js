@@ -6,6 +6,7 @@ export const expoConfig = {
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   userInterfaceStyle: 'automatic',
+  owner:"spot-me", 
   splash: {
     image: './assets/images/splash.png',
     resizeMode: 'contain',
