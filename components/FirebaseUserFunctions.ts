@@ -20,6 +20,8 @@ import { GeoPoint } from 'firebase/firestore';
 
 type filter = [string, string, any];
 
+type birthday =  { day: 1, month: 3, year: 1990 } ;
+
 export interface IUser {
     uid: string;
     email: string;
@@ -40,6 +42,7 @@ export interface IUser {
     currentlyMessaging: string[];
     gymId: string;
     filters: filter[];
+    birthday: birthday;
 }
 
 export interface Gym{
@@ -190,6 +193,7 @@ export async function addUser(
         bio: string = "",
         sex: string = "", 
         filters: filter[],
+        birthday: birthday,
         tags: string[] = []): Promise<void> {
         
     const db = firestore;
@@ -215,6 +219,7 @@ export async function addUser(
             gymExperience: 0,
             currentlyMessaging: [],
             filters: [],
+            birthday: birthday
         });
         console.log("Document written for user: ", uid);
     } catch (error) {
@@ -286,7 +291,7 @@ export async function updateUsers(): Promise<void> {
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
-                tags: userTags
+                birthday: { day: 1, month: 3, year: 1990 }, 
             };
 
             // Update document if any field is missing
