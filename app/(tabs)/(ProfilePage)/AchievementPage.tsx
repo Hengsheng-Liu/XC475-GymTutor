@@ -9,6 +9,7 @@ import {
   Box,
   Spacer,
   ScrollView,
+  HStack,
 } from "native-base";
 import { SafeAreaView } from "react-native";
 import FitFriend from "../../../assets/images/achievements/FitFriendship.svg";
@@ -46,7 +47,25 @@ const AchievementPage = () => {
   ];
   return (
     <NativeBaseProvider>
+    <ScrollView>
       <SafeAreaView>
+        
+                <Flex flexDirection={"row"}  flexWrap={"wrap"} >
+                    {ahievements.map((achievement) => (
+                            <Flex h="20" w="20" width={"1/3"} borderWidth={1} justifyContent={"center"} alignItems={"center"}>
+                                    <achievement.image/>
+                            </Flex>
+                    ))}
+                </Flex>            
+       
+      </SafeAreaView>
+      </ScrollView>
+    </NativeBaseProvider>
+  );
+};
+export default AchievementPage;
+
+/*
         <VStack mt={3}>
           <Spacer />
           <ScrollView>
@@ -76,8 +95,5 @@ const AchievementPage = () => {
             </VStack>
           </ScrollView>
         </VStack>
-      </SafeAreaView>
-    </NativeBaseProvider>
-  );
-};
-export default AchievementPage;
+
+*/
