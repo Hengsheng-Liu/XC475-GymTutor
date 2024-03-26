@@ -10,6 +10,7 @@ export default function HomeLayout() {
         <Stack.Screen name="index" options= {{headerShown: false}}/>
         <Stack.Screen name="CheckInOne" options= {{headerShown: false}}/>
         <Stack.Screen name="CheckInTwo" options= {{headerShown: false}}/>
+        <Stack.Screen name="CheckInThree" options= {{headerShown: false}}/>
 
         </Stack>
     )
