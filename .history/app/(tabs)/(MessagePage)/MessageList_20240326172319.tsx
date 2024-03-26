@@ -22,8 +22,6 @@ import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused 
 import { styles } from "../../../components/HomeComponents/DisplayUsersStyles";
 import { router } from "expo-router";
 
-import { globalState } from './globalState';
-
 type Props = {
   navigation: StackNavigationProp<any>;
 };
@@ -33,11 +31,6 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
   const [users, setUsers] = useState<IUser[]>([]); // State to store users
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
   const { User } = useAuth();
-
-  const navigateToChatPage = (user) => {
-    globalState.user = user; // Set the selected user in the global state
-    router.navigate("ChatPage"); // Then navigate to ChatPage
-  };
 
   useEffect(() => {
     if (User && isFocused) {
@@ -84,7 +77,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
           <TouchableOpacity
             key={index}
             style={styles.userContainer}
-            onPress={() => navigateToChatPage(user)}
+            onPress={() => router.navigate("ChatPage", { user: user })}
           >
             <View style={styles.profilePicture}></View>
             {/* Once we have an image, I can put this */}

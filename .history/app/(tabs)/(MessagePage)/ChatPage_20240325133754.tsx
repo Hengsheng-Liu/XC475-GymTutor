@@ -7,8 +7,6 @@ import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused 
 import { router } from "expo-router";
 import { GiftedChat } from 'react-native-gifted-chat';
 import Fire from './data'
-import { globalState } from './globalState';
-
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -17,34 +15,22 @@ type Props = {
 
 const ChatPage: React.FC<Props> = ({ navigation }) => {
 
-  const { User } = useAuth();
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
   const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
   const [loading, setLoading] = useState<boolean>(true); // State to track loading status
-
-
-  // Accessing the user parameter passed to this screen
-  const receiveUser = globalState.user; // Using optional chaining in case params are undefined
-
-  if (!User) {
-    return null;
-  }
-
-  // Logic to send a message
-  const sendMessage = (messages = []) => {
-    Fire.shared.send(messages, User.uid); // Use user.uid to send messages
+  const sendMessage = () => {
+    // Logic to send message goes here
     setMessage('');
   };
 
-
   useEffect(() => {
-    Fire.shared.on(message =>
+    const unsubscribe = Fire.shared.on(message =>
       setMessages(previousMessages => GiftedChat.append(previousMessages, message))
     );
 
     return () => {
-      Fire.shared.off();
+      unsubscribe();
     };
   }, []);
 
@@ -127,14 +113,11 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
           {/* Icon for additional options */}
         </TouchableOpacity>
       </View>
-      <GiftedChat
-        messages={messages}
-        onSend={Fire.shared.send}
-        user={{
-          _id: User.uid, // Use the UID from useAuth
-          name: User.displayName || 'Anonymous', // Use the displayName from useAuth, if available
-        }}
-      />
+      <ScrollView style={styles.chatContainer}>
+        <GiftedChat
+          messages={messages}
+        />
+      </ScrollView>
       <View style={styles.inputContainer}>
         <TextInput
           value={message}
@@ -142,7 +125,7 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
           style={styles.input}
           placeholder="Type a message"
         />
-        <TouchableOpacity onPress={() => sendMessage([{ text: message, user: { _id: receiveUser.uid, name: receiveUser.displayName } }])}>
+        <TouchableOpacity onPress={sendMessage}>
           <Text style={styles.sendButton}>Send</Text>
         </TouchableOpacity>
       </View>
