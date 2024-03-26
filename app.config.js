@@ -1,17 +1,3 @@
-import { ExpoConfig } from 'expo/config';
-import { config } from 'dotenv';
-import path from 'path';
-
-const env_file = path.join(__dirname, '.env');
-const env = config({
-  path: env_file,
-});
-
-if (env.error) {
-  console.log('ENV FILE ERROR: ', env_file);
-  throw env.error;
-}
-
 export const expoConfig = {
   scheme: 'myapp',
   name: 'SpotMe',
@@ -70,11 +56,19 @@ export const expoConfig = {
       }
     ]
   ],
-  experiments: {
-    typedRoutes: true
-  },
-  extra: {
-    ...env.parsed,
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "22999ea1-0a5e-46c0-8465-f21aea1344fd"
+      }
+    },
+    "updates":{
+      "url": "https://u.expo.dev/22999ea1-0a5e-46c0-8465-f21aea1344fd"
+    },
+    "runtimeVersion":{
+      "policy":"appVersion"
+    },
+    "owner": "spot-me"
   },
 };
 

@@ -1,6 +1,6 @@
 import { Stack } from "expo-router"
 
-export default function authLayout() {
+export default function HomeLayout() {
     return(
         <Stack>
         <Stack.Screen name="Home" options= {{headerShown: false}}/>        
@@ -8,6 +8,9 @@ export default function authLayout() {
         <Stack.Screen name="Notifications" options= {{headerTitle: "Notifications"}}/>
         <Stack.Screen name="Filter" options= {{headerTitle: "Filters"}}/>
         <Stack.Screen name="index" options= {{headerShown: false}}/>
+        <Stack.Screen name="CheckInOne" options= {{headerShown: false}}/>
+        <Stack.Screen name="CheckInTwo" options= {{headerShown: false}}/>
+        <Stack.Screen name="CheckInThree" options= {{headerShown: false}}/>
 
         </Stack>
     )

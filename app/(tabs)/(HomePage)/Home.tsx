@@ -215,18 +215,11 @@ export default function HomeScreen() {
     setFilters(newFilters);
   };
   const handleCheckIn = async () => {
-    const location = await GetUserLocation();
-    if (checkIn) {
-      alert("You have already checked in today");
-      return;
-    } else {
+    const location = await GetUserLocation(); {
       if (location) {
         setLocation(location);
         if (pointInPolygon(location, bound.current)) {
-          AddDate();
-          alert(
-            "Wooho seems like you at the location and check in is successful"
-          );
+          router.push("/CheckInOne");
         } else {
           alert(
             "You are not at the gym location, please check in at the gym location"
@@ -281,8 +274,9 @@ export default function HomeScreen() {
           size={"lg"}
           borderRadius={30}
           position={"absolute"}
-          top={675}
-          left={280}
+          width={125}
+          top={700}
+          left={225}
           background={"#0284C7"}
           onPress={handleCheckIn}
         >
@@ -296,3 +290,24 @@ export default function HomeScreen() {
 // outside the gym: 42.35249135900813, -71.11565509642959
 //42.35193439884672, -71.11673198835226
 //42.352164385569864, -71.11695979401712
+/*
+    const location = await GetUserLocation();
+    if (checkIn) {
+      alert("You have already checked in today");
+      return;
+    } else {
+      if (location) {
+        setLocation(location);
+        if (pointInPolygon(location, bound.current)) {
+          router.push("/CheckInOne");
+        } else {
+          alert(
+            "You are not at the gym location, please check in at the gym location"
+          );
+        }
+      } else {
+        alert("Please enable location services to check in");
+      }
+    }
+
+*/
