@@ -23,15 +23,6 @@ import { AddUserToDB } from './SignUp';
 export default function LogInScreen() {
 
 
-<<<<<<< HEAD
-  // // Hook that gives us the function to authenticate our Google OAuth provider
-  // const [, googleResponse, promptAsyncGoogle] = useGoogleIdTokenAuthRequest({
-  //   selectAccount: true,
-  //   expoClientId,
-  //   iosClientId,
-  //   androidClientId
-  // });
-=======
   // Hook that gives us the function to authenticate our Google OAuth provider
   /*
   const [, googleResponse, promptAsyncGoogle] = useGoogleIdTokenAuthRequest({
@@ -41,7 +32,6 @@ export default function LogInScreen() {
     androidClientId
   });
   */
->>>>>>> b4e2825fe3149a4e35747ae43047aa01a58c8e1d
   const [user, setUser] = useState<User | null>(null);
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
@@ -68,17 +58,6 @@ export default function LogInScreen() {
 
 
   // Code below handles the login via the Google Provider
-<<<<<<< HEAD
-  // const handleLoginGoogle = async () => {
-  //   try {
-  //     await promptAsyncGoogle();
-  //   } catch (error) {
-  //     console.error("Google Sign-In Error:", error);
-  //     Alert.alert("Login Error", "Failed to sign in with Google. Please try again.");
-  //   }
-  // };
-
-=======
   /*
   const handleLoginGoogle = async () => {
     try {
@@ -89,7 +68,6 @@ export default function LogInScreen() {
     }
   };
   */
->>>>>>> b4e2825fe3149a4e35747ae43047aa01a58c8e1d
 
   // Function that logs into firebase using the credentials from an OAuth provider
   /*
@@ -130,17 +108,6 @@ export default function LogInScreen() {
     }
   }, []);
 
-<<<<<<< HEAD
-  // useEffect(() => {
-  //   if (googleResponse?.type === 'success') {
-  //     const credentials = GoogleAuthProvider.credential(
-  //       googleResponse.params.id_token
-  //     );
-  //     GoogleloginToFirebase(credentials);
-  //   }
-  // }, [googleResponse]);
-
-=======
   useEffect(() => {
     if (googleResponse?.type === 'success') {
       const credentials = GoogleAuthProvider.credential(
@@ -150,7 +117,6 @@ export default function LogInScreen() {
     }
   }, [googleResponse]);
   */
->>>>>>> b4e2825fe3149a4e35747ae43047aa01a58c8e1d
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       setUser(user);
@@ -184,11 +150,7 @@ export default function LogInScreen() {
               secureTextEntry />
             <Button title="Log In" onPress={handleLogIn} />
             <Button title="Sign Up" onPress={() => router.navigate("SignUp")} />
-<<<<<<< HEAD
-            {/* <Button title={'Google Login'} onPress={handleLoginGoogle} /> */}
-=======
             {<Button title={'Google Login'} />}
->>>>>>> b4e2825fe3149a4e35747ae43047aa01a58c8e1d
           </View>
         </View>
       </SafeAreaView>
