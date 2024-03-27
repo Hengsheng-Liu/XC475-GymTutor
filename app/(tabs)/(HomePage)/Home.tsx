@@ -219,7 +219,7 @@ export default function HomeScreen() {
       if (location) {
         setLocation(location);
         if (pointInPolygon(location, bound.current)) {
-          router.push("/CheckInOne");
+          router.push("/CheckIn");
         } else {
           alert(
             "You are not at the gym location, please check in at the gym location"

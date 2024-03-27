@@ -8,10 +8,9 @@ export default function HomeLayout() {
         <Stack.Screen name="Notifications" options= {{headerTitle: "Notifications"}}/>
         <Stack.Screen name="Filter" options= {{headerTitle: "Filters"}}/>
         <Stack.Screen name="index" options= {{headerShown: false}}/>
-        <Stack.Screen name="CheckInOne" options= {{headerShown: false}}/>
-        <Stack.Screen name="CheckInTwo" options= {{headerShown: false}}/>
-        <Stack.Screen name="CheckInThree" options= {{headerShown: false}}/>
-
+        <Stack.Screen name="CheckIn" options= {{headerShown: false}}/>
+        <Stack.Screen name="SelectWorkout" options= {{headerShown: false}}/>
+        <Stack.Screen name="CheckInSubmit" options= {{headerShown: false}}/>
         </Stack>
     )
 }
