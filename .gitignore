@@ -37,5 +37,5 @@ yarn-error.*
 
 android/ 
 ios/
-.history/
 lib/
+.history/
