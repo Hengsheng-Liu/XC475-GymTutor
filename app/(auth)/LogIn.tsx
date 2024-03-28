@@ -39,11 +39,11 @@ export default function LogInScreen() {
 
   const handleLogIn = async () => {
     // Skip credentials (Developer use only)
-    const userCredential = await SignIn("a@gmail.com", "password"); // (to skip the email verification)
-        const user = userCredential.user;
-        if (user) {
-          router.replace("/");
-        }
+    // const userCredential = await SignIn("a@gmail.com", "password"); // (to skip the email verification)
+    //     const user = userCredential.user;
+    //     if (user) {
+    //       router.replace("/");
+    //     }
 
     if (email && password) {
       try {
@@ -157,6 +157,7 @@ export default function LogInScreen() {
               secureTextEntry />
             <Button title="Log In" onPress={handleLogIn} />
             <Button title="Sign Up" onPress={() => router.navigate("SignUp")} />
+            {<Button title={'Google Login'} />}
             {<Button title={'Google Login'}/>}
           </View>
         </View>
