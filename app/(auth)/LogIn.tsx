@@ -158,7 +158,6 @@ export default function LogInScreen() {
             <Button title="Log In" onPress={handleLogIn} />
             <Button title="Sign Up" onPress={() => router.navigate("SignUp")} />
             {<Button title={'Google Login'} />}
-            {<Button title={'Google Login'}/>}
           </View>
         </View>
       </SafeAreaView>
