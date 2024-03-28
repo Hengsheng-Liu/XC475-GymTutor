@@ -10,6 +10,8 @@ type AuthContextValue = {
     currUser: IUser | null;
     SignOut: () => Promise<void>;
 }
+
+
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {

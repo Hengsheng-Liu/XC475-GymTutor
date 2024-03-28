@@ -17,8 +17,7 @@ import { GeoPoint } from 'firebase/firestore';
 // Update this and addUsers function when adding new fields
 // Use updateUsers function to initialize new fields on all users.
 // Define User interface
-
-type filter = [string, string, any];
+import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
 
 export interface IUser {
     uid: string;
@@ -39,7 +38,7 @@ export interface IUser {
     gymExperience: number;
     currentlyMessaging: string[];
     gymId: string;
-    filters: filter[];
+    filters: Filters;
 }
 
 export interface Gym{
@@ -114,50 +113,6 @@ export const getUsers = async (UID: string, gymId?: string,
     }
 };
 
-// Function to retrieve users data from Firestore with a filter of gym or any other
-export const getUsers2 = async (UID: string, gym?: string, 
-    filters?: { field: string, operator: string, value: any }[]): Promise<IUser[]> => {
-    const db = firestore;
-    
-    // Query users from a specific gym, or all users if none is given
-    let usersQuery = gym ? query(collection(db, 'Users'), where('gym', '==', gym)) : 
-        collection(db, 'Users');
-
-    // Query users based on given filters
-    // TODO: Only query some of them
-    console.log("HEEEEEY", filters);
-    if (filters){
-        console.log("CHECKED")
-    }
-    if (filters && filters.length > 0) {
-        console.log("CHECKED");
-        for (const filter of filters) {
-            console.log("filter");
-            console.log(filter.field, filter.operator, filter.value);
-            usersQuery = query(usersQuery, where(filter.field, filter.operator as any, filter.value));
-            console.log(usersQuery);
-        }
-    }
-
-    // Get each user and save their data
-    try {
-        const querySnapshot = await getDocs(usersQuery);
-        const usersData: IUser[] = []; 
-
-        querySnapshot.forEach(snap => {
-            const userData = snap.data() as IUser;
-            if (userData.uid != UID){
-                usersData.push(userData);
-            };
-        });
-
-        return usersData;
-    } catch (error) {
-        // Throw error for handling in the caller function
-        console.error('Error querying users:', error);
-        throw error; 
-    }
-};
 
 // Function to retrieve a user given their UID
 export const getUser = async (uid: string): Promise<IUser | null> => {
@@ -189,7 +144,7 @@ export async function addUser(
         age: number = 21, 
         bio: string = "",
         sex: string = "", 
-        filters: filter[],
+        filters: Filters = defaultFilters,
         tags: string[] = []): Promise<void> {
         
     const db = firestore;
@@ -214,7 +169,7 @@ export async function addUser(
             achievements: [],
             gymExperience: 0,
             currentlyMessaging: [],
-            filters: [],
+            filters: filters,
         });
         console.log("Document written for user: ", uid);
     } catch (error) {
@@ -286,12 +241,13 @@ export async function updateUsers(): Promise<void> {
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
-                tags: userTags
+                filters: defaultFilters,
             };
 
             // Update document if any field is missing
             if (Object.keys(newUserFields).length > 0) {
                 await updateDoc(doc1.ref, newUserFields);
+                console.log("Document updated for user: ", doc1.id);
             }
         }
 
