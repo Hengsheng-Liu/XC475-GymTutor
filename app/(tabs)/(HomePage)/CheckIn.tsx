@@ -3,9 +3,9 @@ import React from "react";
 import CheckCircle from "../../../assets/images/checkIn/CheckCircle.svg";
 import { router } from "expo-router";
 import CheckInRoutine from "@/components/CheckInComponents/CheckInRoutine";
-export default function CheckInOne() {
+export default function CheckIn() {
     const submitCheckIn = () => {
-        router.push("CheckInTwo")
+        router.push("/SelectWorkout")
     }
   return (
         <CheckInRoutine navigation={submitCheckIn} Icon={CheckCircle} Title={"Are you ready to check in?"} ButtonText={"Yes"}/>
