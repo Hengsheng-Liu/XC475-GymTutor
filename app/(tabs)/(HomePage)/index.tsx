@@ -101,7 +101,7 @@ export default function SelectGym() {
       <SafeAreaView style={styles.container}>
         <Box margin={2} mt={3}>
             <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"right"}>
-              <Pressable pr={2} onPress={() => router.push("./Home")}>
+              <Pressable pr={2} onPress={() => router.push("./Filter")}>
                 <FontAwesome name="chevron-left" size={30} color="#0C4A6E" />
               </Pressable>
               <Box>

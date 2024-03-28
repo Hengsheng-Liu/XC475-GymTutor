@@ -2,16 +2,17 @@ import { createContext, useContext, useEffect, useState} from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, User, UserCredential } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import {IUser, getUser} from "../components/FirebaseUserFunctions"
+import { onSnapshot, doc } from "firebase/firestore";
+import { firestore } from "../firebaseConfig";
 
 type AuthContextValue = {
     CreateUser: (email: string, password: string) => Promise<UserCredential>;
     SignIn: (email: string, password: string) => Promise<UserCredential>;
     User: User | null;
     currUser: IUser | null;
+    updateCurrUser: () => void;
     SignOut: () => Promise<void>;
 }
-
-
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -30,6 +31,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return await auth.signOut();
     };
 
+    const updateCurrUser = async () => {
+        if (user) {
+            const userData = await getUser(user.uid);
+            console.log("User Updated");
+            setCurrUser(userData);
+        } else {
+            setCurrUser(null);
+            console.log("No user data found!");
+        }
+    }
+
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
             // console.log("user", CurrUser);
@@ -37,19 +49,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
             if (currentUser) {
                 const userData = await getUser(currentUser.uid);
+                console.log("User Updated");
                 setCurrUser(userData);
             } else {
                 setCurrUser(null);
+                console.log("No user data found!");
             }
         });
         return unsubscribe;
     }, []);
+
+    // useEffect(() => {    
+    //     if (currUser) {
+    //         const unsubscribe2 = onSnapshot(doc(firestore, "Users", currUser.uid), (doc) => {
+    //             if (doc.exists()) {
+    //                 const userData = doc.data() as IUser;
+    //                 setCurrUser(userData);
+    //             } else {
+    //                 setCurrUser(null);
+    //                 console.log("No user data found!");
+    //             }
+    //         });
+    //         return unsubscribe2;
+    //     }
+    // }, []);
 
     const authContextValue: AuthContextValue = {
         CreateUser,
         SignIn,
         User: user,
         currUser: currUser,
+        updateCurrUser,
         SignOut
     };
 
