@@ -50,7 +50,7 @@ export default function LogInScreen() {
         const userCredential = await SignIn(email, password);
         const user = userCredential.user;
         if (user) {
-          router.replace("/");
+          router.replace("/Home");
         }
       } catch (error: any) {
         const errorMessage = error.message;
