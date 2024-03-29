@@ -41,6 +41,9 @@ export default function SelectGym() {
     undefined
   );
   const [NearbyGyms, setNearbyGyms] = useState<Gym[]>([]);
+  const { currUser } = useAuth();
+  if (!currUser) return;
+
   useEffect(() => {
     // Make sure SearchLocation is defined and has the necessary properties
 
@@ -101,9 +104,11 @@ export default function SelectGym() {
       <SafeAreaView style={styles.container}>
         <Box margin={2} mt={3}>
             <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"right"}>
+            { (currUser.gym !== "") && 
               <Pressable pr={2} onPress={() => router.replace("./Home")}>
                 <FontAwesome name="chevron-left" size={30} color="#FFF" />
               </Pressable>
+            }
               <Box>
                 <Heading> Select Your Gym </Heading>
                 <Text> Find the gym that you go most often </Text>

@@ -9,7 +9,11 @@ export default function LoadingScreen() {
 
     useEffect(() => {
         if (currUser){
-            router.replace("/Home");
+            if (currUser.gym === "") {
+              router.replace("/");
+            } else{
+              router.replace("/Home");
+            } 
             }
       }, [currUser]); // Check when user has been updated
     
