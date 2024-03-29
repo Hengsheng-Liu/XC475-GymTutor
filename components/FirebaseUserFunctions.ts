@@ -19,6 +19,8 @@ import { GeoPoint } from 'firebase/firestore';
 // Define User interface
 import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
 
+type Birthday = {day: number, month: number, year: number};
+
 export interface IUser {
     uid: string;
     email: string;
@@ -35,10 +37,11 @@ export interface IUser {
     checkInHistory: string[]; // Add proper type
     icon: string;
     achievements: string[]; // Add proper type
-    gymExperience: number;
+    gymExperience: string;
     currentlyMessaging: string[];
     gymId: string;
     filters: Filters;
+    birthday: Birthday;
 }
 
 export interface Gym{
@@ -50,8 +53,7 @@ export interface Gym{
 }
 
 // Function to retrieve users data from Firestore with a filter of gym or any other
-export const getUsers = async (UID: string, gymId?: string, 
-        filters?: { field: string, operator: string, value: any }[]): Promise<IUser[]> => {
+export const getUsers = async (UID: string, gymId?: string, filters?: Filters): Promise<IUser[]> => {
     const db = firestore;
 
     try {
@@ -72,25 +74,29 @@ export const getUsers = async (UID: string, gymId?: string,
         // TODO: Maybe query only nearby users.
         let usersQuery = memberIds.length > 0 ? 
             query(collection(db, 'Users'), where('uid', 'in', memberIds)):
-            query(collection(db, 'Users'));
+            query(collection(db, 'Users'), where("gym", "!=", ""));
         
         // Apply additional filters if provided
-        if (filters && filters.length > 0) {
-            for (const filter of filters) {
-                if (filter.value == ""){
-                    continue
+        if (filters) {
+            const { applyFilters, sex, age, gymExperience } = filters;
+            // Check if filters should be applied in general
+            if (applyFilters[0]) {
+                // Filter by sex if specified
+                if (applyFilters[1] && sex.length > 0) {
+                    usersQuery = query(usersQuery, where("sex", "in", sex));
                 }
-                if (filter.field == "gymExperience"){
-                    continue
-                    if (filter.operator == "<="){
-                        continue
-                    }
+
+                // Filter by age if specified
+                if (applyFilters[2] && age.length === 2) {
+                    usersQuery = query(usersQuery, where("age", ">=", age[0]), where("age", "<=", age[1]));
                 }
-                console.log("filter", filter.field, filter.operator, filter.value);
-                usersQuery = query(usersQuery, where(filter.field, filter.operator as any, filter.value));
-                
-            }
-        }
+
+                // Filter by gym experience if specified
+                if (applyFilters[3] && gymExperience.length > 0) {
+                    usersQuery = query(usersQuery, where("gymExperience", "in", gymExperience));
+                };
+            };
+        };
 
         // Get each user and save their data
         const querySnapshot = await getDocs(usersQuery);
@@ -144,6 +150,8 @@ export async function addUser(
         age: number = 21, 
         bio: string = "",
         sex: string = "", 
+        gymExperience: string = "beginner",
+        birthday: Birthday = {day: 1, month: 1, year: 2000},
         filters: Filters = defaultFilters,
         tags: string[] = []): Promise<void> {
         
@@ -167,9 +175,10 @@ export async function addUser(
             checkInHistory: [],
             icon: "",
             achievements: [],
-            gymExperience: 0,
+            gymExperience: gymExperience,
             currentlyMessaging: [],
             filters: filters,
+            birthday: birthday
         });
         console.log("Document written for user: ", uid);
     } catch (error) {
@@ -238,10 +247,42 @@ export async function updateUsers(): Promise<void> {
 
             const userTags = getRandomSubset(tags, 3);
             
+            function chooseGymExperience(): string {
+                const experiences = ["beginner", "intermediate", "advanced"];
+                const randomIndex = Math.floor(Math.random() * experiences.length);
+                return experiences[randomIndex];
+            }
+            
+            // Example usage
+            const randomExperience = chooseGymExperience();
+
+            function getRandomBirthday(): Birthday {
+                const day = Math.floor(Math.random() * 28) + 1;
+                const month = Math.floor(Math.random() * 12) + 1;
+                const year = Math.floor(Math.random() * 30) + 1974;
+            
+                return { day, month, year };
+            }
+            const randomBirthday = getRandomBirthday();
+
+            function calculateAge(birthday: Birthday): number {
+                const today = new Date();
+                const birthDate = new Date(birthday.year, birthday.month - 1, birthday.day);
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+                // If the current month is less than the birth month, or if it's the same month but the current day
+                // is before the birth day, then subtract 1 from the age
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                return age;
+            }
+            const age = calculateAge(randomBirthday);
+
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
-                filters: defaultFilters,
             };
 
             // Update document if any field is missing

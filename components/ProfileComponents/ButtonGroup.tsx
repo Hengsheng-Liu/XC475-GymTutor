@@ -1,5 +1,7 @@
 import { Button, HStack } from "native-base";
 import { AntDesign } from "@expo/vector-icons";
+import { router } from "expo-router";
+
 export default function ButtonGroup() {
   return (
     <HStack
@@ -8,7 +10,7 @@ export default function ButtonGroup() {
       mt={6}
       textAlign={"center"}
     >
-      <Button flexGrow={"1"} variant={"outline"}>
+      <Button flexGrow={"1"} variant={"outline"} onPress={() => router.push("/Friends")}>
         120 Friends
       </Button>
       <Button

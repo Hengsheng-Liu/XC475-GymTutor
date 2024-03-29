@@ -46,8 +46,7 @@ export default function TabLayout() {
           options={{
             title: "Test",
             headerShown: false,
-            tabBarIcon: (props) => <TabBarIcon {...props} name="pencil" />,
-
+            tabBarIcon: (props) => <TabBarIcon {...props} name="pencil" />
           }}
         />
       </Tabs>

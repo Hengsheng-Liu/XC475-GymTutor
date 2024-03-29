@@ -4,13 +4,17 @@ import { auth } from "../firebaseConfig";
 import {IUser, getUser} from "../components/FirebaseUserFunctions"
 import { onSnapshot, doc } from "firebase/firestore";
 import { firestore } from "../firebaseConfig";
+import { Filters } from '@/app/(tabs)/(HomePage)/Filter';
 
 type AuthContextValue = {
     CreateUser: (email: string, password: string) => Promise<UserCredential>;
     SignIn: (email: string, password: string) => Promise<UserCredential>;
     User: User | null;
     currUser: IUser | null;
-    updateCurrUser: () => void;
+    userFilters: Filters | undefined;
+    updateFilters: (filters: Filters) => void;
+    userGym: [string, string] | undefined;
+    updateUserGym: (gymId: string, gymName: string) => void;
     SignOut: () => Promise<void>;
 }
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -18,6 +22,8 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [currUser, setCurrUser] = useState<IUser | null>(null);
+    const [userFilters, setUserFilters] = useState<Filters>();
+    const [userGym, setUserGym] = useState<[string, string]>();
 
     const CreateUser = async (email: string, password: string) => {
         return await createUserWithEmailAndPassword(auth, email, password);
@@ -31,15 +37,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return await auth.signOut();
     };
 
-    const updateCurrUser = async () => {
-        if (user) {
-            const userData = await getUser(user.uid);
-            console.log("User Updated");
-            setCurrUser(userData);
-        } else {
-            setCurrUser(null);
-            console.log("No user data found!");
-        }
+    const updateFilters = (filters: Filters) => {
+        setUserFilters(filters);
+        console.log("Updated Filters!");
+    }
+
+    const updateUserGym = (gymId: string, gymName: string) => {
+        setUserGym([gymId, gymName]);
+        console.log("Updated Gym!");
     }
 
     useEffect(() => {
@@ -51,6 +56,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 const userData = await getUser(currentUser.uid);
                 console.log("User Updated");
                 setCurrUser(userData);
+                if (userData){
+                    setUserFilters(userData.filters);
+                    setUserGym([userData.gymId, userData.gym]);
+                }
             } else {
                 setCurrUser(null);
                 console.log("No user data found!");
@@ -59,27 +68,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return unsubscribe;
     }, []);
 
-    // useEffect(() => {    
-    //     if (currUser) {
-    //         const unsubscribe2 = onSnapshot(doc(firestore, "Users", currUser.uid), (doc) => {
-    //             if (doc.exists()) {
-    //                 const userData = doc.data() as IUser;
-    //                 setCurrUser(userData);
-    //             } else {
-    //                 setCurrUser(null);
-    //                 console.log("No user data found!");
-    //             }
-    //         });
-    //         return unsubscribe2;
-    //     }
-    // }, []);
-
     const authContextValue: AuthContextValue = {
         CreateUser,
         SignIn,
         User: user,
         currUser: currUser,
-        updateCurrUser,
+        userFilters,
+        updateFilters,
+        updateUserGym,
+        userGym,
         SignOut
     };
 

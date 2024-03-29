@@ -1,19 +1,9 @@
 import React, { useState } from "react";
-import {
-  Flex,
-  Spacer,
-  IconButton,
-  Pressable,
-  Column,
-  Row,
-  Text,
-  Box,
-  Heading,
-} from "native-base";
-import { Image } from "react-native";
-import { IUser } from "@/components/FirebaseUserFunctions";
+import { Flex, Spacer, Row, Text, Box, Heading } from "native-base";
+import { TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
+import { Octicons } from '@expo/vector-icons';
 
 interface FriendProps {
   GymName: string;
@@ -23,33 +13,22 @@ const Header: React.FC<FriendProps> = ({ GymName }) => {
   const [isPressed, setIsPressed] = useState<boolean>(false);
 
   return (
-    <Flex mb={3}>
-      <Box>
-        <Flex
-          justifyContent={"space-between"}
-          flexDirection={"row"}
-          alignItems={"center"}
-        >
-          <Box>
-            <Pressable
-              onPress={() => router.push("/(tabs)/(HomePage)/")}
-              onPressOut={() => setIsPressed(false)}
-              bg={isPressed ? "trueGray.200" : "#FFF"} // Change background color on hover
-            >
-              <Box>
-                <Heading underline size="md" color="trueGray.900">
-                  {GymName}
-                </Heading>
-              </Box>
-            </Pressable>
-            <Text> Click to change your gym </Text>
-          </Box>
-          <Pressable onPress={() => router.push("./Notifications")}>
-            <FontAwesome name="bell" size={40} color="#0C4A6E" />
-          </Pressable>
-        </Flex>
-      </Box>
-    </Flex>
+    <Row
+      mb={2}
+      justifyContent={"space-between"}
+      alignItems={"center"}
+    >
+      <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/(tabs)/(HomePage)/")} >
+        <Heading size="md" color="trueGray.900" isTruncated maxW="90%">
+            {GymName}
+          </Heading>
+          <Text underline >Click to change your gym</Text>
+      </TouchableOpacity>
+      <Spacer/>
+      <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("./Notifications")} >
+      <Octicons name="bell-fill" size={40} color="#0284C7" />
+      </TouchableOpacity>
+    </Row>
   );
 };
 /*

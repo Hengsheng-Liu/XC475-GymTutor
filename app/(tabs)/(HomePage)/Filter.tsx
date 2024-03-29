@@ -31,11 +31,12 @@ export const defaultFilters: Filters = {
 };
 
 const FilterScreen = () => {
-    const { currUser, updateCurrUser } = useAuth();
+    const { User, userFilters, updateFilters } = useAuth();
     const db = firestore;
-    if (!currUser) return;
+    if (!User) return;
+    if (!userFilters) return;
 
-    const [filters, setFilters] = useState<Filters>(currUser.filters); // stores the filters of the user
+    const [filters, setFilters] = useState<Filters>(userFilters); // stores the filters of the user
 
     const [male, setMale] = useState<boolean>(filters.sex.includes("male")); // stores whether male box is checked
     const [female, setFemale] = useState<boolean>(filters.sex.includes("female")); // stores whether female box is checked
@@ -56,11 +57,12 @@ const FilterScreen = () => {
 
   // Update filters of user
   const updateUserFilters = async (filters: Filters) => {
-    const userDocRef = doc(db, "Users", currUser.uid);
+    updateFilters(filters);
+    const userDocRef = doc(db, "Users", User.uid);
     await updateDoc(userDocRef, {
       filters: filters
     });
-    updateCurrUser();
+    // updateCurrUser();
   };
 
   // Retrieve new filters and save them to the user
@@ -135,7 +137,6 @@ const FilterScreen = () => {
     // Check if it's necessary to apply filters
     if (!applyFilters[1] && !applyFilters[2] && !applyFilters[3]) {
       applyFilters[0] = false;
-      console.log("HEY");
     } else {
       // Check if there were any changes in apply filters selection
       if (applyNewFilters !== true) {
@@ -160,10 +161,9 @@ const FilterScreen = () => {
   };
   
   // Apply filters to the user
-  const applyChanges = (newFilters: Filters) => {
+  const applyChanges = async (newFilters: Filters) => {
     // Save new filters to the user
-    updateUserFilters(newFilters);
-    console.log("Saved filter changes to user: ", newFilters);
+    await updateUserFilters(newFilters);
   };
 
   // Save user filters if changes were made
@@ -172,7 +172,7 @@ const FilterScreen = () => {
     if (changed) {
       applyChanges(newFilters);
     };
-    router.push("/Home");
+    router.replace("/Home");
   };
 
   // Handle navigation. Ask user if they want to save changes before leaving
@@ -181,7 +181,7 @@ const FilterScreen = () => {
     if (changed) {
       setDialogOpen(true);
     } else {
-      router.push("/Home");
+      router.replace("/Home");
     }
   };
 
@@ -212,7 +212,7 @@ const FilterScreen = () => {
     if(changed){
       applyChanges(newFilters);
     }
-    router.push("/Home");
+    router.replace("/Home");
   };
 
   return (
@@ -229,7 +229,7 @@ const FilterScreen = () => {
               </Box>
               <Spacer/>
               <TouchableOpacity activeOpacity={0.7} onPress={() => handleResetFilters()} >
-                <Text color= "#FFF" fontWeight="bold">Reset</Text>
+                <Text color= "#FFF" fontSize="md" fontWeight="bold">Reset</Text>
               </TouchableOpacity>
             </Flex>
           </Box>

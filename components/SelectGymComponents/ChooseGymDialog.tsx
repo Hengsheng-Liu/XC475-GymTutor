@@ -7,6 +7,7 @@ import { firestore } from "../../firebaseConfig";
 import { doc, setDoc, updateDoc, getDoc, GeoPoint } from "firebase/firestore";
 import { Geometry } from "react-native-google-places-autocomplete";
 import { nominatimGymSearch } from "../GeolocationFunction";
+
 interface props {
   title: string;
   handleOpenGymDialog: (open: boolean) => void;
@@ -26,10 +27,11 @@ export default function ChooseGym({
   Address,
 }: props) {
   const cancelRef = React.useRef(null);
-  const { User } = useAuth();
+  const { User, updateUserGym } = useAuth();
   const db = firestore;
   const [gymBounding, setGymBounding] = React.useState<GeoPoint[]>();
-  const updateUserGym = async () => {
+
+  const updateUserGym2 = async () => {
     if (!User) return;
     const userDocRef = doc(db, "Users", User.uid);
     await updateDoc(userDocRef, {
@@ -81,8 +83,9 @@ export default function ChooseGym({
   };
 
   const handleSubmit = async () => {
+    updateUserGym(place_id, title);
     handleOpenGymDialog(false);
-    updateUserGym();
+    updateUserGym2();
     updateGym();
     router.push("/(tabs)/(HomePage)/Home");
   };

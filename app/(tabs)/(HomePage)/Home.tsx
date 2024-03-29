@@ -1,55 +1,26 @@
 import React, { useState, useEffect, useRef } from "react";
 import { router } from "expo-router";
-import {
-  NativeBaseProvider,
-  Input,
-  IconButton,
-  Row,
-  Flex,
-  Box,
-  Button,
-  Text,
-  Badge,
-} from "native-base";
-import {
-  Image,
-  ScrollView,
-  ActivityIndicator,
-  Button as RButton,
-} from "react-native";
+import { NativeBaseProvider, Spacer, Text, Box, Column, Spinner, Heading, Input, IconButton, Row, Button } from "native-base";
+import { ScrollView, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome, Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { useAuth } from "@/Context/AuthContext";
-import {
-  IUser,
-  getUsers,
-  getCurrUser,
-  updateUsers,
-  removeFieldFromUsers,
-  Gym,
-} from "@/components/FirebaseUserFunctions";
+import { IUser, getUsers, updateUsers, removeFieldFromUsers, Gym } from "@/components/FirebaseUserFunctions";
 import UserPreview from "../../../components/HomeComponents/UserContainer";
 import Header from "../../../components/HomeComponents/Header";
 import theme from "@/components/theme";
-import updateUser from "@/components/storage";
-import { doc, getDoc, GeoPoint, onSnapshot,updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "@/firebaseConfig";
-import * as Location from "expo-location";
-
 import { GetUserLocation } from "@/components/GeolocationFunction";
 import pointInPolygon from "point-in-polygon";
+import { Octicons } from "@expo/vector-icons";
+
 export default function HomeScreen() {
-  const [gym, setGym] = useState<Gym>(); // State to store the gym
-  const [gymName, setGymName] = useState<string>();
-  const [user, setUser] = useState<IUser>(); // State to store the current user
-  const [gymId, setGymId] = useState<string>("");
+  // const [gym, setGym] = useState<Gym>(); // State to store the gym
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [filters, setFilters] = useState<any>("");
-  const [useFilters, setUseFilters] = useState<boolean>(false);
   const [users, setUsers] = useState<IUser[]>([]); // State to store users
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
-  const { currUser, User } = useAuth();
-
+  const { User, currUser, userFilters, userGym } = useAuth();
   const [location, setLocation] = useState<number[]>([]);
   const bound = useRef<number[][]>([]); // State to store the gym boundary
   const [checkIn, setCheckIn] = useState<boolean>(false); // State to store the gym boundary
@@ -57,79 +28,40 @@ export default function HomeScreen() {
   const Today =
     Day.getFullYear() + "-" + (Day.getMonth() + 1) + "-" + Day.getDate();
   const today = new Date();
+
   if (!User) return;
-  if (!currUser) return;
+  if (!currUser || !userGym || !userFilters) return router.replace("/LoadingPage");
 
   // Initialize gym data
   useEffect(() => {
-    const fetchGym = async () => {
-      try {
-        const user = await getCurrUser(User.uid);
-        setUser(user);
-        const History = user.checkInHistory;
-        if (History && History.includes(Today)) {
-          setCheckIn(true); 
-        }
-        const gymDocRef = doc(firestore, "Gyms", user.gymId);
-        const userGym = (await getDoc(gymDocRef)).data() as Gym;
-
-        userGym.bounding.forEach((point) => {
-          bound.current.push([point.latitude, point.longitude]);
-        });
-        setGym(userGym);
-      } catch (error) {
-        console.log("Error fetching user:", error);
-      }
-    };
-    if (User) {
-      fetchGym();
-      handleGetUsers();
-      if (!gymId && !gymName) {
-        console.log("Initialize gym: ", currUser.gymId, currUser.gym);
-        setGymId(currUser.gymId);
-        setGymName(currUser.gym);
-        setFilters(currUser.filters);
-      }
-    }
-  }, [currUser]);
-
-  // Update gym when changed
-  useEffect(() => {
-    if (User) {
-      const unsubscribe = onSnapshot(
-        doc(firestore, "Users", User.uid),
-        (snapshot) => {
-          const updatedUser = snapshot.data() as IUser;
-          const newGymId = updatedUser.gymId;
-          const newGymName = updatedUser.gym;
-
-          if (gymId && gymId !== newGymId) {
-            console.log("Listened gym change: ", gymName, newGymName);
-            setGymId(newGymId);
-            setGymName(newGymName);
-          }
-
-          const newFilters = updatedUser.filters;
-          if (filters && filters !== newFilters) {
-            console.log("New filters added: ", newFilters);
-            setFilters(filters);
-          }
-        }
-      );
-
-      return () => {
-        unsubscribe();
+    if (currUser) {
+      if (!loading){
+        handleSearchUsers();
+        checkUser();
+        fetchGym();
       };
     }
-  }, [User, gymId, gymName, filters]);
+  }, []);
 
-  // Search users on gym when gym is changed/initialized
-  useEffect(() => {
-    if (gymId && gymName) {
-      console.log("Retrieving users of gym", gymId, gymName);
-      handleGetUsers();
+  const checkUser = () => {
+    const History = currUser.checkInHistory;
+    if (History && History.includes(Today)) {
+      setCheckIn(true); 
+    };
+  };
+
+  const fetchGym = async () => {
+    try {
+      const gymDocRef = doc(firestore, "Gyms", userGym[0]);
+      const userGym2 = (await getDoc(gymDocRef)).data() as Gym;
+
+      userGym2.bounding.forEach((point) => {
+        bound.current.push([point.latitude, point.longitude]);
+      });
+    } catch (error) {
+      console.log("Error fetching user:", error);
     }
-  }, [gymId, gymName]);
+  };
 
   // TODO: Display user preview when clicked
   const handlePreviewClick = (user: IUser) => {
@@ -139,15 +71,18 @@ export default function HomeScreen() {
 
   // Get users from database from gym
   const handleGetUsers = async () => {
-    /// await updateUser(currUser.uid); // Individual update for when needed
-    // updateUsers(); // Uncomment when we want to use it to add fields
-    setUsers([]);
-    setLoading(true);
-    if (gymId){
-      const fetchedUsers = await getUsers(User.uid, gymId);
-      setUsers(fetchedUsers);
+    if (!loading) {
+      setUsers([]);
+      setLoading(true);
+      if (userGym[0]){
+        console.log("Retrieved users from gym: ", userGym[0]);
+        const fetchedUsers = await getUsers(currUser.uid, userGym[0]);
+        setUsers(fetchedUsers);
+      }
     }
+    
     setLoading(false);
+    // updateUsers(); // Uncomment when we want to use it to add fields
   };
 
   // Search users by name
@@ -156,64 +91,35 @@ export default function HomeScreen() {
     setLoading(true);
 
     let fetchedUsers: IUser[];
-    if (searchTerm == "") {
-      //By default search users by gym
-      fetchedUsers = await getUsers(User.uid, gymId);
-      console.log("Fetched gym users...");
+    if (searchTerm === "") {
+      //By default search users with filter and gym
+      fetchedUsers = await getUsers(currUser.uid, userGym[0], userFilters);
+      console.log("Fetched filtered users!");
     } else if (searchTerm == "all") {
       // Testing keyword to show all users
-      fetchedUsers = await getUsers(User.uid);
+      fetchedUsers = await getUsers(currUser.uid);
       console.log("Fetched all users...");
-    } else if (searchTerm == "test") {
-      // Testing keyword to test filters
-      // filters: [["sex", "==", "male"], ["gymExperience", ">=", "1"]]);
-      if (filters) {
-        fetchedUsers = await getUsers(User.uid, "", filters);
-        console.log(
-          "Fetched filtered users with the following filters: ",
-          filters
-        );
-      } else {
-        fetchedUsers = await getUsers(User.uid, gymId);
-        console.log("Couldn't filter users with following filters: ", filters);
-      }
-    } else if (searchTerm == "test2") { // Testing with gyms
-      if (filters){
-        fetchedUsers = await getUsers(User.uid, gymId, filters);
-        console.log("Fetched filtered users with the following filters: ", filters);
-      } else {
-        fetchedUsers = await getUsers(User.uid, gymId);
-        console.log("Couldn't filter users with following filters: ", filters);
-      }
     } else { // TODO: Search by users (search term should be user name)
-      fetchedUsers = await getUsers(User.uid, gymId);
+      fetchedUsers = await getUsers(currUser.uid, userGym[0]);
       console.log("Fetched users with name ", searchTerm);
     }
 
     setUsers(fetchedUsers);
     setLoading(false);
   };
+
   const AddDate = async () => {
-    if (user) {
-      try {
-        const userRef = doc(firestore, "Users", User.uid);
-        await updateDoc(userRef, {
-          checkInHistory: [...user.checkInHistory, Today],
-        });
-        setCheckIn(true);
-      } catch (error) {
-        console.error("Error updating bio: ", error);
-      }
+    try {
+      const userRef = doc(firestore, "Users", currUser.uid);
+      await updateDoc(userRef, {
+        checkInHistory: [...currUser.checkInHistory, Today],
+      });
+      setCheckIn(true);
+    } catch (error) {
+      console.error("Error updating bio: ", error);
     }
   };
 
-  // Function to handle filter changes
-  const handleFiltersApplied = (newFilters: any) => {
-    // Handle the selected filters
-
-    console.log("Selected Filters: ", filters);
-    setFilters(newFilters);
-  };
   const handleCheckIn = async () => {
     const location = await GetUserLocation(); {
       if (location) {
@@ -230,58 +136,58 @@ export default function HomeScreen() {
       }
     }
   };
+  
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView
-        style={{ backgroundColor: "#FFF", flex: 1, padding: 15, paddingTop: 2 }}
+        style={{ backgroundColor: "#FFF", flex: 1, padding: 15}}
       >
-        <Header GymName={gymName ? gymName : ""} />
-        <Input
+        <Header GymName={userGym[1]} />
+        <Row mb={1} space={2} alignItems="center">
+        <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/Filter")} >
+          <Octicons name="filter" size={35} color="#0284C7" />
+        </TouchableOpacity>
+        <Input flex={1}
           InputLeftElement={
-            <IconButton
-              size="xs"
-              onPress={handleSearchUsers}
-              icon={<FontAwesome name="search" size={24} color="#075985" />}
-            />
+            <Box paddingLeft={2}>
+              <TouchableOpacity activeOpacity={0.7} onPress={handleSearchUsers} >
+                <FontAwesome name="search" size={24} color="#0284C7" />
+              </TouchableOpacity>
+            </Box>
           }
           placeholder="Spot someone in this gym"
           bgColor="trueGray.100"
           onChangeText={setSearchTerm}
           borderRadius="md"
           borderWidth={1}
+          fontSize="md"
         />
-        <Row mb={1}>
-          <IconButton
-            size="xs"
-            onPress={() => router.push("/Filter")}
-            icon={<Ionicons name="filter" size={24} color="#075985" />}
-          />
-          <IconButton
-            size="xs"
-            onPress={() => router.push("/Friends")}
-            icon={
-              <FontAwesome5 name="user-friends" size={24} color="#075985" />
-            }
-          />
         </Row>
-        <ScrollView>
+        {loading && 
+            <Column flex={1} alignItems="center" alignContent="center" justifyContent="center">
+              <Spacer/>
+              <Spinner size="md" mb={2} color="#0284C7" accessibilityLabel="Loading posts" />
+              <Heading color="#0284C7" fontSize="md"> Loading</Heading>
+            </Column>}
+        <ScrollView style={{flex:1}}>
           {users.map((user) => (
             <UserPreview friend={user} key={user.uid} />
           ))}
-          {loading && <ActivityIndicator size="large" color="#0000ff" />}
         </ScrollView>
-        <Button
-          size={"lg"}
-          borderRadius={30}
-          position={"absolute"}
-          width={125}
-          top={700}
-          left={225}
-          background={"#0284C7"}
-          onPress={handleCheckIn}
-        >
-          Check In
-        </Button>
+        <View style={{flexDirection:"row", justifyContent:"flex-end"}}>
+            <Spacer/>
+            <Button
+              size={"md"}
+              borderRadius={20}
+              justifyContent="center" // Center the button horizontally
+              alignItems="center"
+              boxSize={20}
+              background={"#0284C7"}
+              onPress={handleCheckIn}
+            >
+              Check In
+            </Button>
+        </View>
       </SafeAreaView>
     </NativeBaseProvider>
   );
