@@ -14,6 +14,7 @@ import { firestore } from "@/firebaseConfig";
 import { GetUserLocation } from "@/components/GeolocationFunction";
 import pointInPolygon from "point-in-polygon";
 import { Octicons } from "@expo/vector-icons";
+import { defaultFilters } from "./Filter";
 
 export default function HomeScreen() {
   // const [gym, setGym] = useState<Gym>(); // State to store the gym
@@ -95,13 +96,18 @@ export default function HomeScreen() {
       //By default search users with filter and gym
       fetchedUsers = await getUsers(currUser.uid, userGym[0], userFilters);
       console.log("Fetched filtered users!");
-    } else if (searchTerm == "all") {
+    } else if (searchTerm === "all") {
       // Testing keyword to show all users
       fetchedUsers = await getUsers(currUser.uid);
-      console.log("Fetched all users...");
-    } else { // TODO: Search by users (search term should be user name)
-      fetchedUsers = await getUsers(currUser.uid, userGym[0]);
-      console.log("Fetched users with name ", searchTerm);
+      console.log("Fetched all users!");
+    } else if (searchTerm === "all gym") {
+      // Testing keyword to show all users on their gym
+      fetchedUsers = await getUsers(currUser.uid, userGym[0], defaultFilters);
+      console.log("Fetched all gym users!");
+    } else { 
+      // Search by name
+      fetchedUsers = await getUsers(currUser.uid, userGym[0], defaultFilters, searchTerm);
+      console.log("Fetched users with name: ", searchTerm);
     }
 
     setUsers(fetchedUsers);
@@ -169,11 +175,23 @@ export default function HomeScreen() {
               <Spinner size="md" mb={2} color="#0284C7" accessibilityLabel="Loading posts" />
               <Heading color="#0284C7" fontSize="md"> Loading</Heading>
             </Column>}
-        <ScrollView style={{flex:1}}>
-          {users.map((user) => (
-            <UserPreview friend={user} key={user.uid} />
-          ))}
-        </ScrollView>
+            {!loading && users.length === 0 ? (
+              <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+                <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
+                  Oops! There are no users matching your search. 🤔
+                </Text> 
+                < Text/>
+                <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
+                  Try broadening your search to discover more amazing users!
+                </Text>   
+              </View>
+            ) : (
+              <ScrollView style={{flex:1}}>
+                {users.map((user) => (
+                  <UserPreview friend={user} key={user.uid} />
+                ))}
+              </ScrollView>
+            )}
         <View style={{flexDirection:"row", justifyContent:"flex-end"}}>
             <Spacer/>
             <Button

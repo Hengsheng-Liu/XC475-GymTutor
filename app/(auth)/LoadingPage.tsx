@@ -9,7 +9,7 @@ export default function LoadingScreen() {
 
     useEffect(() => {
         if (currUser){
-            if (currUser.gym === "") {
+            if (currUser.gym === "" || currUser.gymId === "") {
               router.replace("/");
             } else{
               router.replace("/Home");

@@ -53,7 +53,7 @@ export interface Gym{
 }
 
 // Function to retrieve users data from Firestore with a filter of gym or any other
-export const getUsers = async (UID: string, gymId?: string, filters?: Filters): Promise<IUser[]> => {
+export const getUsers = async (UID: string, gymId?: string, filters?: Filters, name?: string): Promise<IUser[]> => {
     const db = firestore;
 
     try {
@@ -110,6 +110,11 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters): 
             }
         });
 
+        // Filter list of users by name if provided
+        if (name && name !== "" && usersData.length > 0) {
+            return filterUsersByName(usersData, name);
+        };
+
         return usersData;
 
     } catch (error) {
@@ -119,6 +124,18 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters): 
     }
 };
 
+// Funtion to filter users given a full or part of a name
+export const filterUsersByName = (usersData: IUser[], name: string): IUser[] => {
+    // Convert the name to lowercase for case-insensitive matching
+    const lowerCaseName = name.toLowerCase();
+  
+    // Filter users whose name matches the given name (case-insensitive)
+    const filteredUsers = usersData.filter(user =>
+      user.name.toLowerCase().includes(lowerCaseName)
+    );
+  
+    return filteredUsers;
+  };
 
 // Function to retrieve a user given their UID
 export const getUser = async (uid: string): Promise<IUser | null> => {
@@ -195,7 +212,7 @@ export async function getCurrUser(uid: string): Promise<IUser> {
     return currUser;
 }
 
-
+// Developer function to add new fields to users or initialize them with random values
 export async function updateUsers(): Promise<void> {
     const db = firestore;
     const usersRef = collection(db, 'Users');
@@ -371,6 +388,7 @@ export async function updateUsersandGym(): Promise<void> {
     }
 }
 
+// Developer function to remove a field from all users
 export async function  removeFieldFromUsers(): Promise<void> {
     const db = firestore;
     const usersRef = collection(db, 'Users');
@@ -391,7 +409,7 @@ export async function  removeFieldFromUsers(): Promise<void> {
   };
 
 // Ways to randomize some things
-export async function randomIt(): Promise<void> {
+async function randomIt(): Promise<void> {
     // Create random values for fields. Uncomment when used
     const minAge = 18;
     const maxAge = 60;
