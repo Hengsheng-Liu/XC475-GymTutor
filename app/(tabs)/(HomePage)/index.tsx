@@ -41,8 +41,8 @@ export default function SelectGym() {
     undefined
   );
   const [NearbyGyms, setNearbyGyms] = useState<Gym[]>([]);
-  const { currUser } = useAuth();
-  if (!currUser) return;
+  const { userGym } = useAuth();
+  if (!userGym) return;
 
   useEffect(() => {
     // Make sure SearchLocation is defined and has the necessary properties
@@ -104,7 +104,7 @@ export default function SelectGym() {
       <SafeAreaView style={styles.container}>
         <Box margin={2} mt={3}>
             <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"right"}>
-            { (currUser.gym !== "") && 
+            { (userGym[0] !== "" && userGym[1] !== "") && 
               <Pressable pr={2} onPress={() => router.replace("./Home")}>
                 <FontAwesome name="chevron-left" size={30} color="#FFF" />
               </Pressable>
