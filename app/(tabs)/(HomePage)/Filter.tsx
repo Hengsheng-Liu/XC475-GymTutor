@@ -139,7 +139,7 @@ const FilterScreen = () => {
       applyFilters[0] = false;
     } else {
       // Check if there were any changes in apply filters selection
-      if (applyNewFilters !== true) {
+      if (applyNewFilters !== filters.applyFilters[0]) {
         madeChanges = true;
       }
       applyFilters[0] = applyNewFilters;
@@ -320,6 +320,7 @@ const FilterScreen = () => {
           <AlertDialog.Footer>
             <Button.Group space={2}>
               <Button onPress={handleCloseDialog}>Cancel</Button>
+              <Button onPress={() => router.push("/Home")}> Do not save </Button>
               <Button onPress={handleSaveFilters}> Save </Button>
             </Button.Group>
           </AlertDialog.Footer>

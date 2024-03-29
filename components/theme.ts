@@ -29,7 +29,7 @@ const theme = extendTheme({
     components:{
         Text:{
             baseStyle:{
-                fontFamily: "Roboto",
+                // fontFamily: "Roboto",
                 color: "trueGray.900",
                 fontSize: "sm",
             },
@@ -42,7 +42,7 @@ const theme = extendTheme({
         },
         Heading:{
             baseStyle:{
-                fontFamily: "Roboto",
+                // fontFamily: "Roboto",
                 color: "#FFF",
                 fontSize:"md",
                 fontWeight:"bold"
