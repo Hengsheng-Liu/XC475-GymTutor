@@ -186,26 +186,27 @@ export default function HomeScreen() {
                 </Text>   
               </View>
             ) : (
-              <ScrollView style={{flex:1}}>
+              <ScrollView style={{flex:1, zIndex:0}}>
                 {users.map((user) => (
                   <UserPreview friend={user} key={user.uid} />
                 ))}
               </ScrollView>
             )}
-        <View style={{flexDirection:"row", justifyContent:"flex-end"}}>
-            <Spacer/>
-            <Button
-              size={"md"}
-              borderRadius={20}
-              justifyContent="center" // Center the button horizontally
-              alignItems="center"
-              boxSize={20}
-              background={"#0284C7"}
-              onPress={handleCheckIn}
-            >
-              Check In
-            </Button>
-        </View>
+        <Button
+          size={"lg"}
+          borderRadius={30}
+          position={"absolute"}
+          width={150}
+          height={16}
+          bottom={5}
+          right={3}
+          background={"#0284C7"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          onPress={handleCheckIn}
+        >
+          <Text fontWeight="bold" fontSize="lg" color="#FFF"> Check In </Text> 
+        </Button>
       </SafeAreaView>
     </NativeBaseProvider>
   );
