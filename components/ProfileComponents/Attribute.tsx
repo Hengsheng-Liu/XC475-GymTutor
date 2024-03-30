@@ -19,6 +19,9 @@ export default function Attribute({description, onSaveTag}:props) {
     setEditMode(false);
 
   }
+  const handleCancel = () => {
+    setEditMode(false);
+  }
   return (
     <>
       <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={3}>
@@ -46,6 +49,7 @@ export default function Attribute({description, onSaveTag}:props) {
         )}
       </Flex>
 
+      <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={3}>
       {editMode && (
         <Button
           alignSelf="flex-start"
@@ -55,9 +59,23 @@ export default function Attribute({description, onSaveTag}:props) {
           backgroundColor={"#0284C7"}
           leftIcon={<AntDesign name="check" size={24} color="white" />}
         >
-          Save
+          Add
+        </Button>
+
+      )}
+      {editMode && (
+          <Button
+          alignSelf="flex-start"
+          mt={2}
+          ml={2}
+          onPress={handleCancel}
+          backgroundColor={"#0284C7"}
+          leftIcon={<AntDesign name="close" size={24} color="white" />}
+        >
+          Cancel
         </Button>
       )}
+         </Flex>
     </>
   );
 }
