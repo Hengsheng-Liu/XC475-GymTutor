@@ -47,7 +47,8 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
         <Pressable 
             onPress = {() => handleUserClick()}
             onPressOut={() => setIsPressed(false)}
-            mb ={3} ml={1} mr={1} pr={1}// This okay?
+            zIndex={1}
+            mb ={3} ml={1} mr={1} pr={1}
             borderRadius="xl" borderWidth={1} borderColor="trueGray.50" shadow="3"
             bg={isPressed ? "trueGray.200" : "trueGray.50"} // Change background color on hover
             >
@@ -57,14 +58,14 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
                 <Column>
                 <Row justifyContent= {"space-between"} >
                     <Column overflow="hidden" width="170">    
-                        <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated maxW="160">{friend.name}, {friend.age}</Text>
-                        <Text color= "trueGray.900" fontSize="sm" isTruncated maxW="160">{friend.gym}</Text>
+                        <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated>{friend.name}, {friend.age}</Text>
+                        <Text color= "trueGray.900" fontSize="sm" isTruncated>{friend.gym}</Text>
                     </Column>
                     <Spacer/>
                     <Flex alignItems="center">
                         <Button  
                             p={1}
-                            backgroundColor= {canAddFriend(currUser, updatedFriend)? "blue.500" : "gray.200"} rounded="md" 
+                            backgroundColor= {canAddFriend(currUser, updatedFriend)? "#0284C7" : "gray.200"} rounded="md" 
                             onPress={() => canAddFriend(currUser, updatedFriend)? 
                                 sendFriendRequest(currUser.uid, friend.uid): handleUserClick()}>
                             <Text fontSize="xs" fontWeight="bold"> {canAddFriend(currUser, updatedFriend)? "  Add   " : "Added"}</Text>

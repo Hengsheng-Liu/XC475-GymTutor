@@ -1,6 +1,12 @@
 import { Button, HStack } from "native-base";
 import { AntDesign } from "@expo/vector-icons";
-export default function ButtonGroup() {
+import { router } from "expo-router";
+
+interface ButtonGroupProps{
+  friendCount: String;
+}
+
+export default function ButtonGroup({friendCount}:ButtonGroupProps) {
   return (
     <HStack
       space={3}
@@ -8,9 +14,10 @@ export default function ButtonGroup() {
       mt={6}
       textAlign={"center"}
     >
-      <Button flexGrow={"1"} variant={"outline"}>
-        120 Friends
+      <Button flexGrow={"1"} variant={"outline"} onPress={() => router.push("/Friends")}>
+        {friendCount} 
       </Button>
+
       <Button
         flexGrow={"1"}
         backgroundColor={"#0284C7"}

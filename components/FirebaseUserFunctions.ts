@@ -11,14 +11,73 @@ import {
     getDocs, 
     updateDoc, 
     arrayUnion} from 'firebase/firestore';
-import { useAuth } from "../Context/AuthContext";
+import { useAuth } from "@/Context/AuthContext";
 import { Geometry } from 'react-native-google-places-autocomplete';
 import { GeoPoint } from 'firebase/firestore';
 // Update this and addUsers function when adding new fields
 // Use updateUsers function to initialize new fields on all users.
 // Define User interface
+import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
+import Achievement from './ProfileComponents/Achievement';
+type Birthday = {day: number, month: number, year: number};
+interface Achievement {
+    name: string;
+    curr: number;
+    max: number;
+}
+export interface Achievements {
+    Chest: Achievement[];
+    Back: Achievement[];
+    Legs: Achievement[];
+    Arms: Achievement[];
+    Core: Achievement[];
+    Cardio: Achievement[];
+    FullBody: Achievement[];
+    Shoulder: Achievement[];
+}
 
-type filter = [string, string, any];
+export const DefaultAchievement: Achievements = {
+    Chest:[
+        {name: "Bench Press", curr: 0, max: 10},
+        {name: "Dumbbell Press", curr: 0, max: 10},
+        {name: "Pushups", curr: 0, max: 10},
+    ],
+    Back:[
+        {name: "Pullups", curr: 0, max: 10},
+        {name: "Deadlifts", curr: 0, max: 10},
+        {name: "Rows", curr: 0, max: 10},
+    ],
+    Legs:[
+        {name: "Squats", curr: 0, max: 10},
+        {name: "Lunges", curr: 0, max: 10},
+        {name: "Leg Press", curr: 0, max: 10},
+    ],
+    Arms:[
+        {name: "Bicep Curls", curr: 0, max: 10},
+        {name: "Tricep Dips", curr: 0, max: 10},
+        {name: "Hammer Curls", curr: 0, max: 10},
+    ],
+    Core:[
+        {name: "Planks", curr: 0, max: 10},
+        {name: "Crunches", curr: 0, max: 10},
+        {name: "Leg Raises", curr: 0, max: 10},
+    ],
+    Cardio:[
+        {name: "Running", curr: 0, max: 10},
+        {name: "Cycling", curr: 0, max: 10},
+        {name: "Swimming", curr: 0, max: 10},
+    ],
+    FullBody:[
+        {name: "Burpees", curr: 0, max: 10},
+        {name: "Mountain Climbers", curr: 0, max: 10},
+        {name: "Jumping Jacks", curr: 0, max: 10},
+    ],
+    Shoulder:[
+        {name: "Shoulder Press", curr: 0, max: 10},
+        {name: "Lateral Raises", curr: 0, max: 10},
+        {name: "Front Raises", curr: 0, max: 10},
+    ]
+};
 
 export interface IUser {
     uid: string;
@@ -35,11 +94,13 @@ export interface IUser {
     gym: string;
     checkInHistory: string[]; // Add proper type
     icon: string;
-    achievements: string[]; // Add proper type
-    gymExperience: number;
+    Achievement: Achievements;
+    gymExperience: string;
     currentlyMessaging: string[];
     gymId: string;
-    filters: filter[];
+    filters: Filters;
+    birthday: Birthday;
+
 }
 
 export interface Gym{
@@ -51,8 +112,7 @@ export interface Gym{
 }
 
 // Function to retrieve users data from Firestore with a filter of gym or any other
-export const getUsers = async (UID: string, gymId?: string, 
-        filters?: { field: string, operator: string, value: any }[]): Promise<IUser[]> => {
+export const getUsers = async (UID: string, gymId?: string, filters?: Filters, name?: string): Promise<IUser[]> => {
     const db = firestore;
 
     try {
@@ -73,25 +133,29 @@ export const getUsers = async (UID: string, gymId?: string,
         // TODO: Maybe query only nearby users.
         let usersQuery = memberIds.length > 0 ? 
             query(collection(db, 'Users'), where('uid', 'in', memberIds)):
-            query(collection(db, 'Users'));
+            query(collection(db, 'Users'), where("gym", "!=", ""));
         
         // Apply additional filters if provided
-        if (filters && filters.length > 0) {
-            for (const filter of filters) {
-                if (filter.value == ""){
-                    continue
+        if (filters) {
+            const { applyFilters, sex, age, gymExperience } = filters;
+            // Check if filters should be applied in general
+            if (applyFilters[0]) {
+                // Filter by sex if specified
+                if (applyFilters[1] && sex.length > 0) {
+                    usersQuery = query(usersQuery, where("sex", "in", sex));
                 }
-                if (filter.field == "gymExperience"){
-                    continue
-                    if (filter.operator == "<="){
-                        continue
-                    }
+
+                // Filter by age if specified
+                if (applyFilters[2] && age.length === 2) {
+                    usersQuery = query(usersQuery, where("age", ">=", age[0]), where("age", "<=", age[1]));
                 }
-                console.log("filter", filter.field, filter.operator, filter.value);
-                usersQuery = query(usersQuery, where(filter.field, filter.operator as any, filter.value));
-                
-            }
-        }
+
+                // Filter by gym experience if specified
+                if (applyFilters[3] && gymExperience.length > 0) {
+                    usersQuery = query(usersQuery, where("gymExperience", "in", gymExperience));
+                };
+            };
+        };
 
         // Get each user and save their data
         const querySnapshot = await getDocs(usersQuery);
@@ -105,6 +169,11 @@ export const getUsers = async (UID: string, gymId?: string,
             }
         });
 
+        // Filter list of users by name if provided
+        if (name && name !== "" && usersData.length > 0) {
+            return filterUsersByName(usersData, name);
+        };
+
         return usersData;
 
     } catch (error) {
@@ -114,50 +183,18 @@ export const getUsers = async (UID: string, gymId?: string,
     }
 };
 
-// Function to retrieve users data from Firestore with a filter of gym or any other
-export const getUsers2 = async (UID: string, gym?: string, 
-    filters?: { field: string, operator: string, value: any }[]): Promise<IUser[]> => {
-    const db = firestore;
-    
-    // Query users from a specific gym, or all users if none is given
-    let usersQuery = gym ? query(collection(db, 'Users'), where('gym', '==', gym)) : 
-        collection(db, 'Users');
-
-    // Query users based on given filters
-    // TODO: Only query some of them
-    console.log("HEEEEEY", filters);
-    if (filters){
-        console.log("CHECKED")
-    }
-    if (filters && filters.length > 0) {
-        console.log("CHECKED");
-        for (const filter of filters) {
-            console.log("filter");
-            console.log(filter.field, filter.operator, filter.value);
-            usersQuery = query(usersQuery, where(filter.field, filter.operator as any, filter.value));
-            console.log(usersQuery);
-        }
-    }
-
-    // Get each user and save their data
-    try {
-        const querySnapshot = await getDocs(usersQuery);
-        const usersData: IUser[] = []; 
-
-        querySnapshot.forEach(snap => {
-            const userData = snap.data() as IUser;
-            if (userData.uid != UID){
-                usersData.push(userData);
-            };
-        });
-
-        return usersData;
-    } catch (error) {
-        // Throw error for handling in the caller function
-        console.error('Error querying users:', error);
-        throw error; 
-    }
-};
+// Funtion to filter users given a full or part of a name
+export const filterUsersByName = (usersData: IUser[], name: string): IUser[] => {
+    // Convert the name to lowercase for case-insensitive matching
+    const lowerCaseName = name.toLowerCase();
+  
+    // Filter users whose name matches the given name (case-insensitive)
+    const filteredUsers = usersData.filter(user =>
+      user.name.toLowerCase().includes(lowerCaseName)
+    );
+  
+    return filteredUsers;
+  };
 
 // Function to retrieve a user given their UID
 export const getUser = async (uid: string): Promise<IUser | null> => {
@@ -189,7 +226,9 @@ export async function addUser(
         age: number = 21, 
         bio: string = "",
         sex: string = "", 
-        filters: filter[],
+        gymExperience: string = "beginner",
+        birthday: Birthday = {day: 1, month: 1, year: 2000},
+        filters: Filters = defaultFilters,
         tags: string[] = []): Promise<void> {
         
     const db = firestore;
@@ -212,9 +251,11 @@ export async function addUser(
             checkInHistory: [],
             icon: "",
             achievements: [],
-            gymExperience: 0,
+            gymExperience: gymExperience,
             currentlyMessaging: [],
-            filters: [],
+            filters: filters,
+            birthday: birthday,
+            Achievement: DefaultAchievement,
         });
         console.log("Document written for user: ", uid);
     } catch (error) {
@@ -231,7 +272,7 @@ export async function getCurrUser(uid: string): Promise<IUser> {
     return currUser;
 }
 
-
+// Developer function to add new fields to users or initialize them with random values
 export async function updateUsers(): Promise<void> {
     const db = firestore;
     const usersRef = collection(db, 'Users');
@@ -283,15 +324,48 @@ export async function updateUsers(): Promise<void> {
 
             const userTags = getRandomSubset(tags, 3);
             
+            function chooseGymExperience(): string {
+                const experiences = ["beginner", "intermediate", "advanced"];
+                const randomIndex = Math.floor(Math.random() * experiences.length);
+                return experiences[randomIndex];
+            }
+            
+            // Example usage
+            const randomExperience = chooseGymExperience();
+
+            function getRandomBirthday(): Birthday {
+                const day = Math.floor(Math.random() * 28) + 1;
+                const month = Math.floor(Math.random() * 12) + 1;
+                const year = Math.floor(Math.random() * 30) + 1974;
+            
+                return { day, month, year };
+            }
+            const randomBirthday = getRandomBirthday();
+
+            function calculateAge(birthday: Birthday): number {
+                const today = new Date();
+                const birthDate = new Date(birthday.year, birthday.month - 1, birthday.day);
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+                // If the current month is less than the birth month, or if it's the same month but the current day
+                // is before the birth day, then subtract 1 from the age
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                return age;
+            }
+            const age = calculateAge(randomBirthday);
+
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
-                tags: userTags
             };
 
             // Update document if any field is missing
             if (Object.keys(newUserFields).length > 0) {
                 await updateDoc(doc1.ref, newUserFields);
+                console.log("Document updated for user: ", doc1.id);
             }
         }
 
@@ -374,6 +448,7 @@ export async function updateUsersandGym(): Promise<void> {
     }
 }
 
+// Developer function to remove a field from all users
 export async function  removeFieldFromUsers(): Promise<void> {
     const db = firestore;
     const usersRef = collection(db, 'Users');
@@ -394,7 +469,7 @@ export async function  removeFieldFromUsers(): Promise<void> {
   };
 
 // Ways to randomize some things
-export async function randomIt(): Promise<void> {
+async function randomIt(): Promise<void> {
     // Create random values for fields. Uncomment when used
     const minAge = 18;
     const maxAge = 60;
@@ -426,6 +501,21 @@ export async function randomIt(): Promise<void> {
     // Example usage
     const randomName: string = generateRandomName(randomSex);
 }
+export const AddDate = async (uid:string) => {
+    const Day = new Date();
+    const Today =
+        Day.getFullYear() + "-" + (Day.getMonth() + 1) + "-" + Day.getDate();
+
+        try {
+            const userRef = doc(firestore, "Users", uid);
+            const userCheckHistory = (await getDoc(userRef)).data()?.checkInHistory; 
+            await updateDoc(userRef, {
+                checkInHistory: [...userCheckHistory, Today],
+            });
+        } catch (error) {
+            console.error("Error updating bio: ", error);
+        }
+    };
 
 // Attempt to do it automatically. Didn't work and gave up
 // Define a function to fetch all users and update them with missing fields

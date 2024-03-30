@@ -38,12 +38,19 @@ export default function LogInScreen() {
   const { SignIn } = useAuth();
 
   const handleLogIn = async () => {
+    // Skip credentials (Developer use only)
+    // const userCredential = await SignIn("a@gmail.com", "password"); // (to skip the email verification)
+    //     const user = userCredential.user;
+    //     if (user) {
+    //       router.replace("/Home");
+    //     }
+
     if (email && password) {
       try {
         const userCredential = await SignIn(email, password);
         const user = userCredential.user;
         if (user) {
-          router.replace("/");
+          router.replace("/LoadingPage");
         }
       } catch (error: any) {
         const errorMessage = error.message;
@@ -150,7 +157,7 @@ export default function LogInScreen() {
               secureTextEntry />
             <Button title="Log In" onPress={handleLogIn} />
             <Button title="Sign Up" onPress={() => router.navigate("SignUp")} />
-            {<Button title={'Google Login'}/>}
+            {<Button title={'Google Login'} />}
           </View>
         </View>
       </SafeAreaView>
