@@ -8,7 +8,7 @@ import { router } from "expo-router";
 import { GiftedChat } from 'react-native-gifted-chat';
 import Fire from './data'
 import { globalState } from './globalState';
-
+import { generateChatId } from './data';
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -33,13 +33,15 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
 
   // Logic to send a message
   const sendMessage = (messages = []) => {
-    Fire.shared.send(messages, User.uid); // Use user.uid to send messages
+    Fire.shared.send(messages, User.uid, receiveUser); // Use user.uid to send messages
     setMessage('');
   };
 
 
   useEffect(() => {
-    Fire.shared.on(message =>
+
+    const chatId = generateChatId(User.uid, receiveUser.uid);
+    Fire.shared.on(chatId, message =>
       setMessages(previousMessages => GiftedChat.append(previousMessages, message))
     );
 
@@ -129,23 +131,12 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
       </View>
       <GiftedChat
         messages={messages}
-        onSend={Fire.shared.send}
+        onSend={messages => sendMessage(messages)}
         user={{
           _id: User.uid, // Use the UID from useAuth
           name: User.displayName || 'Anonymous', // Use the displayName from useAuth, if available
         }}
       />
-      <View style={styles.inputContainer}>
-        <TextInput
-          value={message}
-          onChangeText={setMessage}
-          style={styles.input}
-          placeholder="Type a message"
-        />
-        <TouchableOpacity onPress={() => sendMessage([{ text: message, user: { _id: receiveUser.uid, name: receiveUser.displayName } }])}>
-          <Text style={styles.sendButton}>Send</Text>
-        </TouchableOpacity>
-      </View>
     </KeyboardAvoidingView>
   );
 }

@@ -21,7 +21,7 @@ import { useAuth } from "@/Context/AuthContext";
 import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
 import { styles } from "../../../components/HomeComponents/DisplayUsersStyles";
 import { router } from "expo-router";
-
+import { findOrCreateChat } from "./data";
 import { globalState } from './globalState';
 
 type Props = {
@@ -35,6 +35,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
   const { User } = useAuth();
 
   const navigateToChatPage = (user) => {
+    console.log(findOrCreateChat(User?.uid, user.uid));
     globalState.user = user; // Set the selected user in the global state
     router.navigate("ChatPage"); // Then navigate to ChatPage
   };
