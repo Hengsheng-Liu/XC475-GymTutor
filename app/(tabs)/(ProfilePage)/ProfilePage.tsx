@@ -57,6 +57,13 @@ const ProfilePage = () => {
     };
     fetchUser();
 
+    //testing purposes
+    if (userInfo) {
+      console.log("frined count", userInfo.friends.length);
+    }
+    const friendsLength = userInfo.friends.length + " Friends";
+
+   
   }, []);
 
   const updateBio = async (newBio:string) => {
@@ -91,7 +98,7 @@ const ProfilePage = () => {
                 <Header name={userInfo.name} gym={userInfo.gym} />
 
                 <Attribute description={userInfo.tags} />
-                <ButtonGroup />
+                <ButtonGroup friendCount={userInfo.friends.length + " Friends"}/>
                 <Description bio={userInfo.bio} onSave={updateBio}/>
                 <Achievement />
                 <Calendar />

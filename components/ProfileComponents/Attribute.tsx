@@ -4,6 +4,7 @@ import { Flex,Pressable } from "native-base";
 interface props{
     description:string[];
 }
+
 export default function Attribute({description}:props) {
   return (
     <Flex
