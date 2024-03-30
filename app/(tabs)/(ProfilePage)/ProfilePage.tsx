@@ -61,7 +61,6 @@ const ProfilePage = () => {
     if (userInfo) {
       console.log("frined count", userInfo.friends.length);
     }
-    const friendsLength = userInfo.friends.length + " Friends";
 
    
   }, []);
@@ -76,6 +75,17 @@ const ProfilePage = () => {
   }
 
   };
+
+  const updateTags = async (addTag:string) => {
+    if (User) {
+      try {
+        await updateDoc(doc(firestore, "Users", User.uid), {tags: arrayUnion(addTag)})
+      }
+      catch (error) {
+        console.error("Error updating tag: ", error);
+      }
+    }
+  }
 
   const theme = extendTheme({
     components: {
@@ -97,7 +107,7 @@ const ProfilePage = () => {
               <Flex>
                 <Header name={userInfo.name} gym={userInfo.gym} />
 
-                <Attribute description={userInfo.tags} />
+                <Attribute description={userInfo.tags} onSaveTag={updateTags} />
                 <ButtonGroup friendCount={userInfo.friends.length + " Friends"}/>
                 <Description bio={userInfo.bio} onSave={updateBio}/>
                 <Achievement />
