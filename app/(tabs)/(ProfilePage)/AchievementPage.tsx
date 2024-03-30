@@ -46,21 +46,21 @@ const AchievementPage = () => {
     },
   ];
   return (
-    <NativeBaseProvider>
-    <ScrollView>
-      <SafeAreaView>
-        
-                <Flex flexDirection={"row"}  flexWrap={"wrap"} >
-                    {ahievements.map((achievement) => (
-                            <Flex h="20" w="20" width={"1/3"} borderWidth={1} justifyContent={"center"} alignItems={"center"}>
-                                    <achievement.image/>
-                            </Flex>
-                    ))}
-                </Flex>            
-       
-      </SafeAreaView>
-      </ScrollView>
-    </NativeBaseProvider>
+        <NativeBaseProvider>
+        <ScrollView>
+          <SafeAreaView>
+      
+        <Flex flexDirection={"row"}  flexWrap={"wrap"} >
+            {ahievements.map((achievement, index) => (
+              <Flex key={index} h="20" w="20" width={"1/3"} borderWidth={1} justifyContent={"center"} alignItems={"center"}>
+                <achievement.image/>
+              </Flex>
+            ))}
+        </Flex>            
+           
+          </SafeAreaView>
+          </ScrollView>
+        </NativeBaseProvider>
   );
 };
 export default AchievementPage;

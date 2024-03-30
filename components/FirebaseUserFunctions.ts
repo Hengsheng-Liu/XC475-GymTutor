@@ -11,15 +11,73 @@ import {
     getDocs, 
     updateDoc, 
     arrayUnion} from 'firebase/firestore';
-import { useAuth } from "../Context/AuthContext";
+import { useAuth } from "@/Context/AuthContext";
 import { Geometry } from 'react-native-google-places-autocomplete';
 import { GeoPoint } from 'firebase/firestore';
 // Update this and addUsers function when adding new fields
 // Use updateUsers function to initialize new fields on all users.
 // Define User interface
 import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
-
+import Achievement from './ProfileComponents/Achievement';
 type Birthday = {day: number, month: number, year: number};
+interface Achievement {
+    name: string;
+    curr: number;
+    max: number;
+}
+export interface Achievements {
+    Chest: Achievement[];
+    Back: Achievement[];
+    Legs: Achievement[];
+    Arms: Achievement[];
+    Core: Achievement[];
+    Cardio: Achievement[];
+    FullBody: Achievement[];
+    Shoulder: Achievement[];
+}
+
+export const DefaultAchievement: Achievements = {
+    Chest:[
+        {name: "Bench Press", curr: 0, max: 10},
+        {name: "Dumbbell Press", curr: 0, max: 10},
+        {name: "Pushups", curr: 0, max: 10},
+    ],
+    Back:[
+        {name: "Pullups", curr: 0, max: 10},
+        {name: "Deadlifts", curr: 0, max: 10},
+        {name: "Rows", curr: 0, max: 10},
+    ],
+    Legs:[
+        {name: "Squats", curr: 0, max: 10},
+        {name: "Lunges", curr: 0, max: 10},
+        {name: "Leg Press", curr: 0, max: 10},
+    ],
+    Arms:[
+        {name: "Bicep Curls", curr: 0, max: 10},
+        {name: "Tricep Dips", curr: 0, max: 10},
+        {name: "Hammer Curls", curr: 0, max: 10},
+    ],
+    Core:[
+        {name: "Planks", curr: 0, max: 10},
+        {name: "Crunches", curr: 0, max: 10},
+        {name: "Leg Raises", curr: 0, max: 10},
+    ],
+    Cardio:[
+        {name: "Running", curr: 0, max: 10},
+        {name: "Cycling", curr: 0, max: 10},
+        {name: "Swimming", curr: 0, max: 10},
+    ],
+    FullBody:[
+        {name: "Burpees", curr: 0, max: 10},
+        {name: "Mountain Climbers", curr: 0, max: 10},
+        {name: "Jumping Jacks", curr: 0, max: 10},
+    ],
+    Shoulder:[
+        {name: "Shoulder Press", curr: 0, max: 10},
+        {name: "Lateral Raises", curr: 0, max: 10},
+        {name: "Front Raises", curr: 0, max: 10},
+    ]
+};
 
 export interface IUser {
     uid: string;
@@ -36,12 +94,13 @@ export interface IUser {
     gym: string;
     checkInHistory: string[]; // Add proper type
     icon: string;
-    achievements: string[]; // Add proper type
+    Achievement: Achievements;
     gymExperience: string;
     currentlyMessaging: string[];
     gymId: string;
     filters: Filters;
     birthday: Birthday;
+
 }
 
 export interface Gym{
@@ -195,7 +254,8 @@ export async function addUser(
             gymExperience: gymExperience,
             currentlyMessaging: [],
             filters: filters,
-            birthday: birthday
+            birthday: birthday,
+            Achievement: DefaultAchievement,
         });
         console.log("Document written for user: ", uid);
     } catch (error) {
@@ -441,6 +501,21 @@ async function randomIt(): Promise<void> {
     // Example usage
     const randomName: string = generateRandomName(randomSex);
 }
+export const AddDate = async (uid:string) => {
+    const Day = new Date();
+    const Today =
+        Day.getFullYear() + "-" + (Day.getMonth() + 1) + "-" + Day.getDate();
+
+        try {
+            const userRef = doc(firestore, "Users", uid);
+            const userCheckHistory = (await getDoc(userRef)).data()?.checkInHistory; 
+            await updateDoc(userRef, {
+                checkInHistory: [...userCheckHistory, Today],
+            });
+        } catch (error) {
+            console.error("Error updating bio: ", error);
+        }
+    };
 
 // Attempt to do it automatically. Didn't work and gave up
 // Define a function to fetch all users and update them with missing fields

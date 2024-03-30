@@ -28,7 +28,7 @@ export default function HomeScreen() {
   const Day = new Date();
   const Today =
     Day.getFullYear() + "-" + (Day.getMonth() + 1) + "-" + Day.getDate();
-  const today = new Date();
+
 
   if (!User) return;
   if (!currUser || !userGym || !userFilters) return router.replace("/LoadingPage");
@@ -36,15 +36,13 @@ export default function HomeScreen() {
   // Initialize gym data
   useEffect(() => {
     if (currUser) {
-      if (!loading){
         handleSearchUsers();
-        checkUser();
+        checkUserDate();
         fetchGym();
       };
-    }
   }, []);
 
-  const checkUser = () => {
+  const checkUserDate = () => {
     const History = currUser.checkInHistory;
     if (History && History.includes(Today)) {
       setCheckIn(true); 
@@ -113,19 +111,6 @@ export default function HomeScreen() {
     setUsers(fetchedUsers);
     setLoading(false);
   };
-
-  const AddDate = async () => {
-    try {
-      const userRef = doc(firestore, "Users", currUser.uid);
-      await updateDoc(userRef, {
-        checkInHistory: [...currUser.checkInHistory, Today],
-      });
-      setCheckIn(true);
-    } catch (error) {
-      console.error("Error updating bio: ", error);
-    }
-  };
-
   const handleCheckIn = async () => {
     const location = await GetUserLocation(); {
       if (location) {
