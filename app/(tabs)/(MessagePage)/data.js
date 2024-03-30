@@ -27,9 +27,9 @@ class Fire {
     this.unsubscribe = onSnapshot(q, snapshot => {
 
       snapshot.docChanges().forEach(change => {
-        console.log("I'm here");
+
         if (change.type === 'added') {
-          console.log("added change type");
+
           callback(this.parse(change.doc));
 
         }
@@ -86,7 +86,7 @@ class Fire {
 
   append = async (message, chatId) => {
     try {
-      console.log("chatID from append method: ", chatId);
+
       // Reference to the specific chat document
       const chatRef = doc(this.db, 'Chat', chatId);
 
