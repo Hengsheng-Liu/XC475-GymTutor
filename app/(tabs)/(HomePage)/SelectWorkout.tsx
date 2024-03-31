@@ -11,42 +11,45 @@ import { AddDate } from "@/components/FirebaseUserFunctions";
 export default function SelectWorkout() {
   const [selected, setSelected] = useState<string[]>([]);
   const { User } = useAuth();
-  
-  const submitToDatabase = async () => {  
+
+  const submitToDatabase = async () => {
     if (!User) return;
     const userRef = doc(firestore, "Users", User.uid);
     const userData = (await getDoc(userRef)).data() as IUser;
+    let UpdateAchievement = userData.Achievement;
     AddDate(User.uid);
-    if (!userData.Achievement){
+    if (!userData.Achievement) {
       await updateDoc(userRef, {
         Achievement: DefaultAchievement,
       });
-    }else{
-      const UpdateAchievement = userData.Achievement;
-      console.log(UpdateAchievement)
-      selected.forEach((part: string) => {
-        UpdateAchievement[part as keyof typeof UpdateAchievement]?.forEach((item) => {
-          item.curr += 1;
-        });
-      });
-      try {
-        console.log(UpdateAchievement);
-        await updateDoc(userRef, {
-          Achievement: UpdateAchievement,
-        });
-      } catch (error) {
-        console.error("Error updating Achievement: ", error);      
-      }
+      UpdateAchievement = DefaultAchievement;
     }
-  }
+    selected.forEach((part: string) => {
+      UpdateAchievement[part as keyof typeof UpdateAchievement]?.forEach(
+        (item) => {
+          item.curr += 1;
+          if (item.curr === item.max) {
+            item.achieved = true;
+          }
+        }
+      );
+    });
+    try {
+      await updateDoc(userRef, {
+        Achievement: UpdateAchievement,
+      });
+    } catch (error) {
+      console.error("Error updating Achievement: ", error);
+    }
+  };
+
   const submitCheckIn = () => {
     if (selected.length === 0) {
       alert("Please select a workout.");
-    }else{
-    router.push("/CheckInSubmit");
-    submitToDatabase();
+    } else {
+      router.push("/CheckInSubmit");
+      submitToDatabase();
     }
-    
   };
 
   return (

@@ -20,63 +20,33 @@ import { GeoPoint } from 'firebase/firestore';
 import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
 import Achievement from './ProfileComponents/Achievement';
 type Birthday = {day: number, month: number, year: number};
-interface Achievement {
+export interface Achievementprops {
     name: string;
     curr: number;
     max: number;
+    achieved?: boolean;
 }
 export interface Achievements {
-    Chest: Achievement[];
-    Back: Achievement[];
-    Legs: Achievement[];
-    Arms: Achievement[];
-    Core: Achievement[];
-    Cardio: Achievement[];
-    FullBody: Achievement[];
-    Shoulder: Achievement[];
+    Chest?: Achievementprops[];
+    Back?: Achievementprops[];
+    Legs?: Achievementprops[];
+    Arms?: Achievementprops[];
+    Core?: Achievementprops[];
+    Cardio?: Achievementprops[];
+    FullBody?: Achievementprops[];
+    Shoulder?: Achievementprops[];
 }
 
 export const DefaultAchievement: Achievements = {
     Chest:[
-        {name: "Bench Press", curr: 0, max: 10},
-        {name: "Dumbbell Press", curr: 0, max: 10},
-        {name: "Pushups", curr: 0, max: 10},
+        {name: "BenchBeast", curr: 0, max: 10, achieved: false},
     ],
     Back:[
-        {name: "Pullups", curr: 0, max: 10},
-        {name: "Deadlifts", curr: 0, max: 10},
-        {name: "Rows", curr: 0, max: 10},
+        {name: "PullUpPro", curr: 0, max: 10, achieved: false},
     ],
     Legs:[
-        {name: "Squats", curr: 0, max: 10},
-        {name: "Lunges", curr: 0, max: 10},
-        {name: "Leg Press", curr: 0, max: 10},
+        {name: "SquatKing", curr: 0, max: 10, achieved: false},
     ],
-    Arms:[
-        {name: "Bicep Curls", curr: 0, max: 10},
-        {name: "Tricep Dips", curr: 0, max: 10},
-        {name: "Hammer Curls", curr: 0, max: 10},
-    ],
-    Core:[
-        {name: "Planks", curr: 0, max: 10},
-        {name: "Crunches", curr: 0, max: 10},
-        {name: "Leg Raises", curr: 0, max: 10},
-    ],
-    Cardio:[
-        {name: "Running", curr: 0, max: 10},
-        {name: "Cycling", curr: 0, max: 10},
-        {name: "Swimming", curr: 0, max: 10},
-    ],
-    FullBody:[
-        {name: "Burpees", curr: 0, max: 10},
-        {name: "Mountain Climbers", curr: 0, max: 10},
-        {name: "Jumping Jacks", curr: 0, max: 10},
-    ],
-    Shoulder:[
-        {name: "Shoulder Press", curr: 0, max: 10},
-        {name: "Lateral Raises", curr: 0, max: 10},
-        {name: "Front Raises", curr: 0, max: 10},
-    ]
 };
 
 export interface IUser {
