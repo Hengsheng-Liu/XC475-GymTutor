@@ -24,6 +24,9 @@ const FriendProfilePage = () => {
 
   };
 
+  const updateTags = async (addTag:string) => {
+    
+  };
 
   const theme = extendTheme({
     components: {
@@ -44,8 +47,8 @@ const FriendProfilePage = () => {
             {userInfo && (
               <Flex>
                 <Header user={userInfo} />
-                <Attribute description={userInfo.tags} />
-                <ButtonGroup />
+                <Attribute description={userInfo.tags} onSaveTag={updateTags} />
+                <ButtonGroup friendCount={userInfo.friends.length + " Friends"}/>
                 <Description bio={userInfo.bio} onSave={updateBio}/>
                 <Achievement />
                 <Calendar />

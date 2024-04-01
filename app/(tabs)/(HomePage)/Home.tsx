@@ -30,7 +30,7 @@ export default function HomeScreen() {
   const Day = new Date();
   const Today =
     Day.getFullYear() + "-" + (Day.getMonth() + 1) + "-" + Day.getDate();
-  const today = new Date();
+
 
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -40,13 +40,10 @@ export default function HomeScreen() {
   // Initialize gym data
   useEffect(() => {
     if (currUser) {
-      if (!loading){
         handleSearchUsers();
-        checkUser();
         fetchGym();
         setFirstLoad(false);
       };
-    }
   }, []);
 
   const checkUser = () => {
@@ -120,21 +117,7 @@ export default function HomeScreen() {
       setLoading(false);
     };
   };
-
-  const AddDate = async () => {
-    if (currUser) {
-      try {
-        const userRef = doc(firestore, "Users", currUser.uid);
-        await updateDoc(userRef, {
-          checkInHistory: [...currUser.checkInHistory, Today],
-        });
-        setCheckIn(true);
-      } catch (error) {
-        console.error("Error updating bio: ", error);
-      }
-    };
-  };
-
+  
   const handleCheckIn = async () => {
     const location = await GetUserLocation(); {
       if (location) {

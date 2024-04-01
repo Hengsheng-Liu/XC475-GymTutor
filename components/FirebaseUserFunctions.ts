@@ -11,15 +11,43 @@ import {
     getDocs, 
     updateDoc, 
     arrayUnion} from 'firebase/firestore';
-import { useAuth } from "../Context/AuthContext";
+import { useAuth } from "@/Context/AuthContext";
 import { Geometry } from 'react-native-google-places-autocomplete';
 import { GeoPoint } from 'firebase/firestore';
 // Update this and addUsers function when adding new fields
 // Use updateUsers function to initialize new fields on all users.
 // Define User interface
 import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
-
+import Achievement from './ProfileComponents/Achievement';
 type Birthday = {day: number, month: number, year: number};
+export interface Achievementprops {
+    name: string;
+    curr: number;
+    max: number;
+    achieved?: boolean;
+}
+export interface Achievements {
+    Chest?: Achievementprops[];
+    Back?: Achievementprops[];
+    Legs?: Achievementprops[];
+    Arms?: Achievementprops[];
+    Core?: Achievementprops[];
+    Cardio?: Achievementprops[];
+    FullBody?: Achievementprops[];
+    Shoulder?: Achievementprops[];
+}
+
+export const DefaultAchievement: Achievements = {
+    Chest:[
+        {name: "BenchBeast", curr: 0, max: 10, achieved: false},
+    ],
+    Back:[
+        {name: "PullUpPro", curr: 0, max: 10, achieved: false},
+    ],
+    Legs:[
+        {name: "SquatKing", curr: 0, max: 10, achieved: false},
+    ],
+};
 
 export interface IUser {
     uid: string;
@@ -36,12 +64,13 @@ export interface IUser {
     gym: string;
     checkInHistory: string[]; // Add proper type
     icon: string;
-    achievements: string[]; // Add proper type
+    Achievement: Achievements;
     gymExperience: string;
     currentlyMessaging: string[];
     gymId: string;
     filters: Filters;
     birthday: Birthday;
+
 }
 
 export interface Gym{
@@ -195,7 +224,8 @@ export async function addUser(
             gymExperience: gymExperience,
             currentlyMessaging: [],
             filters: filters,
-            birthday: birthday
+            birthday: birthday,
+            Achievement: DefaultAchievement,
         });
         console.log("Document written for user: ", uid);
     } catch (error) {
@@ -441,6 +471,21 @@ async function randomIt(): Promise<void> {
     // Example usage
     const randomName: string = generateRandomName(randomSex);
 }
+export const AddDate = async (uid:string) => {
+    const Day = new Date();
+    const Today =
+        Day.getFullYear() + "-" + (Day.getMonth() + 1) + "-" + Day.getDate();
+
+        try {
+            const userRef = doc(firestore, "Users", uid);
+            const userCheckHistory = (await getDoc(userRef)).data()?.checkInHistory; 
+            await updateDoc(userRef, {
+                checkInHistory: [...userCheckHistory, Today],
+            });
+        } catch (error) {
+            console.error("Error updating bio: ", error);
+        }
+    };
 
 // Attempt to do it automatically. Didn't work and gave up
 // Define a function to fetch all users and update them with missing fields

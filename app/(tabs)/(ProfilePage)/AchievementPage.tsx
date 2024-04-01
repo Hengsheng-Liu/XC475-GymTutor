@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   VStack,
   Heading,
@@ -12,53 +12,89 @@ import {
   HStack,
 } from "native-base";
 import { SafeAreaView } from "react-native";
-import FitFriend from "../../../assets/images/achievements/FitFriendship.svg";
-import SocialButterfly from "../../../assets/images/achievements/SocialButterfly.svg";
-import CheckInChampion from "../../../assets/images/achievements/CheckInChampion.svg";
-import IronDedication from "../../../assets/images/achievements/IronDedication.svg";
-import ConsistencyConqueror from "../../../assets/images/achievements/ConsistencyConqueror.svg";
+import AchievementModal from "../../../components/ProfileComponents/AchievementsModal";
+import { SvgUri } from "react-native-svg";
+import {
+  Achievementprops,
+  Achievements,
+  getCurrUser,
+} from "@/components/FirebaseUserFunctions";
+import { useAuth } from "@/Context/AuthContext";
 const AchievementPage = () => {
-  const ahievements = [
-    {
-      name: "FitFriend",
-      description: "You have made 5 friends on FitMate!",
-      image: FitFriend,
-    },
-    {
-      name: "SocialButterfly",
-      description: "You have attended 5 events!",
-      image: SocialButterfly,
-    },
-    {
-      name: "CheckInChampion",
-      description: "You have checked in 10 times!",
-      image: CheckInChampion,
-    },
-    {
-      name: "IronDedication",
-      description: "You have attended 10 events!",
-      image: IronDedication,
-    },
-    {
-      name: "ConsistencyConqueror",
-      description: "You have checked in 20 times!",
-      image: ConsistencyConqueror,
-    },
-  ];
+  const [UserAchievements, setAchievements] = React.useState<Achievementprops[]>([]);
+  const { User } = useAuth();
+  const getSVG = (name: string, achieved: boolean) => {
+    if (achieved) {
+      return (
+        <SvgUri
+          width="100"
+          height="100"
+          uri={`/assets/images/achievements/Complete/${name}.svg`}
+        />
+      );
+    }else{
+    return (
+      <SvgUri
+        width="100"
+        height="100"
+        uri={`/assets/images/achievements/Uncomplete/${name}.svg`}
+      />
+    );
+    }
+  };
+  const GetUserAchievement = async () => {
+    console.log("call tihs function")
+    if (User) {
+      try {
+        const Achievement = (await getCurrUser(User.uid)).Achievement;
+        const newAchievements:Achievementprops[] = [];
+        Object.keys(Achievement).forEach(muscleGroup => {
+          const achievements = Achievement[muscleGroup as keyof Achievements];
+          console.log(achievements)
+          achievements.forEach(achievement => {
+            newAchievements.push(achievement);
+          });
+        });
+        setAchievements(newAchievements);
+        console.log("User Achievements: ", UserAchievements);
+      } catch (error) {
+        console.error("Error fetching user achievements: ", error);
+      }
+    }
+  
+  }
+  useEffect(() => {
+    GetUserAchievement();
+
+  }, []);
   return (
     <NativeBaseProvider>
-    <ScrollView>
-      <SafeAreaView>
-        
-                <Flex flexDirection={"row"}  flexWrap={"wrap"} >
-                    {ahievements.map((achievement) => (
-                            <Flex h="20" w="20" width={"1/3"} borderWidth={1} justifyContent={"center"} alignItems={"center"}>
-                                    <achievement.image/>
-                            </Flex>
-                    ))}
-                </Flex>            
-       
-      </SafeAreaView>
+      <ScrollView>
+        <SafeAreaView>
+          <Heading margin={2}> Earned Badges</Heading>
+          <Flex flexDirection={"row"} flexWrap={"wrap"}>
+            <AchievementModal
+              image={getSVG("BenchBeast")}
+              name="BenchBeast"
+              description="Awared for reacing 15 total check-ins"
+            />
+            <AchievementModal
+              image={getSVG("BenchBeast")}
+              name="BenchBeast"
+              description="Bench the f out"
+            />
+            <AchievementModal
+              image={getSVG("BenchBeast")}
+              name="BenchBeast"
+              description="Bench the f out"
+            />
+            <AchievementModal
+              image={getSVG("BenchBeast")}
+              name="BenchBeast"
+              description="Bench the f out"
+            />
+          </Flex>
+        </SafeAreaView>
       </ScrollView>
     </NativeBaseProvider>
   );

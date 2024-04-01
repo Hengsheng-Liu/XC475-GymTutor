@@ -1,7 +1,7 @@
 
 import { firestore } from '../../../firebaseConfig';
 
-import { getFirestore, collection, query, orderBy, limit, onSnapshot, serverTimestamp, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, query, orderBy, limit, onSnapshot, serverTimestamp, addDoc, doc, getDoc, setDoc } from 'firebase/firestore';
 
 class Fire {
 
@@ -11,19 +11,27 @@ class Fire {
   }
   // 1.
   get ref() {
-    return collection(this.db, 'messages');
+    return collection(this.db, 'Chat');
   }
   // 2.
-  on = callback => {
-    const q = query(this.ref, orderBy('timestamp', 'desc'), limit(20)); // Create a query
+  on = (chatId, callback) => {
+    const messagesRef = collection(this.ref, chatId, "Messages");
+
+    const q = query(
+      messagesRef,
+      orderBy('timestamp', 'desc'),
+      limit(20)
+    );
+
 
     this.unsubscribe = onSnapshot(q, snapshot => {
+
       snapshot.docChanges().forEach(change => {
-        console.log("I'm before");
+
         if (change.type === 'added') {
-          console.log("I'm middle");
+
           callback(this.parse(change.doc));
-          console.log("I'm after");
+
         }
       });
     });
@@ -58,7 +66,11 @@ class Fire {
   }
 
 
-  send = (messages, userId) => {
+  send = (messages, userId, receiveUser) => {
+    console.log("senderId:", userId);
+    console.log("receiverId:", receiveUser.uid);
+    chatId = generateChatId(userId, receiveUser.uid);
+
     for (let i = 0; i < messages.length; i++) {
       const { text } = messages[i];
 
@@ -67,19 +79,59 @@ class Fire {
         user: { _id: userId },
         timestamp: this.timestamp,
       };
-      this.append(message);
+      this.append(message, chatId);
     }
   };
 
 
-  append = async message => {
+  append = async (message, chatId) => {
     try {
-      const docRef = await addDoc(this.ref, message);
-      console.log("Document written with ID: ", docRef.id);
+
+      // Reference to the specific chat document
+      const chatRef = doc(this.db, 'Chat', chatId);
+
+      // Reference to the 'Messages' subcollection of the chat
+      const messagesRef = collection(chatRef, 'Messages');
+
+      const docRef = await addDoc(messagesRef, message);
+      console.log("Message written with ID: ", docRef.id);
     } catch (error) {
       console.error("Error adding document: ", error);
     }
   };
+}
+
+
+
+
+
+
+
+// Function to ensure user IDs are ordered consistently
+// This could be alphabetical, numerical, or any other consistent method
+export function generateChatId(userId1, userId2) {
+  return [userId1, userId2].sort().join('_');
+}
+
+// Function to find or create a chat document
+export async function findOrCreateChat(userId1, userId2) {
+  const chatId = generateChatId(userId1, userId2);
+
+  const chatRef = doc(firestore, 'Chat', chatId);
+  const docSnap = await getDoc(chatRef);
+
+  if (!docSnap.exists()) {
+    // Chat doesn't exist, create a new one
+    await setDoc(chatRef, {
+      participants: [userId1, userId2],
+      timestamp: serverTimestamp(), // Use server timestamp for consistency
+    });
+    console.log('New chat created with ID:', chatId);
+  } else {
+    console.log('Chat found with ID:', chatId);
+  }
+
+  return chatId; // Return the chatId for further use (e.g., sending messages)
 }
 
 Fire.shared = new Fire();

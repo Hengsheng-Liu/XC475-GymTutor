@@ -6,10 +6,11 @@ import CheckInRoutine from "@/components/CheckInComponents/CheckInRoutine";
 export default function CheckInSubmit() {
     const submitCheckIn = () => {
         router.replace("/Home")
+        
     }
 
   return (
-        <CheckInRoutine navigation={submitCheckIn} Icon={CheckOut} Title={"You Are Checked In!"} ButtonText={"Let's Go!"}/>
+        <CheckInRoutine navigation={submitCheckIn} Icon={CheckOut} Title={"You Are Checked In!"} ButtonText={"Let's Go!"} lastPage/>
 
   );
 }
