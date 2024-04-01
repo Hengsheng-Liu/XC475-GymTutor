@@ -29,11 +29,12 @@ const AchievementPage = () => {
         <SvgUri
           width="100"
           height="100"
+          
           uri={`/assets/images/achievements/Complete/${name}.svg`}
         />
       );
     }else{
-    return (
+  return (
       <SvgUri
         width="100"
         height="100"
@@ -43,18 +44,17 @@ const AchievementPage = () => {
     }
   };
   const GetUserAchievement = async () => {
-    console.log("call tihs function")
     if (User) {
       try {
         const Achievement = (await getCurrUser(User.uid)).Achievement;
         const newAchievements:Achievementprops[] = [];
         Object.keys(Achievement).forEach(muscleGroup => {
           const achievements = Achievement[muscleGroup as keyof Achievements];
-          console.log(achievements)
           achievements.forEach(achievement => {
             newAchievements.push(achievement);
           });
         });
+
         setAchievements(newAchievements);
         console.log("User Achievements: ", UserAchievements);
       } catch (error) {
@@ -65,6 +65,7 @@ const AchievementPage = () => {
   }
   useEffect(() => {
     GetUserAchievement();
+    console.log("User Achievements: ", UserAchievements);
 
   }, []);
   return (
@@ -73,26 +74,16 @@ const AchievementPage = () => {
         <SafeAreaView>
           <Heading margin={2}> Earned Badges</Heading>
           <Flex flexDirection={"row"} flexWrap={"wrap"}>
-            <AchievementModal
-              image={getSVG("BenchBeast")}
-              name="BenchBeast"
-              description="Awared for reacing 15 total check-ins"
-            />
-            <AchievementModal
-              image={getSVG("BenchBeast")}
-              name="BenchBeast"
-              description="Bench the f out"
-            />
-            <AchievementModal
-              image={getSVG("BenchBeast")}
-              name="BenchBeast"
-              description="Bench the f out"
-            />
-            <AchievementModal
-              image={getSVG("BenchBeast")}
-              name="BenchBeast"
-              description="Bench the f out"
-            />
+            {UserAchievements.map((achievement) => (
+              <AchievementModal
+                image={getSVG(achievement.name, achievement.achieved)}
+                name={achievement.name}
+                description={achievement.description}
+                current={achievement.curr}
+                max = {achievement.max}
+                achieved={true}
+              />
+            ))}
           </Flex>
         </SafeAreaView>
       </ScrollView>

@@ -24,7 +24,8 @@ export interface Achievementprops {
     name: string;
     curr: number;
     max: number;
-    achieved?: boolean;
+    achieved: boolean;
+    description: string;
 }
 export interface Achievements {
     Chest?: Achievementprops[];
@@ -39,13 +40,13 @@ export interface Achievements {
 
 export const DefaultAchievement: Achievements = {
     Chest:[
-        {name: "BenchBeast", curr: 0, max: 10, achieved: false},
+        {name: "BenchBeast", curr: 0, max: 10,description:"Have bench over 10 times",achieved: false},
     ],
     Back:[
-        {name: "PullUpPro", curr: 0, max: 10, achieved: false},
+        {name: "PullUpPro", curr: 0, max: 10, description:"Have Pull Up over 10 times", achieved: false},
     ],
     Legs:[
-        {name: "SquatKing", curr: 0, max: 10, achieved: false},
+        {name: "SquatKing", curr: 0, max: 10, description:"Have Squatted over 10 times", achieved: false},
     ],
 };
 
