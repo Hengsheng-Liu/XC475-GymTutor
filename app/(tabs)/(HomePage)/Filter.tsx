@@ -53,7 +53,7 @@ const FilterScreen = () => {
     const [ageRange, setAgeRange] = useState(filters.age);
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    const [applyNewFilters, setApplyNewFilters] = useState(true);
+    const [applyNewFilters, setApplyNewFilters] = useState(filters.applyFilters[0]);
 
   // Update filters of user
   const updateUserFilters = async (filters: Filters) => {

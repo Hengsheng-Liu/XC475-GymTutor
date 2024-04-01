@@ -12,7 +12,6 @@ interface FriendProps {
 }
 
 const UserPreview: React.FC<FriendProps> = ({ friend }) => {
-    const [isPressed, setIsPressed] = useState<boolean>(false);
     const [updatedFriend, setUpdatedFriend] = useState<IUser>(friend); // State to hold updated friend data
     const {currUser} = useAuth();
     if (!currUser) return;
@@ -36,7 +35,6 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
 
     // TODO: Display user preview when clicked
     const handleUserClick  = async () =>{
-        setIsPressed(true)
         console.log("User is pressed")
         console.log(friend.tags);
         // Do something when user is clicked
@@ -44,14 +42,6 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
     };
       
     return (
-        <Pressable 
-            onPress = {() => handleUserClick()}
-            onPressOut={() => setIsPressed(false)}
-            zIndex={1}
-            mb ={3} ml={1} mr={1} pr={1}
-            borderRadius="xl" borderWidth={1} borderColor="trueGray.50" shadow="3"
-            bg={isPressed ? "trueGray.200" : "trueGray.50"} // Change background color on hover
-            >
         <Flex>
             <Row alignItems="center" space="sm">
                 <Avatar m={2} size= "xl" source={friend.icon ? {uri: friend.icon} : require("@/assets/images/default-profile-pic.png")} />
@@ -76,7 +66,6 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
                 </Column>
             </Row>
         </Flex>
-        </Pressable>
     );
   };
 

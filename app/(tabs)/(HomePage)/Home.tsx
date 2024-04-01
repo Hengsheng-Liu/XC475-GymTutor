@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { router } from "expo-router";
-import { NativeBaseProvider, Spacer, Text, Box, Column, Spinner, Heading, Input, IconButton, Row, Button } from "native-base";
+import { NativeBaseProvider, Spacer, Pressable, Flex, HStack, Badge, Text, Box, Column, Spinner, Heading, Input, IconButton, Row, Button } from "native-base";
 import { ScrollView, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome, Ionicons, FontAwesome5 } from "@expo/vector-icons";
@@ -15,12 +15,14 @@ import { GetUserLocation } from "@/components/GeolocationFunction";
 import pointInPolygon from "point-in-polygon";
 import { Octicons } from "@expo/vector-icons";
 import { defaultFilters } from "./Filter";
+import UserExpandedPreview from "@/components/HomeComponents/ExpandedPreview";
 
 export default function HomeScreen() {
   // const [gym, setGym] = useState<Gym>(); // State to store the gym
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [users, setUsers] = useState<IUser[]>([]); // State to store users
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
+  const [firstLoad, setFirstLoad] = useState<boolean>(true); // State to track first load
   const { User, currUser, userFilters, userGym } = useAuth();
   const [location, setLocation] = useState<number[]>([]);
   const bound = useRef<number[][]>([]); // State to store the gym boundary
@@ -30,8 +32,10 @@ export default function HomeScreen() {
     Day.getFullYear() + "-" + (Day.getMonth() + 1) + "-" + Day.getDate();
   const today = new Date();
 
+  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
   if (!User) return;
-  if (!currUser || !userGym || !userFilters) return router.replace("/LoadingPage");
 
   // Initialize gym data
   useEffect(() => {
@@ -40,95 +44,101 @@ export default function HomeScreen() {
         handleSearchUsers();
         checkUser();
         fetchGym();
+        setFirstLoad(false);
       };
     }
   }, []);
 
   const checkUser = () => {
-    const History = currUser.checkInHistory;
-    if (History && History.includes(Today)) {
-      setCheckIn(true); 
+    if (currUser) {
+      const History = currUser.checkInHistory;
+      if (History && History.includes(Today)) {
+        setCheckIn(true); 
+      };
     };
   };
 
   const fetchGym = async () => {
-    try {
-      const gymDocRef = doc(firestore, "Gyms", userGym[0]);
-      const userGym2 = (await getDoc(gymDocRef)).data() as Gym;
+    if (userGym) {
+      try {
+        const gymDocRef = doc(firestore, "Gyms", userGym[0]);
+        const userGym2 = (await getDoc(gymDocRef)).data() as Gym;
 
-      userGym2.bounding.forEach((point) => {
-        bound.current.push([point.latitude, point.longitude]);
-      });
-    } catch (error) {
-      console.log("Error fetching user:", error);
+        userGym2.bounding.forEach((point) => {
+          bound.current.push([point.latitude, point.longitude]);
+        });
+      } catch (error) {
+        console.log("Error fetching user:", error);
+      }
+    };
+  };
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' || event.key === 'Return') {
+      // Perform the search operation
+      handleSearchUsers();
     }
   };
 
   // TODO: Display user preview when clicked
-  const handlePreviewClick = (user: IUser) => {
-    // Do something when user is clicked
-    // Open Profile
+  const handlePreviewClick = (friend: IUser) => {
+    setSelectedUser(friend);
+    setIsOpen(true);
   };
 
-  // Get users from database from gym
-  const handleGetUsers = async () => {
-    if (!loading) {
-      setUsers([]);
-      setLoading(true);
-      if (userGym[0]){
-        console.log("Retrieved users from gym: ", userGym[0]);
-        const fetchedUsers = await getUsers(currUser.uid, userGym[0]);
-        setUsers(fetchedUsers);
-      }
-    }
-    
-    setLoading(false);
-    // updateUsers(); // Uncomment when we want to use it to add fields
+  const handleCloseModal = () => {
+    setSelectedUser(null);
+    setIsOpen(false);
   };
 
   // Search users by name
   const handleSearchUsers = async () => {
-    setUsers([]);
-    setLoading(true);
+    if (currUser && userGym) {
+      setUsers([]);
+      setLoading(true);
 
-    let fetchedUsers: IUser[];
-    if (searchTerm === "") {
-      //By default search users with filter and gym
-      fetchedUsers = await getUsers(currUser.uid, userGym[0], userFilters);
-      console.log("Fetched filtered users!");
-    } else if (searchTerm === "all") {
-      // Testing keyword to show all users
-      fetchedUsers = await getUsers(currUser.uid);
-      console.log("Fetched all users!");
-    } else if (searchTerm === "all gym") {
-      // Testing keyword to show all users on their gym
-      fetchedUsers = await getUsers(currUser.uid, userGym[0], defaultFilters);
-      console.log("Fetched all gym users!");
-    } else { 
-      // Search by name
-      fetchedUsers = await getUsers(currUser.uid, userGym[0], defaultFilters, searchTerm);
-      console.log("Fetched users with name: ", searchTerm);
-    }
+      let fetchedUsers: IUser[];
+      if (searchTerm === "") {
+        //By default search users with filter and gym
+        fetchedUsers = await getUsers(currUser.uid, userGym[0], userFilters);
+        console.log("Fetched filtered users!");
+      } else if (searchTerm === "all") {
+        // Testing keyword to show all users
+        fetchedUsers = await getUsers(currUser.uid);
+        console.log("Fetched all users!");
+      } else if (searchTerm === "all gym") {
+        // Testing keyword to show all users on their gym
+        fetchedUsers = await getUsers(currUser.uid, userGym[0], defaultFilters);
+        console.log("Fetched all gym users!");
+      } else { 
+        // Search by name
+        fetchedUsers = await getUsers(currUser.uid, userGym[0], defaultFilters, searchTerm);
+        console.log("Fetched users with name: ", searchTerm);
+      }
 
-    setUsers(fetchedUsers);
-    setLoading(false);
+      setUsers(fetchedUsers);
+      setLoading(false);
+    };
   };
 
   const AddDate = async () => {
-    try {
-      const userRef = doc(firestore, "Users", currUser.uid);
-      await updateDoc(userRef, {
-        checkInHistory: [...currUser.checkInHistory, Today],
-      });
-      setCheckIn(true);
-    } catch (error) {
-      console.error("Error updating bio: ", error);
-    }
+    if (currUser) {
+      try {
+        const userRef = doc(firestore, "Users", currUser.uid);
+        await updateDoc(userRef, {
+          checkInHistory: [...currUser.checkInHistory, Today],
+        });
+        setCheckIn(true);
+      } catch (error) {
+        console.error("Error updating bio: ", error);
+      }
+    };
   };
 
   const handleCheckIn = async () => {
     const location = await GetUserLocation(); {
       if (location) {
+        console.log(location);
         setLocation(location);
         if (pointInPolygon(location, bound.current)) {
           router.push("/CheckIn");
@@ -143,12 +153,13 @@ export default function HomeScreen() {
     }
   };
   
-  return (
+  
+  return ( 
     <NativeBaseProvider theme={theme}>
       <SafeAreaView
         style={{ backgroundColor: "#FFF", flex: 1, padding: 15}}
       >
-        <Header GymName={userGym[1]} />
+        { userGym && <Header GymName={userGym[1]} />}
         <Row mb={1} space={2} alignItems="center">
         <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/Filter")} >
           <Octicons name="filter" size={35} color="#0284C7" />
@@ -175,23 +186,32 @@ export default function HomeScreen() {
               <Spinner size="md" mb={2} color="#0284C7" accessibilityLabel="Loading posts" />
               <Heading color="#0284C7" fontSize="md"> Loading</Heading>
             </Column>}
-            {!loading && users.length === 0 ? (
-              <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
-                <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
-                  Oops! There are no users matching your search. 🤔
-                </Text> 
-                < Text/>
-                <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
-                  Try broadening your search to discover more amazing users!
-                </Text>   
-              </View>
-            ) : (
-              <ScrollView style={{flex:1, zIndex:0}}>
-                {users.map((user) => (
-                  <UserPreview friend={user} key={user.uid} />
-                ))}
-              </ScrollView>
-            )}
+        {!firstLoad && !loading && users.length === 0 ? (
+          <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
+              Oops! There are no users matching your search. 🤔
+            </Text> 
+            < Text/>
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
+              Try broadening your search to discover more amazing users!
+            </Text>   
+          </View>
+          ) : (
+          <ScrollView style={{flex:1, zIndex:0}}>
+            {users.map((user) => (
+            <Pressable onPress={()=> handlePreviewClick(user)}>
+              {({ isPressed }) => {
+              return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} 
+                          style={{transform: [{ scale: isPressed ? 0.96 : 1 }]}} 
+                          shadow="3" borderRadius="xl" mb ={3} ml={1} mr={1} pr={1}>
+                        <UserPreview friend={user} key={user.uid} />
+                      </Box>}}
+            </Pressable>))}
+          </ScrollView>
+          )}
+        {selectedUser && 
+          <UserExpandedPreview users={users} user={selectedUser} isOpen={isOpen} onClose={handleCloseModal} />
+        }
         <Button
           size={"lg"}
           borderRadius={30}
