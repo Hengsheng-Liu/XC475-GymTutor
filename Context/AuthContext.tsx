@@ -14,6 +14,8 @@ type AuthContextValue = {
     userFilters: Filters | undefined;
     updateFilters: (filters: Filters) => void;
     userGym: [string, string] | undefined;
+    friend: IUser | null;
+    updateFriend: (friend: IUser) => void;
     updateUserGym: (gymId: string, gymName: string) => void;
     SignOut: () => Promise<void>;
 }
@@ -24,6 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [currUser, setCurrUser] = useState<IUser | null>(null);
     const [userFilters, setUserFilters] = useState<Filters>();
     const [userGym, setUserGym] = useState<[string, string]>();
+    const [friend, setFriend] = useState<IUser | null>(null);
 
     const CreateUser = async (email: string, password: string) => {
         return await createUserWithEmailAndPassword(auth, email, password);
@@ -46,6 +49,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUserGym([gymId, gymName]);
         console.log("Updated Gym!");
     }
+
+    const updateFriend = async (friend: IUser) => {
+        if (friend) {
+            setFriend(friend);
+        }
+        console.log("Updated Friend!");
+    };
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
@@ -76,6 +86,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         userFilters,
         updateFilters,
         updateUserGym,
+        friend,
+        updateFriend,
         userGym,
         SignOut
     };
