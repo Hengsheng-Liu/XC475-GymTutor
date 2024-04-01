@@ -18,21 +18,16 @@ interface Props {
   
   const UserExpandedPreview: React.FC<Props> = ({ users, user, isOpen, onClose }) => {
     const [selectedUser, setSelectedUser] = useState<IUser>(user); // State to hold updated friend data
-    const {currUser} = useAuth();
+    const {currUser, updateFriend } = useAuth();
     const [currentIndex, setCurrentIndex] = useState<number>(0);
 
     if (!currUser) return;
 
     // TODO: Display user preview when clicked
     const handleOpenProfile = async () =>{
+        await updateFriend(selectedUser);
         console.log("HEY");
-        router.push("/ProfilePage");
-        // router.navigate({
-        //     pathname: "@/(tabs)/(HomePage)/FriendProfile",
-        //     params: {
-        //       user: user,
-        //     }
-        //   });
+        router.push("/FriendProfile");
 
         // Open Profile
     };
