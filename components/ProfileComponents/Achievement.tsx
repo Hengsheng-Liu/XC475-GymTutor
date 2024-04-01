@@ -17,7 +17,7 @@ export default function Achievement() {
   return (
     <VStack mt={4}>
       <HStack>
-        <Heading mr={3}>Achievement</Heading>
+        <Heading mr={3}>Achievements</Heading>
         <Pressable onPress={() => console.log("Edit Achievement pressed!")}>
           <FontAwesome6 name="pencil" size={22} color="black" />
         </Pressable>

@@ -50,9 +50,11 @@ const AchievementPage = () => {
         const newAchievements:Achievementprops[] = [];
         Object.keys(Achievement).forEach(muscleGroup => {
           const achievements = Achievement[muscleGroup as keyof Achievements];
-          achievements.forEach(achievement => {
-            newAchievements.push(achievement);
-          });
+          if (achievements) {
+            achievements.forEach(achievement => {
+              newAchievements.push(achievement);
+            });
+          }
         });
 
         setAchievements(newAchievements);
