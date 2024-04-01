@@ -17,9 +17,11 @@ interface AchievementProps {
   name: string;
   description: string;
   achieved?: boolean;
+  current:number;
+  max:number;
 }
 
-const AchievementModal = ({ image, name, description }: AchievementProps) => {
+const AchievementModal = ({ image, name, description, current, max}: AchievementProps) => {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -36,16 +38,16 @@ const AchievementModal = ({ image, name, description }: AchievementProps) => {
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} size={"md"}>
         <Modal.Content>
           <Modal.CloseButton />
-
+          <Center>
           <Modal.Header>{name}</Modal.Header>
-
+          </Center>
           <Modal.Body>
             <Flex alignItems={"center"}>
               <Box marginBottom={5}>
                 <Center>{image}</Center>
               </Box>
               <Text marginBottom={"5"}>{description}</Text>
-              <Button bgColor="#EA580C">You Status: 3/15</Button>
+              <Button bgColor="#EA580C"><Text color = "#FAFAFA">You Status: {current}/{max}</Text></Button>
             </Flex>
           </Modal.Body>
         </Modal.Content>
