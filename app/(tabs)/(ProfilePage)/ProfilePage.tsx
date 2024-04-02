@@ -100,7 +100,7 @@ const ProfilePage = () => {
 
   return (
     <NativeBaseProvider theme={theme}>
-      <SafeAreaView >
+      <SafeAreaView style= {{backgroundColor:"#FFF"}}>
         <ScrollView backgroundColor={"#FFFFFF"}>
           <Box ml={"3"} mr={"3"} paddingTop={"10"}>
             {userInfo && (

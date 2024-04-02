@@ -1,7 +1,7 @@
 
 import { firestore } from '../../../firebaseConfig';
 
-import { getFirestore, collection, query, orderBy, limit, onSnapshot, serverTimestamp, addDoc, doc, getDoc, setDoc } from 'firebase/firestore';
+import { getFirestore, updateDoc, arrayUnion, collection, query, orderBy, limit, onSnapshot, serverTimestamp, addDoc, doc, getDoc, setDoc } from 'firebase/firestore';
 
 class Fire {
 
@@ -126,7 +126,18 @@ export async function findOrCreateChat(userId1, userId2) {
       participants: [userId1, userId2],
       timestamp: serverTimestamp(), // Use server timestamp for consistency
     });
+    
     console.log('New chat created with ID:', chatId);
+
+    const db = firestore;
+    const user1DocRef = doc(db, "Users", userId1);
+    const user2DocRef = doc(db, "Users", userId2);
+
+    // Save each others chatId in the currentlyMessaging
+    
+    await updateDoc(user1DocRef, {currentlyMessaging: arrayUnion(userId2) });
+    await updateDoc(user2DocRef, {currentlyMessaging: arrayUnion(userId1) });
+    console.log("Updated Currently messaging for both users", userId1, userId2);
   } else {
     console.log('Chat found with ID:', chatId);
   }

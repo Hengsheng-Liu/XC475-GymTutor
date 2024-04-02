@@ -124,7 +124,7 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
   return (
     <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={styles.header}>
-        <Text style={styles.userName}>Bob</Text>
+        <Text style={styles.userName}></Text>
         <TouchableOpacity>
           {/* Icon for additional options */}
         </TouchableOpacity>

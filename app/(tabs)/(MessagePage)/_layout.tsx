@@ -5,8 +5,9 @@ import ChatPage from './ChatPage';
 export default function authLayout() {
   return (
     <Stack>
-      <Stack.Screen name="MessageList" />
-      <Stack.Screen name="ChatPage" />
+      <Stack.Screen name="MessageList" options= {{headerShown: false, title: ""}}/>
+      <Stack.Screen name="ChatPage" options={{headerShown: true, title: ""}}/>
+      <Stack.Screen name="FriendsChat" options={{headerShown: true, title: ""}}/>
 
     </Stack>
   )
