@@ -16,13 +16,25 @@ import { collection, addDoc,setDoc,doc, updateDoc } from "firebase/firestore";
 import { useAuth} from "../../Context/AuthContext";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+import { addUser } from "@/components/FirebaseUserFunctions"
+
+import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
+
+
+export const AddUserToDB = async (response: UserCredential, name: string, bio: string, gender: string) => {
+  const user = response.user;
+
+  await addUser(user.uid, user.email || "", "", "", name, 21, bio, gender, "beginner",{day: 1, month: 1, year: 2000}, defaultFilters, []);
+
+
+
+};
 
 export default function SignUpScreen2() { 
-    const {User}= useAuth(); 
-    console.log("user frorm useAuth", User);
+    const { CreateUser } = useAuth();
 
-    const {uid, email} = useLocalSearchParams();
-    console.log("token", uid, email);
+
+    const {email, password} = useLocalSearchParams();
 
     const [name, setName] = useState<string | undefined>();
 
@@ -56,52 +68,59 @@ export default function SignUpScreen2() {
 
 
 
-  const AddUserToDB = async () => {
-    const db = firestore;
+//   const AddUserToDB = async () => {
+//     const db = firestore;
     
-    if (User?.uid) {
-    try {
-        await setDoc(doc(db, "Users", User.uid), {
-        achievements: [],
-        age: date,
-        bio: bio,
-        blockedUsers: [],
-        checkInHistory: [],
-        currentlyMessaging: [],
-        email: email,
-        friendRequests: [],
-        friends: [],
-        gym: "",
-        gymExperience: "",
-        icon: "",
+//     if (User?.uid) {
+//     try {
+//         await setDoc(doc(db, "Users", User.uid), {
+//         achievements: [],
+//         age: date,
+//         bio: bio,
+//         blockedUsers: [],
+//         checkInHistory: [],
+//         currentlyMessaging: [],
+//         email: email,
+//         friendRequests: [],
+//         friends: [],
+//         gym: "",
+//         gymExperience: "",
+//         icon: "",
 
-        name: name,
-        rejectedRequests: [],
-        sex: gender,
-        tags: [],
-        uid: uid,  
+//         name: name,
+//         rejectedRequests: [],
+//         sex: gender,
+//         tags: [],
+//         uid: uid,  
 
-      });
+//       });
   
-    } catch (error) {
-      console.error("Error adding document: ", error);
-    }
-}
-  };
-      const finishSignUp = async () => {
-        if (date && name && gender && bio) {
+//     } catch (error) {
+//       console.error("Error adding document: ", error);
+//     }
+// }
+//   };
+    const finishSignUp = async () => {
+
+    if (date && name && gender && bio) {
   //          await updateDB(userCredential);
-            console.log("dababy");
-            await AddUserToDB();
+
+            if (email && password) {
+              const userCredential = await CreateUser(email as string, password as string);
+              const user = userCredential.user;
+              await AddUserToDB(userCredential, name, bio, gender);
+
+            } else {
+              Alert.alert("Error", "User cannot be properly stored in firestore database."); 
       
-    
             }
-            else {
-            Alert.alert("Error", "Please fill in all fields");
-            }
+         
         
         router.navigate("LogIn");
-        }
+        }   
+        else {
+          Alert.alert("Error", "Please fill in all fields");
+          }
 
         
       
@@ -193,4 +212,4 @@ const styles = StyleSheet.create({
       flex: 6,
     },
   });
-  
+}

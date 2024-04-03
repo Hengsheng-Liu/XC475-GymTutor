@@ -16,14 +16,9 @@ import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { useAuth } from "../../Context/AuthContext";
 import { addUser } from "@/components/FirebaseUserFunctions"
 
-export const AddUserToDB = async (response: UserCredential) => {
-  const user = response.user;
 
-  await addUser(user.uid, user.email || "");
-
-};
 export default function SignUpScreen() {
-  const [email, setEmail] = useState<string | undefined>();
+  const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string | undefined>();
   const [confirmPassword, setConfirmPassword] = useState<string | undefined>();
   const [passwordMatchError, setPasswordMatchError] = useState<boolean>(false);
@@ -48,21 +43,18 @@ export default function SignUpScreen() {
   const handleSignUp = async () => {
     if (email && password && confirmPassword && password === confirmPassword) {
       try {
-        const userCredential = await CreateUser(email, password);
-        const user = userCredential.user;
-        if (user) {
-          await AddUserToDB(userCredential);
-          router.navigate({
-            pathname: "SignUp2",
-            params: {
-              uid: user.uid,
-              email: user.email,
-              user: user,
-            }
-          });
+        router.navigate({
+          pathname: "SignUp2",
+          params: {
+            password: password,
+            email: email,
 
+          }
+        });
+        
+        // const userCredential = await CreateUser(email, password);
+        // const user = userCredential.user;
 
-        }
       } catch (error: any) {
         Alert.alert("Error", error.message);
       }
@@ -105,7 +97,7 @@ export default function SignUpScreen() {
               secureTextEntry
             />
             {passwordMatchError && <Text>Passwords do not match</Text>}
-            <Button title="Sign Up" onPress={handleSignUp} />
+            <Button title="Next" onPress={handleSignUp} />
             <Button title="Go Back" onPress={() => router.navigate("LogIn")} />
           </View>
         </View>
