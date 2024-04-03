@@ -16,6 +16,8 @@ import { collection, addDoc,setDoc,doc, updateDoc } from "firebase/firestore";
 import { useAuth} from "../../Context/AuthContext";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+import { useRoute } from '@react-navigation/native';
+
 import { addUser } from "@/components/FirebaseUserFunctions"
 
 import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
@@ -26,15 +28,20 @@ export const AddUserToDB = async (response: UserCredential, name: string, bio: s
 
   await addUser(user.uid, user.email || "", "", "", name, 21, bio, gender, "beginner",{day: 1, month: 1, year: 2000}, defaultFilters, []);
 
-
-
 };
+
+// interface RouteParams {
+//   email: string;
+//   password: string;
+// }
 
 export default function SignUpScreen2() { 
     const { CreateUser } = useAuth();
 
+    // const route = useRoute();
+    // const { email, password } = route.params as RouteParams;
 
-    const {email, password} = useLocalSearchParams();
+   const {email, password} = useLocalSearchParams();
 
     const [name, setName] = useState<string | undefined>();
 
@@ -102,9 +109,16 @@ export default function SignUpScreen2() {
 //   };
     const finishSignUp = async () => {
 
+
+    console.log("email is ", email);
+    console.log("password is", password);
     if (date && name && gender && bio) {
   //          await updateDB(userCredential);
 
+
+
+            console.log("email is ", email);
+            console.log("password is", password);
             if (email && password) {
               const userCredential = await CreateUser(email as string, password as string);
               const user = userCredential.user;
@@ -123,7 +137,7 @@ export default function SignUpScreen2() {
           }
 
         
-      
+        }
 
 
     return (
@@ -171,14 +185,14 @@ export default function SignUpScreen2() {
               
             />
 
-        <Button title="Next" onPress={finishSignUp} />
+        <Button title="Finish Sign Up" onPress={finishSignUp} />
           </View>
         </View>
       </SafeAreaView>
     </Pressable>
     );
-}
 
+      }
 
 const styles = StyleSheet.create({
     contentView: {
@@ -212,4 +226,3 @@ const styles = StyleSheet.create({
       flex: 6,
     },
   });
-}

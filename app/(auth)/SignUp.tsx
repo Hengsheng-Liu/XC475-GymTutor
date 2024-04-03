@@ -58,6 +58,7 @@ export default function SignUpScreen() {
       } catch (error: any) {
         Alert.alert("Error", error.message);
       }
+      
     } else {
       if (password !== confirmPassword) {
         Alert.alert("Error", "Passwords do not match");
