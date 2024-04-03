@@ -40,7 +40,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
       handleSearchUsers();
       setFirstLoad(false);
     }
-  }, []);
+  }, [isFocused]);
 
   // Search currently messaged users
   const handleSearchUsers = async () => {

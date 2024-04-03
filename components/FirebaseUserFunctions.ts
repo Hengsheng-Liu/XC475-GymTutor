@@ -56,6 +56,7 @@ export interface IUser {
     name: string;
     age: number;
     bio: string;
+    status: string; // Shorter bio (one liner to show on preview)
     sex: string;
     tags: string[];
     friends: string[];
@@ -197,6 +198,7 @@ export async function addUser(
         age: number = 21, 
         bio: string = "",
         sex: string = "", 
+        status: string = "",
         gymExperience: string = "beginner",
         birthday: Birthday = {day: 1, month: 1, year: 2000},
         filters: Filters = defaultFilters,
@@ -213,6 +215,7 @@ export async function addUser(
             sex: sex,
             tags: tags,
             bio: bio,
+            status: status,
             friends: [],
             friendRequests: [],
             rejectedRequests: [],
@@ -328,9 +331,38 @@ export async function updateUsers(): Promise<void> {
             }
             const age = calculateAge(randomBirthday);
 
+            const fitnessStatusLines: string[] = [
+                "Back Squat Enthusiast",
+                "Protein Shake Connoisseur",
+                "Deadlift Dynamo",
+                "Yoga Warrior",
+                "Kettlebell Junkie",
+                "Swole Patrol Member",
+                "Flexibility Fanatic",
+                "Spin Class Addict",
+                "Gym Rat Extraordinaire",
+                "Burpee Boss",
+                "Muscle-up Maverick",
+                "CrossFit Crusader",
+                "Weightlifting Wizard",
+                "Plank Prodigy",
+                "Fitness Freak",
+                "Circuit Training Champ",
+                "Running Renegade",
+                "Powerlifting Powerhouse",
+                "HIIT Hero"
+            ];
+            
+            function getRandomStatus(): string {
+                const randomIndex = Math.floor(Math.random() * fitnessStatusLines.length);
+                return fitnessStatusLines[randomIndex];
+            }
+            
+            const randomStatus: string = getRandomStatus();
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
+                status: randomStatus,
             };
 
             // Update document if any field is missing

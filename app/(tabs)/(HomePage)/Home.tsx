@@ -16,6 +16,8 @@ import pointInPolygon from "point-in-polygon";
 import { Octicons } from "@expo/vector-icons";
 import { defaultFilters } from "./Filter";
 import UserExpandedPreview from "@/components/HomeComponents/ExpandedPreview";
+import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
+
 
 export default function HomeScreen() {
   // const [gym, setGym] = useState<Gym>(); // State to store the gym
@@ -23,6 +25,7 @@ export default function HomeScreen() {
   const [users, setUsers] = useState<IUser[]>([]); // State to store users
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
   const [firstLoad, setFirstLoad] = useState<boolean>(true); // State to track first load
+  const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
   const { User, currUser, userFilters, userGym } = useAuth();
   const [location, setLocation] = useState<number[]>([]);
   const bound = useRef<number[][]>([]); // State to store the gym boundary
@@ -40,6 +43,7 @@ export default function HomeScreen() {
   // Initialize gym data
   useEffect(() => {
     if (currUser) {
+        // updateUsers(); // Uncomment when we want to update users with new fields / random values
         handleSearchUsers();
         fetchGym();
         setFirstLoad(false);
