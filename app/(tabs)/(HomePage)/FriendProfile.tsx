@@ -1,43 +1,34 @@
-import React, { useEffect, useState } from "react";
-import { firestore } from "../../../firebaseConfig";
-import { doc, updateDoc, onSnapshot } from "firebase/firestore";
+import React, { useState } from "react";
 import { useAuth } from "../../../Context/AuthContext";
-import { Box, NativeBaseProvider, ScrollView, extendTheme, Flex } from "native-base";
+import { Box, HStack, Row, Icon, Text, Button, NativeBaseProvider, ScrollView, Flex } from "native-base";
 import Header from "../../../components/FriendsComponents/Header";
-import ButtonGroup from "../../../components/ProfileComponents/ButtonGroup";
-import Description from "../../../components/ProfileComponents/Description";
-import Achievement from "../../../components/ProfileComponents/Achievement";
-import Attribute from "../../../components/ProfileComponents/Attribute";
+import Description from "../../../components/FriendsComponents/Description";
+import Achievement from "../../../components/FriendsComponents/Achievement";
+import Attribute from "../../../components/FriendsComponents/Attribute";
 import Calendar from "../../../components/ProfileComponents/Calendar";
+import DropdownButton from "@/components/FriendsComponents/dropDownButton";
 import { IUser } from "../../../components/FirebaseUserFunctions";
 import { SafeAreaView } from "react-native";
-import { useRoute } from '@react-navigation/native';
+import { router } from "expo-router";
+import theme from "@/components/theme";
+import { sendFriendRequest, canAddFriend } from "@/components/FriendsComponents/FriendFunctions"
 
-import { router, useLocalSearchParams } from "expo-router";
+import { SvgUri } from "react-native-svg";
 
+import { findOrCreateChat } from "@/app/(tabs)/(MessagePage)/data.js";
+import { globalState } from '@/app/(tabs)/(MessagePage)/globalState';
 
 const FriendProfilePage = () => {
-  const { friend } = useAuth();
+  const { friend, currUser } = useAuth();
   const [userInfo, setUserInfo] = useState<IUser | null>(friend);
 
-  const updateBio = async (newBio:string) => {
-
+  const openChat = async (friend: any) => {
+    if (currUser) {  
+      console.log(findOrCreateChat(currUser.uid, friend.uid));
+      globalState.user = friend; // Set the selected user in the global state
+      router.navigate("ChatPage"); // Then navigate to ChatPage
+    };
   };
-
-  const updateTags = async (addTag:string) => {
-    
-  };
-
-  const theme = extendTheme({
-    components: {
-      Button: {
-        baseStyle: {
-          color: "#0369A1",
-          rounded: "full",
-        },
-      },
-    },
-  });
 
   return (
     <NativeBaseProvider theme={theme}>
@@ -47,9 +38,47 @@ const FriendProfilePage = () => {
             {userInfo && (
               <Flex>
                 <Header user={userInfo} />
-                <Attribute description={userInfo.tags} onSaveTag={updateTags} />
-                <ButtonGroup friendCount={userInfo.friends.length + " Friends"}/>
-                <Description bio={userInfo.bio} onSave={updateBio}/>
+                <Attribute description={userInfo.tags} />
+                <HStack
+                  space={3}
+                  justifyContent={"space-around"}
+                  mt={6}
+                  textAlign={"center"}
+                >
+                  <Button width="40%" variant={"outline"} borderRadius={16} onPress={() => router.push("/Friends")}>
+                  <Text fontSize="md" color="#0284C7" > {userInfo.friends.length} {userInfo.friends.length == 1? " Friend" : "Friends"} </Text>
+                  </Button>
+
+                  { currUser && canAddFriend(currUser, userInfo) ? (
+                    <Button
+                    onPress={() => sendFriendRequest(currUser.uid, userInfo.uid)}
+                    backgroundColor= "#0284C7"
+                    borderRadius={16}
+                    width="40%"
+                  >
+                      <Row>
+                        <Icon as={<SvgUri uri={`/assets/images/Spot!.svg`} />}/>
+                        <Text fontSize="md" color="#FFF" fontWeight="bold"> Connect</Text>
+                      </Row>
+                  </Button>
+                  ) : (
+                    <Button
+                    onPress={() => openChat(userInfo)}
+                    backgroundColor= "#0284C7"
+                    borderRadius={16}
+                    width="40%"
+                  >
+                      <Row>
+                        <Icon as={<SvgUri uri={`/assets/images/Spot!.svg`} />}/>
+                        <Text fontSize="md" color="#FFF" fontWeight="bold"> Message</Text>
+                      </Row>
+                  </Button>
+
+                  )}
+                  {currUser && <DropdownButton currUserUID={currUser.uid} friendUID={userInfo.uid}/>}
+                </HStack>
+
+                <Description bio={userInfo.bio}/>
                 <Achievement />
                 <Calendar />
               </Flex>

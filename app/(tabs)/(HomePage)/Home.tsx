@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { router } from "expo-router";
-import { NativeBaseProvider, Spacer, Pressable, Flex, HStack, Badge, Text, Box, Column, Spinner, Heading, Input, IconButton, Row, Button } from "native-base";
+import { NativeBaseProvider, Spacer, Pressable, Text, Box, Column, Spinner, Heading, Input, Row, Button } from "native-base";
 import { ScrollView, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FontAwesome, Ionicons, FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "@/Context/AuthContext";
 import { IUser, getUsers, updateUsers, removeFieldFromUsers, Gym } from "@/components/FirebaseUserFunctions";
 import UserPreview from "../../../components/HomeComponents/UserContainer";
@@ -26,7 +26,7 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
   const [firstLoad, setFirstLoad] = useState<boolean>(true); // State to track first load
   const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
-  const { User, currUser, userFilters, userGym } = useAuth();
+  const { User, currUser, userGym } = useAuth();
   const [location, setLocation] = useState<number[]>([]);
   const bound = useRef<number[][]>([]); // State to store the gym boundary
   const [checkIn, setCheckIn] = useState<boolean>(false); // State to store the gym boundary
@@ -101,7 +101,7 @@ export default function HomeScreen() {
       let fetchedUsers: IUser[];
       if (searchTerm === "") {
         //By default search users with filter and gym
-        fetchedUsers = await getUsers(currUser.uid, userGym[0], userFilters);
+        fetchedUsers = await getUsers(currUser.uid, userGym[0], currUser.filters);
         console.log("Fetched filtered users!");
       } else if (searchTerm === "all") {
         // Testing keyword to show all users

@@ -24,7 +24,7 @@ interface Props {
   const UserExpandedPreview: React.FC<Props> = ({ users, user, isOpen, onClose }) => {
     const [selectedUser, setSelectedUser] = useState<IUser>(user); // State to hold updated friend data
     const {currUser, updateFriend } = useAuth();
-    const [currentIndex, setCurrentIndex] = useState<number>(0);
+    const [currentIndex, setCurrentIndex] = useState<number>( users.findIndex(u => u.uid === user.uid));
 
     if (!currUser) return;
 
@@ -50,7 +50,11 @@ interface Props {
     };
     
       const handlePreviousUser = () => {
-        setCurrentIndex((prevIndex) => (prevIndex - 1) % users.length);
+        let prevIndex = currentIndex - 1;
+        if (prevIndex < 0) {
+          prevIndex = users.length - 1;
+        }
+        setCurrentIndex(prevIndex);
     };
 
     return (
@@ -82,13 +86,8 @@ interface Props {
             </TouchableOpacity>
             </Row> 
           <Box overflow="hidden" mb={3}>
-            <Flex flexDirection="row" justifyContent="space-evenly">
-              {selectedUser.tags && selectedUser.tags.slice(0, 3).map((tag, index) => (
-                <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>{tag}</Badge>
-              ))}
-            </Flex>
-            <Flex flexDirection="row" justifyContent="space-evenly">
-              {selectedUser.tags && selectedUser.tags.slice(3, 5).map((tag, index) => (
+            <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly">
+              {selectedUser.tags && selectedUser.tags.slice(0, 5).map((tag, index) => (
                 <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>{tag}</Badge>
               ))}
             </Flex>
