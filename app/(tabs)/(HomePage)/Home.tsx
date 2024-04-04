@@ -141,7 +141,12 @@ export default function HomeScreen() {
     }
   };
   
-  
+  // Function to update the users list after sending a friend request
+  const updateFetchedUsers = (updatedUser: IUser) => {
+    const updatedUsers = users.map((user) => (user.uid === updatedUser.uid ? updatedUser : user));
+    setUsers(updatedUsers);
+  };
+    
   return ( 
     <NativeBaseProvider theme={theme}>
       <SafeAreaView
@@ -198,7 +203,7 @@ export default function HomeScreen() {
           </ScrollView>
           )}
         {selectedUser && 
-          <UserExpandedPreview users={users} user={selectedUser} isOpen={isOpen} onClose={handleCloseModal} />
+          <UserExpandedPreview users={users} user={selectedUser} isOpen={isOpen} onClose={handleCloseModal} updateFetchedUsers={updateFetchedUsers}/>
         }
         <Button
           size={"lg"}

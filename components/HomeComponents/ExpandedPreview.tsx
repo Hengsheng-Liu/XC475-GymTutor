@@ -5,11 +5,13 @@ import { FontAwesome } from "@expo/vector-icons";
 import { IUser } from "../FirebaseUserFunctions";
 import Tags from "./Tags";
 import { router } from "expo-router";
-import { sendFriendRequest, canAddFriend } from "../FriendsComponents/FriendFunctions"
+import { sendFriendRequest, handleSendFriendRequest, canAddFriend } from "../FriendsComponents/FriendFunctions"
 import { useState, useEffect } from "react";
 import { useAuth } from "@/Context/AuthContext";
 import { SvgUri } from "react-native-svg";
 
+import { firestore } from "@/firebaseConfig";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 
 import { findOrCreateChat } from "@/app/(tabs)/(MessagePage)/data.js";
 import { globalState } from '@/app/(tabs)/(MessagePage)/globalState';
@@ -19,11 +21,12 @@ interface Props {
     user: IUser;
     isOpen: boolean;
     onClose: () => void;
+    updateFetchedUsers: (user: IUser) => void;
   }
   
-  const UserExpandedPreview: React.FC<Props> = ({ users, user, isOpen, onClose }) => {
+  const UserExpandedPreview: React.FC<Props> = ({ users, user, isOpen, onClose, updateFetchedUsers }) => {
     const [selectedUser, setSelectedUser] = useState<IUser>(user); // State to hold updated friend data
-    const {currUser, updateFriend } = useAuth();
+    const {currUser, updateFriend, friend } = useAuth();
     const [currentIndex, setCurrentIndex] = useState<number>( users.findIndex(u => u.uid === user.uid));
 
     if (!currUser) return;
@@ -56,6 +59,26 @@ interface Props {
         }
         setCurrentIndex(prevIndex);
     };
+
+    const handleSendFriendRequest = async (userUID: string, friendUID: string) => {
+      const db = firestore;
+      const friendRef = doc(db, 'Users', friendUID);
+      
+      try {
+          if (user){    
+              const updatedFriend = { ...user };
+              updatedFriend.friendRequests.push(userUID);
+              updateFriend(updatedFriend);
+              setSelectedUser(updatedFriend);
+              updateFetchedUsers(updatedFriend);
+              console.log(updatedFriend);
+          }
+          await updateDoc(friendRef, { friendRequests: arrayUnion(userUID) });
+          console.log('Friend Request sent successfully: ', friendUID, userUID);
+      } catch (error) {
+          console.error('Error sending Friend Request:', error);
+      }
+  }
 
     return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl" >
@@ -98,7 +121,7 @@ interface Props {
             </Button>
             { canAddFriend(currUser, selectedUser) ? (
               <Button
-              onPress={() => sendFriendRequest(currUser.uid, selectedUser.uid)}
+              onPress={() => handleSendFriendRequest(currUser.uid, selectedUser.uid)}
               size="lg"
               width="45%"
               backgroundColor= "#0284C7"

@@ -18,11 +18,11 @@ export const canAddFriend = (User: IUser, Friend: IUser): boolean => {
 };
 
 // Send friend Requests
-export const handleSendFriendRequest = (User: IUser, friend: IUser) => {
+export async function handleSendFriendRequest(User: IUser, friend: IUser): Promise<void> {
     // Check if userUID is not in friendsList, friendRequests, rejectedList, and blockedList
     if (canAddFriend(User, friend)) {
         // If userUID is not in any of the lists, send a friend request
-        sendFriendRequest(User.uid, friend.uid);
+        await sendFriendRequest(User.uid, friend.uid);
     }
     // addFriend(userUID, friendUID);
 };
@@ -42,7 +42,7 @@ export async function sendFriendRequest(userUID: string, friendUID: string): Pro
             updateFriend(updatedFriend);
         }
         console.log("HEY :)")
-        updateDoc(friendRef, { friendRequests: arrayUnion(userUID) });
+        await updateDoc(friendRef, { friendRequests: arrayUnion(userUID) });
         console.log('Friend Request sent successfully: ', friendUID, userUID);
     } catch (error) {
         console.error('Error sending Friend Request:', error);
