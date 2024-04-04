@@ -21,7 +21,7 @@ interface AchievementProps {
   max:number;
 }
 
-const AchievementModal = ({ image, name, description, current, max}: AchievementProps) => {
+const AchievementModal = ({ image, name, description, current, max,achieved}: AchievementProps) => {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -47,7 +47,7 @@ const AchievementModal = ({ image, name, description, current, max}: Achievement
                 <Center>{image}</Center>
               </Box>
               <Text marginBottom={"5"}>{description}</Text>
-              <Button bgColor="#EA580C"><Text color = "#FAFAFA">You Status: {current}/{max}</Text></Button>
+              {!achieved && <Button bgColor="#EA580C"><Text color = "#FAFAFA">You Status: {current}/{max}</Text></Button>}
             </Flex>
           </Modal.Body>
         </Modal.Content>

@@ -11,7 +11,7 @@ import {
 import { FontAwesome6 } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { SvgAst} from "react-native-svg";
-
+import DefaultDisplay from "./DefaultDisplay";
 import { router } from "expo-router";
 export default function Achievement() {
   return (
@@ -23,6 +23,9 @@ export default function Achievement() {
         </Pressable>
       </HStack>
       <HStack justifyContent={"space-around"} mt={2} alignItems={"center"}>
+        <DefaultDisplay />
+        <DefaultDisplay />
+        <DefaultDisplay />
         <Pressable onPress={() => router.push("/AchievementPage")}>
           <FontAwesome5 name="chevron-right" size={24} color={"#737373"} />
         </Pressable>
