@@ -98,7 +98,8 @@ class Fire {
 
       // Update the 'newestMessage' field of the chat document with the text of the new message
       await updateDoc(chatRef, {
-        newestMessage: message.text
+        newestMessage: message.text,
+        timestamp: serverTimestamp()
       });
     } catch (error) {
       console.error("Error adding document: ", error);
