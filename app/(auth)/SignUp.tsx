@@ -22,6 +22,8 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState<string | undefined>();
   const [confirmPassword, setConfirmPassword] = useState<string | undefined>();
   const [passwordMatchError, setPasswordMatchError] = useState<boolean>(false);
+  const [name, setName] = useState<string>('');
+
   const { CreateUser } = useAuth();
   const handlePasswordChange = (text: string) => {
     setPassword(text);
@@ -41,11 +43,13 @@ export default function SignUpScreen() {
   };
 
   const handleSignUp = async () => {
-    if (email && password && confirmPassword && password === confirmPassword) {
+    if (name && email && password && confirmPassword && password === confirmPassword) {
+      console.log('name is ' + name);
       try {
         router.navigate({
           pathname: "SignUp2",
           params: {
+            name: name,
             password: password,
             email: email,
 
@@ -75,6 +79,14 @@ export default function SignUpScreen() {
             <Text style={styles.titleText}>Register</Text>
           </View>
           <View style={styles.mainContent}>
+           <TextInput
+              style={styles.loginTextField}
+              placeholder="Name"
+              value={name}
+              onChangeText={setName}
+              inputMode="email"
+              autoCapitalize="none"
+            />
             <TextInput
               style={styles.loginTextField}
               placeholder="Email"
@@ -97,6 +109,7 @@ export default function SignUpScreen() {
               onChangeText={handleConfirmPasswordChange}
               secureTextEntry
             />
+            
             {passwordMatchError && <Text>Passwords do not match</Text>}
             <Button title="Next" onPress={handleSignUp} />
             <Button title="Go Back" onPress={() => router.navigate("LogIn")} />

@@ -18,7 +18,6 @@ import { expoClientId, iosClientId, androidClientId, auth } from '../../firebase
 import { signInWithCredential, User, GoogleAuthProvider, OAuthCredential, AuthError, getAdditionalUserInfo, UserCredential } from "firebase/auth";
 import { firestore } from "../../firebaseConfig";
 import { collection, addDoc, setDoc, doc } from "firebase/firestore";
-import { AddUserToDB } from './SignUp';
 
 export default function LogInScreen() {
 
