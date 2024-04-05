@@ -6,8 +6,8 @@ interface props{
 }
 export default function Attribute({description}:props) {
   return (
-    <Box overflow="hidden">
-      <Flex flexDirection="row" justifyContent="space-evenly" mt={3}>
+    <Box overflow="hidden" justifyContent={"left"}>
+      <Flex flexDirection="row">
         {description.slice(0, 2).map((str, index) => (
           <Tags key={index} title={str} />
         ))}

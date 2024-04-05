@@ -43,44 +43,27 @@ import { SafeAreaView } from "react-native";
 // it from there, but for some reason that didn't work. So for now, I put the code in UserProfilePage in this file
 
 const ProfilePage = () => {
-  const [userInfo, setUserInfo] = useState<IUser>();
   const [Display, setDisplay] = useState<string[]>(["default", "default", "default"]);
   const { User } = useAuth(); // gets current user's authentication data (in particular UID)
  
+  const { currUser } = useAuth(); // gets current user's authentication data (in particular UID)
+  const [userInfo, setUserInfo] = useState<IUser | null>(currUser);
   // finds the current user's data (only name for now) via Users firestore database.
 
-  useEffect(() => {
-    if (!User) return;
-    const fetchUser = async () => {
-      const unsub = onSnapshot(doc(firestore, "Users", User.uid), (doc) => {
-        setUserInfo(doc.data() as IUser);
-      });
-    };
-    fetchUser();
-
-    //testing purposes
-    if (userInfo) {
-      console.log("frined count", userInfo.friends.length);
-    }
-
-   
-  }, []);
-
   const updateBio = async (newBio:string) => {
-    if (User) {
+    if (currUser) {
       try {
-        await updateDoc(doc(firestore, "Users", User.uid), { bio: newBio });
+        await updateDoc(doc(firestore, "Users", currUser.uid), { bio: newBio });
       } catch (error) {
         console.error("Error updating bio: ", error);
       }
   }
-
   };
 
   const updateTags = async (addTag:string) => {
-    if (User) {
+    if (currUser) {
       try {
-        await updateDoc(doc(firestore, "Users", User.uid), {tags: arrayUnion(addTag)})
+        await updateDoc(doc(firestore, "Users", currUser.uid), {tags: arrayUnion(addTag)})
       }
       catch (error) {
         console.error("Error updating tag: ", error);
