@@ -71,6 +71,7 @@ export interface IUser {
     gymId: string;
     filters: Filters;
     birthday: Birthday;
+    display: string[]
 
 }
 
@@ -227,7 +228,9 @@ export async function addUser(
             filters: filters,
             birthday: birthday,
             Achievement: DefaultAchievement,
+            display: []
         });
+
         console.log("Document written for user: ", uid);
     } catch (error) {
       console.error("Error adding document: ", error);
