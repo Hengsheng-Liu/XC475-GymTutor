@@ -19,7 +19,7 @@ class Fire {
 
     const q = query(
       messagesRef,
-      orderBy('timestamp', 'desc'),
+      orderBy('timestamp', 'asc'),
       limit(20)
     );
 
@@ -96,11 +96,13 @@ class Fire {
       const docRef = await addDoc(messagesRef, message);
       console.log("Message written with ID: ", docRef.id);
 
-      // Update the 'newestMessage' field of the chat document with the text of the new message
+      // Update the 'newestMessage' and 'timestamp' field of the chat document with the text of the new message
       await updateDoc(chatRef, {
         newestMessage: message.text,
         timestamp: serverTimestamp()
       });
+
+
     } catch (error) {
       console.error("Error adding document: ", error);
     }
