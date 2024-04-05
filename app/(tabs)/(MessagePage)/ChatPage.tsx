@@ -31,6 +31,23 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
     return null;
   }
 
+  function renderMessage(props) {
+    return (
+      <View style={{
+        maxWidth: '70%',
+        margin: 5,
+        padding: 10,
+        borderRadius: 20,
+        backgroundColor: props.currentMessage.user._id === receiveUser.uid ? '#e5e5ea' : '#0084ff',
+        alignSelf: props.currentMessage.user._id === receiveUser.uid ? 'flex-start' : 'flex-end',
+      }}>
+        <Text style={{ color: props.currentMessage.user._id === 1 ? '#fff' : '#000' }}>
+          {props.currentMessage.text}
+        </Text>
+      </View>
+    );
+  }
+
   // Logic to send a message
   const sendMessage = (messages = []) => {
     Fire.shared.send(messages, User.uid, receiveUser); // Use user.uid to send messages
@@ -132,6 +149,7 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
       <GiftedChat
         messages={messages}
         onSend={messages => sendMessage(messages)}
+        renderMessage={renderMessage}
         user={{
           _id: User.uid, // Use the UID from useAuth
           name: User.displayName || 'Anonymous', // Use the displayName from useAuth, if available

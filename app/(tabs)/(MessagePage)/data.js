@@ -95,6 +95,11 @@ class Fire {
 
       const docRef = await addDoc(messagesRef, message);
       console.log("Message written with ID: ", docRef.id);
+
+      // Update the 'newestMessage' field of the chat document with the text of the new message
+      await updateDoc(chatRef, {
+        newestMessage: message.text
+      });
     } catch (error) {
       console.error("Error adding document: ", error);
     }
@@ -124,9 +129,10 @@ export async function findOrCreateChat(userId1, userId2) {
     // Chat doesn't exist, create a new one
     await setDoc(chatRef, {
       participants: [userId1, userId2],
-      timestamp: serverTimestamp(), // Use server timestamp for consistency
+      timestamp: serverTimestamp(),
+      newestMessage: ""
     });
-    
+
     console.log('New chat created with ID:', chatId);
 
     const db = firestore;
@@ -134,9 +140,9 @@ export async function findOrCreateChat(userId1, userId2) {
     const user2DocRef = doc(db, "Users", userId2);
 
     // Save each others chatId in the currentlyMessaging
-    
-    await updateDoc(user1DocRef, {currentlyMessaging: arrayUnion(userId2) });
-    await updateDoc(user2DocRef, {currentlyMessaging: arrayUnion(userId1) });
+
+    await updateDoc(user1DocRef, { currentlyMessaging: arrayUnion(userId2) });
+    await updateDoc(user2DocRef, { currentlyMessaging: arrayUnion(userId1) });
     console.log("Updated Currently messaging for both users", userId1, userId2);
   } else {
     console.log('Chat found with ID:', chatId);
