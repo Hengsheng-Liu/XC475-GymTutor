@@ -27,12 +27,12 @@ export default function FriendListScreen () {
   useEffect(() => {
     fetchData();
 
-    const userDocRef = doc(firestore, 'Users', User.uid);
-    const unsubscribe = onSnapshot(userDocRef, () => { // Set up listener for changes in user's document
-      fetchData(); // Fetch data whenever the document changes
-    });
+    // const userDocRef = doc(firestore, 'Users', User.uid);
+    // const unsubscribe = onSnapshot(userDocRef, () => { // Set up listener for changes in user's document
+    //   fetchData(); // Fetch data whenever the document changes
+    // });
 
-    return () => unsubscribe();
+    // return () => unsubscribe();
   }, [User]);
 
   const fetchData = async () => {
@@ -115,7 +115,7 @@ export default function FriendListScreen () {
         ) : (
           <Flex p={1} pt={3} >
             {friends.map((user) => (
-              <FriendContainer friend= {user} key={user.uid}/>
+              <FriendContainer friend= {user} fetchData={fetchData} key={user.uid}/>
             ))}
           </Flex>  
         )}

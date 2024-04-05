@@ -8,9 +8,10 @@ import { firestore } from '@/firebaseConfig';
 
 interface FriendProps {
     friend: IUser;
+    fetchData: () => void;
 }
 
-const friendContainer: React.FC<FriendProps> = ({ friend }) => {
+const friendContainer: React.FC<FriendProps> = ({ friend, fetchData }) => {
     const [isPressed, setIsPressed] = useState<boolean>(false);
     const {currUser, updateCurrUser, updateFriend} = useAuth();
 
@@ -50,6 +51,7 @@ const friendContainer: React.FC<FriendProps> = ({ friend }) => {
         console.error('Error removing friend:', error);
         throw error;
     }
+    fetchData();
     };
 
     return (

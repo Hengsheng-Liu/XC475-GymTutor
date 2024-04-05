@@ -95,7 +95,7 @@ const FriendProfilePage = () => {
             {userInfo && (
               <Flex>
                 <Row>
-                <TouchableOpacity activeOpacity={0.7} onPress={() => router.replace("/Home")}>
+                <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
                   <FontAwesome name="chevron-left" size={24} color="#0C4A6E" />
                 </TouchableOpacity>
                 <Header user={userInfo} />
