@@ -44,6 +44,7 @@ import { SafeAreaView } from "react-native";
 
 const ProfilePage = () => {
   const [userInfo, setUserInfo] = useState<IUser>();
+  const [Display, setDisplay] = useState<string[]>(["default", "default", "default"]);
   const { User } = useAuth(); // gets current user's authentication data (in particular UID)
  
   // finds the current user's data (only name for now) via Users firestore database.
@@ -110,7 +111,7 @@ const ProfilePage = () => {
                 <Attribute description={userInfo.tags} onSaveTag={updateTags} />
                 <ButtonGroup friendCount={userInfo.friends.length + " Friends"}/>
                 <Description bio={userInfo.bio} onSave={updateBio}/>
-                <Achievement />
+                <Achievement display = {userInfo.display}/>
                 <Calendar />
               </Flex>
             )}
