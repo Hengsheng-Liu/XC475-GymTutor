@@ -17,6 +17,17 @@ export const canAddFriend = (User: IUser, Friend: IUser): boolean => {
     return !isFriend && !hasSentRequest && !hasRequest && !isRejected && !isBlocked;
 };
 
+// Function to check whether if they can message each other (checks if they are friends)
+export const canMessage = (User: IUser, Friend: IUser): boolean => {
+    const userUID = User.uid;
+    
+    const isFriend = Friend.friends.includes(userUID);
+    const isMutualFriend = User.friends.includes(Friend.uid);
+    const isBlocked = Friend.blockedUsers.includes(userUID);
+
+    return isFriend && isMutualFriend && !isBlocked;
+};
+
 // Send friend Requests
 export async function handleSendFriendRequest(User: IUser, friend: IUser): Promise<void> {
     // Check if userUID is not in friendsList, friendRequests, rejectedList, and blockedList

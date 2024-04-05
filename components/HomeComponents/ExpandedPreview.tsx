@@ -5,7 +5,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { IUser } from "../FirebaseUserFunctions";
 import Tags from "./Tags";
 import { router } from "expo-router";
-import { sendFriendRequest, handleSendFriendRequest, canAddFriend } from "../FriendsComponents/FriendFunctions"
+import { canAddFriend, canMessage } from "../FriendsComponents/FriendFunctions"
 import { useState, useEffect } from "react";
 import { useAuth } from "@/Context/AuthContext";
 import { SvgUri } from "react-native-svg";
@@ -37,12 +37,14 @@ interface Props {
   
     // Open the friend's profile
     const handleOpenProfile = async () =>{
+        onClose();
         await updateFriend(selectedUser);
         router.push("/FriendProfile");
 
     };
     
     const openChat = async (friend: any) => {
+        onClose();
         console.log(findOrCreateChat(currUser.uid, friend.uid));
         globalState.user = friend; // Set the selected user in the global state
         router.navigate("ChatPage"); // Then navigate to ChatPage
@@ -65,11 +67,10 @@ interface Props {
       const friendRef = doc(db, 'Users', friendUID);
       
       try {
-          if (user){    
-              const updatedFriend = { ...user };
+          if (selectedUser){    
+              const updatedFriend = { ...selectedUser};
               updatedFriend.friendRequests.push(userUID);
               updateFriend(updatedFriend);
-              setSelectedUser(updatedFriend);
               updateFetchedUsers(updatedFriend);
               console.log(updatedFriend);
           }
@@ -81,7 +82,7 @@ interface Props {
   }
 
     return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl" >
+    <Modal isOpen={isOpen} onClose={onClose} size="xl" width={"100%"} height={"100%"}>
       <Modal.Content backgroundColor="#F5F5F5">
         <Modal.CloseButton/>
         {selectedUser && (
@@ -133,19 +134,32 @@ interface Props {
                 </Row>
             </Button>
             ) : (
-              <Button
-              onPress={() => openChat(selectedUser)}
-              size="lg"
-              width="45%"
-              backgroundColor= "#0284C7"
-              borderRadius={16}
-            >
-                <Row>
-                  <Icon as={<SvgUri uri={`/assets/images/Spot!.svg`} />}/>
-                  <Text fontSize="md" color="#FFF" fontWeight="bold"> Message</Text>
-                </Row>
-            </Button>
-
+              canMessage(currUser, selectedUser) ? ( 
+                <Button
+                  onPress={() => openChat(selectedUser)}
+                  size="lg"
+                  width="45%"
+                  backgroundColor= "#0284C7"
+                  borderRadius={16}
+                  >
+                    <Row>
+                      <Icon as={<SvgUri uri={`/assets/images/Spot!.svg`} />}/>
+                      <Text fontSize="md" color="#FFF" fontWeight="bold"> Message</Text>
+                    </Row>
+                </Button>
+                ) : (
+                  <Button
+                    size="lg"
+                    width="45%"
+                    backgroundColor= "#3F9443"
+                    borderRadius={16}
+                    >
+                  <Row>
+                      <Icon as={<SvgUri uri={`/assets/images/Spot!.svg`} />}/>
+                      <Text fontSize="md" color="#FFF" fontWeight="bold"> Requested</Text>
+                    </Row>
+                </Button>
+                )
             )}
           </Flex>
           <Box flexDirection="row" justifyContent="space-between" px={4} pb={4}>

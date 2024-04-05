@@ -48,7 +48,7 @@ export default function HomeScreen() {
         fetchGym();
         setFirstLoad(false);
       };
-  }, []);
+  }, [isFocused]);
 
   const checkUser = () => {
     if (currUser) {

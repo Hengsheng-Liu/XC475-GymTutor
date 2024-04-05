@@ -321,9 +321,9 @@ const FilterScreen = () => {
           </AlertDialog.Body>
           <AlertDialog.Footer>
             <Button.Group space={2}>
-              <Button onPress={handleCloseDialog}>Cancel</Button>
-              <Button onPress={() => router.push("/Home")}> Do not save </Button>
-              <Button onPress={handleSaveFilters}> Save </Button>
+              <Button bgColor="#0284C7" onPress={handleCloseDialog}>Cancel</Button>
+              <Button bgColor="#0284C7" onPress={() => router.push("/Home")}> Do not save </Button>
+              <Button bgColor="#0284C7" onPress={handleSaveFilters}> Save </Button>
             </Button.Group>
           </AlertDialog.Footer>
         </AlertDialog.Content>

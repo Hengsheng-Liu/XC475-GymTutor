@@ -95,10 +95,10 @@ const FriendProfilePage = () => {
             {userInfo && (
               <Flex>
                 <Row>
-                <TouchableOpacity activeOpacity={0.7} onPress={() => router.replace("/Home")}>
-                  <FontAwesome name="chevron-left" size={24} color="#0C4A6E" />
-                </TouchableOpacity>
-                <Header user={userInfo} />
+                  <TouchableOpacity activeOpacity={0.7} onPress={() => router.replace("/ProfilePage")}>
+                    <FontAwesome name="chevron-left" size={24} color="#0C4A6E"  />
+                  </TouchableOpacity>
+                  <Header user={userInfo} />
                 </Row>
                 <Attribute description={userInfo.tags} />
                 <HStack

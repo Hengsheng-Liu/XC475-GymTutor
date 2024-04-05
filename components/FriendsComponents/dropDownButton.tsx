@@ -1,13 +1,18 @@
 import React from 'react';
 import { Popover, Button, Text, Box } from 'native-base';
-import { removeFriend } from './FriendFunctions';
+import { removeFriend, canMessage } from './FriendFunctions';
+import { useAuth } from '@/Context/AuthContext';
+import { doc, updateDoc, arrayRemove } from 'firebase/firestore';
+import { firestore } from '@/firebaseConfig';
 
 interface DropdownButtonProps {
     currUserUID: string;
     friendUID: string;
+    removeFriend: (userUID: string, friendUID: string) => void;
 }
 
 const DropdownButton: React.FC<DropdownButtonProps> = ({ currUserUID, friendUID }) => {
+
   return (
     <Popover
       trigger={(triggerProps) => {
