@@ -9,8 +9,8 @@ export const canAddFriend = (User: IUser, Friend: IUser): boolean => {
     const userUID = User.uid;
     
     const isFriend = Friend.friends.includes(userUID);
-    const hasSentRequest = Friend.friendRequests.includes(userUID);
-    const hasRequest = User.friendRequests.includes(Friend.uid);
+    const hasSentRequest = Friend.friendRequests.findIndex(request => request.friend === userUID) !== -1;
+    const hasRequest = User.friendRequests.findIndex(request => request.friend === Friend.uid) !== -1;
     const isRejected = Friend.rejectedRequests.includes(userUID);
     const isBlocked = Friend.blockedUsers.includes(userUID);
 
@@ -43,17 +43,17 @@ export async function sendFriendRequest(userUID: string, friendUID: string): Pro
     const {updateFriend, friend} = useAuth();
     const db = firestore;
     const friendRef = doc(db, 'Users', friendUID);
-    
-    console.log("HEY YOU")
+    const timestamp = new Date().getTime();
+
     // Append user uid to the friend requested
     try {
         if (friend){    
             const updatedFriend = { ...friend };
-            updatedFriend.friendRequests.push(userUID);
+            updatedFriend.friendRequests.push({friend: userUID, date: timestamp, status: "pending"});
             updateFriend(updatedFriend);
         }
         console.log("HEY :)")
-        await updateDoc(friendRef, { friendRequests: arrayUnion(userUID) });
+        await updateDoc(friendRef, { friendRequests: arrayUnion({friend: userUID, date: timestamp, status: "pending"}) });
         console.log('Friend Request sent successfully: ', friendUID, userUID);
     } catch (error) {
         console.error('Error sending Friend Request:', error);
@@ -79,7 +79,8 @@ export async function addFriend(userUID: string, friendUID: string): Promise<voi
             updatedFriend.friends.push(userUID);
             updateFriend(updatedFriend);
         }
-        removeFriendRequest(userUID, friendUID);
+        // removeFriendRequest(userUID, friendUID);
+        updateFriendRequest(userUID, friendUID, "accepted");
         updateDoc(userRef, { friends: arrayUnion(friendUID) });
         updateDoc(friendRef, { friends: arrayUnion(userUID) });
         console.log('Friend added successfully: ', friendUID, userUID);
@@ -96,7 +97,9 @@ export async function rejectRequest(userUID: string, friendUID: string): Promise
 
     // Append user uid to the rejected request list
     try {  
-        removeFriendRequest(userUID, friendUID);
+        // removeFriendRequest(userUID, friendUID);
+        updateFriendRequest(userUID, friendUID, "rejected");
+
         if (currUser){    
             const updatedUser = { ...currUser };
             updatedUser.rejectedRequests.push(friendUID);
@@ -116,18 +119,48 @@ export const removeFriendRequest = async (userUID: string, friendUID: string) =>
     try {
         if (currUser){    
             const updatedUser = { ...currUser };
-            const friendIndex = updatedUser.friendRequests.indexOf(friendUID);
-            updatedUser.friendRequests.splice(friendIndex, 1);
-            updateCurrUser(updatedUser);
+            const friendIndex = updatedUser.friendRequests.findIndex(request => request.friend === friendUID);
+            if (friendIndex !== -1) {
+                updatedUser.friendRequests.splice(friendIndex, 1);
+                updateCurrUser(updatedUser);
+
+                // Update the user document to remove the friend request
+                updateDoc(userRef, { friendRequests: arrayRemove(friendUID)});
+            } else {
+                console.log(`Friend request with friendUID ${friendUID} not found`);
+            }
         }
-        // Update the user document to remove the friend request
-        updateDoc(userRef, { friendRequests: arrayRemove(friendUID)});
         console.log('Friend request removed successfully');
     } catch (error) {
         console.error('Error removing friend request:', error);
         throw error;
     }
 };
+
+export const updateFriendRequest = async (userUID: string, friendUID: string, status: string) => {
+    const userRef = doc(firestore, 'Users', userUID);
+    const {currUser, updateCurrUser} = useAuth();
+    try {
+        if (currUser){    
+            const updatedUser = { ...currUser };
+            const updatedFriendRequests = updatedUser.friendRequests.map(request => {
+                if (request.friend === friendUID) {
+                    return { ...request, status, date: new Date().getTime() };
+                }
+                return request;
+            });
+            updatedUser.friendRequests = updatedFriendRequests;
+            updateCurrUser(updatedUser);
+
+            // Update the user document to remove the friend request
+            updateDoc(userRef, { friendRequests: updatedFriendRequests});
+        }
+        console.log('Friend request updated successfully');
+    } catch (error) {
+        console.error('Error updating friend request:', error);
+        throw error;
+    }
+}
 
 // Function to remove a friend
 export const removeFriend = async (userUID: string, friendUID: string) => {

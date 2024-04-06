@@ -19,6 +19,7 @@ import { GeoPoint } from 'firebase/firestore';
 // Define User interface
 import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
 import Achievement from './ProfileComponents/Achievement';
+
 type Birthday = {day: number, month: number, year: number};
 export interface Achievementprops {
     name: string;
@@ -50,6 +51,8 @@ export const DefaultAchievement: Achievements = {
     ],
 };
 
+type friendRequest = {friend: string, date: number, status: string} // Status can be "pending", "accepted", "rejected"
+
 export interface IUser {
     uid: string;
     email: string;
@@ -60,7 +63,7 @@ export interface IUser {
     sex: string;
     tags: string[];
     friends: string[];
-    friendRequests: string[];
+    friendRequests: friendRequest[];
     rejectedRequests: string[];
     blockedUsers: string[];
     gym: string;
@@ -365,7 +368,7 @@ export async function updateUsers(): Promise<void> {
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
-                status: randomStatus,
+                friendRequests: [],
             };
 
             // Update document if any field is missing
