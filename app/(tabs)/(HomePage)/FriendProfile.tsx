@@ -21,6 +21,7 @@ import { SvgUri } from "react-native-svg";
 
 import { findOrCreateChat } from "@/app/(tabs)/(MessagePage)/data.js";
 import { globalState } from '@/app/(tabs)/(MessagePage)/globalState';
+import FriendRequest from "@/components/FriendsComponents/RequestContainer";
 
 const FriendProfilePage = () => {
   const { friend, currUser, updateCurrUser, updateFriend } = useAuth();
@@ -37,15 +38,16 @@ const FriendProfilePage = () => {
   const handleSendFriendRequest = async (userUID: string, friendUID: string) => {
     const db = firestore;
     const friendRef = doc(db, 'Users', friendUID);
-    
+    const timestamp = new Date().getTime();
+
     try {
         if (userInfo){    
             const updatedFriend = { ...userInfo };
-            updatedFriend.friendRequests.push(userUID);
+            updatedFriend.friendRequests.push({friend: userUID, date: timestamp, status: "pending"});
             updateFriend(updatedFriend);
             console.log(updatedFriend);
         }
-        await updateDoc(friendRef, { friendRequests: arrayUnion(userUID) });
+        await updateDoc(friendRef, { friendRequests: arrayUnion({friend: userUID, date: timestamp, status: "pending"}) });
         console.log('Friend Request sent successfully: ', friendUID, userUID);
     } catch (error) {
         console.error('Error sending Friend Request:', error);

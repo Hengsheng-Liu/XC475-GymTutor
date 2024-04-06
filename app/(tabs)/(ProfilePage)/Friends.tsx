@@ -58,7 +58,7 @@ export default function FriendListScreen () {
     } 
     setLoading(false);
     }
-  // Handle navigation. Ask user if they want to save changes before leaving
+
   const handleGoBack = () => {
     router.replace("/ProfilePage");
   };
