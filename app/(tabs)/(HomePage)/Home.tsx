@@ -47,6 +47,7 @@ export default function HomeScreen() {
         handleSearchUsers();
         fetchGym();
         setFirstLoad(false);
+        checkUser();
       };
   }, [isFocused]);
 

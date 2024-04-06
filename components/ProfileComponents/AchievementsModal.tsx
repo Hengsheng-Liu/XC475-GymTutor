@@ -36,7 +36,7 @@ const AchievementModal = ({ image, name, description, current, max,achieved,edit
           display?.shift();
           
         }
-        setdisplay?.([...display,name]);
+        setdisplay?.([...(display ?? []), name]);
       }
     }else{
       setShowModal(true);

@@ -11,16 +11,18 @@ export default function DefaultDisplay(
     { display }: DefaultDisplayProps
 ) {
     return (
-        <Flex
+        <Pressable 
         width={"1/4"}
-        height={"24"}
+        onPress={() => router.push({pathname:"/AchievementPage",params:{edit:true,display}})}>
+        <Flex
+       height={"24"}
+       borderRadius={10}
         alignItems={"center"}
         justifyContent={"center"}
         backgroundColor={"muted.200"}
         >
-            <Pressable onPress={() => router.push({pathname:"/AchievementPage",params:{edit:true,display}})}>
-            <AntDesign name="plus" size={24} color="black" />
-            </Pressable>
+            <AntDesign name="plus" size={36} color="black" />
         </Flex>
+        </Pressable>
     );
 }

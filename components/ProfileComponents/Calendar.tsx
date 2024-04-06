@@ -1,6 +1,11 @@
 import { ExpandableCalendar, CalendarProvider } from "react-native-calendars";
 import { Box, VStack, Heading } from "native-base";
-export default function Calendar() {
+interface CalendarProps {
+  history: string[];
+}
+export default function Calendar(
+  {history}: CalendarProps
+) {
   const date = new Date();
   const FormateDate =
     date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
@@ -9,8 +14,8 @@ export default function Calendar() {
       <VStack>
         <Heading mb={2}> Calendar</Heading>
         <Box>
-          <CalendarProvider date={FormateDate}>
-            <ExpandableCalendar />
+          <CalendarProvider date={FormateDate} >
+            <ExpandableCalendar markedDates={history}/>
           </CalendarProvider>
         </Box>
       </VStack>

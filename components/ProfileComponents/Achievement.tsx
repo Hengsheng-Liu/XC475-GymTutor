@@ -14,6 +14,7 @@ import DefaultDisplay from "./DefaultDisplay";
 import { router} from "expo-router";
 import { SvgUri } from "react-native-svg";
 import React, { useEffect } from "react";
+import { getSVG } from "./AchievementFunction";
 interface AchievementProps {
   display: string[];
 }
@@ -21,18 +22,7 @@ interface AchievementProps {
 export default function Achievement(
  { display }: AchievementProps
 ) 
-{
-  const getSVG = (name: string) => {
-      return (
-        <SvgUri
-          width="100%"
-          height="100%"
-          
-          uri={`/assets/images/achievements/Complete/${name}.svg`}
-        />
-      )
-  };
-  
+{  
   const renderDisplay = () => {
     return Array.from({ length: 3 }, (_, index) => {
       const name = display[index] || "default"; 
@@ -46,9 +36,8 @@ export default function Achievement(
             height={"24"}
             alignItems={"center"}
             justifyContent={"center"}
-            backgroundColor={"muted.200"}
           >
-            {getSVG(name)}
+            {getSVG(name,true)}
           </Flex>
         );
       }
