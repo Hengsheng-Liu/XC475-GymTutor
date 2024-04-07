@@ -9,6 +9,7 @@ import { firestore } from "@/firebaseConfig";
 import { Gym } from "@/components/FirebaseUserFunctions";
 import pointInPolygon from "point-in-polygon";
 import { router } from "expo-router";
+import { CalendarUtils } from "react-native-calendars";
 
 export const GetUserLocation = async (): Promise<number[] | undefined> => {
   try {
@@ -62,8 +63,7 @@ export const fetchGym = async (userGym:[string, string]): Promise<number[][]> =>
 export const checkUser = (checkInHistory:string[]) => {
   const Day = new Date();
 
-  const Today =
-    Day.getFullYear() + "-" + (Day.getMonth() + 1) + "-" + Day.getDate();
+  const Today = CalendarUtils.getCalendarDateString(Day);
     const History = checkInHistory;
     if (History && History.includes(Today)) {
       return true;
@@ -72,12 +72,9 @@ export const checkUser = (checkInHistory:string[]) => {
 };
 export const handleCheckIn = async (userGym:[string, string] | undefined, checkInHistory:string[]) => {
   try {
-    console.log("Function clicked");
     const location = await GetUserLocation();
     const checkIn = checkUser(checkInHistory);
     const GymBound = await fetchGym(userGym? userGym : ["", ""]);
-    console.log("Location", location);
-    console.log("Checkin", checkIn);
     if (checkIn) {
       alert("You have already checked in today");
       return;

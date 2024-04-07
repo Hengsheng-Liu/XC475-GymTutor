@@ -82,8 +82,8 @@ const AchievementPage = () => {
     <NativeBaseProvider>
       <ScrollView style={styles.container}>
           <Flex justifyContent={"flex-end"}flexDir={"column"} margin={1}>
-            {Complete.length > 0 && <Box>
-            <Heading marginBottom={2}> Earned Badges</Heading>
+            {Complete.length > 0 && <Box marginBottom={5}>
+            <Heading marginBottom={2} marginTop={3}> Earned Badges</Heading>
             <Flex flexDirection={"row"} flexWrap={"wrap"}>
               {Complete.map((achievement) => (
                 <AchievementModal
@@ -104,12 +104,12 @@ const AchievementPage = () => {
             <Flex>
               <Box
                 borderWidth={0.5}
-                width={"5/6"}
+                width={"95%"}
                 alignSelf={"center"}
                 borderColor={"muted.300"}
               ></Box>
             </Flex>
-            <Heading marginBottom={2}> More Badges</Heading>
+            <Heading marginTop={5} marginBottom={2}> More Badges</Heading>
             <Flex flexDirection={"row"} flexWrap={"wrap"}>
               {Uncomplete.map((achievement) => (
                 <AchievementModal

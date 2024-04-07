@@ -32,7 +32,7 @@ import ButtonGroup from "../../../components/ProfileComponents/ButtonGroup";
 import Description from "../../../components/ProfileComponents/Description";
 import Achievement from "../../../components/ProfileComponents/Achievement";
 import Attribute from "../../../components/ProfileComponents/Attribute";
-import Calendar from "../../../components/ProfileComponents/Calendar";
+import History from "../../../components/ProfileComponents/History";
 import {
   getUser,
   IUser,
@@ -116,7 +116,7 @@ const ProfilePage = () => {
                 />
                 <Description bio={userInfo.bio} onSave={updateBio}/>
                 <Achievement display = {userInfo.display}/>
-                <Calendar history = {userInfo.checkInHistory}/>
+                <History history = {userInfo.checkInHistory}/>
               </Flex>
             )}
           </Box>

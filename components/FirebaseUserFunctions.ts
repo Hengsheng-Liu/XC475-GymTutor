@@ -19,6 +19,7 @@ import { GeoPoint } from 'firebase/firestore';
 // Define User interface
 import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
 import Achievement from './ProfileComponents/Achievement';
+import { CalendarUtils } from 'react-native-calendars';
 
 type Birthday = {day: number, month: number, year: number};
 export interface Achievementprops {
@@ -512,9 +513,7 @@ async function randomIt(): Promise<void> {
 }
 export const AddDate = async (uid:string) => {
     const Day = new Date();
-    const Today =
-        Day.getFullYear() + "-" + (Day.getMonth() + 1) + "-" + Day.getDate();
-
+    const Today = CalendarUtils.getCalendarDateString(Day);
         try {
             const userRef = doc(firestore, "Users", uid);
             const userCheckHistory = (await getDoc(userRef)).data()?.checkInHistory; 
