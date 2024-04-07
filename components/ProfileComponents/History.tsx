@@ -1,6 +1,7 @@
 import { ExpandableCalendar, CalendarProvider, WeekCalendar, CalendarUtils,Calendar} from "react-native-calendars";
 import { Box, VStack, Heading } from "native-base";
-import { useState,useMemo, useEffect } from "react";
+import { useState,useMemo, useEffect} from "react";
+import { StyleSheet } from "react-native";
 interface CalendarProps {
   history: string[];
 }
@@ -26,7 +27,6 @@ export default function History(
         selected: true,
         disableTouchEvent: true,
         selectedColor: '#F97316',
-        //selectedTextColor: 'red'
       };
     });
   
@@ -38,13 +38,18 @@ export default function History(
     <Box mt={4}>
       <VStack>
         <Heading mb={2}> Calendar</Heading>
-        <Box>
+        <Box
+            shadow={3} 
+            borderRadius={10}
+      >
           <Calendar
             current={CalendarUtils.getCalendarDateString(date)}
-            markedDates={marked(selected)} // Add type assertion
+            markedDates={marked(selected)}
           />
         </Box>
       </VStack>
     </Box>
   );
 }
+const styles = StyleSheet.create({
+});
