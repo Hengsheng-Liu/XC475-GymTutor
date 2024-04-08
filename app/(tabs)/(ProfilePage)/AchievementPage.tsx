@@ -27,6 +27,7 @@ import {
 } from "@/components/FirebaseUserFunctions";
 import { useAuth } from "@/Context/AuthContext";
 import { useLocalSearchParams,router } from "expo-router";
+import { getSVG } from "@/components/ProfileComponents/AchievementFunction";
 const AchievementPage = () => {
   const { edit } = useLocalSearchParams();
   const [Complete, SetComplete] = React.useState<Achievementprops[]>([]);
@@ -34,25 +35,6 @@ const AchievementPage = () => {
   const [editDisplay, setEditDisplay] = React.useState<string[]>([]);
   
   const { User } = useAuth();
-  const getSVG = (name: string, achieved: boolean) => {
-    if (achieved) {
-      return (
-        <SvgUri
-          width="100%"
-          height="100%"
-          uri={`/assets/images/achievements/Complete/${name}.svg`}
-        />
-      );
-    } else {
-      return (
-        <SvgUri
-          width="100%"
-          height="100%"
-          uri={`/assets/images/achievements/Uncomplete/${name}.svg`}
-        />
-      );
-    }
-  };
   const updateUserDisplay = async () => {
     if (User) {
       try {
@@ -100,7 +82,8 @@ const AchievementPage = () => {
     <NativeBaseProvider>
       <ScrollView style={styles.container}>
           <Flex justifyContent={"flex-end"}flexDir={"column"} margin={1}>
-            <Heading marginBottom={2}> Earned Badges</Heading>
+            {Complete.length > 0 && <Box marginBottom={5}>
+            <Heading marginBottom={2} marginTop={3}> Earned Badges</Heading>
             <Flex flexDirection={"row"} flexWrap={"wrap"}>
               {Complete.map((achievement) => (
                 <AchievementModal
@@ -116,16 +99,17 @@ const AchievementPage = () => {
                 />
               ))}
             </Flex>
-            {!edit && <Box>
+            </Box>}
+            {!edit && Uncomplete.length > 0 && <Box>
             <Flex>
               <Box
                 borderWidth={0.5}
-                width={"5/6"}
+                width={"95%"}
                 alignSelf={"center"}
                 borderColor={"muted.300"}
               ></Box>
             </Flex>
-            <Heading marginBottom={2}> More Badges</Heading>
+            <Heading marginTop={5} marginBottom={2}> More Badges</Heading>
             <Flex flexDirection={"row"} flexWrap={"wrap"}>
               {Uncomplete.map((achievement) => (
                 <AchievementModal

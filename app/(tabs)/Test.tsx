@@ -3,10 +3,12 @@ import { SafeAreaView, StyleSheet, View,Image } from "react-native";
 import React from "react";
 import Grey from "../../assets/images/achievements/Uncomplete/Grey.svg"
 import { SvgUri } from "react-native-svg";
+import Logo from "../../assets/images/Logo.svg";
 export default function Test() {
   return (
     <NativeBaseProvider>
       <SafeAreaView style={styles.container}>
+        <Logo />
       </SafeAreaView>
     </NativeBaseProvider>
   );

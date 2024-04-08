@@ -36,12 +36,21 @@ const AchievementModal = ({ image, name, description, current, max,achieved,edit
           display?.shift();
           
         }
-        setdisplay?.([...display,name]);
+        setdisplay?.([...(display ?? []), name]);
       }
     }else{
       setShowModal(true);
     }
-
+  }
+  const setBorderColor = () => {
+    if (edit && display?.includes(name)){
+      return "#7DD3FC";
+    }else if(!achieved){
+      return "#525252";
+    }
+    else{
+      return "#EA580C";
+    }
   }
   return (
     <Flex
@@ -49,7 +58,7 @@ const AchievementModal = ({ image, name, description, current, max,achieved,edit
     height={"32"}
     >
 
-      <Pressable borderRadius={"5"} borderWidth={5} borderColor={edit  && display?.includes(name) ? "#7DD3FC"  : "#EA580C"} margin={"1.5"} onPress={handlePress}>{image}</Pressable>
+      <Pressable borderRadius={"5"} borderWidth={5} borderColor={setBorderColor()} margin={"1.5"} onPress={handlePress}>{image}</Pressable>
 
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} size={"md"}>
         <Modal.Content>

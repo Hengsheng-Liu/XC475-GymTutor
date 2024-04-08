@@ -20,7 +20,13 @@ import { GeoPoint } from 'firebase/firestore';
 // Define User interface
 import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
 import Achievement from './ProfileComponents/Achievement';
+<<<<<<< HEAD
 type Birthday = { day: number, month: number, year: number };
+=======
+import { CalendarUtils } from 'react-native-calendars';
+
+type Birthday = {day: number, month: number, year: number};
+>>>>>>> 4e5ded4a408e1b05c463e78c8df891e3fce13002
 export interface Achievementprops {
     name: string;
     curr: number;
@@ -55,6 +61,7 @@ export type CurrentlyMessagingEntry = {
     userId: string;
     timeAsNumber: number;
 };
+type friendRequest = { friend: string, date: number, status: string } // Status can be "pending", "accepted", "rejected"
 
 export interface IUser {
     uid: string;
@@ -66,7 +73,7 @@ export interface IUser {
     sex: string;
     tags: string[];
     friends: string[];
-    friendRequests: string[];
+    friendRequests: friendRequest[];
     rejectedRequests: string[];
     blockedUsers: string[];
     gym: string;
@@ -372,7 +379,7 @@ export async function updateUsers(): Promise<void> {
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
-                status: randomStatus,
+                friendRequests: [],
             };
 
             // Update document if any field is missing
@@ -516,6 +523,7 @@ async function randomIt(): Promise<void> {
 }
 export const AddDate = async (uid: string) => {
     const Day = new Date();
+<<<<<<< HEAD
     const Today =
         Day.getFullYear() + "-" + (Day.getMonth() + 1) + "-" + Day.getDate();
 
@@ -529,6 +537,19 @@ export const AddDate = async (uid: string) => {
         console.error("Error updating bio: ", error);
     }
 };
+=======
+    const Today = CalendarUtils.getCalendarDateString(Day);
+        try {
+            const userRef = doc(firestore, "Users", uid);
+            const userCheckHistory = (await getDoc(userRef)).data()?.checkInHistory;
+            await updateDoc(userRef, {
+                checkInHistory: [...userCheckHistory, Today],
+            });
+        } catch (error) {
+            console.error("Error updating bio: ", error);
+        }
+    };
+>>>>>>> 4e5ded4a408e1b05c463e78c8df891e3fce13002
 
 // Attempt to do it automatically. Didn't work and gave up
 // Define a function to fetch all users and update them with missing fields
