@@ -5,7 +5,7 @@ import Header from "../../../components/FriendsComponents/Header";
 import Description from "../../../components/FriendsComponents/Description";
 import Achievement from "../../../components/FriendsComponents/Achievement";
 import Attribute from "../../../components/FriendsComponents/Attribute";
-import Calendar from "../../../components/ProfileComponents/History";
+import History from "../../../components/ProfileComponents/History";
 import DropdownButton from "@/components/FriendsComponents/dropDownButton";
 import { IUser } from "../../../components/FirebaseUserFunctions";
 import { SafeAreaView } from "react-native";
@@ -184,7 +184,7 @@ const FriendProfilePage = () => {
 
                 <Description bio={userInfo.bio}/>
                 <Achievement />
-                <Calendar />
+                <History history = {userInfo.checkInHistory}/>
               </Flex>
             )}
           </Box>
