@@ -8,7 +8,7 @@ import { Flex, Text } from "native-base";
 import { firestore } from '@/firebaseConfig';
 import { doc, onSnapshot } from 'firebase/firestore';
 
-import FriendContainer from '../../../components/FriendsComponents/FriendContainer';
+import FriendContainer2 from '../../../components/FriendsComponents/FriendContainer2';
 import fetchUsers from '../../../components/FriendsComponents/FetchUsers';
 import theme from '@/components/theme';
 import { getCurrUser } from '@/components/FirebaseUserFunctions';
@@ -59,7 +59,7 @@ export default function FriendListScreen() {
           ) : (
             <Flex p={1}>
               {friends.map((user) => (
-                < FriendContainer friend={user} key={user.uid} />
+                < FriendContainer2 friend={user} key={user.uid} />
               ))}
             </Flex>
           )}
