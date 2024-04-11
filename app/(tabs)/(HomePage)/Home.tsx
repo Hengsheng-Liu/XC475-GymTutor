@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { router } from "expo-router";
-import { NativeBaseProvider, Spacer, Pressable, Flex, HStack, Badge, Text, Box, Column, Spinner, Heading, Input, IconButton, Row, Button } from "native-base";
+import { NativeBaseProvider, Spacer, Pressable, Text, Box, Column, Spinner, Heading, Input, Row, Button } from "native-base";
 import { ScrollView, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FontAwesome, Ionicons, FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "@/Context/AuthContext";
 import { IUser, getUsers, updateUsers, removeFieldFromUsers, Gym } from "@/components/FirebaseUserFunctions";
 import UserPreview from "../../../components/HomeComponents/UserContainer";
@@ -16,6 +16,8 @@ import pointInPolygon from "point-in-polygon";
 import { Octicons } from "@expo/vector-icons";
 import { defaultFilters } from "./Filter";
 import UserExpandedPreview from "@/components/HomeComponents/ExpandedPreview";
+import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
+
 
 export default function HomeScreen() {
   // const [gym, setGym] = useState<Gym>(); // State to store the gym
@@ -23,7 +25,8 @@ export default function HomeScreen() {
   const [users, setUsers] = useState<IUser[]>([]); // State to store users
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
   const [firstLoad, setFirstLoad] = useState<boolean>(true); // State to track first load
-  const { User, currUser, userFilters, userGym } = useAuth();
+  const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
+  const { User, currUser, userGym } = useAuth();
   const [location, setLocation] = useState<number[]>([]);
   const bound = useRef<number[][]>([]); // State to store the gym boundary
   const [checkIn, setCheckIn] = useState<boolean>(false); // State to store the gym boundary
@@ -40,11 +43,13 @@ export default function HomeScreen() {
   // Initialize gym data
   useEffect(() => {
     if (currUser) {
+        // updateUsers(); // Uncomment when we want to update users with new fields / random values
         handleSearchUsers();
         fetchGym();
         setFirstLoad(false);
+        checkUser();
       };
-  }, []);
+  }, [isFocused]);
 
   const checkUser = () => {
     if (currUser) {
@@ -97,7 +102,7 @@ export default function HomeScreen() {
       let fetchedUsers: IUser[];
       if (searchTerm === "") {
         //By default search users with filter and gym
-        fetchedUsers = await getUsers(currUser.uid, userGym[0], userFilters);
+        fetchedUsers = await getUsers(currUser.uid, userGym[0], currUser.filters);
         console.log("Fetched filtered users!");
       } else if (searchTerm === "all") {
         // Testing keyword to show all users
@@ -137,7 +142,12 @@ export default function HomeScreen() {
     }
   };
   
-  
+  // Function to update the users list after sending a friend request
+  const updateFetchedUsers = (updatedUser: IUser) => {
+    const updatedUsers = users.map((user) => (user.uid === updatedUser.uid ? updatedUser : user));
+    setUsers(updatedUsers);
+  };
+    
   return ( 
     <NativeBaseProvider theme={theme}>
       <SafeAreaView
@@ -194,7 +204,7 @@ export default function HomeScreen() {
           </ScrollView>
           )}
         {selectedUser && 
-          <UserExpandedPreview users={users} user={selectedUser} isOpen={isOpen} onClose={handleCloseModal} />
+          <UserExpandedPreview users={users} user={selectedUser} isOpen={isOpen} onClose={handleCloseModal} updateFetchedUsers={updateFetchedUsers}/>
         }
         <Button
           size={"lg"}

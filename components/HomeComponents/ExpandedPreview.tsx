@@ -1,114 +1,167 @@
 import React from "react";
-import { Modal, Flex, Row, Button, Avatar, Spacer, Box, Text } from "native-base";
+import { Modal, Flex, Row, Icon, Badge, Button, Avatar, Spacer, Box, Text } from "native-base";
 import { TouchableOpacity } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { IUser } from "../FirebaseUserFunctions";
 import Tags from "./Tags";
 import { router } from "expo-router";
-import { sendFriendRequest, canAddFriend } from "../FriendsComponents/FriendFunctions"
-import { useState } from "react";
+import { canAddFriend, canMessage } from "../FriendsComponents/FriendFunctions"
+import { useState, useEffect } from "react";
 import { useAuth } from "@/Context/AuthContext";
+import { SvgUri } from "react-native-svg";
+
+import { firestore } from "@/firebaseConfig";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+
+import { findOrCreateChat } from "@/app/(tabs)/(MessagePage)/data.js";
+import { globalState } from '@/app/(tabs)/(MessagePage)/globalState';
 
 interface Props {
     users: IUser[];
     user: IUser;
     isOpen: boolean;
     onClose: () => void;
+    updateFetchedUsers: (user: IUser) => void;
   }
   
-  const UserExpandedPreview: React.FC<Props> = ({ users, user, isOpen, onClose }) => {
+  const UserExpandedPreview: React.FC<Props> = ({ users, user, isOpen, onClose, updateFetchedUsers }) => {
     const [selectedUser, setSelectedUser] = useState<IUser>(user); // State to hold updated friend data
-    const {currUser, updateFriend } = useAuth();
-    const [currentIndex, setCurrentIndex] = useState<number>(0);
+    const {currUser, updateFriend, friend } = useAuth();
+    const [currentIndex, setCurrentIndex] = useState<number>( users.findIndex(u => u.uid === user.uid));
 
     if (!currUser) return;
 
-    // TODO: Display user preview when clicked
+    useEffect(() => {
+      setSelectedUser(users[currentIndex]);
+    }, [currentIndex, users]);
+  
+    // Open the friend's profile
     const handleOpenProfile = async () =>{
+        onClose();
         await updateFriend(selectedUser);
-        console.log("HEY");
         router.push("/FriendProfile");
 
-        // Open Profile
+    };
+    
+    const openChat = async (friend: any) => {
+        onClose();
+        console.log(findOrCreateChat(currUser.uid, friend.uid));
+        globalState.user = friend; // Set the selected user in the global state
+        router.navigate("ChatPage"); // Then navigate to ChatPage
     };
 
     const handleNextUser = () => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % users.length);
-        setSelectedUser(users[currentIndex]);
     };
     
       const handlePreviousUser = () => {
-        setCurrentIndex((prevIndex) => (prevIndex - 1) % users.length);
-        setSelectedUser(users[currentIndex]);
+        let prevIndex = currentIndex - 1;
+        if (prevIndex < 0) {
+          prevIndex = users.length - 1;
+        }
+        setCurrentIndex(prevIndex);
     };
 
+    const handleSendFriendRequest = async (userUID: string, friendUID: string) => {
+      const db = firestore;
+      const friendRef = doc(db, 'Users', friendUID);
+      const timestamp = new Date().getTime();
+
+      try {
+          if (selectedUser){    
+              const updatedFriend = { ...selectedUser};
+              updatedFriend.friendRequests.push({friend: userUID, date: timestamp, status: "pending"});
+              updateFriend(updatedFriend);
+              updateFetchedUsers(updatedFriend);
+              console.log(updatedFriend);
+          }
+          await updateDoc(friendRef, { friendRequests: arrayUnion({friend: userUID, date: timestamp, status: "pending"}) });
+          console.log('Friend Request sent successfully: ', friendUID, userUID);
+      } catch (error) {
+          console.error('Error sending Friend Request:', error);
+      }
+  }
+
     return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl" >
-      <Modal.Content backgroundColor="#FFF7ED">
+    <Modal isOpen={isOpen} onClose={onClose} size="xl" width={"100%"} height={"100%"}>
+      <Modal.Content backgroundColor="#F5F5F5">
         <Modal.CloseButton/>
         {selectedUser && (
           <Flex direction="column" alignItems="center" justifyContent="center" mt={5}>
           <Avatar
             mb={3}
-            size="xl"
+            size="2xl"
             source={selectedUser.icon ? { uri: selectedUser.icon } : require("@/assets/images/default-profile-pic.png")}
           />
-          <Text fontSize="xl" fontWeight="bold" mb={2}>
+          <Text fontSize="xl" fontWeight="bold">
             {selectedUser.name}, {selectedUser.age}
           </Text>
-          {users.length > 1? (
+          <Text fontSize="sm" color="trueGray.500">{selectedUser.status}</Text>
           <Row alignItems="center" mr="2" ml="2" p="3" justifyContent={"space-between"}>
             <TouchableOpacity activeOpacity={0.7} onPress={() => handlePreviousUser()}>
                 <FontAwesome name="chevron-left" size={24} color="black" />
             </TouchableOpacity>
             <Spacer/>
-            <Text fontSize="md" m={3}>
-                {selectedUser.bio}
-            </Text>
+            <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
+              {selectedUser.gymExperience.charAt(0).toUpperCase() + selectedUser.gymExperience.slice(1)}
+            </Badge>
             <Spacer/>
             <TouchableOpacity activeOpacity={0.7} onPress={() => handleNextUser()}>
                 <FontAwesome name="chevron-right" size={24} color="black" />
             </TouchableOpacity>
-            </Row> ) : (
-            <Row alignItems="center" mr="2" ml="2" p="5" justifyContent={"space-between"}>
-            <TouchableOpacity activeOpacity={0.7} onPress={() => handlePreviousUser()}>
-                <FontAwesome name="chevron-left" size={24} color="black" />
-            </TouchableOpacity>
-            <Spacer/>
-            <Text fontSize="md" m={3}>
-                {selectedUser.bio}
-            </Text>
-            <Spacer/>
-            <TouchableOpacity activeOpacity={0.7} onPress={() => handleNextUser()}>
-                <FontAwesome name="chevron-right" size={24} color="black" />
-            </TouchableOpacity>
-            </Row>)}
+            </Row> 
           <Box overflow="hidden" mb={3}>
-            <Flex flexDirection="row" justifyContent="space-evenly">
-              {selectedUser.tags && selectedUser.tags.slice(0, 3).map((tag, index) => (
-                <Tags key={index} title={tag} />
-              ))}
-            </Flex>
-            <Flex flexDirection="row" justifyContent="space-evenly">
-              {selectedUser.tags && selectedUser.tags.slice(3, 5).map((tag, index) => (
-                <Tags key={index} title={tag} />
+            <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly">
+              {selectedUser.tags && selectedUser.tags.slice(0, 5).map((tag, index) => (
+                <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>{tag}</Badge>
               ))}
             </Flex>
           </Box>
           <Flex direction="row" justifyContent="space-between" width="90%" m={3}>
-            <Button onPress={() => handleOpenProfile()} size="lg" width="45%" backgroundColor="#0284C7">
-              <Text fontSize="md" color="#FFF" fontWeight="bold">Profile</Text>
+            <Button onPress={() => handleOpenProfile()} size="lg" width="45%" backgroundColor="#FAFAFA" borderColor="#0284C7" borderWidth={2} borderRadius={16}>
+              <Text fontSize="md" color="#0284C7" fontWeight="bold">View Profile</Text>
             </Button>
-            <Button
-              onPress={() => canAddFriend(currUser, selectedUser)? 
-                    sendFriendRequest(currUser.uid, selectedUser.uid): console.log("Cannot add friend")}
+            { canAddFriend(currUser, selectedUser) ? (
+              <Button
+              onPress={() => handleSendFriendRequest(currUser.uid, selectedUser.uid)}
               size="lg"
               width="45%"
-              backgroundColor= {canAddFriend(currUser, selectedUser)? "#0284C7" : "gray.200"}
-              //_pressed={{ backgroundColor: "#0369A1" }}
+              backgroundColor= "#0284C7"
+              borderRadius={16}
             >
-                <Text fontSize="md" color="#FFF" fontWeight="bold"> {canAddFriend(currUser, selectedUser)? "  Add   " : "Added"}</Text>
+                <Row>
+                  <Icon as={<SvgUri uri={`/assets/images/Spot!.svg`} />}/>
+                  <Text fontSize="md" color="#FFF" fontWeight="bold"> Connect</Text>
+                </Row>
             </Button>
+            ) : (
+              canMessage(currUser, selectedUser) ? ( 
+                <Button
+                  onPress={() => openChat(selectedUser)}
+                  size="lg"
+                  width="45%"
+                  backgroundColor= "#0284C7"
+                  borderRadius={16}
+                  >
+                    <Row>
+                      <Icon as={<SvgUri uri={`/assets/images/Spot!.svg`} />}/>
+                      <Text fontSize="md" color="#FFF" fontWeight="bold"> Message</Text>
+                    </Row>
+                </Button>
+                ) : (
+                  <Button
+                    size="lg"
+                    width="45%"
+                    backgroundColor= "#3F9443"
+                    borderRadius={16}
+                    >
+                  <Row>
+                      <Icon as={<SvgUri uri={`/assets/images/Spot!.svg`} />}/>
+                      <Text fontSize="md" color="#FFF" fontWeight="bold"> Requested</Text>
+                    </Row>
+                </Button>
+                )
+            )}
           </Flex>
           <Box flexDirection="row" justifyContent="space-between" px={4} pb={4}>
         </Box>

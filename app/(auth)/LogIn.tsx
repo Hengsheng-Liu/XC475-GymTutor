@@ -1,28 +1,39 @@
-import { Text, View } from 'react-native'
-import React from 'react'
+import { View } from "react-native";
+import React from "react";
 import {
   Alert,
-  Button,
   StyleSheet,
   Pressable,
   SafeAreaView,
   Keyboard,
   TextInput,
 } from "react-native";
+import { Text, Box, Button, Center } from "native-base";
 import { useState, useEffect, useCallback } from "react";
-import { router } from 'expo-router';
-import { useAuth } from '../../Context/AuthContext';
-import { useIdTokenAuthRequest as useGoogleIdTokenAuthRequest } from 'expo-auth-session/providers/google';
+import { router } from "expo-router";
+import { useAuth } from "../../Context/AuthContext";
+import { useIdTokenAuthRequest as useGoogleIdTokenAuthRequest } from "expo-auth-session/providers/google";
 // In anotherFile.js
-import { expoClientId, iosClientId, androidClientId, auth } from '../../firebaseConfig';
-import { signInWithCredential, User, GoogleAuthProvider, OAuthCredential, AuthError, getAdditionalUserInfo, UserCredential } from "firebase/auth";
+import {
+  expoClientId,
+  iosClientId,
+  androidClientId,
+  auth,
+} from "../../firebaseConfig";
+import {
+  signInWithCredential,
+  User,
+  GoogleAuthProvider,
+  OAuthCredential,
+  AuthError,
+  getAdditionalUserInfo,
+  UserCredential,
+} from "firebase/auth";
 import { firestore } from "../../firebaseConfig";
 import { collection, addDoc, setDoc, doc } from "firebase/firestore";
-import { AddUserToDB } from './SignUp';
-
+import { Flex, Heading, Input, NativeBaseProvider } from "native-base";
+import Logo from "../../assets/images/Logo.svg";
 export default function LogInScreen() {
-
-
   // Hook that gives us the function to authenticate our Google OAuth provider
   /*
   const [, googleResponse, promptAsyncGoogle] = useGoogleIdTokenAuthRequest({
@@ -40,10 +51,10 @@ export default function LogInScreen() {
   const handleLogIn = async () => {
     // Skip credentials (Developer use only)
     const userCredential = await SignIn("a@gmail.com", "password"); // (to skip the email verification)
-        const user = userCredential.user;
-        if (user) {
-          router.replace("/LoadingPage");
-        }
+    const user = userCredential.user;
+    if (user) {
+      router.replace("/LoadingPage");
+    }
 
     if (email && password) {
       try {
@@ -57,12 +68,7 @@ export default function LogInScreen() {
         Alert.alert("Error", errorMessage);
       }
     }
-  }
-
-
-
-
-
+  };
 
   // Code below handles the login via the Google Provider
   /*
@@ -134,46 +140,70 @@ export default function LogInScreen() {
   }, []);
 
   return (
-    <Pressable style={styles.contentView} onPress={Keyboard.dismiss}>
-      <SafeAreaView style={styles.contentView}>
-        <View style={styles.container}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.titleText}>Log In</Text>
-          </View>
-          <View style={styles.mainContent}>
-            <TextInput
-              style={styles.loginTextField}
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-              inputMode="email"
-              autoCapitalize="none"
-            />
-            <TextInput
-              style={styles.loginTextField}
-              placeholder="Password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry />
-            <Button title="Log In" onPress={handleLogIn} />
-            <Button title="Sign Up" onPress={() => router.navigate("SignUp")} />
-            {<Button title={'Google Login'} />}
-          </View>
-        </View>
-      </SafeAreaView>
-    </Pressable>
+    <NativeBaseProvider>
+      <Pressable style={styles.contentView} onPress={Keyboard.dismiss}>
+        <SafeAreaView style={styles.contentView}>
+          <Flex flex={"1"} marginX={10} bg={"#F97316"}>
+            <Flex flexDir={"row"} marginTop={"1/4"} alignItems={"center"}>
+              <Heading mt={3} size={"lg"} color={"#FAFAFA"}>
+                Welcome to
+              </Heading>
+              <Logo />
+            </Flex>
+            <Box marginTop={"7"}>
+              <Text color={"#FAFAFA"}>Email</Text>
+              <Input
+                mt={2}
+                size="md"
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+                inputMode="email"
+                autoCapitalize="none"
+                backgroundColor={"#FAFAFA"}
+                borderRadius={5}
+              />
+              <Text color={"#FAFAFA"} marginTop={5}>
+                Password
+              </Text>
+              <Input
+                size="md"
+                mt={2}
+                placeholder="Password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                backgroundColor={"#FAFAFA"}
+                borderRadius={5}
+              />
+            </Box>
+            <Button
+              background={"#FFF7ED"}
+              onPress={handleLogIn}
+              marginTop={"16"}
+              borderRadius={5}
+            >
+              <Heading color={"#F97316"} size={"md"}>
+                Log In
+              </Heading>
+            </Button>
+          </Flex>
+          <Center>
+            <Pressable onPress={() => router.navigate("SignUp")} >
+              <Heading color={"#FAFAFA"} size={"md"}>
+                Sign up with Email
+              </Heading>
+            </Pressable>
+          </Center>
+        </SafeAreaView>
+      </Pressable>
+    </NativeBaseProvider>
   );
 }
 const styles = StyleSheet.create({
   contentView: {
     flex: 1,
-    backgroundColor: "white",
-  },
-  container: {
-    flex: 1,
-    marginHorizontal: 50,
-    backgroundColor: "white",
-    paddingTop: 20,
+    backgroundColor: "#F97316",
   },
   titleContainer: {
     flex: 1.2,

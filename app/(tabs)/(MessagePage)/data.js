@@ -19,7 +19,7 @@ class Fire {
 
     const q = query(
       messagesRef,
-      orderBy('timestamp', 'desc'),
+      orderBy('timestamp', 'asc'),
       limit(20)
     );
 
@@ -95,6 +95,17 @@ class Fire {
 
       const docRef = await addDoc(messagesRef, message);
       console.log("Message written with ID: ", docRef.id);
+
+      // Update the 'newestMessage' and 'timestamp' field of the chat document with the text of the new message
+      await updateDoc(chatRef, {
+        newestMessage: message.text,
+        timestamp: serverTimestamp()
+      });
+
+      const [senderId, receiveId] = chatId.split("_");
+      await updateMessaging(doc(this.db, "Users", senderId), receiveId);
+      await updateMessaging(doc(this.db, "Users", receiveId), senderId);
+
     } catch (error) {
       console.error("Error adding document: ", error);
     }
@@ -113,6 +124,23 @@ export function generateChatId(userId1, userId2) {
   return [userId1, userId2].sort().join('_');
 }
 
+
+// Helper function to update the currentlyMessaging field
+export const updateMessaging = async (userDocRef, otherUserId) => {
+  const userDoc = await getDoc(userDocRef);
+
+  const userData = userDoc.data();
+  const currentlyMessaging = userData.CurrentlyMessaging || [];
+
+  // Create a new array for updated currentlyMessaging data
+  let updatedMessaging = currentlyMessaging.filter(entry => entry.userId !== otherUserId);
+  updatedMessaging.push({ userId: otherUserId, timeAsNumber: Date.now() });
+
+  // Update the document with the modified currentlyMessaging array
+  await updateDoc(userDocRef, { CurrentlyMessaging: updatedMessaging });
+};
+
+
 // Function to find or create a chat document
 export async function findOrCreateChat(userId1, userId2) {
   const chatId = generateChatId(userId1, userId2);
@@ -124,19 +152,23 @@ export async function findOrCreateChat(userId1, userId2) {
     // Chat doesn't exist, create a new one
     await setDoc(chatRef, {
       participants: [userId1, userId2],
-      timestamp: serverTimestamp(), // Use server timestamp for consistency
+      timestamp: serverTimestamp(),
+      newestMessage: ""
     });
-    
+
     console.log('New chat created with ID:', chatId);
 
     const db = firestore;
     const user1DocRef = doc(db, "Users", userId1);
     const user2DocRef = doc(db, "Users", userId2);
 
+
+
     // Save each others chatId in the currentlyMessaging
-    
-    await updateDoc(user1DocRef, {currentlyMessaging: arrayUnion(userId2) });
-    await updateDoc(user2DocRef, {currentlyMessaging: arrayUnion(userId1) });
+
+    await updateMessaging(user1DocRef, userId2);
+    await updateMessaging(user2DocRef, userId1);
+
     console.log("Updated Currently messaging for both users", userId1, userId2);
   } else {
     console.log('Chat found with ID:', chatId);

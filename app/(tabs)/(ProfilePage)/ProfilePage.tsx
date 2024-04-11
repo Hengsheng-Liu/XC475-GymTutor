@@ -32,7 +32,7 @@ import ButtonGroup from "../../../components/ProfileComponents/ButtonGroup";
 import Description from "../../../components/ProfileComponents/Description";
 import Achievement from "../../../components/ProfileComponents/Achievement";
 import Attribute from "../../../components/ProfileComponents/Attribute";
-import Calendar from "../../../components/ProfileComponents/Calendar";
+import History from "../../../components/ProfileComponents/History";
 import {
   getUser,
   IUser,
@@ -44,7 +44,8 @@ import { SafeAreaView } from "react-native";
 
 const ProfilePage = () => {
   const [userInfo, setUserInfo] = useState<IUser>();
-  const { User } = useAuth(); // gets current user's authentication data (in particular UID)
+  const [Display, setDisplay] = useState<string[]>(["default", "default", "default"]);
+  const { User,userGym } = useAuth(); // gets current user's authentication data (in particular UID)
  
   // finds the current user's data (only name for now) via Users firestore database.
 
@@ -108,10 +109,14 @@ const ProfilePage = () => {
                 <Header name={userInfo.name} gym={userInfo.gym} />
 
                 <Attribute description={userInfo.tags} onSaveTag={updateTags} />
-                <ButtonGroup friendCount={userInfo.friends.length + " Friends"}/>
+                <ButtonGroup friendCount={userInfo.friends.length + " Friends"}
+                  gym = {userGym}
+                  History = {userInfo.checkInHistory}
+
+                />
                 <Description bio={userInfo.bio} onSave={updateBio}/>
-                <Achievement />
-                <Calendar />
+                <Achievement display = {userInfo.display}/>
+                <History history = {userInfo.checkInHistory}/>
               </Flex>
             )}
           </Box>

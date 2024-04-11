@@ -15,7 +15,9 @@ type AuthContextValue = {
     updateFilters: (filters: Filters) => void;
     userGym: [string, string] | undefined;
     friend: IUser | null;
+    friends: string[] | null;
     updateFriend: (friend: IUser) => void;
+    updateCurrUser: (user: IUser) => void;
     updateUserGym: (gymId: string, gymName: string) => void;
     SignOut: () => Promise<void>;
 }
@@ -27,6 +29,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [userFilters, setUserFilters] = useState<Filters>();
     const [userGym, setUserGym] = useState<[string, string]>();
     const [friend, setFriend] = useState<IUser | null>(null);
+    const [friends, setFriends] = useState<string[]>([]);
 
     const CreateUser = async (email: string, password: string) => {
         return await createUserWithEmailAndPassword(auth, email, password);
@@ -49,6 +52,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUserGym([gymId, gymName]);
         console.log("Updated Gym!");
     }
+
+    const updateCurrUser = (user: IUser) => {
+        if (user) {
+            setCurrUser(user);
+        }
+    };
 
     const updateFriend = async (friend: IUser) => {
         if (friend) {
@@ -87,7 +96,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         updateFilters,
         updateUserGym,
         friend,
+        friends,
         updateFriend,
+        updateCurrUser,
         userGym,
         SignOut
     };

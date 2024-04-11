@@ -45,24 +45,16 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
         <Flex>
             <Row alignItems="center" space="sm">
                 <Avatar m={2} size= "xl" source={friend.icon ? {uri: friend.icon} : require("@/assets/images/default-profile-pic.png")} />
-                <Column>
+                <Column justifyContent={"space-evenly"}>
                 <Row justifyContent= {"space-between"} >
-                    <Column overflow="hidden" width="170">    
+                    <Column overflow="hidden">    
                         <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated>{friend.name}, {friend.age}</Text>
-                        <Text color= "trueGray.900" fontSize="sm" isTruncated>{friend.gym}</Text>
+                        <Text color= "trueGray.900" fontSize="sm" isTruncated>{friend.status}</Text>
                     </Column>
-                    <Spacer/>
-                    <Flex alignItems="center">
-                        <Button  
-                            p={1}
-                            backgroundColor= {canAddFriend(currUser, updatedFriend)? "#0284C7" : "gray.200"} rounded="md" 
-                            onPress={() => canAddFriend(currUser, updatedFriend)? 
-                                sendFriendRequest(currUser.uid, friend.uid): handleUserClick()}>
-                            <Text fontSize="xs" fontWeight="bold"> {canAddFriend(currUser, updatedFriend)? "  Add   " : "Added"}</Text>
-                        </Button>
-                    </Flex>  
                 </Row>
-                <Attribute description={friend.tags} />
+                <Row justifyContent={"left"}>
+                    <Attribute description={friend.tags} />
+                </Row>
                 </Column>
             </Row>
         </Flex>

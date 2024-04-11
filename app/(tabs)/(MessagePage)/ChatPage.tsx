@@ -5,7 +5,7 @@ import { getUser, IUser } from '@/components/FirebaseUserFunctions';
 import { useAuth } from "@/Context/AuthContext";
 import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
 import { router } from "expo-router";
-import { GiftedChat } from 'react-native-gifted-chat';
+import { GiftedChat, Composer, Send } from 'react-native-gifted-chat';
 import Fire from './data'
 import { globalState } from './globalState';
 import { generateChatId } from './data';
@@ -29,6 +29,47 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
 
   if (!User) {
     return null;
+  }
+
+  function renderMessage(props) {
+    return (
+      <View style={{
+        maxWidth: '70%',
+        margin: 5,
+        padding: 10,
+        borderRadius: 20,
+        backgroundColor: props.currentMessage.user._id === receiveUser.uid ? '#FFD700' : '#FF6347',
+        alignSelf: props.currentMessage.user._id === receiveUser.uid ? 'flex-start' : 'flex-end',
+      }}>
+        <Text style={{ color: props.currentMessage.user._id === 1 ? '#fff' : '#000' }}>
+          {props.currentMessage.text}
+        </Text>
+      </View>
+    );
+  }
+
+  // Set style of the text input box
+  function renderComposer(props) {
+    return (
+      <Composer
+        {...props}
+        textInputStyle={styles.composer}
+      />
+    );
+  }
+
+  // Set style of the send button
+  function renderSend(props) {
+    return (
+      <Send
+        {...props}
+        containerStyle={styles.sendContainer}
+      >
+        <View style={styles.sendButton}>
+          <Text style={styles.sendText}>Send</Text>
+        </View>
+      </Send>
+    );
   }
 
   // Logic to send a message
@@ -91,11 +132,6 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
       borderColor: 'gray',
       backgroundColor: '#ffffff',
     },
-    sendButton: {
-      marginLeft: 10,
-      fontSize: 16,
-      color: '#007bff',
-    },
     messageBubble: {
       padding: 10,
       borderRadius: 20,
@@ -119,6 +155,36 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
     userInfo: {
       marginLeft: 10,
     },
+    composer: {
+      backgroundColor: '#F5F5F5',
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: '#E4E9F2',
+      paddingTop: 8.5,
+      paddingHorizontal: 12,
+      marginLeft: 0, // Adjust as necessary
+      marginRight: 10, // Adjust as necessary
+    },
+    sendContainer: {
+      justifyContent: 'center',
+      height: 44,
+      marginRight: 10, // Adjust as necessary
+    },
+    sendButton: {
+      marginRight: 10,
+      marginBottom: 5,
+      borderWidth: 1, // Add a border
+      borderColor: '#000000', // Border color matching the text color
+      borderRadius: 15, // Rounded corners for the bubble effect
+      paddingVertical: 5, // Vertical padding inside the bubble
+      paddingHorizontal: 10, // Horizontal padding inside the bubble
+      backgroundColor: 'white', // Background color for the bubble
+    },
+    sendText: {
+      color: '#000000', // Customize the color
+      fontWeight: 'bold',
+      fontSize: 16
+    },
   });
 
   return (
@@ -132,10 +198,14 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
       <GiftedChat
         messages={messages}
         onSend={messages => sendMessage(messages)}
+        renderMessage={renderMessage}
         user={{
           _id: User.uid, // Use the UID from useAuth
           name: User.displayName || 'Anonymous', // Use the displayName from useAuth, if available
         }}
+        alwaysShowSend={true}
+        renderComposer={renderComposer}
+        renderSend={renderSend}
       />
     </KeyboardAvoidingView>
   );

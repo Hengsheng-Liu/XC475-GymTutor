@@ -6,16 +6,25 @@ import { useState } from "react";
 import { useAuth } from "@/Context/AuthContext";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "@/firebaseConfig";
-import { DefaultAchievement, IUser } from "@/components/FirebaseUserFunctions";
+import { DefaultAchievement, IUser,Achievementprops } from "@/components/FirebaseUserFunctions";
 import { AddDate } from "@/components/FirebaseUserFunctions";
+import { NativeBaseProvider } from "native-base";
+import {DailyProgress} from "@/components/ProfileComponents/DailyProgress";
+import { Box } from "native-base";
 export default function SelectWorkout() {
   const [selected, setSelected] = useState<string[]>([]);
+  const [Inprogress, setInprogress] = useState<Achievementprops[]>([]);
+  const [Completed, setCompleted] = useState<Achievementprops[]>([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [ModalVisible, setModalVisible] = useState(false);
   const { User } = useAuth();
 
   const submitToDatabase = async () => {
     if (!User) return;
     const userRef = doc(firestore, "Users", User.uid);
     const userData = (await getDoc(userRef)).data() as IUser;
+    const InProgressHolder:Achievementprops[] = [];
+    const CompletedHolder: Achievementprops[] = [];
     let UpdateAchievement = userData.Achievement;
     AddDate(User.uid);
     if (!userData.Achievement) {
@@ -29,11 +38,32 @@ export default function SelectWorkout() {
         (item) => {
           item.curr += 1;
           if (item.curr === item.max) {
+            CompletedHolder.push(item);
             item.achieved = true;
+          }else if(item.curr < item.max){
+            InProgressHolder.push(item);
           }
         }
+      )
+        UpdateAchievement["CheckIn"].forEach((item) => {
+          item.curr += 1;
+          if (item.curr === item.max) {
+            CompletedHolder.push(item);
+            item.achieved = true;
+          }else if(item.curr < item.max){
+            InProgressHolder.push(item);
+          }
+
+        }
       );
-    });
+    })
+    setInprogress(InProgressHolder);
+    setCompleted(CompletedHolder);
+    if(InProgressHolder.length > 0 || CompletedHolder.length > 0){
+      setModalVisible(true);
+    }else{
+      router.push("/CheckInSubmit");
+    }
     try {
       await updateDoc(userRef, {
         Achievement: UpdateAchievement,
@@ -47,12 +77,20 @@ export default function SelectWorkout() {
     if (selected.length === 0) {
       alert("Please select a workout.");
     } else {
-      router.push("/CheckInSubmit");
       submitToDatabase();
     }
   };
 
   return (
+    <NativeBaseProvider>
+    <Box>
+      <DailyProgress
+        Inprogress={Inprogress}
+        Completed={Completed}
+        ModalVisible={ModalVisible}
+        setModalVisible={setModalVisible}
+      />
+    </Box>
     <CheckInRoutine
       navigation={submitCheckIn}
       Icon={Tags}
@@ -62,5 +100,9 @@ export default function SelectWorkout() {
       selectedBodyParts={selected}
       setSelectedBodyParts={setSelected}
     />
+
+    </NativeBaseProvider>
+
+
   );
 }

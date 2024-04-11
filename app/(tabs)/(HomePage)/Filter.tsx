@@ -31,12 +31,12 @@ export const defaultFilters: Filters = {
 };
 
 const FilterScreen = () => {
-    const { User, userFilters, updateFilters } = useAuth();
+    const { User, currUser, updateCurrUser, userFilters, updateFilters } = useAuth();
     const db = firestore;
     if (!User) return;
-    if (!userFilters) return;
+    if (!currUser) return;
 
-    const [filters, setFilters] = useState<Filters>(userFilters); // stores the filters of the user
+    const [filters, setFilters] = useState<Filters>(currUser.filters); // stores the filters of the user
 
     const [male, setMale] = useState<boolean>(filters.sex.includes("male")); // stores whether male box is checked
     const [female, setFemale] = useState<boolean>(filters.sex.includes("female")); // stores whether female box is checked
@@ -58,11 +58,13 @@ const FilterScreen = () => {
   // Update filters of user
   const updateUserFilters = async (filters: Filters) => {
     updateFilters(filters);
+    if (currUser){    
+      const updatedUser = { ...currUser };
+      updatedUser.filters = filters;
+      updateCurrUser(updatedUser);
+    }
     const userDocRef = doc(db, "Users", User.uid);
-    await updateDoc(userDocRef, {
-      filters: filters
-    });
-    // updateCurrUser();
+    updateDoc(userDocRef, {filters: filters});
   };
 
   // Retrieve new filters and save them to the user
@@ -319,9 +321,9 @@ const FilterScreen = () => {
           </AlertDialog.Body>
           <AlertDialog.Footer>
             <Button.Group space={2}>
-              <Button onPress={handleCloseDialog}>Cancel</Button>
-              <Button onPress={() => router.push("/Home")}> Do not save </Button>
-              <Button onPress={handleSaveFilters}> Save </Button>
+              <Button bgColor="#0284C7" onPress={handleCloseDialog}>Cancel</Button>
+              <Button bgColor="#0284C7" onPress={() => router.push("/Home")}> Do not save </Button>
+              <Button bgColor="#0284C7" onPress={handleSaveFilters}> Save </Button>
             </Button.Group>
           </AlertDialog.Footer>
         </AlertDialog.Content>

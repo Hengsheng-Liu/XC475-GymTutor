@@ -20,7 +20,7 @@ export default function Header({ user }: HeaderProps) {
           }
         />
         <Column marginLeft={2}>
-          <Heading size="lg">{user.name}</Heading>
+          <Heading size="lg" color="trueGray.900">{user.name}</Heading>
           <Text isTruncated maxW="280" w="80%">{user.gym}</Text>
         </Column>
       </Flex>
