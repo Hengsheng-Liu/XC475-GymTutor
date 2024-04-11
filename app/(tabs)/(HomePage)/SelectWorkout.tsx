@@ -15,6 +15,7 @@ export default function SelectWorkout() {
   const [selected, setSelected] = useState<string[]>([]);
   const [Inprogress, setInprogress] = useState<Achievementprops[]>([]);
   const [Completed, setCompleted] = useState<Achievementprops[]>([]);
+  const [openModal, setOpenModal] = useState(false);
   const [ModalVisible, setModalVisible] = useState(false);
   const { User } = useAuth();
 
@@ -43,10 +44,26 @@ export default function SelectWorkout() {
             InProgressHolder.push(item);
           }
         }
+      )
+        UpdateAchievement["CheckIn"].forEach((item) => {
+          item.curr += 1;
+          if (item.curr === item.max) {
+            CompletedHolder.push(item);
+            item.achieved = true;
+          }else if(item.curr < item.max){
+            InProgressHolder.push(item);
+          }
+
+        }
       );
     })
     setInprogress(InProgressHolder);
     setCompleted(CompletedHolder);
+    if(InProgressHolder.length > 0 || CompletedHolder.length > 0){
+      setModalVisible(true);
+    }else{
+      router.push("/CheckInSubmit");
+    }
     try {
       await updateDoc(userRef, {
         Achievement: UpdateAchievement,
@@ -61,11 +78,6 @@ export default function SelectWorkout() {
       alert("Please select a workout.");
     } else {
       submitToDatabase();
-      /*
-      router.push("/CheckInSubmit");
-      submitToDatabase();
-      */
-      setModalVisible(true);
     }
   };
 

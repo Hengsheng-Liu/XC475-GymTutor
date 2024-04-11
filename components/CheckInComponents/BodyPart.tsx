@@ -8,7 +8,7 @@ export default function BodyPart(
     {selectedBodyParts, setSelectedBodyParts}: BodyPartProps
 
 ) {
-  const BodyParts = ["Chest", "Back", "Legs", "Shoulders", "Arms", "Core","Full Body", "Cardio",];
+  const BodyParts = ["Chest", "Back", "Legs", "Shoulders", "Arms", "Core","FullBody", "Cardio",];
   const handleSelect = (part: string) => {
     if (selectedBodyParts.includes(part)) {
         setSelectedBodyParts(selectedBodyParts.filter((item) => item !== part));

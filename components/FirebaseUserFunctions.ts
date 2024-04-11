@@ -31,26 +31,43 @@ export interface Achievementprops {
     description: string;
 }
 export interface Achievements {
-    Chest?: Achievementprops[];
-    Back?: Achievementprops[];
-    Legs?: Achievementprops[];
-    Arms?: Achievementprops[];
-    Core?: Achievementprops[];
-    Cardio?: Achievementprops[];
-    FullBody?: Achievementprops[];
-    Shoulder?: Achievementprops[];
+    Chest: Achievementprops[];
+    Back: Achievementprops[];
+    Legs: Achievementprops[];
+    Core: Achievementprops[];
+    Cardio: Achievementprops[];
+    FullBody: Achievementprops[];
+    Shoulder: Achievementprops[];
+    CheckIn: Achievementprops[];
 }
 
 export const DefaultAchievement: Achievements = {
     Chest: [
-        { name: "BenchBeast", curr: 0, max: 10, description: "Have bench over 10 times", achieved: false },
+        { name: "Chest Champion", curr: 0, max: 10, description: " Awarded for achieving 10 check-ins with the chest day, highlighting a focus on chest muscle development and strength.", achieved: false },
     ],
     Back: [
-        { name: "PullUpPro", curr: 0, max: 10, description: "Have Pull Up over 10 times", achieved: false },
+        { name: "Back Day Boss", curr: 0, max: 10, description: "Awarded for reaching 10 check-ins with the back day, indicating consistent effort towards back muscle strength and definition.", achieved: false },
     ],
     Legs: [
-        { name: "SquatKing", curr: 0, max: 10, description: "Have Squatted over 10 times", achieved: false },
+        { name: "Leg Day Legend", curr: 0, max: 10, description: "Awarded for completing 10 check-ins with the leg day, showcasing dedication to lower body strength and development.", achieved: false },
     ],
+    Shoulder:[
+        {name:"Shoulder Sculptor", curr: 0, max: 10, description:"Awarded for accumulating 10 check-ins with the shoulder day, demonstrating commitment to shoulder muscle growth and definition.",achieved:false}
+    ],
+    Cardio:[
+        {name:"Cardio King", curr: 0, max: 10, description:"Awarded for achieving 10 check-ins with the cardio day, highlighting a focus on cardiovascular health and endurance.",achieved:false}
+    ],
+    Core:[
+        {name:"Core Crusher", curr: 0, max: 10, description:"Awarded for reaching 10 check-ins with the core day, showcasing dedication to core muscle strength and definition.",achieved:false}
+    ],
+    FullBody:[
+        {name:"Full Body Fiend", curr: 0, max: 10, description:"Awarded for completing 10 check-ins with the full body day, demonstrating commitment to overall body strength and development.",achieved:false}
+    ],
+    CheckIn: [
+        { "name": "Check-In Champion", "curr": 0, "max": 15, "description": "Awarded for reaching 15 total check-ins.", "achieved": false },
+        { "name": "Consistency Conqueror", "curr": 0, "max": 25, "description": "Awarded for making 25 check-ins in a single month.", "achieved": false },
+        { "name": "Iron Dedication", "curr": 0, "max": 50, "description": "Awarded for hitting 50 consecutive check-ins without missing a day.", "achieved": false },
+    ]
 };
 
 export type CurrentlyMessagingEntry = {

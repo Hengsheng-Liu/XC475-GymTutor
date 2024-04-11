@@ -76,7 +76,7 @@ const AchievementModal = ({ image, name, description, current, max,achieved,edit
                   </Center>
               </Box>
               <Text marginBottom={"5"}>{description}</Text>
-              {!achieved && <Button bgColor="#EA580C"><Text color = "#FAFAFA">You Status: {current}/{max}</Text></Button>}
+              {!achieved && <Button bgColor="#EA580C"><Text color = "#FAFAFA">Your Status: {current}/{max}</Text></Button>}
             </Flex>
           </Modal.Body>
         </Modal.Content>

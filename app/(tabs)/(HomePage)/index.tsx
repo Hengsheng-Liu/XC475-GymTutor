@@ -20,7 +20,6 @@ import {
   Point,
   Geometry
 } from "react-native-google-places-autocomplete";
-import * as Location from "expo-location";
 import { useAuth } from "@/Context/AuthContext";
 import { router } from "expo-router";
 
