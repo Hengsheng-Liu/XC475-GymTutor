@@ -14,7 +14,7 @@ export const expoConfig = {
 
   assetBundlePatterns: ['**/*'],
   ios: {
-    bundleIdentifier: 'com.anonymous.SpotMe',
+    bundleIdentifier: "com.spot-me.spotme",
     supportsTablet: true,
     infoPlist: {
       "UIBackgroundModes": [
@@ -25,7 +25,7 @@ export const expoConfig = {
     }
   },
   android: {
-    package: 'com.anonymous.SpotMe',
+    package: "com.spot-me.spotme",
     adaptiveIcon: {
       foregroundImage: './assets/images/adaptive-icon.png',
       backgroundColor: '#ffffff',
@@ -54,7 +54,13 @@ export const expoConfig = {
       {
         "locationAlwaysAndWhenInUsePermission": "Allow Spot Me to use your location."
       }
-    ]
+    ],
+    "expo-camera",
+    {
+      "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+      "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+      "recordAudioAndroid": true
+    }
   ],
   "expo": {
     "extra": {
