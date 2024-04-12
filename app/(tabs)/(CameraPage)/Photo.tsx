@@ -12,7 +12,7 @@ import { Feather } from "@expo/vector-icons";
 import { useAuth } from "@/Context/AuthContext";
 import { FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from "expo-image-picker";
-export default function Test() {
+export default function Photo() {
   let camRef = useRef<Camera>(null);
   const [type, setType] = useState(CameraType.back);
   const [CameraPermission, setcameraPermission] = useState(false);
@@ -33,8 +33,8 @@ export default function Test() {
       setBase64Img(result.assets[0].uri);
       setPickImage(true);
     }
-  } catch (E) {
-    console.log(E);
+  } catch (e) {
+    console.log(e);
   }
 }
   function toggleCameraType() {

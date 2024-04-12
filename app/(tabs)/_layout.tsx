@@ -49,7 +49,15 @@ export default function TabLayout() {
             tabBarIcon: (props) => <TabBarIcon {...props} name="pencil" />
           }}
         />
+        <Tabs.Screen
+          name = "(CameraPage)/Photo"
+          options={{
+            href: null,
+            headerShown: false,
+          }}
+        />
       </Tabs>
+
     );
   }
 }
