@@ -1,46 +1,57 @@
-import {
-  Avatar,
-  Box,
-  Flex,
-  Heading,
-  Row,
-  Text,
-  Column,
-  IconButton,
-} from "native-base";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Box, Flex, Heading, Text, Column, IconButton, Image } from "native-base";
 import { useAuth } from "@/Context/AuthContext";
 import { Entypo } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+
 interface HeaderProps {
   name: string;
-  icon?: string;
+  icon: string;
   gym: string;
 }
+
 export default function Header({ name, icon, gym }: HeaderProps) {
   const { currUser } = useAuth();
-  if (!currUser) return;
+  const [userIcon, setUserIcon] = useState<string>(require("@/assets/images/default-profile-pic.png"));
+
+  const GetUserIcon = async (iconUrl: string) => {
+    try {
+      const storage = getStorage();
+      const storageRef = ref(storage, iconUrl);
+      const url = await getDownloadURL(storageRef);
+      setUserIcon(url);
+      console.log("User Icon: ", url);
+    } catch (error) {
+      console.error("Error getting user icon: ", error);
+      setUserIcon(require("@/assets/images/default-profile-pic.png"));
+    }
+  };
+
+  useEffect(() => {
+    if (currUser && icon) {
+      GetUserIcon(icon);
+    }
+  }, [icon, currUser]); 
+
+  if (!currUser) return null;
 
   return (
     <Flex>
       <Flex alignItems={"center"} marginBottom={2} flexDir={"row"}>
         <Box>
-          <Avatar
-            size="2xl"
-            source={
-              currUser.icon
-                ? { uri: currUser.icon }
-                : require("@/assets/images/default-profile-pic.png")
-            }
+          <Image 
+            size={130}
+            borderRadius={100}
+            source={{ uri: userIcon }}
+            alt="User Icon"
           />
-
           <IconButton
-            icon={<Entypo name="camera" size={28} color="#FED7AA" />}
+            icon={<Entypo name="camera" size={28} color="#FB923C" />}
             zIndex={1}
-
             marginTop={"-10"}
             marginLeft={"20"}
-            onPress={() => router.push("/Photo")}
+            onPress={() => router.push({pathname:"/Photo",params:{Avatar:true}})}
           />
         </Box>
         <Column marginLeft={2}>

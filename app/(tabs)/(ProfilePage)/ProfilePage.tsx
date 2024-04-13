@@ -39,6 +39,7 @@ import {
   getCurrUser,
 } from "../../../components/FirebaseUserFunctions";
 import { SafeAreaView } from "react-native";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 // note - I originally wrote everything below in UserProfilePage.tsx under 'components', and tried importing
 // it from there, but for some reason that didn't work. So for now, I put the code in UserProfilePage in this file
 
@@ -46,26 +47,25 @@ const ProfilePage = () => {
   const [userInfo, setUserInfo] = useState<IUser>();
   const [Display, setDisplay] = useState<string[]>(["default", "default", "default"]);
   const { User,userGym } = useAuth(); // gets current user's authentication data (in particular UID)
- 
-  // finds the current user's data (only name for now) via Users firestore database.
-
+  const [userIcon, setUserIcon] = useState<string>("default");
   useEffect(() => {
-    if (!User) return;
+    if (!User) return;    
     const fetchUser = async () => {
-      const unsub = onSnapshot(doc(firestore, "Users", User.uid), (doc) => {
-        setUserInfo(doc.data() as IUser);
+      const unsub = onSnapshot(doc(firestore, "Users", User.uid), (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          console.log("User data updated")
+          setUserInfo(docSnapshot.data() as IUser);
+        } else {
+          console.log("No user data available");
+        }
       });
+
+      
+      return () => unsub();
     };
+
     fetchUser();
-
-    //testing purposes
-    if (userInfo) {
-      console.log("frined count", userInfo.friends.length);
-    }
-
-   
-  }, []);
-
+  }, [User]); 
   const updateBio = async (newBio:string) => {
     if (User) {
       try {
@@ -74,8 +74,8 @@ const ProfilePage = () => {
         console.error("Error updating bio: ", error);
       }
   }
-
   };
+
 
   const updateTags = async (addTag:string) => {
     if (User) {
@@ -106,7 +106,7 @@ const ProfilePage = () => {
           <Box ml={"3"} mr={"3"} paddingTop={"10"}>
             {userInfo && (
               <Flex>
-                <Header name={userInfo.name} gym={userInfo.gym} />
+                <Header name={userInfo.name} gym={userInfo.gym} icon = {userInfo.icon}/>
 
                 <Attribute description={userInfo.tags} onSaveTag={updateTags} />
                 <ButtonGroup friendCount={userInfo.friends.length + " Friends"}

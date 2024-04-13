@@ -12,21 +12,29 @@ import { Feather } from "@expo/vector-icons";
 import { useAuth } from "@/Context/AuthContext";
 import { FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from "expo-image-picker";
-export default function Photo() {
+import { router, useLocalSearchParams } from "expo-router";
+import { firestore } from '../../firebaseConfig';
+import { doc, updateDoc } from "firebase/firestore";
+export default function photo() {
   let camRef = useRef<Camera>(null);
   const [type, setType] = useState(CameraType.back);
   const [CameraPermission, setcameraPermission] = useState(false);
   const [pickImage, setPickImage] = useState(false);
+  const {Avatar} = useLocalSearchParams();
   const { User } = useAuth();
   const [cameraOpen, setCameraOpen] = useState(false);
   const [base64Img, setBase64Img] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    console.log("Camerage Page again")
+    reset();
+  }, []);
   async function UserpickImage() {
     try{
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       base64: true,
       allowsEditing: true,
-      aspect: [9, 16],
+      aspect: [4, 3],
       quality: 1,
     });
     if (!result.canceled) {
@@ -62,39 +70,55 @@ export default function Photo() {
       setBase64Img(picture.base64);
     }
   }
-
+  async function setUserIcon(url:string){
+    if(User){
+      const userRef = doc(firestore, "Users", User.uid);
+      await updateDoc(userRef, { icon: url });
+    }
+}
   async function uploadImage() {
     try {
       const storage = getStorage();
+      const url = Avatar ? `Icon/${User?.uid}/Avatar.png`:`CheckIn/${User?.uid}/${new Date().toISOString()}.png`;
       const storageRef = ref(
         storage,
-        `images/${User?.uid}/${new Date().toISOString()}.png`
+        url
       );
-  
+      if(!base64Img){
+        return
+      }
       const fetchResponse = await fetch(`data:image/png;base64,${base64Img}`);
+
       const blob = await fetchResponse.blob();
   
       const uploadResult = await uploadBytes(storageRef, blob);
+      setUserIcon(url);
       console.log("Image uploaded to: ", uploadResult.metadata.fullPath);
       if (uploadResult.metadata.fullPath) {
-        alert("Image uploaded to: " + uploadResult.metadata.fullPath);
+        alert("Image uploaded successfully!");
         reset();
+      
       }
+      Goback();
     } catch (error) {
       console.error("Error uploading image:", error);
+
     }
   }
   
 
   function reset() {
     setBase64Img(undefined);
-    setCameraOpen(false);
-    setPickImage(false);
-  }
-  function retake() {
-    setBase64Img(undefined);
     setCameraOpen(true);
     setPickImage(false);
+  }
+  function Goback(){
+    if(Avatar){
+      router.replace("ProfilePage")
+    }else{
+      router.replace("DailyPicture")
+    }
+    reset();
   }
     return (
       <NativeBaseProvider>
@@ -113,23 +137,38 @@ export default function Photo() {
                 alignItems={"center"}
                 marginTop={2}
               >
-                <TouchableOpacity onPress={openCamera}>
+                {
+                  /*
+                <TouchableOpacity onPress={() => router.replace("ProfilePage")}>
                   <AntDesign name="back" size={28} color="black" />
+                </TouchableOpacity>
+                */}
+                <TouchableOpacity onPress={UserpickImage} >
+                    <FontAwesome name="photo" size={26} color="#EA580C" />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={takePicture}>
                   <Box
                     width={50}
                     height={50}
-                    bgColor="gray.400"
+                    bgColor="#EA580C"
+                    zIndex={1}
                     borderRadius={25}
+                    borderColor={"#FAFAFA"}
+                    borderWidth={5}
+                  />
+                  <Box
+                    width={60}
+                    height={60}
+                    marginTop={"-55"}
+                    marginLeft={"-5.5"}
+                    bgColor="#EA580C"
+                    borderRadius={30}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={toggleCameraType}>
-                  <Entypo name="cycle" size={24} color="black" />
+                  <Entypo name="cycle" size={26} color="#EA580C" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={UserpickImage} >
-                    <FontAwesome name="photo" size={24} color="black" />
-                </TouchableOpacity>
+
               </Flex>
             </SafeAreaView>
           ) : cameraOpen && base64Img ? (
@@ -149,23 +188,19 @@ export default function Photo() {
                 alignItems={"center"}
                 marginTop={2}
               >
-                <TouchableOpacity onPress={retake}>
-                  <AntDesign name="back" size={28} color="black" />
+                <TouchableOpacity onPress={reset}>
+                  <AntDesign name="back" size={30} color="#EA580C" />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={uploadImage}>
-                  <Feather name="upload" size={28} color="black" />
+                  <Feather name="upload" size={30} color="#EA580C" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={reset}>
-                  <Feather name="trash-2" size={28} color="black" />
+                <TouchableOpacity onPress={Goback}>
+                  <Feather name="trash-2" size={30} color="#EA580C" />
                 </TouchableOpacity>
               </Flex>
             </SafeAreaView>
           ) : (
             <View>
-              <TouchableOpacity onPress={openCamera}>
-                <Text>Open Camera</Text>
-              </TouchableOpacity>
-              <StatusBar style="auto" />
             </View>
           )}
         </View>

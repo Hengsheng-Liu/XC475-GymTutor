@@ -11,6 +11,7 @@ export default function HomeLayout() {
         <Stack.Screen name="SelectWorkout" options= {{headerShown: false}}/>
         <Stack.Screen name="CheckInSubmit" options= {{headerShown: false}}/>
         <Stack.Screen name="FriendProfile" options= {{headerShown: false}}/>
+        <Stack.Screen name="DailyPicture" options= {{headerShown: false}}/>
         </Stack>
     )
 }

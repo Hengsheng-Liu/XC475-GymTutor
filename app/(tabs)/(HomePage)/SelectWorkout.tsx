@@ -99,6 +99,7 @@ export default function SelectWorkout() {
       Tags
       selectedBodyParts={selected}
       setSelectedBodyParts={setSelected}
+      Process
     />
 
     </NativeBaseProvider>

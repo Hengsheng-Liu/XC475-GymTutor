@@ -124,8 +124,15 @@ const AchievementPage = () => {
             </Flex>
             </Box>}
           </Flex>
+
       </ScrollView>
-      {edit && <Button backgroundColor={"#F97316"} onPress={updateUserDisplay}>Submit</Button>}
+      {edit && 
+      <Flex flexDir={"row"} justifyContent={"space-around"} backgroundColor={"#FFF"} paddingBottom={5}>
+         <Button backgroundColor={"#F97316"} width = {"1/3"} borderRadius = {"15"}  onPress={updateUserDisplay}>Submit</Button>
+       <Button backgroundColor={"#F97316"} width={"1/3"} borderRadius = {"15"} onPress={() => router.navigate("/ProfilePage")}>Cancel</Button>
+     
+      </Flex>
+      }
     </NativeBaseProvider>
   );
 };
