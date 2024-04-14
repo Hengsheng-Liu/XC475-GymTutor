@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { View, ScrollView, TouchableOpacity } from "react-native";
+import { View, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { CurrentlyMessagingEntry, IUser } from "@/components/FirebaseUserFunctions";
 import { useAuth } from "@/Context/AuthContext";
 import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
 import { router } from "expo-router";
-import { findOrCreateChat } from "./data";
+import { findOrCreateChat, generateChatId } from "./data";
 import { globalState } from './globalState';
 import { NativeBaseProvider, Spacer, Pressable, Text, Box, Column, Spinner, Heading, Input, Row } from "native-base";
 import { SafeAreaView } from "react-native-safe-area-context";
 import theme from "@/components/theme";
 import Header from "@/components/ChatComponents/Header";
 import { FontAwesome } from "@expo/vector-icons";
-import { getDocs, where, query, collection } from "firebase/firestore";
+import { getDocs, where, query, collection, doc, deleteDoc, getDoc, updateDoc, arrayRemove, writeBatch } from "firebase/firestore";
 import { firestore } from "@/firebaseConfig";
 import { filterUsersByName } from "@/components/FirebaseUserFunctions";
 import ChatPreview from "@/components/ChatComponents/ChatContainer";
@@ -56,6 +56,89 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
     console.log(findOrCreateChat(User?.uid, user.uid));
     globalState.user = user; // Set the selected user in the global state
     router.navigate("ChatPage"); // Then navigate to ChatPage
+  };
+
+  const confirmAndDelete = (user) => {
+    Alert.alert(
+      "Confirm Delete", // Dialog Title
+      "Are you sure you want to delete this chat?", // Dialog Message
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "Delete",
+          onPress: () => handleDeleteMessageSession(user),
+          style: "destructive"
+        }
+      ]
+    );
+  };
+
+  const handleDeleteMessageSession = async (user) => {
+    setLoading(true);
+    try {
+      if (!User || !User.uid) {
+        console.error("No current user logged in!");
+        return;
+      }
+
+      // Generate the chat document ID using your existing function
+      const chatId = generateChatId(User.uid, user.uid);
+
+      // Fetch current user document to get the timeAsNumber
+      const currentUserDocRef = doc(firestore, "Users", User.uid);
+      const currentUserDoc = await getDoc(currentUserDocRef);
+      const currentUserData = currentUserDoc.data();
+
+      // Fetch other user document to get the timeAsNumber
+      const otherUserDocRef = doc(firestore, "Users", user.uid);
+      const otherUserDoc = await getDoc(otherUserDocRef);
+      const otherUserData = otherUserDoc.data();
+
+      const currentUserEntryToRemove = currentUserData?.CurrentlyMessaging.find(entry => entry.userId === user.uid);
+      const otherUserEntryToRemove = otherUserData?.CurrentlyMessaging.find(entry => entry.userId === User.uid);
+
+      // Create a reference to the chat document
+      const chatDocRef = doc(firestore, "Chat", chatId);
+      const messagesColRef = collection(chatDocRef, "Messages");
+
+      // First, delete all documents in the Messages subcollection
+      const messagesSnapshot = await getDocs(messagesColRef);
+      const batch = writeBatch(firestore);
+
+      messagesSnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+
+      // Commit the batch
+      await batch.commit();
+      console.log("All messages deleted successfully");
+
+      // Delete the chat document
+      await deleteDoc(chatDocRef);
+
+      console.log(chatDocRef);
+
+      console.log("Chat session deleted successfully");
+
+      if (currentUserEntryToRemove && otherUserEntryToRemove) {
+        await updateDoc(currentUserDocRef, {
+          CurrentlyMessaging: arrayRemove(currentUserEntryToRemove)
+        });
+        await updateDoc(otherUserDocRef, {
+          CurrentlyMessaging: arrayRemove(otherUserEntryToRemove)
+        });
+
+        console.log("Both users' CurrentlyMessaging fields updated successfully");
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Failed to delete chat session:", error);
+    }
   };
 
   useEffect(() => {
@@ -170,7 +253,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
         ) : (
           <ScrollView style={{ flex: 1, zIndex: 0 }}>
             {users.map((user) => (
-              <Pressable onPress={() => navigateToChatPage(user)}>
+              <Pressable onPress={() => navigateToChatPage(user)} onLongPress={() => confirmAndDelete(user)}>
                 {({ isPressed }) => {
                   return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"}
                     style={{ transform: [{ scale: isPressed ? 0.96 : 1 }] }}
