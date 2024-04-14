@@ -3,7 +3,6 @@ import React from "react";
 import { router } from "expo-router";
 import { SvgProps } from "react-native-svg";
 import BodyPart from "./BodyPart";
-import { useState } from "react";
 interface CheckInOneProps {
     navigation: () => void;
     Icon: React.FC<SvgProps>
@@ -12,11 +11,12 @@ interface CheckInOneProps {
     Tags?:boolean | false;
     selectedBodyParts?: string[];
     setSelectedBodyParts?: React.Dispatch<React.SetStateAction<string[]>>; 
-    lastPage?: boolean;
+    Process?: boolean;
+    skipPhoto?: boolean;
 }
 export default function CheckInRoutine(
     {navigation, Icon, Title,ButtonText, Tags, selectedBodyParts, setSelectedBodyParts
-    , lastPage = false
+    , Process, skipPhoto = false
     }: CheckInOneProps
     
 ) {
@@ -41,11 +41,18 @@ export default function CheckInRoutine(
             <Button bg={"#EA580C"} width={175} onPress={navigation}>
                 <Text fontSize={20} fontWeight={700} color={"#FAFAFA"}>{ButtonText}</Text>
             </Button>
-            { !lastPage &&
+            { !Process && !skipPhoto &&
             <Pressable onPress={() => router.back()} marginTop={4} paddingX={5}>
                 <Text color = {"muted.500"} >Not yet</Text>
             </Pressable>
 }
+            {
+              skipPhoto &&
+              <Pressable onPress={() => router.push("SelectWorkout")} marginTop={4} paddingX={5}>
+                <Text color = {"muted.500"} >Skip</Text>
+              </Pressable>
+            }
+
           </Center>
         </Flex>
       </VStack>

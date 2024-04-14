@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Tags from "../../../assets/images/checkIn/Tags.svg";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import CheckInRoutine from "@/components/CheckInComponents/CheckInRoutine";
 import { useState } from "react";
 import { useAuth } from "@/Context/AuthContext";
@@ -15,8 +15,13 @@ export default function SelectWorkout() {
   const [selected, setSelected] = useState<string[]>([]);
   const [Inprogress, setInprogress] = useState<Achievementprops[]>([]);
   const [Completed, setCompleted] = useState<Achievementprops[]>([]);
+  const [openModal, setOpenModal] = useState(false);
   const [ModalVisible, setModalVisible] = useState(false);
   const { User } = useAuth();
+  const { url } = useLocalSearchParams<{ url?: string}>();
+  useEffect(() => {
+    console.log("url=",url);
+  }, []);
 
   const submitToDatabase = async () => {
     if (!User) return;
@@ -25,7 +30,7 @@ export default function SelectWorkout() {
     const InProgressHolder:Achievementprops[] = [];
     const CompletedHolder: Achievementprops[] = [];
     let UpdateAchievement = userData.Achievement;
-    AddDate(User.uid);
+    AddDate(User.uid, url);
     if (!userData.Achievement) {
       await updateDoc(userRef, {
         Achievement: DefaultAchievement,
@@ -43,10 +48,26 @@ export default function SelectWorkout() {
             InProgressHolder.push(item);
           }
         }
+      )
+        UpdateAchievement["CheckIn"].forEach((item) => {
+          item.curr += 1;
+          if (item.curr === item.max) {
+            CompletedHolder.push(item);
+            item.achieved = true;
+          }else if(item.curr < item.max){
+            InProgressHolder.push(item);
+          }
+
+        }
       );
     })
     setInprogress(InProgressHolder);
     setCompleted(CompletedHolder);
+    if(InProgressHolder.length > 0 || CompletedHolder.length > 0){
+      setModalVisible(true);
+    }else{
+      router.push("/CheckInSubmit");
+    }
     try {
       await updateDoc(userRef, {
         Achievement: UpdateAchievement,
@@ -61,11 +82,6 @@ export default function SelectWorkout() {
       alert("Please select a workout.");
     } else {
       submitToDatabase();
-      /*
-      router.push("/CheckInSubmit");
-      submitToDatabase();
-      */
-      setModalVisible(true);
     }
   };
 
@@ -87,6 +103,7 @@ export default function SelectWorkout() {
       Tags
       selectedBodyParts={selected}
       setSelectedBodyParts={setSelected}
+      Process
     />
 
     </NativeBaseProvider>

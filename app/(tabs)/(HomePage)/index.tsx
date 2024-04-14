@@ -20,7 +20,6 @@ import {
   Point,
   Geometry
 } from "react-native-google-places-autocomplete";
-import * as Location from "expo-location";
 import { useAuth } from "@/Context/AuthContext";
 import { router } from "expo-router";
 
@@ -45,7 +44,7 @@ export default function SelectGym() {
   if (!userGym) return router.replace("/LoadingPage");
 
   useEffect(() => {
-    // Make sure SearchLocation is defined and has the necessary properties
+   
 
     if (
       !SearchLocation ||

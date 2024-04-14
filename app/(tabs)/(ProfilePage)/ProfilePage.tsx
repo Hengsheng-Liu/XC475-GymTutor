@@ -44,28 +44,25 @@ import { SafeAreaView } from "react-native";
 
 const ProfilePage = () => {
   const [userInfo, setUserInfo] = useState<IUser>();
-  const [Display, setDisplay] = useState<string[]>(["default", "default", "default"]);
   const { User,userGym } = useAuth(); // gets current user's authentication data (in particular UID)
- 
-  // finds the current user's data (only name for now) via Users firestore database.
-
+  const [history, setHistory] = useState<string[]>([]);
   useEffect(() => {
-    if (!User) return;
+    if (!User) return;    
     const fetchUser = async () => {
-      const unsub = onSnapshot(doc(firestore, "Users", User.uid), (doc) => {
-        setUserInfo(doc.data() as IUser);
-      });
+      const unsub = onSnapshot(doc(firestore, "Users", User.uid), (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const data = docSnapshot.data() as IUser;
+          setUserInfo(data);
+          setHistory(data.checkInHistory.map(x => x.day));
+        } else {
+          console.log("No user data available");
+        }
+      });      
+      return () => unsub();
     };
+
     fetchUser();
-
-    //testing purposes
-    if (userInfo) {
-      console.log("frined count", userInfo.friends.length);
-    }
-
-   
-  }, []);
-
+  }, [User]); 
   const updateBio = async (newBio:string) => {
     if (User) {
       try {
@@ -74,8 +71,8 @@ const ProfilePage = () => {
         console.error("Error updating bio: ", error);
       }
   }
-
   };
+
 
   const updateTags = async (addTag:string) => {
     if (User) {
@@ -87,7 +84,6 @@ const ProfilePage = () => {
       }
     }
   }
-
   const theme = extendTheme({
     components: {
       Button: {
@@ -106,17 +102,17 @@ const ProfilePage = () => {
           <Box ml={"3"} mr={"3"} paddingTop={"10"}>
             {userInfo && (
               <Flex>
-                <Header name={userInfo.name} gym={userInfo.gym} />
+                <Header name={userInfo.name} gym={userInfo.gym} icon = {userInfo.icon}/>
 
                 <Attribute description={userInfo.tags} onSaveTag={updateTags} />
                 <ButtonGroup friendCount={userInfo.friends.length + " Friends"}
                   gym = {userGym}
-                  History = {userInfo.checkInHistory}
+                  History = {history}
 
                 />
                 <Description bio={userInfo.bio} onSave={updateBio}/>
                 <Achievement display = {userInfo.display}/>
-                <History history = {userInfo.checkInHistory}/>
+                <History history = {history}/>
               </Flex>
             )}
           </Box>

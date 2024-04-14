@@ -7,7 +7,7 @@ export const getSVG = (name: string, achieved: boolean) => {
         <SvgUri
           width="100%"
           height="100%"
-          uri={`/assets/images/achievements/Complete/${name}.svg`}
+          uri={`/assets/images/achievements/Complete/${name.replace(/\s/g, '')}Colored.svg`}
         />
       );
     } else {
@@ -15,7 +15,7 @@ export const getSVG = (name: string, achieved: boolean) => {
         <SvgUri
           width="100%"
           height="100%"
-          uri={`/assets/images/achievements/Uncomplete/${name}.svg`}
+          uri={`/assets/images/achievements/Uncomplete/${name.replace(/\s/g, '')}Grey.svg`}
         />
       );
     }

@@ -1,22 +1,15 @@
-import { Heading, NativeBaseProvider, Box } from "native-base";
-import { SafeAreaView, StyleSheet, View,Image } from "react-native";
 import React from "react";
-import Grey from "../../assets/images/achievements/Uncomplete/Grey.svg"
-import { SvgUri } from "react-native-svg";
-import Logo from "../../assets/images/Logo.svg";
+import Camera from "../../assets/images/checkIn/Camera.svg";
+import { Entypo } from '@expo/vector-icons';
+import { router } from "expo-router";
+import CheckInRoutine from "@/components/CheckInComponents/CheckInRoutine";
 export default function Test() {
-  return (
-    <NativeBaseProvider>
-      <SafeAreaView style={styles.container}>
-        <Logo />
-      </SafeAreaView>
-    </NativeBaseProvider>
-  );
+    const goPhotoPage = () =>{
+        router.push("Photo")
+    }
+    return (
+        <CheckInRoutine navigation={goPhotoPage} Icon={Camera} Title={"Take a picture to prove it."} ButtonText={"Use Camera"} lastPage/>
+    )
+  
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: "#ecf0f1",
-  },
-});
+

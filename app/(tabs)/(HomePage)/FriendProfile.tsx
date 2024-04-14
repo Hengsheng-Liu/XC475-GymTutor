@@ -183,8 +183,8 @@ const FriendProfilePage = () => {
                 </HStack>
 
                 <Description bio={userInfo.bio} />
-                <Achievement />
-                <History history={userInfo.checkInHistory} />
+                <Achievement display={userInfo.display} />
+                <History history={userInfo.checkInHistory.map(x => x.day)} />
               </Flex>
             )}
           </Box>

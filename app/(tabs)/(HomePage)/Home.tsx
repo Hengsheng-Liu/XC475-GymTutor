@@ -53,7 +53,7 @@ export default function HomeScreen() {
 
   const checkUser = () => {
     if (currUser) {
-      const History = currUser.checkInHistory;
+      const History = currUser.checkInHistory.map((each) => each.day);
       if (History && History.includes(Today)) {
         setCheckIn(true); 
       };
@@ -193,7 +193,7 @@ export default function HomeScreen() {
           ) : (
           <ScrollView style={{flex:1, zIndex:0}}>
             {users.map((user) => (
-            <Pressable onPress={()=> handlePreviewClick(user)}>
+            <Pressable onPress={()=> handlePreviewClick(user)} key = {user.uid}>
               {({ isPressed }) => {
               return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} 
                           style={{transform: [{ scale: isPressed ? 0.96 : 1 }]}} 
