@@ -18,7 +18,6 @@ import { doc, updateDoc } from "firebase/firestore";
 export default function photo() {
   let camRef = useRef<Camera>(null);
   const [type, setType] = useState(CameraType.back);
-  const [CameraPermission, setcameraPermission] = useState(false);
   const [pickImage, setPickImage] = useState(false);
   const {Avatar} = useLocalSearchParams();
   const { User } = useAuth();
@@ -92,14 +91,16 @@ export default function photo() {
       const blob = await fetchResponse.blob();
   
       const uploadResult = await uploadBytes(storageRef, blob);
-      setUserIcon(url);
+      if(Avatar){
+        setUserIcon(url);
+      }
       console.log("Image uploaded to: ", uploadResult.metadata.fullPath);
       if (uploadResult.metadata.fullPath) {
         alert("Image uploaded successfully!");
         reset();
       
       }
-      Goback();
+      Goback(url);
     } catch (error) {
       console.error("Error uploading image:", error);
 
@@ -112,11 +113,15 @@ export default function photo() {
     setCameraOpen(true);
     setPickImage(false);
   }
-  function Goback(){
+  function Goback(url?:string){
     if(Avatar){
-      router.replace("ProfilePage")
+      router.replace("ProfilePage");
     }else{
-      router.replace("DailyPicture")
+      if(url){
+        router.replace({pathname:"/SelectWorkout",params:{url:url}});
+      } else {
+        router.replace("DailyPicture");
+      }
     }
     reset();
   }
@@ -194,7 +199,7 @@ export default function photo() {
                 <TouchableOpacity onPress={uploadImage}>
                   <Feather name="upload" size={30} color="#EA580C" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={Goback}>
+                <TouchableOpacity onPress={() => Goback()}>
                   <Feather name="trash-2" size={30} color="#EA580C" />
                 </TouchableOpacity>
               </Flex>

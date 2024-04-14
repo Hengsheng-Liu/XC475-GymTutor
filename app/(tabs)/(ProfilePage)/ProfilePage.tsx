@@ -39,28 +39,25 @@ import {
   getCurrUser,
 } from "../../../components/FirebaseUserFunctions";
 import { SafeAreaView } from "react-native";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
 // note - I originally wrote everything below in UserProfilePage.tsx under 'components', and tried importing
 // it from there, but for some reason that didn't work. So for now, I put the code in UserProfilePage in this file
 
 const ProfilePage = () => {
   const [userInfo, setUserInfo] = useState<IUser>();
-  const [Display, setDisplay] = useState<string[]>(["default", "default", "default"]);
   const { User,userGym } = useAuth(); // gets current user's authentication data (in particular UID)
-  const [userIcon, setUserIcon] = useState<string>("default");
+  const [history, setHistory] = useState<string[]>([]);
   useEffect(() => {
     if (!User) return;    
     const fetchUser = async () => {
       const unsub = onSnapshot(doc(firestore, "Users", User.uid), (docSnapshot) => {
         if (docSnapshot.exists()) {
-          console.log("User data updated")
-          setUserInfo(docSnapshot.data() as IUser);
+          const data = docSnapshot.data() as IUser;
+          setUserInfo(data);
+          setHistory(data.checkInHistory.map(x => x.day));
         } else {
           console.log("No user data available");
         }
-      });
-
-      
+      });      
       return () => unsub();
     };
 
@@ -87,7 +84,6 @@ const ProfilePage = () => {
       }
     }
   }
-
   const theme = extendTheme({
     components: {
       Button: {
@@ -111,12 +107,12 @@ const ProfilePage = () => {
                 <Attribute description={userInfo.tags} onSaveTag={updateTags} />
                 <ButtonGroup friendCount={userInfo.friends.length + " Friends"}
                   gym = {userGym}
-                  History = {userInfo.checkInHistory}
+                  History = {history}
 
                 />
                 <Description bio={userInfo.bio} onSave={updateBio}/>
                 <Achievement display = {userInfo.display}/>
-                <History history = {userInfo.checkInHistory}/>
+                <History history = {history}/>
               </Flex>
             )}
           </Box>

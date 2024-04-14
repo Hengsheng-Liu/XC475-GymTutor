@@ -49,8 +49,12 @@ export const expoConfig = {
   },
   plugins: [
     "expo-router",
+    {
+      "origin": "https://spot-me.vercel.app",
+    }
     [
       "expo-location",
+      
       {
         "locationAlwaysAndWhenInUsePermission": "Allow Spot Me to use your location."
       }

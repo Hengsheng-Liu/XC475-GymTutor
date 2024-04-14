@@ -30,6 +30,10 @@ export interface Achievementprops {
     achieved: boolean;
     description: string;
 }
+export interface DailyCheckIn {
+    day: string;
+    photo: string;
+}
 export interface Achievements {
     Chest: Achievementprops[];
     Back: Achievementprops[];
@@ -90,7 +94,7 @@ export interface IUser {
     rejectedRequests: string[];
     blockedUsers: string[];
     gym: string;
-    checkInHistory: string[]; // Add proper type
+    checkInHistory: DailyCheckIn[]; // Add proper type
     icon: string;
     Achievement: Achievements;
     gymExperience: string;
@@ -534,14 +538,19 @@ async function randomIt(): Promise<void> {
     // Example usage
     const randomName: string = generateRandomName(randomSex);
 }
-export const AddDate = async (uid: string) => {
+export const AddDate = async (uid: string, url:string|undefined) => {
     const Day = new Date();
     const Today = CalendarUtils.getCalendarDateString(Day);
+    const newCheckIn: DailyCheckIn = {
+        day: Today,
+        photo: url ? url : "default/CheckInPhoto.png"
+    };
+
     try {
         const userRef = doc(firestore, "Users", uid);
         const userCheckHistory = (await getDoc(userRef)).data()?.checkInHistory;
         await updateDoc(userRef, {
-            checkInHistory: [...userCheckHistory, Today],
+            checkInHistory: [...userCheckHistory, newCheckIn],
         });
     } catch (error) {
         console.error("Error updating bio: ", error);

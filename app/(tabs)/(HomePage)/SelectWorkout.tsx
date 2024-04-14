@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Tags from "../../../assets/images/checkIn/Tags.svg";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import CheckInRoutine from "@/components/CheckInComponents/CheckInRoutine";
 import { useState } from "react";
 import { useAuth } from "@/Context/AuthContext";
@@ -18,6 +18,10 @@ export default function SelectWorkout() {
   const [openModal, setOpenModal] = useState(false);
   const [ModalVisible, setModalVisible] = useState(false);
   const { User } = useAuth();
+  const { url } = useLocalSearchParams<{ url?: string}>();
+  useEffect(() => {
+    console.log("url=",url);
+  }, []);
 
   const submitToDatabase = async () => {
     if (!User) return;
@@ -26,7 +30,7 @@ export default function SelectWorkout() {
     const InProgressHolder:Achievementprops[] = [];
     const CompletedHolder: Achievementprops[] = [];
     let UpdateAchievement = userData.Achievement;
-    AddDate(User.uid);
+    AddDate(User.uid, url);
     if (!userData.Achievement) {
       await updateDoc(userRef, {
         Achievement: DefaultAchievement,

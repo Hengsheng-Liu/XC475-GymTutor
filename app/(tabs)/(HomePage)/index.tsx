@@ -44,7 +44,7 @@ export default function SelectGym() {
   if (!userGym) return router.replace("/LoadingPage");
 
   useEffect(() => {
-    // Make sure SearchLocation is defined and has the necessary properties
+   
 
     if (
       !SearchLocation ||
