@@ -21,6 +21,7 @@ import { GeoPoint } from 'firebase/firestore';
 import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
 import Achievement from './ProfileComponents/Achievement';
 import { CalendarUtils } from 'react-native-calendars';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 
 type Birthday = { day: number, month: number, year: number };
 export interface Achievementprops {
@@ -556,7 +557,17 @@ export const AddDate = async (uid: string, url:string|undefined) => {
         console.error("Error updating bio: ", error);
     }
 };
-
+export const getUserIcon = async (iconUrl: string): Promise<string> => {
+    try {
+      const storage = getStorage();
+      const storageRef = ref(storage, iconUrl);
+      const url = await getDownloadURL(storageRef);
+      return url;  
+    } catch (error) {
+      console.error("Error getting user icon: ", error);
+      return require("@/assets/images/default-profile-pic.png");  // return the default icon URL
+    }
+  };
 // Attempt to do it automatically. Didn't work and gave up
 // Define a function to fetch all users and update them with missing fields
 // export async function updateUsers(): Promise<void> {

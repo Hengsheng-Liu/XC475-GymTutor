@@ -13,6 +13,7 @@ import { Entypo } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { Camera } from "expo-camera";
+import { getUserIcon } from "@/components/FirebaseUserFunctions";
 
 interface HeaderProps {
   name: string;
@@ -26,17 +27,7 @@ export default function Header({ name, icon, gym }: HeaderProps) {
     require("@/assets/images/default-profile-pic.png")
   );
 
-  const GetUserIcon = async (iconUrl: string) => {
-    try {
-      const storage = getStorage();
-      const storageRef = ref(storage, iconUrl);
-      const url = await getDownloadURL(storageRef);
-      setUserIcon(url);
-    } catch (error) {
-      console.error("Error getting user icon: ", error);
-      setUserIcon(require("@/assets/images/default-profile-pic.png"));
-    }
-  };
+
   const ReTakeAvatar = () => {
     Camera.getCameraPermissionsAsync()
       .then((perm) => {
@@ -52,10 +43,24 @@ export default function Header({ name, icon, gym }: HeaderProps) {
   };
 
   useEffect(() => {
-    if (currUser && icon) {
-      GetUserIcon(icon);
+
+    async function fetchIcon() {
+      if (currUser && icon !== "") {
+        try {
+          const url = await getUserIcon(icon);
+          console.log("Icon URL: ", url);
+          setUserIcon(url);
+        } catch (error) {
+          console.error("Failed to fetch user icon:", error);
+          
+        }
+      }
     }
-  }, [icon, currUser]);
+
+    // Call the fetch function
+    fetchIcon();
+    console.log("Icon: ", userIcon);
+  }, [icon, currUser]); 
 
   if (!currUser) return null;
 
