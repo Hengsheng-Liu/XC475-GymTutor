@@ -29,7 +29,19 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
   const [firstLoad, setFirstLoad] = useState<boolean>(true); // State to track first load
   const { User, currUser } = useAuth();
+  const [currentUserCurrentlyMessaging, setCurrentUserCurrentlyMessaging] = useState([]);
 
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const currentUserDocRef = doc(firestore, "Users", User.uid);
+      const currentUserDoc = await getDoc(currentUserDocRef);
+      const currentUserData = currentUserDoc.data();
+      const CurrentlyMessagingData = currentUserData?.CurrentlyMessaging
+      setCurrentUserCurrentlyMessaging(CurrentlyMessagingData);
+    };
+    fetchData();
+  }, []);
 
   const FriendHeader = () => {
     const [isPressed, setIsPressed] = useState<boolean>(false);
@@ -140,6 +152,16 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
       console.error("Failed to delete chat session:", error);
     }
   };
+
+  // Based on haveRead field in CurrentlyMessaging, determine the background color of chat records
+  const getBackgroundColor = (user) => {
+
+    // Find the messaging entry for the given user
+    const messagingEntry = currentUserCurrentlyMessaging.find(entry => entry.userId === user.uid);
+    // If haveRead is false, return the gray color, otherwise return the default
+    return messagingEntry && !messagingEntry.haveRead ? "coolGray.400" : "#FAFAFA";
+  };
+
 
   useEffect(() => {
     if (User) {
@@ -255,7 +277,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
             {users.map((user) => (
               <Pressable onPress={() => navigateToChatPage(user)} onLongPress={() => confirmAndDelete(user)}>
                 {({ isPressed }) => {
-                  return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"}
+                  return <Box bg={isPressed ? "coolGray.200" : getBackgroundColor(user)}
                     style={{ transform: [{ scale: isPressed ? 0.96 : 1 }] }}
                     shadow="3" borderRadius="xl" mb={3} ml={1} mr={1} pr={1}>
                     <ChatPreview friend={user} key={user.uid} />
