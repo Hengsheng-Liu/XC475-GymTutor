@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import theme from "@/components/theme";
 import Header from "@/components/ChatComponents/Header";
 import { FontAwesome } from "@expo/vector-icons";
-import { getDocs, where, query, collection, doc, deleteDoc, getDoc, updateDoc, arrayRemove, writeBatch } from "firebase/firestore";
+import { getDocs, where, query, collection, doc, deleteDoc, getDoc, updateDoc, arrayRemove, writeBatch, onSnapshot } from "firebase/firestore";
 import { firestore } from "@/firebaseConfig";
 import { filterUsersByName } from "@/components/FirebaseUserFunctions";
 import ChatPreview from "@/components/ChatComponents/ChatContainer";
@@ -29,7 +29,116 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
   const [firstLoad, setFirstLoad] = useState<boolean>(true); // State to track first load
   const { User, currUser } = useAuth();
+  const [currentUserCurrentlyMessaging, setCurrentUserCurrentlyMessaging] = useState([]);
+  const [deleteMessageTrigger, setDeleteMessageTrigger] = useState(0);
 
+
+  useEffect(() => {
+
+    if (!User.uid) return;  // Ensure that User.uid is available
+
+    // Reference to the user's document in Firestore
+    const currentUserDocRef = doc(firestore, "Users", User.uid);
+
+    // Set up the real-time listener
+    const unsubscribe = onSnapshot(currentUserDocRef, (doc) => {
+      const userData = doc.data();
+      const CurrentlyMessagingData = userData?.CurrentlyMessaging;
+
+      // Update state with the latest data
+      setCurrentUserCurrentlyMessaging(CurrentlyMessagingData);
+
+      setFirstLoad(false);
+
+      // Optionally, log the timeAsNumber for debugging
+      if (CurrentlyMessagingData) {
+        console.log(CurrentlyMessagingData.map(entry => entry.timeAsNumber));
+      }
+    }, (error) => {
+      console.error("Failed to fetch user data:", error);
+    });
+
+    // Clean up the listener when the component unmounts or User.uid changes
+    return () => unsubscribe();
+  }, [User.uid, firestore]);
+
+
+  useEffect(() => {
+    // Only execute handleSearchUsers if:
+    // - The screen is focused, and
+    // - It is not the first load, or
+    // - The first load has just completed and this is a subsequent update.
+    if (isFocused && !firstLoad) {
+      handleSearchUsers();
+    }
+  }, [isFocused, firstLoad, deleteMessageTrigger]); // Depend on both isFocused and firstLoad
+
+  // Search currently messaged users
+  const handleSearchUsers = async () => {
+
+    if (firstLoad) {
+      return;
+    }
+    if (currUser) {
+      setUsers([]);
+      setLoading(true);
+
+      let messagedUsers: CurrentlyMessagingEntry[] = []
+      let db = firestore;
+
+      // You can use the currentlyMessaging field from the user
+      // You might need to save them into context if you save new ones
+      // For now I save them in your generateChatId function check it out and see how you would need to modify it
+      messagedUsers = currentUserCurrentlyMessaging;
+
+      // For now, I'll show all users if there are no users on the currentlyMessaging. 
+      // Hardcode a couple for testing and then you should remove this option
+      // Extract user IDs from the messagedUsers array of tuples
+      const userIds = messagedUsers.map(entry => entry.userId);
+
+      let usersQuery = userIds.length > 0 ?
+        query(collection(db, 'Users'), where('uid', 'in', userIds)) :
+        query(collection(db, 'Users'), where("gym", "!=", "")); // This option gets all users (a bit roundabout)
+
+      // Testing trick. Search "all" to show all users
+      if (searchTerm === "all") {
+        usersQuery = query(collection(db, 'Users'), where("gym", "!=", ""));
+      }
+      // Get each user and save their data
+      const querySnapshot = await getDocs(usersQuery);
+      const usersData: IUser[] = [];
+
+      // Save user data if it is not the current User
+      querySnapshot.forEach(snap => {
+        const userData = snap.data() as IUser;
+        if (userData.uid !== currUser.uid) {
+          usersData.push(userData);
+        }
+      });
+
+      // Sort the users based on the timeAsNumber, descending (most recent first)
+      const sortedUsers = usersData.sort((a, b) => {
+        // Find the corresponding timeAsNumber for each user
+        const timeAsNumberA = messagedUsers.find(entry => entry.userId === a.uid)?.timeAsNumber ?? 0;
+        const timeAsNumberB = messagedUsers.find(entry => entry.userId === b.uid)?.timeAsNumber ?? 0;
+        return timeAsNumberB - timeAsNumberA; // Sort in descending order
+      });
+
+
+      // Filter list of users by name if provided
+      if (searchTerm && searchTerm !== "" && usersData.length > 0) {
+        if (searchTerm !== "all") {
+          setUsers(filterUsersByName(sortedUsers, searchTerm));
+        } else {
+          setUsers(sortedUsers);
+        }
+      } else {
+        setUsers(sortedUsers);
+      };
+      setLoading(false);
+    };
+    console.log(users.map(entry => entry.name));
+  };
 
   const FriendHeader = () => {
     const [isPressed, setIsPressed] = useState<boolean>(false);
@@ -90,15 +199,13 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
 
       // Fetch current user document to get the timeAsNumber
       const currentUserDocRef = doc(firestore, "Users", User.uid);
-      const currentUserDoc = await getDoc(currentUserDocRef);
-      const currentUserData = currentUserDoc.data();
 
       // Fetch other user document to get the timeAsNumber
       const otherUserDocRef = doc(firestore, "Users", user.uid);
       const otherUserDoc = await getDoc(otherUserDocRef);
       const otherUserData = otherUserDoc.data();
 
-      const currentUserEntryToRemove = currentUserData?.CurrentlyMessaging.find(entry => entry.userId === user.uid);
+      const currentUserEntryToRemove = currentUserCurrentlyMessaging.find(entry => entry.userId === user.uid);
       const otherUserEntryToRemove = otherUserData?.CurrentlyMessaging.find(entry => entry.userId === User.uid);
 
       // Create a reference to the chat document
@@ -134,6 +241,9 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
 
         console.log("Both users' CurrentlyMessaging fields updated successfully");
       }
+
+      // Change the state variable so that search function is triggered to show the change
+      setDeleteMessageTrigger(prev => prev + 1);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -141,75 +251,16 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    if (User) {
-      handleSearchUsers();
-      setFirstLoad(false);
-    }
-  }, [isFocused, searchTerm]);
+  // Based on haveRead field in CurrentlyMessaging, determine the background color of chat records
+  const getBackgroundColor = (user) => {
 
-  // Search currently messaged users
-  const handleSearchUsers = async () => {
-    if (currUser) {
-      setUsers([]);
-      setLoading(true);
-
-      let messagedUsers: CurrentlyMessagingEntry[] = []
-      let db = firestore;
-
-      // You can use the currentlyMessaging field from the user
-      // You might need to save them into context if you save new ones
-      // For now I save them in your generateChatId function check it out and see how you would need to modify it
-      messagedUsers = currUser.CurrentlyMessaging;
-
-      // For now, I'll show all users if there are no users on the currentlyMessaging. 
-      // Hardcode a couple for testing and then you should remove this option
-      // Extract user IDs from the messagedUsers array of tuples
-      const userIds = messagedUsers.map(entry => entry.userId);
-
-      let usersQuery = userIds.length > 0 ?
-        query(collection(db, 'Users'), where('uid', 'in', userIds)) :
-        query(collection(db, 'Users'), where("gym", "!=", "")); // This option gets all users (a bit roundabout)
-
-      // Testing trick. Search "all" to show all users
-      if (searchTerm === "all") {
-        usersQuery = query(collection(db, 'Users'), where("gym", "!=", ""));
-      }
-      // Get each user and save their data
-      const querySnapshot = await getDocs(usersQuery);
-      const usersData: IUser[] = [];
-
-      // Save user data if it is not the current User
-      querySnapshot.forEach(snap => {
-        const userData = snap.data() as IUser;
-        if (userData.uid !== currUser.uid) {
-          usersData.push(userData);
-        }
-      });
-
-      // Sort the users based on the timeAsNumber, descending (most recent first)
-      const sortedUsers = usersData.sort((a, b) => {
-        // Find the corresponding timeAsNumber for each user
-        const timeAsNumberA = messagedUsers.find(entry => entry.userId === a.uid)?.timeAsNumber ?? 0;
-        const timeAsNumberB = messagedUsers.find(entry => entry.userId === b.uid)?.timeAsNumber ?? 0;
-        return timeAsNumberB - timeAsNumberA; // Sort in descending order
-      });
-
-
-      // Filter list of users by name if provided
-      if (searchTerm && searchTerm !== "" && usersData.length > 0) {
-        if (searchTerm !== "all") {
-          setUsers(filterUsersByName(sortedUsers, searchTerm));
-        } else {
-          setUsers(sortedUsers);
-        }
-      } else {
-        setUsers(sortedUsers);
-      };
-      setLoading(false);
-    };
-    console.log(users.map(entry => entry.name));
+    // Find the messaging entry for the given user
+    const messagingEntry = currentUserCurrentlyMessaging.find(entry => entry.userId === user.uid);
+    // If haveRead is false, return the gray color, otherwise return the default
+    return messagingEntry && !messagingEntry.haveRead ? "coolGray.400" : "#FAFAFA";
   };
+
+
 
   return (
     <NativeBaseProvider theme={theme}>
@@ -229,6 +280,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
             placeholder="Type and look for your partner"
             bgColor="trueGray.100"
             onChangeText={setSearchTerm}
+            onSubmitEditing={handleSearchUsers}
             borderRadius="md"
             borderWidth={1}
             fontSize="md"
@@ -255,7 +307,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
             {users.map((user) => (
               <Pressable onPress={() => navigateToChatPage(user)} onLongPress={() => confirmAndDelete(user)}>
                 {({ isPressed }) => {
-                  return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"}
+                  return <Box bg={isPressed ? "coolGray.200" : getBackgroundColor(user)}
                     style={{ transform: [{ scale: isPressed ? 0.96 : 1 }] }}
                     shadow="3" borderRadius="xl" mb={3} ml={1} mr={1} pr={1}>
                     <ChatPreview friend={user} key={user.uid} />
