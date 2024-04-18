@@ -37,8 +37,8 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
         maxWidth: '70%',
         margin: 5,
         padding: 10,
-        borderRadius: 20,
-        backgroundColor: props.currentMessage.user._id === receiveUser.uid ? '#FFD700' : '#FF6347',
+        borderRadius: 5,
+        backgroundColor: props.currentMessage.user._id === receiveUser.uid ? '#FED7AA' : '#F97316',
         alignSelf: props.currentMessage.user._id === receiveUser.uid ? 'flex-start' : 'flex-end',
       }}>
         <Text style={{ color: props.currentMessage.user._id === 1 ? '#fff' : '#000' }}>

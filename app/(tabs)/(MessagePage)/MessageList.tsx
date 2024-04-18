@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, ScrollView, TouchableOpacity, Alert } from "react-native";
+import { View, ScrollView, TouchableOpacity, Alert, Image } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { CurrentlyMessagingEntry, IUser } from "@/components/FirebaseUserFunctions";
 import { useAuth } from "@/Context/AuthContext";
@@ -155,7 +155,9 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
           <Spacer />
         </Column>
         <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("./FriendsChatCopy")} >
-          <FontAwesome5 name="user-friends" size={40} color="#0284C7" />
+          <Image
+            source={require('../../../assets/images/Vector.png')}
+          />
         </TouchableOpacity>
       </Row>
     );
