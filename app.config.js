@@ -14,7 +14,7 @@ export const expoConfig = {
 
   assetBundlePatterns: ['**/*'],
   ios: {
-    bundleIdentifier: 'com.anonymous.SpotMe',
+    bundleIdentifier: "com.spot-me.spotme",
     supportsTablet: true,
     infoPlist: {
       "UIBackgroundModes": [
@@ -25,7 +25,7 @@ export const expoConfig = {
     }
   },
   android: {
-    package: 'com.anonymous.SpotMe',
+    package: "com.spot-me.spotme",
     adaptiveIcon: {
       foregroundImage: './assets/images/adaptive-icon.png',
       backgroundColor: '#ffffff',
@@ -49,12 +49,26 @@ export const expoConfig = {
   },
   plugins: [
     "expo-router",
+    {
+      "origin": "https://spot-me.vercel.app",
+    }
     [
       "expo-location",
+      
       {
         "locationAlwaysAndWhenInUsePermission": "Allow Spot Me to use your location."
       }
-    ]
+    ],
+    "expo-camera",
+    {
+      "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+      "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+      "recordAudioAndroid": true
+    },
+    "expo-image-picker",
+    {
+      "photosPermission": "The app accesses your photos to let you share them with your friends."
+    }
   ],
   "expo": {
     "extra": {

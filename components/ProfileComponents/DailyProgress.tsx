@@ -79,8 +79,8 @@ const EachProgress = (
         <Box h="16" w="16">
           {getSVG(achievement.name, true)}
         </Box>
-        <Flex marginLeft={5}>
-          <Heading mb={2} fontSize={"sm"}>
+        <Box marginLeft={5} width={"60%"} >
+          <Heading mb={2} fontSize={"sm"} isTruncated>
             {achievement.name}
           </Heading>
           {achieved ? (
@@ -91,7 +91,7 @@ const EachProgress = (
               value={(achievement.curr / achievement.max) * 100}
             />
           )}
-        </Flex>
+        </Box>
       </Flex>
     </Center>
   );

@@ -1,22 +1,18 @@
-import { Heading, NativeBaseProvider, Box } from "native-base";
-import { SafeAreaView, StyleSheet, View,Image } from "react-native";
 import React from "react";
-import Grey from "../../assets/images/achievements/Uncomplete/Grey.svg"
-import { SvgUri } from "react-native-svg";
-import Logo from "../../assets/images/Logo.svg";
+
+import { Popover, Box, Button, NativeBaseProvider } from "native-base";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { View } from "react-native";
 export default function Test() {
   return (
-    <NativeBaseProvider>
-      <SafeAreaView style={styles.container}>
-        <Logo />
-      </SafeAreaView>
-    </NativeBaseProvider>
+    <SafeAreaView>
+      <NativeBaseProvider>
+        <View>
+
+        </View>
+      </NativeBaseProvider>
+      
+    </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: "#ecf0f1",
-  },
-});

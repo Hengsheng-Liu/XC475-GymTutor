@@ -7,23 +7,31 @@ function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;
 }) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+  return <FontAwesome size={28} style={{ 
+    color:"#F97316",
+   }} {...props} />;
 }
 
 export default function TabLayout() {
-  const { User } = useAuth(); // Changed User to user
+  const { User } = useAuth(); 
   if (!User) {
     return <Redirect href="/LogIn" />;
   } else {
     return (
-      <Tabs>
+      <Tabs
+      screenOptions={{
+        tabBarShowLabel: false,
+      }}
+      >
         <Tabs.Screen
           name="(MessagePage)"
           options={{
             title: "Message",
             headerShown: false,
             tabBarIcon: (props) => <TabBarIcon {...props} name="comments" />,
+            
           }}
+          
         />
         <Tabs.Screen
           name="(HomePage)"
@@ -31,6 +39,7 @@ export default function TabLayout() {
             title: "SpotMe",
             headerShown: false,
             tabBarIcon: (props) => <TabBarIcon {...props} name="group" />,
+          
           }}
         />
         <Tabs.Screen
@@ -39,6 +48,7 @@ export default function TabLayout() {
             title: "Profile",
             headerShown: false,
             tabBarIcon: (props) => <TabBarIcon {...props} name="user" />,
+     
           }}
         />
         <Tabs.Screen
@@ -46,10 +56,14 @@ export default function TabLayout() {
           options={{
             title: "Test",
             headerShown: false,
-            tabBarIcon: (props) => <TabBarIcon {...props} name="pencil" />
+            tabBarIcon: (props) => <TabBarIcon {...props} name="pencil" />,
+
+            
           }}
         />
       </Tabs>
+
+
     );
   }
 }

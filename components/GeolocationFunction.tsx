@@ -10,14 +10,13 @@ import { Gym } from "@/components/FirebaseUserFunctions";
 import pointInPolygon from "point-in-polygon";
 import { router } from "expo-router";
 import { CalendarUtils } from "react-native-calendars";
-
+/*
+import Geolocation from '@react-native-community/geolocation';
+const  locationConfig = {skipPermissionRequests:true,authorizationLevel:"whenInUse"}
+Geolocation.setRNConfiguration(locationConfig);
+*/
 export const GetUserLocation = async (): Promise<number[] | undefined> => {
   try {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      console.log("Permission to access location was denied");
-      return;
-    }
     const location = await Location.getCurrentPositionAsync({});
     return [location.coords.latitude, location.coords.longitude];
   } catch (error) {
@@ -72,6 +71,7 @@ export const checkUser = (checkInHistory:string[]) => {
 };
 export const handleCheckIn = async (userGym:[string, string] | undefined, checkInHistory:string[]) => {
   try {
+    
     const location = await GetUserLocation();
     const checkIn = checkUser(checkInHistory);
     const GymBound = await fetchGym(userGym? userGym : ["", ""]);
