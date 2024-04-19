@@ -124,6 +124,7 @@ export default function HomeScreen() {
   };
   
   const handleCheckIn = async () => {
+    /*
     const location = await GetUserLocation(); {
       if (location) {
         console.log(location);
@@ -140,6 +141,8 @@ export default function HomeScreen() {
         alert("Please enable location services to check in");
       }
     }
+    */
+    router.push("/CheckIn");
   };
   
   // Function to update the users list after sending a friend request

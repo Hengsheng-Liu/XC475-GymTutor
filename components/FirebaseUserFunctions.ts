@@ -33,7 +33,7 @@ export interface Achievementprops {
 }
 export interface DailyCheckIn {
     day: string;
-    photo: string;
+    photo?: string;
 }
 export interface Achievements {
     Chest: Achievementprops[];
@@ -544,8 +544,10 @@ export const AddDate = async (uid: string, url:string|undefined) => {
     const Today = CalendarUtils.getCalendarDateString(Day);
     const newCheckIn: DailyCheckIn = {
         day: Today,
-        photo: url ? url : "default/CheckInPhoto.png"
     };
+    if (url){
+        newCheckIn.photo = url;
+    }
 
     try {
         const userRef = doc(firestore, "Users", uid);
@@ -568,6 +570,18 @@ export const getUserIcon = async (iconUrl: string): Promise<string> => {
       return require("@/assets/images/default-profile-pic.png");  // return the default icon URL
     }
   };
+  export const GetUserPicture = async (Url: string): Promise<string | undefined> => {
+    try {
+      const storage = getStorage();
+      const storageRef = ref(storage, Url);
+      const url = await getDownloadURL(storageRef);
+      return url;  
+    } catch (error) {
+      console.error("Error getting user picture: ", error);
+      return undefined 
+    }
+  };
+
 // Attempt to do it automatically. Didn't work and gave up
 // Define a function to fetch all users and update them with missing fields
 // export async function updateUsers(): Promise<void> {

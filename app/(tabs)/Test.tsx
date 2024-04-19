@@ -1,15 +1,18 @@
 import React from "react";
-import Camera from "../../assets/images/checkIn/Camera.svg";
-import { Entypo } from '@expo/vector-icons';
-import { router } from "expo-router";
-import CheckInRoutine from "@/components/CheckInComponents/CheckInRoutine";
-export default function Test() {
-    const goPhotoPage = () =>{
-        router.push("Photo")
-    }
-    return (
-        <CheckInRoutine navigation={goPhotoPage} Icon={Camera} Title={"Take a picture to prove it."} ButtonText={"Use Camera"} lastPage/>
-    )
-  
-}
 
+import { Popover, Box, Button, NativeBaseProvider } from "native-base";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { View } from "react-native";
+export default function Test() {
+  return (
+    <SafeAreaView>
+      <NativeBaseProvider>
+        <View>
+
+        </View>
+      </NativeBaseProvider>
+      
+    </SafeAreaView>
+  );
+}

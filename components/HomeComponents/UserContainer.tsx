@@ -13,8 +13,7 @@ interface FriendProps {
 
 const UserPreview: React.FC<FriendProps> = ({ friend }) => {
     const [updatedFriend, setUpdatedFriend] = useState<IUser>(friend); // State to hold updated friend data
-    const [friendIcon, setFriendIcon] = useState<string>(
-    ); // State to hold friend icon
+    const [friendIcon, setFriendIcon] = useState<string>(); 
     const {currUser} = useAuth();
     if (!currUser) return;
 

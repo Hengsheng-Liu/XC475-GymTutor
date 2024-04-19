@@ -1,5 +1,5 @@
 import React from "react";
-import CheckOut from "../../../assets/images/checkIn/CheckOut.svg";
+import CheckOut from "../../assets/images/checkIn/CheckOut.svg";
 
 import { router } from "expo-router";
 import CheckInRoutine from "@/components/CheckInComponents/CheckInRoutine";
