@@ -2,9 +2,7 @@ import { useState } from "react";
 import { View, Text } from "react-native";
 import {
   Alert,
-  Button,
   StyleSheet,
-  Pressable,
   SafeAreaView,
   Keyboard,
   TextInput,
@@ -15,7 +13,18 @@ import { UserCredential } from "firebase/auth";
 import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { useAuth } from "../../Context/AuthContext";
 import { addUser } from "@/components/FirebaseUserFunctions"
-
+import {
+  Box,
+  Button,
+  NativeBaseProvider,
+  Pressable,
+  ScrollView,
+  Spacer,
+  Tag,
+  extendTheme,
+  Flex,
+  Input
+} from "native-base";
 
 export default function SignUpScreen() {
   const [email, setEmail] = useState<string>('');
@@ -71,22 +80,30 @@ export default function SignUpScreen() {
     }
   };
 
+  const theme = extendTheme({
+    components: {
+      Button: {
+        baseStyle: {
+          color: "#F97316",
+          rounded: "full",
+        },
+      },
+    },
+  });
+
   return (
-    <Pressable style={styles.contentView} onPress={Keyboard.dismiss}>
-      <SafeAreaView style={styles.contentView}>
-        <View style={styles.container}>
-          <View style={styles.titleContainer}>
+    <NativeBaseProvider theme={theme}>
+      <SafeAreaView style= {{backgroundColor:"#FFF"}}>
+        <ScrollView backgroundColor={"#FFFFFF"}>
+          <Box ml={"3"} mr={"3"} paddingTop={"10"}>
+  
             <Text style={styles.titleText}>Register</Text>
-          </View>
-          <View style={styles.mainContent}>
-           <TextInput
-              style={styles.loginTextField}
-              placeholder="Name"
-              value={name}
-              onChangeText={setName}
-              inputMode="email"
-              autoCapitalize="none"
-            />
+  
+          <Box alignItems="left">
+              Your Name
+            <Input mx="3" placeholder="Name" w="90%" onChangeText={setName} />
+
+              </Box>;
             <TextInput
               style={styles.loginTextField}
               placeholder="Email"
@@ -111,12 +128,17 @@ export default function SignUpScreen() {
             />
             
             {passwordMatchError && <Text>Passwords do not match</Text>}
-            <Button title="Next" onPress={handleSignUp} />
-            <Button title="Go Back" onPress={() => router.navigate("LogIn")} />
-          </View>
-        </View>
+
+            <Flex direction="column" justifyContent="space-around">
+
+            <Button onPress={handleSignUp} > Next </Button>
+            <Spacer/>
+            <Button onPress={() => router.navigate("LogIn")} > Go Back </Button>
+            </Flex>
+            </Box>
+        </ScrollView>
       </SafeAreaView>
-    </Pressable>
+    </NativeBaseProvider>
   );
 }
 
