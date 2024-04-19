@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import Tags from "../../../assets/images/checkIn/Tags.svg";
+import Tags from "../../assets/images/checkIn/Tags.svg";
 import { router, useLocalSearchParams } from "expo-router";
 import CheckInRoutine from "@/components/CheckInComponents/CheckInRoutine";
 import { useState } from "react";
