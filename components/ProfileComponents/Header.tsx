@@ -28,7 +28,8 @@ export default function Header({ name, icon, gym }: HeaderProps) {
   );
 
 
-  const ReTakeAvatar = () => {
+  const ReTakeAvatar = async () => {
+    /*
     Camera.getCameraPermissionsAsync()
       .then((perm) => {
         if (perm.granted) {
@@ -40,6 +41,17 @@ export default function Header({ name, icon, gym }: HeaderProps) {
       .catch((e) => {
         console.log("Error fetching camera permissions:", e);
       });
+    */
+      try {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        if (status === "granted") {
+          router.push({ pathname: "/Photo", params: { Avatar: true } });
+        } else {
+          alert("Please allow camera permissions to continue.");
+        }
+      } catch (e) {
+        console.log("Error fetching camera permissions:", e);
+      }
   };
 
   useEffect(() => {

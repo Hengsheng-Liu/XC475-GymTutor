@@ -29,9 +29,6 @@ export default function ButtonGroup({friendCount,gym,History}:ButtonGroupProps) 
       >
         Check In
       </Button>
-      <Button backgroundColor={"#0284C7"} flexGrow={"1"}>
-        Edit
-      </Button>
     </HStack>
   );
 }
