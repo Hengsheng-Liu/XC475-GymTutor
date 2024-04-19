@@ -42,6 +42,9 @@ export default function HomeScreen() {
 
   // Initialize gym data
   useEffect(() => {
+    if (!userGym || userGym[0] === "" || userGym[1] === "") {
+      router.push("/index");
+    }
     if (currUser) {
         // updateUsers(); // Uncomment when we want to update users with new fields / random values
         handleSearchUsers();
