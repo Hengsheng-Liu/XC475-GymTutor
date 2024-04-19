@@ -92,7 +92,7 @@ const FriendProfilePage = () => {
     <NativeBaseProvider theme={theme}>
       <SafeAreaView style={{ backgroundColor: "#FFF" }}>
         <ScrollView backgroundColor={"#FFFFFF"}>
-          <Box ml={"3"} mr={"3"} paddingTop={"10"}>
+          <Box ml={"3"} mr={"3"}>
             {userInfo && (
               <Flex>
                 <Row>

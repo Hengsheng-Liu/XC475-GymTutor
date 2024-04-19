@@ -36,7 +36,7 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
               } catch (error) {
                 console.error("Failed to fetch friend icon:", error);
                 // Handle the error e.g., set a default icon or state
-                setFriendIcon("@/assets/images/default-profile-pic.png");
+                setFriendIcon(require("@/assets/images/default-profile-pic.png"));
               }
             }
             console.log("Icon URL: ", friendIcon);

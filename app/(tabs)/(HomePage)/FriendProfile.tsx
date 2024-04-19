@@ -93,7 +93,7 @@ const FriendProfilePage = () => {
     <NativeBaseProvider theme={theme}>
       <SafeAreaView style={{ backgroundColor: "#FFF" }}>
         <ScrollView backgroundColor={"#FFFFFF"}>
-          <Box ml={"3"} mr={"3"} paddingTop={"10"}>
+          <Box ml={"3"} mr={"3"}>
             {userInfo && (
               <Flex>
                 <Row>
@@ -184,7 +184,7 @@ const FriendProfilePage = () => {
 
                 <Description bio={userInfo.bio} />
                 <Achievement display={userInfo.display} />
-                <History history={userInfo.checkInHistory.map(x => x.day)} />
+                <History history={userInfo.checkInHistory} />
               </Flex>
             )}
           </Box>

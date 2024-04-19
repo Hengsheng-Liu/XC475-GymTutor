@@ -397,7 +397,7 @@ export async function updateUsers(): Promise<void> {
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
-                friendRequests: [],
+                Achievement: DefaultAchievement,
             };
 
             // Update document if any field is missing

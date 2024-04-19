@@ -7,6 +7,7 @@ export default function HomeLayout() {
         <Stack.Screen name="Notifications" options= {{headerShown: false}}/>
         <Stack.Screen name="Filter" options= {{headerShown: false}}/>
         <Stack.Screen name="index" options= {{headerShown: false}}/>
+        <Stack.Screen name="FriendProfile" options= {{headerShown: false}}/>
         </Stack>
     )
 }
