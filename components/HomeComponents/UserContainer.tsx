@@ -28,19 +28,27 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
             });
             return unsubscribe; // Cleanup function
         };
+
         async function fetchIcon() {
             if (currUser && friend.icon !== "") {
               try {
                 const url = await getUserIcon(friend.icon);
+                console.log("Found Icon URL: ", url);
                 setFriendIcon(url);
               } catch (error) {
                 console.error("Failed to fetch friend icon:", error);
                 // Handle the error e.g., set a default icon or state
-                setFriendIcon(require("@/assets/images/default-profile-pic.png"));
+                const url = await getUserIcon("Icon/Default/Avatar.png");
+                console.log("Used default Icon URL: ", url)
+                setFriendIcon(url);
               }
-            }
-            console.log("Icon URL: ", friendIcon);
+            } else {
+            const url = await getUserIcon("Icon/Default/Avatar.png");
+            console.log("Found Icon URL: ", url)
+            setFriendIcon(url);
           }
+        }
+
         if (currUser) {
             fetchIcon();
             fetchUpdatedFriend();

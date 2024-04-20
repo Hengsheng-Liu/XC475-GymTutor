@@ -256,7 +256,7 @@ export async function addUser(
             gym: gym,
             gymId: gymId,
             checkInHistory: [],
-            icon: "",
+            icon: "Icon/Default/Avatar.png",
             achievements: [],
             gymExperience: gymExperience,
             currentlyMessaging: [],
@@ -397,7 +397,7 @@ export async function updateUsers(): Promise<void> {
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
-                Achievement: DefaultAchievement,
+                icon: "Icon/Default/Avatar.png",
             };
 
             // Update document if any field is missing
@@ -566,8 +566,10 @@ export const getUserIcon = async (iconUrl: string): Promise<string> => {
       const url = await getDownloadURL(storageRef);
       return url;  
     } catch (error) {
-      console.error("Error getting user icon: ", error);
-      return require("@/assets/images/default-profile-pic.png");  // return the default icon URL
+        console.error("Error getting user icon: ", error);
+        const url = await getUserIcon("Icon/Default/Avatar.png");
+        console.log("Used Default Icon URL: ", url);
+      return url;  // return the default icon URL
     }
   };
   export const GetUserPicture = async (Url: string): Promise<string | undefined> => {

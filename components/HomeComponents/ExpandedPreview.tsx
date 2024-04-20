@@ -16,6 +16,8 @@ import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { findOrCreateChat } from "@/app/(tabs)/(MessagePage)/data.js";
 import { globalState } from '@/app/(tabs)/(MessagePage)/globalState';
 
+import { getUserIcon } from "../FirebaseUserFunctions";
+
 interface Props {
     users: IUser[];
     user: IUser;
@@ -28,12 +30,38 @@ interface Props {
     const [selectedUser, setSelectedUser] = useState<IUser>(user); // State to hold updated friend data
     const {currUser, updateFriend, friend } = useAuth();
     const [currentIndex, setCurrentIndex] = useState<number>( users.findIndex(u => u.uid === user.uid));
+    const [friendIcon, setFriendIcon] = useState<string>();
 
     if (!currUser) return;
 
     useEffect(() => {
       setSelectedUser(users[currentIndex]);
+      const friend = users[currentIndex];
+        async function fetchIcon() {
+          if (currUser && friend.icon !== "") {
+            try {
+              const url = await getUserIcon(friend.icon);
+              console.log("Found Icon URL: ", url);
+              setFriendIcon(url);
+            } catch (error) {
+              console.error("Failed to fetch friend icon:", error);
+              // Handle the error e.g., set a default icon or state
+              const url = await getUserIcon("Icon/Default/Avatar.png");
+              console.log("Used default Icon URL: ", url)
+              setFriendIcon(url);
+            }
+          } else {
+          const url = await getUserIcon("Icon/Default/Avatar.png");
+          console.log("Found Icon URL: ", url)
+          setFriendIcon(url);
+        }
+      }
+    
+      if (currUser) {
+          fetchIcon();
+      }
     }, [currentIndex, users]);
+
   
     // Open the friend's profile
     const handleOpenProfile = async () =>{
@@ -91,7 +119,7 @@ interface Props {
           <Avatar
             mb={3}
             size="2xl"
-            source={selectedUser.icon ? { uri: selectedUser.icon } : require("@/assets/images/default-profile-pic.png")}
+            source={{ uri: friendIcon }}
           />
           <Text fontSize="xl" fontWeight="bold">
             {selectedUser.name}, {selectedUser.age}
