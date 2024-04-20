@@ -130,15 +130,15 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters, n
                 if (gymData && gymData.members) {
                     memberIds = gymData.members;
                 }
+                if (memberIds.length === 0) {
+                    return [];}
             }
 
         }
 
-        // Query  users from their gym. If they don't have one, query all users
+        // Query  users from their gym.
         // TODO: Maybe query only nearby users.
-        let usersQuery = memberIds.length > 0 ?
-            query(collection(db, 'Users'), where('uid', 'in', memberIds)) :
-            query(collection(db, 'Users'), where("gym", "!=", ""));
+        let usersQuery = query(collection(db, 'Users'), where('uid', 'in', memberIds));
 
         // Apply additional filters if provided
         if (filters) {

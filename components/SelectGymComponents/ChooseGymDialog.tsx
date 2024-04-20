@@ -27,7 +27,7 @@ export default function ChooseGym({
   Address,
 }: props) {
   const cancelRef = React.useRef(null);
-  const { User, updateUserGym } = useAuth();
+  const { User, currUser, updateUserGym } = useAuth();
   const db = firestore;
   const [gymBounding, setGymBounding] = React.useState<GeoPoint[]>();
 
@@ -41,7 +41,27 @@ export default function ChooseGym({
   };
 
   const updateGym = async () => {
+    console.log("Updating gym", place_id, title);
     if (!User) return;
+    if (currUser) {
+      console.log("Updating previous gym", currUser.gymId, currUser.gym);
+      const prevGymDocRef = doc(db, "Gyms", currUser.gymId);
+      try {
+        const docSnap = await getDoc(prevGymDocRef);
+        let members: string[] = [];
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          members = data.members ? [...data.members] : [];
+          if (members.includes(User.uid)) {
+            members = members.filter((member) => member !== User.uid);
+          }
+          await updateDoc( prevGymDocRef, { members: members });
+          console.log("Updated previous gym members:", members);
+        } 
+      } catch (error) {
+        console.error("Error updating previous gym:", error);
+      } }
+  
     const gymDocRef = doc(db, "Gyms", place_id);
     try {
       const docSnap = await getDoc(gymDocRef);
@@ -62,6 +82,7 @@ export default function ChooseGym({
           },
           { merge: true }
         );
+        console.log("Updated gym members:", members);
       } else {
         const bound = await nominatimGymSearch(Geometry);
         setGymBounding(bound);
@@ -75,7 +96,7 @@ export default function ChooseGym({
             bounding: bound,
           },
           { merge: true }
-        );
+        );    
       }
     } catch (error) {
       console.error("Error updating gym:", error);
@@ -83,10 +104,10 @@ export default function ChooseGym({
   };
 
   const handleSubmit = async () => {
+    updateGym();
     updateUserGym(place_id, title);
     handleOpenGymDialog(false);
     updateUserGym2();
-    updateGym();
     router.push("/(tabs)/(HomePage)/Home");
   };
 
