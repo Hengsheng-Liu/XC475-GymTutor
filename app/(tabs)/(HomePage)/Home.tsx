@@ -220,9 +220,10 @@ export default function HomeScreen() {
           height={16}
           bottom={5}
           right={3}
-          background={"#0284C7"}
+          background={"#F97316"}
           justifyContent={"center"}
           alignItems={"center"}
+          _pressed={{ opacity: 0.5}}
           onPress={handleCheckIn}
         >
           <Text fontWeight="bold" fontSize="lg" color="#FFF"> Check In </Text> 

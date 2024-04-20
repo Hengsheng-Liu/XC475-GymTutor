@@ -96,7 +96,7 @@ export default function photo() {
       }
       console.log("Image uploaded to: ", uploadResult.metadata.fullPath);
       if (uploadResult.metadata.fullPath) {
-        alert("Image uploaded successfully!");
+        //alert("Image uploaded successfully!");
         reset();
       
       }

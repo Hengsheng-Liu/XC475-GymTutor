@@ -7,6 +7,7 @@ export default function authLayout() {
         <Stack.Screen name="AchievementPage" options= {{headerShown: true,title:"Your Badges" }}/>
         <Stack.Screen name="Friends" options= {{headerShown: false}}/>
         <Stack.Screen name="FriendProfile2" options= {{headerShown: false}}/>
+        <Stack.Screen name="PastPhoto"/>
     
         </Stack>
     )

@@ -58,7 +58,10 @@ const AchievementModal = ({ image, name, description, current, max,achieved,edit
     height={"32"}
     >
 
-      <Pressable borderRadius={"5"} borderWidth={5} borderColor={setBorderColor()} margin={"1.5"} onPress={handlePress}>{image}</Pressable>
+      <Pressable borderRadius={"5"} borderWidth={5} borderColor={setBorderColor()} margin={"1.5"} onPress={handlePress}>{image}
+
+      </Pressable>
+      
 
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} size={"md"}>
         <Modal.Content>

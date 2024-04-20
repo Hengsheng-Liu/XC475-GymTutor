@@ -15,9 +15,10 @@ export default function Attribute({description, onSaveTag}:props) {
   const [addTag, setAddTag] = useState("");
 
   const handleSave = () => {
-    onSaveTag(addTag as string);
+    if (addTag === "") {
+      onSaveTag(addTag as string);
+    }
     setEditMode(false);
-
   }
   const handleCancel = () => {
     setEditMode(false);
@@ -56,8 +57,9 @@ export default function Attribute({description, onSaveTag}:props) {
           mt={2}
           ml={2}
           onPress={handleSave}
-          backgroundColor={"#0284C7"}
+          backgroundColor={"#F97316"}
           leftIcon={<AntDesign name="check" size={24} color="white" />}
+          _pressed={{ opacity: 0.5 }}
         >
           Add
         </Button>
@@ -69,8 +71,12 @@ export default function Attribute({description, onSaveTag}:props) {
           mt={2}
           ml={2}
           onPress={handleCancel}
-          backgroundColor={"#0284C7"}
-          leftIcon={<AntDesign name="close" size={24} color="white" />}
+          
+          backgroundColor={"#F97316"}
+          leftIcon={<AntDesign name="close" size={24} color="white" 
+          _pressed={{ opacity: 0.5 }}
+          />
+        }
         >
           Cancel
         </Button>

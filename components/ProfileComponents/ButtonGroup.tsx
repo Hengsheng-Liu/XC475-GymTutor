@@ -23,7 +23,8 @@ export default function ButtonGroup({friendCount,gym,History}:ButtonGroupProps) 
 
       <Button
         flexGrow={"1"}
-        backgroundColor={"#0284C7"}
+        backgroundColor={"#F97316"}
+        _pressed={{ opacity: 0.5 }}
         leftIcon={<AntDesign name="check" size={24} color="white" />}
         onPress={() => handleCheckIn(gym,History)}
       >

@@ -4,7 +4,7 @@ import { Flex } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { GetUserPicture } from '@/components/FirebaseUserFunctions';
 import { Stack, useNavigation } from 'expo-router';
-
+import { Ionicons } from '@expo/vector-icons';
 export default function PastPhoto() {
     const { pictureUrl,title } = useLocalSearchParams();
     const [url, setUrl] = useState<string | null>("");
@@ -39,5 +39,5 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-    },
+    }
 });

@@ -182,8 +182,9 @@ export default function LogInScreen() {
               onPress={handleLogIn}
               marginTop={"16"}
               borderRadius={5}
+              _pressed={{ opacity: 0.5}} 
             >
-              <Heading color={"#F97316"} size={"md"}>
+              <Heading color={"#F97316"} size={"md"}> 
                 Log In
               </Heading>
             </Button>

@@ -20,7 +20,6 @@ export default function SelectWorkout() {
   const { User } = useAuth();
   const { url } = useLocalSearchParams<{ url?: string}>();
   useEffect(() => {
-    console.log("url=",url);
   }, []);
 
   const submitToDatabase = async () => {
