@@ -24,7 +24,11 @@ import {
   extendTheme,
   Flex,
   Input,
-  Text
+  Text,
+  HStack,
+  IconButton,
+  Icon,
+  ChevronLeftIcon
 } from "native-base";
 
 export default function SignUpScreen() {
@@ -85,7 +89,9 @@ export default function SignUpScreen() {
     colors: {
       primary: {
       50: '#7C2D12',
-      100: '#F97316'
+      100: '#F97316',
+      200: "#171717",
+      300: "#FAFAFA"
       },
     },
     components: {
@@ -105,58 +111,68 @@ export default function SignUpScreen() {
 
   return (
     <NativeBaseProvider theme={theme}>
-      <SafeAreaView style= {{backgroundColor:"#FFF"}}>
-        <ScrollView backgroundColor={"#FFFFFF"}>
-          <Box ml={"3"} mr={"3"} paddingTop={"10"}>
+
+       <HStack px="5" py="10" justifyContent="flex-start" alignItems="center" w="100%" bg="primary.300">
+        <HStack alignItems="center" flex={1}>
+          <ChevronLeftIcon icon={<Icon size="md" name="back" color="primary.200" />} onPress={() => router.navigate("LogIn")}/>
+          <Text fontSize="20" fontWeight="bold" textAlign="center" flex="1" color="primary.200" mr="4" p="2">
+            Registration
+          </Text>
+        </HStack>
+        </HStack>
+
+
+      <SafeAreaView style= {{ flex: 1, backgroundColor: "#FFF" }}>
+        <ScrollView backgroundColor={"#FFFFFF"} contentContainerStyle={{ flexGrow: 1 }}>
+          <Box ml={"3"} mr={"3"} paddingTop={"10"} flex="1 ">
+
+
   
             <Text fontSize="28" fontFamily="Roberto" fontWeight="700" color="primary.50" lineHeight="28" p="3">Create an account</Text>
   
-            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3">Your Name</Text>
+            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="1">Your Name</Text>
 
             <Box alignItems="left">
             
-               <Input mx="3" w="90%" onChangeText={setName} />
+               <Input mx="3" w="90%" value={name} onChangeText={setName} />
 
             </Box>
 
-            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3">Email</Text>
+            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Email</Text>
 
             <Box alignItems="left">
 
-              <Input mx="3" w="90%" onChangeText={setEmail} />
+              <Input mx="3" w="90%" value = {email} onChangeText={setEmail} />
 
             </Box>
-          
-            <TextInput
-              style={styles.loginTextField}
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-              inputMode="email"
-              autoCapitalize="none"
-            />
-            <TextInput
-              style={styles.loginTextField}
-              placeholder="Password"
-              value={password}
-              onChangeText={handlePasswordChange}
-              secureTextEntry
-            />
-            <TextInput
-              style={styles.loginTextField}
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChangeText={handleConfirmPasswordChange}
-              secureTextEntry
-            />
-            
-            {passwordMatchError && <Text>Passwords do not match</Text>}
 
-            <Flex direction="column" justifyContent="space-around">
+            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Password</Text>
+
+          <Box alignItems="left">
+
+            <Input mx="3" w="90%" value = {password} onChangeText={handlePasswordChange} secureTextEntry />
+
+          </Box>
+
+          <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Confirm Password</Text>
+
+          <Box alignItems="left">
+
+            <Input mx="3" w="90%" value = {confirmPassword} onChangeText={handleConfirmPasswordChange} secureTextEntry />
+
+          </Box>
+                    
+
+
+            
+            {passwordMatchError && <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="3">
+              Passwords do not match
+              </Text>}
+
+            <Flex direction="column" flexGrow="1" justifyContent="flex-end">
 
             <Button bg="primary.100" onPress={handleSignUp} > Next </Button>
-            <Spacer/>
-            <Button bg="primary.100" onPress={() => router.navigate("LogIn")} > Go Back </Button>
+         
             </Flex>
             </Box>
         </ScrollView>

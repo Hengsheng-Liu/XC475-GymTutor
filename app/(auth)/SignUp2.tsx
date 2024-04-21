@@ -31,7 +31,7 @@ import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
 export const AddUserToDB = async (response: UserCredential, name: string, bio: string, gender: string, gymExperience: string, tags: string[]) => {
   const user = response.user;
 
-  await addUser(user.uid, user.email || "", "", "", name, 21, bio, gender, gymExperience ,{day: 1, month: 1, year: 2000}, defaultFilters, tags);
+  await addUser(user.uid, user.email || "", "", "", name, 21, bio, gender, "", gymExperience ,{day: 1, month: 1, year: 2000}, defaultFilters, tags);
 
 };
 
