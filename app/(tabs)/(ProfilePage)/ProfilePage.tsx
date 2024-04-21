@@ -106,6 +106,9 @@ const signOutUser = async () => {
           rounded: "full",
         },
       },
+      Text: {
+        
+      }
     },
   });
 

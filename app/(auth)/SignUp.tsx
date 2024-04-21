@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import {
   Alert,
   StyleSheet,
@@ -23,7 +23,8 @@ import {
   Tag,
   extendTheme,
   Flex,
-  Input
+  Input,
+  Text
 } from "native-base";
 
 export default function SignUpScreen() {
@@ -81,13 +82,24 @@ export default function SignUpScreen() {
   };
 
   const theme = extendTheme({
+    colors: {
+      primary: {
+      50: '#7C2D12',
+      100: '#F97316'
+      },
+    },
     components: {
       Button: {
         baseStyle: {
-          color: "#F97316",
+          color: "primary.50",
           rounded: "full",
         },
       },
+      Text: {
+        fontSize:"50",
+        fontFamily:"Roberto",
+        color: "primary.50"
+      }
     },
   });
 
@@ -97,13 +109,24 @@ export default function SignUpScreen() {
         <ScrollView backgroundColor={"#FFFFFF"}>
           <Box ml={"3"} mr={"3"} paddingTop={"10"}>
   
-            <Text style={styles.titleText}>Register</Text>
+            <Text fontSize="28" fontFamily="Roberto" fontWeight="700" color="primary.50" lineHeight="28" p="3">Create an account</Text>
   
-          <Box alignItems="left">
-              Your Name
-            <Input mx="3" placeholder="Name" w="90%" onChangeText={setName} />
+            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3">Your Name</Text>
 
-              </Box>;
+            <Box alignItems="left">
+            
+               <Input mx="3" w="90%" onChangeText={setName} />
+
+            </Box>
+
+            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3">Email</Text>
+
+            <Box alignItems="left">
+
+              <Input mx="3" w="90%" onChangeText={setEmail} />
+
+            </Box>
+          
             <TextInput
               style={styles.loginTextField}
               placeholder="Email"
@@ -131,9 +154,9 @@ export default function SignUpScreen() {
 
             <Flex direction="column" justifyContent="space-around">
 
-            <Button onPress={handleSignUp} > Next </Button>
+            <Button bg="primary.100" onPress={handleSignUp} > Next </Button>
             <Spacer/>
-            <Button onPress={() => router.navigate("LogIn")} > Go Back </Button>
+            <Button bg="primary.100" onPress={() => router.navigate("LogIn")} > Go Back </Button>
             </Flex>
             </Box>
         </ScrollView>
