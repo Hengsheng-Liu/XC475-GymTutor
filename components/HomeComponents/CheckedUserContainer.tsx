@@ -55,7 +55,7 @@ const CheckedUserPreview: React.FC<FriendProps> = ({ friend }) => {
             if (currUser && photo && photo !== "") {
               try {
                 const url = await getUserIcon(photo);
-                console.log("Found Check In Picture: ", url);
+                // console.log("Found Check In Picture: ", url);
                 setFriendPicture(url);
               } catch (error) {
                 console.error("Failed to fetch friend picture:", error);
@@ -80,15 +80,20 @@ const CheckedUserPreview: React.FC<FriendProps> = ({ friend }) => {
     }, [currUser, friend.uid,friend.icon]); // Depend on currUser and friend.uid
       
     return (
-        <Flex mt="2">
-            <Row alignItems="center" justifyContent="center">
+        <Flex mt="1">
+            <Row mr="1" ml="1" alignItems="center" justifyContent="center">
                 <Image source={{ uri: friendPicture }} alt="Check In Picture" size="xl" height="180" resizeMode="cover" borderRadius="10" flex="1"/>
             </Row>
-            <Row justifyContent={"center"}>
+            <Row justifyContent="center">
+                <Text color= "trueGray.900" fontSize="sm" numberOfLines={2} textAlign="center" isTruncated maxWidth="85%">
+                    {friend.bio}
+                </Text>
+            </Row>
+            {/*<Row justifyContent={"center"}>
                 <Badge m="1" colorScheme={"blue"}>
                     <Text fontSize="xs">{friend.tags[0]}</Text>
                 </Badge>
-            </Row>
+            </Row>*/}
             <Row alignItems="center" space="sm">
                 <Avatar m={2} size="md" source={{ uri: friendIcon }} />
                 <Column justifyContent={"space-evenly"}>

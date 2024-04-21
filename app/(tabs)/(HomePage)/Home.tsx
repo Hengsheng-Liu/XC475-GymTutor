@@ -130,7 +130,6 @@ export default function HomeScreen() {
         if (user.checkInHistory.length !== 0) {
           const lastCheckIn = user.checkInHistory[user.checkInHistory.length - 1];
           if ( lastCheckIn && lastCheckIn.day && lastCheckIn.day === Today && lastCheckIn.photo) {
-            console.log(user.name, " has checked in today!");
             return user;
           }
         } 
@@ -177,10 +176,10 @@ export default function HomeScreen() {
   return ( 
     <NativeBaseProvider theme={theme}>
       <SafeAreaView
-        style={{ backgroundColor: "#FFF", flex: 1, padding: 15}}
+        style={{ backgroundColor: "#FFF", flex: 1, padding: 10, paddingHorizontal: 5}}
       >
         { userGym && <Header GymName={userGym[1]} />}
-        <Row mb={1} space={2} alignItems="center">
+        <Row mb={1} mr="1" ml="1" space={2} alignItems="center">
         <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/Filter")} >
           <Octicons name="filter" size={35} color="#0284C7" />
         </TouchableOpacity>
@@ -219,24 +218,24 @@ export default function HomeScreen() {
           ) : (
           <ScrollView style={{flex:1, zIndex:0}}>
             <Row>
-            <Column space={3} flex={1}>
+            <Column flex={1}>
               {checkedUsers.slice(0, Math.ceil(checkedUsers.length/2)).map((user) => (
               <Pressable onPress={()=> handlePreviewClick(user)} key = {user.uid}>
                 {({ isPressed }) => {
                 return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} 
                             style={{transform: [{ scale: isPressed ? 0.96 : 1 }]}} 
-                            shadow="3" borderRadius="xl" mb ={3} ml={1} mr={1} pr={1}>
+                            shadow="3" borderRadius="xl" mb ={2} ml={1} mr={1} pr={1}>
                           <CheckedUserPreview friend={user} key={user.uid} />
                         </Box>}}
               </Pressable>))}
             </Column>
-            <Column space={3} flex={1}>
+            <Column flex={1}>
               {checkedUsers.slice(Math.ceil(checkedUsers.length/2)).map((user) => (
               <Pressable onPress={()=> handlePreviewClick(user)} key = {user.uid}>
                 {({ isPressed }) => {
                 return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} 
                             style={{transform: [{ scale: isPressed ? 0.96 : 1 }]}} 
-                            shadow="3" borderRadius="xl" mb ={3} ml={1} mr={1} pr={1}>
+                            shadow="3" borderRadius="xl" mb ={2}>
                           <CheckedUserPreview friend={user} key={user.uid} />
                         </Box>}}
               </Pressable>))}
@@ -248,7 +247,7 @@ export default function HomeScreen() {
               {({ isPressed }) => {
               return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} 
                           style={{transform: [{ scale: isPressed ? 0.96 : 1 }]}} 
-                          shadow="3" borderRadius="xl" mb ={3} ml={1} mr={1} pr={1}>
+                          shadow="3" borderRadius="xl" mb ={2}>
                         <UserPreview friend={user} key={user.uid} />
                       </Box>}}
             </Pressable>))}

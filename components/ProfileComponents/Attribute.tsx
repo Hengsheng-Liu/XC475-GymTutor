@@ -1,5 +1,5 @@
 import Tags from "./Tags";
-import { Flex,Pressable, Input, Button } from "native-base";
+import { Flex,Pressable, Badge, Input, Button } from "native-base";
 import React, { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -26,13 +26,17 @@ export default function Attribute({description, onSaveTag}:props) {
   return (
     <>
       <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={3}>
-        {description.map((str, index) => (
-          <Tags key={index} title={str} />
+        {description.map((tag) => (
+          <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
+              {tag}
+          </Badge>
         ))}
 
         {!editMode && (
           <Pressable onPress={() => setEditMode(true)}>
-            <Tags title={"+"} />
+            <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
+              {"+"}
+          </Badge>
           </Pressable>
         )}
 

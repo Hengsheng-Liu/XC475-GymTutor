@@ -14,7 +14,7 @@ const Header: React.FC<FriendProps> = ({ GymName }) => {
 
   return (
     <Row
-      mb={2}
+      mb={2} mr="1" ml="1"
       justifyContent={"space-between"}
       alignItems={"center"}
     >

@@ -122,8 +122,8 @@ const signOutUser = async () => {
             trigger={(triggerProps) => {
               return (
                 <Flex >
-                  <Button width={55} bgColor={"#FFF"} {...triggerProps}>
-                    <Text>三</Text>
+                  <Button position="absolute" right="2" top="0" width={55} bgColor={"#FFF"} {...triggerProps}>
+                    <Text fontSize="xl">三</Text>
                   </Button>
                 </Flex>
               );
