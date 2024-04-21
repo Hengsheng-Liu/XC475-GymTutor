@@ -51,7 +51,7 @@ export default function Header({ user }: HeaderProps) {
         />
         <Column marginLeft={2}>
           <Heading size="lg" color="trueGray.900">{user.name}</Heading>
-          <Text color= "trueGray.900" fontSize="sm" numberOfLines={2} isTruncated maxWidth="80%">{user.gym}</Text>
+          <Text color= "trueGray.700" fontSize="sm" numberOfLines={2} isTruncated maxWidth="80%">{user.gym}</Text>
         </Column>
       </Flex>
     </Flex>

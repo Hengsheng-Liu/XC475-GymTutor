@@ -66,7 +66,7 @@ export default function FriendListScreen () {
   return (
     <NativeBaseProvider theme = {theme} >
       <SafeAreaView style= {{backgroundColor:"#FFFFFF", flex:1}}>
-      <Box p={15} alignItems="center" justifyContent="space-between">
+      <Box p={15} pb={2} alignItems="center" justifyContent="space-between">
             <Row alignItems={"center"}>
               <TouchableOpacity activeOpacity={0.7} onPress={() => handleGoBack()}>
                 <FontAwesome name="chevron-left" size={24} color="black" />
@@ -76,7 +76,7 @@ export default function FriendListScreen () {
                 <Heading fontSize="lg" color="trueGray.800" pr="1">Friends</Heading> 
               </Box>
               <Spacer/>
-              <Text fontSize="2xl">...</Text>
+              <Text fontSize="3xl">...</Text>
             </Row>
       </Box>
         <Row alignItems="center">

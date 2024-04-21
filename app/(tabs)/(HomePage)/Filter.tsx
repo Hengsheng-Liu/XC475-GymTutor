@@ -219,42 +219,42 @@ const FilterScreen = () => {
 
   return (
     <NativeBaseProvider theme={theme}>
-      <SafeAreaView style={{backgroundColor:"#0284C7", flex: 1}}>
-      <Box p={15} alignItems="center" shadow="1">
+      <SafeAreaView style={{backgroundColor:"#F97316", flex: 1}}>
+      <Box p={15} alignItems="center">
             <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"space-evenly"}>
               <TouchableOpacity activeOpacity={0.7} onPress={() => handleGoBack()}>
                 <FontAwesome name="chevron-left" size={24} color="#FFF" />
               </TouchableOpacity>
               <Spacer/>
               <Box>
-                <Heading fontSize="lg">Filters</Heading> 
+                <Heading fontSize="lg" color="#FFF" pl="2">Filters</Heading> 
               </Box>
               <Spacer/>
               <TouchableOpacity activeOpacity={0.7} onPress={() => handleResetFilters()} >
-                <Text color= "#FFF" fontSize="md" fontWeight="bold">Reset</Text>
+                <Text color="#FFF" fontSize="md" fontWeight="bold">Reset</Text>
               </TouchableOpacity>
             </Flex>
           </Box>
         <ScrollView style={{flex:1, backgroundColor:"#FFF"}}>
         <View bgColor="#FFF" flex={1} paddingLeft={15} paddingRight={15} >
-          <Heading pt={2} pb={2} fontSize="md" color="trueGray.900">BASIC INFO</Heading>
-          <Text pt={2} pb={2} fontSize="sm">Sex </Text>
+          <Heading pt={2} pb={2} fontSize="md" color="trueGray.700">Basic Information</Heading>
+          <Text pt={2} pb={2} fontSize="md">Sex </Text>
           <Row justifyContent="space-evenly">
             <Checkbox 
               value="male"
               isChecked={male}
               defaultIsChecked={male}
-              colorScheme="lightBlue"
+              colorScheme="orange"
               onChange={() => setMale(!male)}>Male</Checkbox>
             <Checkbox 
               value="female"
               isChecked={female}
               defaultIsChecked={female}
-              colorScheme="lightBlue"
+              colorScheme="orange"
               onChange={() => setFemale(!female)}>Female</Checkbox>
           </Row>
           <Row justifyContent={'left'} pt={5}>
-            <Text fontSize="sm">Age </Text>
+            <Text fontSize="md">Age </Text>
             <Spacer/>
             <Text>{ageRange[0]} - {ageRange[1]}</Text>
           </Row>
@@ -268,28 +268,28 @@ const FilterScreen = () => {
             step={1}
             allowOverlap={false}
             snapped
-            selectedStyle= {{backgroundColor: "#0284C7"}}
+            selectedStyle= {{backgroundColor: "#F97316"}}
           />
         </Row>
-          <Text pt={4} pb={2}>Experience Level </Text>
+          <Text pt={4} pb={3} fontSize="md">Experience Level </Text>
           <Row justifyContent="space-evenly">
             <Checkbox 
               value="beginnner"
               isChecked={beginner}
               defaultIsChecked={beginner}
-              colorScheme="lightBlue"
+              colorScheme="orange"
               onChange={() => setBeginner(!beginner)}>Beginner</Checkbox>
             <Checkbox 
               value="intermediate"
               isChecked={intermediate}
               defaultIsChecked={intermediate}
-              colorScheme="lightBlue"
+              colorScheme="orange"
               onChange={() => setIntermediate(!intermediate)}>Intermediate</Checkbox>
             <Checkbox 
               value="advanced"
               isChecked={advanced}
               defaultIsChecked={advanced}
-              colorScheme="lightBlue"
+              colorScheme="orange"
               onChange={() => setAdvanced(!advanced)}>Advanced</Checkbox>
           </Row>
           <Spacer/>
@@ -300,10 +300,10 @@ const FilterScreen = () => {
               value="applyNewFilters"
               isChecked={applyNewFilters}
               defaultIsChecked={applyNewFilters}
-              colorScheme="lightBlue"
+              colorScheme="orange"
               onChange={() => setApplyNewFilters(!applyNewFilters)}> Check to apply filters
             </Checkbox>
-          <Button onPress={handleSaveChanges} style={{ marginTop: 10, backgroundColor:"#0284C7" }}>
+          <Button onPress={handleSaveChanges} mt="2" backgroundColor="#F97316" _pressed={{ opacity: 0.4 }}>
             <Text color="#FFF" fontWeight="bold">Save Changes</Text>
           </Button>
           </View>

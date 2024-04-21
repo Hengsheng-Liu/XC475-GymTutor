@@ -6,8 +6,9 @@ import { useAuth } from "../../Context/AuthContext";
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;
+  size: number;
 }) {
-  return <FontAwesome size={28}{...props} />;
+  return <FontAwesome {...props} />;
 }
 
 export default function TabLayout() {
@@ -21,6 +22,9 @@ export default function TabLayout() {
         tabBarShowLabel: false,
         tabBarActiveTintColor: "#F97316",
         tabBarInactiveTintColor: "#A5A5A5",
+        tabBarStyle:{
+          height: 100,
+        }
       }}
       >
         <Tabs.Screen
@@ -28,8 +32,7 @@ export default function TabLayout() {
           options={{
             title: "Message",
             headerShown: false,
-            tabBarIcon: (props) => <TabBarIcon {...props} name="comments" />,
-            
+            tabBarIcon: (props) => <TabBarIcon {...props} name="comments" size={40}/>,
           }}
           
         />
@@ -38,8 +41,7 @@ export default function TabLayout() {
           options={{
             title: "SpotMe",
             headerShown: false,
-            tabBarIcon: (props) => <TabBarIcon {...props} name="group" />,
-          
+            tabBarIcon: (props) => <TabBarIcon {...props} name="group" size={40}/>,
           }}
         />
         <Tabs.Screen
@@ -47,18 +49,8 @@ export default function TabLayout() {
           options={{
             title: "Profile",
             headerShown: false,
-            tabBarIcon: (props) => <TabBarIcon {...props} name="user" />,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="user" size={40}/>,
      
-          }}
-        />
-        <Tabs.Screen
-          name = "Test"
-          options={{
-            title: "Test",
-            headerShown: false,
-            tabBarIcon: (props) => <TabBarIcon {...props} name="pencil" />,
-
-            
           }}
         />
       </Tabs>

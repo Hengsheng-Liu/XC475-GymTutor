@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, TouchableOpacity } from 'react-native';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { NativeBaseProvider } from 'native-base';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -84,23 +84,24 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <NativeBaseProvider theme = {theme} >
-      <SafeAreaView style= {{backgroundColor:"#0284C7", flex:1}}>
+      <SafeAreaView style= {{backgroundColor:"#FFFFFF", flex:1, overflow: "hidden"}}>
         <Flex p={15} flexDirection={"row"} alignItems={"center"} justifyContent={"space-evenly"}>
           <TouchableOpacity activeOpacity={0.7} onPress={() => handleGoBack()}>
-            <FontAwesome name="chevron-left" size={24} color="#FFF" />
+            <FontAwesome name="chevron-left" size={24} color="black" />
           </TouchableOpacity>
           <Spacer/>
           <Box>
-            <Heading fontSize="lg">Notifications</Heading> 
+            <Heading fontSize="lg" color="trueGray.800" pr="2">Notifications</Heading> 
           </Box>
           <Spacer/>
+          <Text fontSize="3xl">...</Text>
         </Flex>
-      <ScrollView style= {{flex:1, backgroundColor:"#FFF", padding:15 }}>
+      <ScrollView style= {{flex:1, backgroundColor:"#FFF", padding:15, paddingTop: 0}}>
         {loading && (
           <Column flex={1} flexDirection={"column"} padding={50} alignItems="center" alignContent="center" justifyContent="center">
             <Spacer/>
-            <Spinner size="md" mb={2} color="#0284C7" accessibilityLabel="Loading posts" />
-            <Heading color="#0284C7" fontSize="md"> Loading</Heading>
+            <Spinner size="md" mb={2} color="#F97316" accessibilityLabel="Loading posts" />
+            <Heading color="#F97316" fontSize="md"> Loading</Heading>
             <Spacer/>
           </Column>
         )} 

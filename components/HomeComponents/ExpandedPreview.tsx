@@ -149,15 +149,15 @@ interface Props {
             </Flex>
           </Box>
           <Flex direction="row" justifyContent="space-between" width="90%" m={3}>
-            <Button onPress={() => handleOpenProfile()} size="lg" width="45%" backgroundColor="#FAFAFA" borderColor="#0284C7" borderWidth={2} borderRadius={16}>
-              <Text fontSize="md" color="#0284C7" fontWeight="bold">View Profile</Text>
+            <Button onPress={() => handleOpenProfile()} size="lg" width="45%" backgroundColor="#FAFAFA" borderColor="#F97316" borderWidth={2} borderRadius={16}>
+              <Text fontSize="md" color="#F97316" fontWeight="bold">View Profile</Text>
             </Button>
             { canAddFriend(currUser, selectedUser) ? (
               <Button
               onPress={() => handleSendFriendRequest(currUser.uid, selectedUser.uid)}
               size="lg"
               width="45%"
-              backgroundColor= "#0284C7"
+              backgroundColor= "#F97316"
               borderRadius={16}
             >
                 <Row>
@@ -171,7 +171,7 @@ interface Props {
                   onPress={() => openChat(selectedUser)}
                   size="lg"
                   width="45%"
-                  backgroundColor= "#0284C7"
+                  backgroundColor= "#F97316"
                   borderRadius={16}
                   >
                     <Row>

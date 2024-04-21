@@ -181,13 +181,13 @@ export default function HomeScreen() {
         { userGym && <Header GymName={userGym[1]} />}
         <Row mb={1} mr="1" ml="1" space={2} alignItems="center">
         <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/Filter")} >
-          <Octicons name="filter" size={35} color="#0284C7" />
+          <Octicons name="filter" size={35} color="#F97316" />
         </TouchableOpacity>
         <Input flex={1}
           InputLeftElement={
             <Box paddingLeft={2}>
               <TouchableOpacity activeOpacity={0.7} onPress={handleSearchUsers} >
-                <FontAwesome name="search" size={24} color="#0284C7" />
+                <FontAwesome name="search" size={24} color="#A3A3A3" />
               </TouchableOpacity>
             </Box>
           }
@@ -202,16 +202,16 @@ export default function HomeScreen() {
         {loading && 
             <Column flex={1} alignItems="center" alignContent="center" justifyContent="center">
               <Spacer/>
-              <Spinner size="md" mb={2} color="#0284C7" accessibilityLabel="Loading posts" />
-              <Heading color="#0284C7" fontSize="md"> Loading</Heading>
+              <Spinner size="md" mb={2} color="#F97316" accessibilityLabel="Loading posts" />
+              <Heading color="#F97316" fontSize="md"> Loading</Heading>
             </Column>}
         {!firstLoad && !loading && users.length === 0 ? (
           <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
-            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
               Oops! There are no users matching your search. 🤔
             </Text> 
             < Text/>
-            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
               Try broadening your search to discover more amazing users!
             </Text>   
           </View>
@@ -264,6 +264,7 @@ export default function HomeScreen() {
           height={16}
           bottom={5}
           right={3}
+          shadow="3"
           background={"#F97316"}
           justifyContent={"center"}
           alignItems={"center"}

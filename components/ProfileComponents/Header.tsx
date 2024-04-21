@@ -95,10 +95,9 @@ export default function Header({ name, icon, gym }: HeaderProps) {
           />
         </Box>
         <Column marginLeft={2}>
+          <Text></Text>
           <Heading size="lg">{name}</Heading>
-          <Text isTruncated maxW="280" w="80%">
-            {gym}
-          </Text>
+          <Text color= "trueGray.700" fontSize="sm" numberOfLines={2} isTruncated maxWidth="80%">{gym}</Text>
         </Column>
       </Flex>
     </Flex>

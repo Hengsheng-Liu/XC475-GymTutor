@@ -37,7 +37,12 @@ export default function Achievement(
             alignItems={"center"}
             justifyContent={"center"}
           >
-            {getSVG(name,true)}
+            <Box
+              width="100%"
+              height="100%"
+              borderRadius={10}
+              overflow="hidden"
+            >{getSVG(name,true)}</Box>
           </Flex>
         );
       }
