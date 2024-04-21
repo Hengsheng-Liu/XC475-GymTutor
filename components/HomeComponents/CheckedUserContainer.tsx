@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { Flex, Box, Spacer, Button, Row, Column, Pressable, Text, Avatar} from 'native-base'
+import { Flex, Image, Row, Box, Badge, Column, Text, Avatar} from 'native-base'
 import { IUser } from '@/components/FirebaseUserFunctions'; 
 import { useAuth } from "@/Context/AuthContext";
 import { sendFriendRequest, canAddFriend } from "../FriendsComponents/FriendFunctions"
@@ -11,9 +11,10 @@ interface FriendProps {
     friend: IUser;
 }
 
-const UserPreview: React.FC<FriendProps> = ({ friend }) => {
+const CheckedUserPreview: React.FC<FriendProps> = ({ friend }) => {
     const [updatedFriend, setUpdatedFriend] = useState<IUser>(friend); // State to hold updated friend data
     const [friendIcon, setFriendIcon] = useState<string>(); 
+    const [friendPicture, setFriendPicture] = useState<string>();
     const {currUser} = useAuth();
     if (!currUser) return;
 
@@ -49,25 +50,52 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
           }
         }
 
+        async function fetchCheckInPicture() {
+            const photo = friend.checkInHistory[friend.checkInHistory.length-1].photo;
+            if (currUser && photo && photo !== "") {
+              try {
+                const url = await getUserIcon(photo);
+                console.log("Found Check In Picture: ", url);
+                setFriendPicture(url);
+              } catch (error) {
+                console.error("Failed to fetch friend picture:", error);
+                // Handle the error e.g., set a default icon or state
+                const url = await getUserIcon("Icon/Default/Avatar.png");
+                console.log("Used default Icon URL: ", url)
+                setFriendPicture(url);
+              }
+            } else {
+            const url = await getUserIcon("Icon/Default/Avatar.png");
+            // console.log("Used default Icon URL: ", url)
+            setFriendIcon(url);
+          }
+        }
+
         if (currUser) {
             fetchIcon();
             fetchUpdatedFriend();
+            fetchCheckInPicture();
         }
+
     }, [currUser, friend.uid,friend.icon]); // Depend on currUser and friend.uid
       
     return (
-        <Flex>
+        <Flex mt="2">
+            <Row alignItems="center" justifyContent="center">
+                <Image source={{ uri: friendPicture }} alt="Check In Picture" size="xl" height="180" resizeMode="cover" borderRadius="10" flex="1"/>
+            </Row>
+            <Row justifyContent={"center"}>
+                <Badge m="1" colorScheme={"blue"}>
+                    <Text fontSize="xs">{friend.tags[0]}</Text>
+                </Badge>
+            </Row>
             <Row alignItems="center" space="sm">
-                <Avatar m={2} size="xl" source={{ uri: friendIcon }} />
+                <Avatar m={2} size="md" source={{ uri: friendIcon }} />
                 <Column justifyContent={"space-evenly"}>
                 <Row justifyContent= {"space-between"} >
                     <Column overflow="hidden">    
                         <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated>{friend.name}, {friend.age}</Text>
-                        <Text color= "trueGray.900" fontSize="sm" isTruncated>{friend.status}</Text>
                     </Column>
-                </Row>
-                <Row justifyContent={"left"}>
-                    <Attribute description={friend.tags} />
                 </Row>
                 </Column>
             </Row>
@@ -75,4 +103,4 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
     );
   };
 
-  export default UserPreview;
+  export default CheckedUserPreview;
