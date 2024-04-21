@@ -64,22 +64,22 @@ export default function SignUpScreen2() {
 
 
 
-    // functions related to the calendar for Date of Birth
-    const dateOnChange = (event: any, selectedDate: any) => {
-        const currentDate = selectedDate;
-        console.log("currentdate", currentDate);
-        setShow(false);
-        setDate(currentDate);
-      };
+    // // functions related to the calendar for Date of Birth
+    // const dateOnChange = (event: any, selectedDate: any) => {
+    //     const currentDate = selectedDate;
+    //     console.log("currentdate", currentDate);
+    //     setShow(false);
+    //     setDate(currentDate);
+    //   };
     
-      const showMode = (currentMode: any) => {
-        setShow(true);
-        setMode(currentMode);
-      };
+    //   const showMode = (currentMode: any) => {
+    //     setShow(true);
+    //     setMode(currentMode);
+    //   };
     
-      const showDatepicker = () => {
-        showMode('date');
-      };
+    //   const showDatepicker = () => {
+    //     showMode('date');
+    //   };
 
       // 2 functions below are for adding tags
       const handleSave = () => {
@@ -179,17 +179,9 @@ export default function SignUpScreen2() {
             
 
 
-    <Button onPress={showDatepicker} > Choose Date of Birth </Button>
+    <Button  > Choose Date of Birth </Button>
 
-      <Text>Selected Date of Birth: {date.toLocaleString().slice(0, 10)}</Text>
-      {show && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode="date"
-          onChange={dateOnChange}
-        />
-      )}
+
 
 
       <Box maxW="300">
