@@ -49,9 +49,6 @@ export default function Achievement(
     <VStack mt={4}>
       <HStack>
         <Heading mr={3}>Achievements</Heading>
-        <Pressable onPress={() => router.push({pathname:"/AchievementPage",params:{edit:true,display}})}>
-          <FontAwesome6 name="pencil" size={22} color="black" />
-        </Pressable>
       </HStack>
       <HStack justifyContent={"space-around"} mt={2} alignItems={"center"}>
         {renderDisplay()}

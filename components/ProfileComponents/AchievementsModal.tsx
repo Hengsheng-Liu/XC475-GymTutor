@@ -54,7 +54,7 @@ const AchievementModal = ({ image, name, description, current, max,achieved,edit
   }
   return (
     <Flex
-    width={"1/3"}
+    width={"32"}
     height={"32"}
     >
 

@@ -17,8 +17,8 @@ export default function ButtonGroup({friendCount,gym,History}:ButtonGroupProps) 
       mt={1}
       textAlign={"center"}
     >
-      <Button flexGrow={"1"} variant={"outline"} width="30%"
-        borderRadius={16} borderColor="#F97316" borderWidth="2" onPress={() => router.push("/Friends")}>
+      <Button flexGrow={"1"} variant={"outline"} width="30%" backgroundColor="#FFFFFF"
+        borderRadius={16} borderColor="#F97316" borderWidth="2" _pressed={{ opacity:0.5}} onPress={() => router.push("/Friends")}>
         <Text fontSize="md" color="#C2410C" >{friendCount}</Text> 
       </Button>
 
