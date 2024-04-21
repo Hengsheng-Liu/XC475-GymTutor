@@ -1,6 +1,11 @@
 import { useState } from "react";
-import { View, Text } from "react-native";
-import { NativeBaseProvider, Select, Box, CheckIcon, Flex, Pressable, Input, Button} from "native-base";
+import { NativeBaseProvider, Select, Box, CheckIcon, Flex, Pressable, Input, Button, extendTheme,
+  ChevronLeftIcon,
+  HStack,
+  Icon,
+   Text,
+   ScrollView
+} from "native-base";
 import { AntDesign } from "@expo/vector-icons";
 import Tags from "../../components/ProfileComponents/Tags";
 
@@ -9,6 +14,7 @@ import {
   Alert,
 
   StyleSheet,
+  View,
 
   SafeAreaView,
   Keyboard,
@@ -19,7 +25,6 @@ import { router, useLocalSearchParams } from "expo-router";
 import { UserCredential } from "firebase/auth";
 import { collection, addDoc,setDoc,doc, updateDoc } from "firebase/firestore";
 import { useAuth} from "../../Context/AuthContext";
-import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { useRoute } from '@react-navigation/native';
 
@@ -28,10 +33,10 @@ import { addUser } from "@/components/FirebaseUserFunctions"
 import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
 
 
-export const AddUserToDB = async (response: UserCredential, name: string, bio: string, gender: string, gymExperience: string, tags: string[]) => {
+export const AddUserToDB = async (response: UserCredential, name: string, bio: string, gender: string, gymExperience: string, year: number, month: number, date: number) => {
   const user = response.user;
 
-  await addUser(user.uid, user.email || "", "", "", name, 21, bio, gender, "", gymExperience ,{day: 1, month: 1, year: 2000}, defaultFilters, tags);
+  await addUser(user.uid, user.email || "", "", "", name, 21, bio, gender, "", gymExperience ,{day: date, month: month, year: year}, defaultFilters, [""]);
 
 };
 
@@ -49,9 +54,15 @@ export default function SignUpScreen2() {
    const {name, email, password} = useLocalSearchParams();
 
 
-    const [date, setDate] = useState(new Date(1598051730000));
-    const [mode, setMode] = useState('date');
-    const [show, setShow] = useState(false);
+    // const [date, setDate] = useState(new Date(1598051730000));
+    // const [mode, setMode] = useState('date');
+    // const [show, setShow] = useState(false);
+    const [year, setYear] = useState<number | undefined>();
+    const [month, setMonth] = useState<number | undefined>();
+    const [date, setDate] = useState<number | undefined>();
+    const [errorMessage, setErrorMessage] = useState<string>('');
+
+
     const [gymExperience, setGymExperience] = useState<string>('');
   
    // const [age, setAge] = useState<string | undefined>();
@@ -137,7 +148,7 @@ export default function SignUpScreen2() {
     console.log("password is", password);
     console.log("name is" + name as string);
 
-    if (date && gymExperience && gender && bio && tags) {
+    if (year && month && date && gymExperience && gender && bio && validateDate(year, month, date)) {
   //          await updateDB(userCredential);
 
 
@@ -148,7 +159,7 @@ export default function SignUpScreen2() {
             if (email && password) {
               const userCredential = await CreateUser(email as string, password as string);
               const user = userCredential.user;
-              await AddUserToDB(userCredential, name as string, bio, gender, gymExperience, tags);
+              await AddUserToDB(userCredential, name as string, bio, gender, gymExperience, year, month, date);
 
             } else {
               Alert.alert("Error", "User cannot be properly stored in firestore database."); 
@@ -156,7 +167,10 @@ export default function SignUpScreen2() {
             }
          
         
-        router.navigate("LogIn");
+            router.navigate({
+              pathname: "LogIn"
+
+            });
         }   
         else {
           Alert.alert("Error", "Please fill in all fields");
@@ -166,127 +180,177 @@ export default function SignUpScreen2() {
         }
 
 
-    return (
-    <NativeBaseProvider>
-
-    <Pressable style={styles.contentView} onPress={Keyboard.dismiss}>
-      <SafeAreaView style={styles.contentView}>
-        <View style={styles.container}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.titleText}>Add Personal Info</Text>
-          </View>
-          <View style={styles.mainContent}>
-            
-
-
-    <Button  > Choose Date of Birth </Button>
-
-
-
-
-      <Box maxW="300">
-        <Select selectedValue={gender} minWidth="200" accessibilityLabel="Choose Gender" placeholder="Gender" _selectedItem={{
-        bg: "teal.600",
-        endIcon: <CheckIcon size="5" />
-      }} mt={1} onValueChange={itemValue => setGender(itemValue)}>
-          <Select.Item label="Male" value="male" />
-          <Select.Item label="Female" value="female" />
-          <Select.Item label="Other" value="other" />
-        </Select>
-      </Box>
-
-      <Box maxW="300">
-        <Select selectedValue={gymExperience} minWidth="200" accessibilityLabel="Choose Gym Experience" placeholder="Gym Experience" _selectedItem={{
-        bg: "teal.600",
-        endIcon: <CheckIcon size="5" />
-      }} mt={1} onValueChange={itemValue => setGymExperience(itemValue)}>
-          <Select.Item label="Beginner" value="beginner" />
-          <Select.Item label="Intermediate" value="intermediate" />
-          <Select.Item label="Advanced" value="advanced" />
-        </Select>
-      </Box>
-
-<Box 
-      flexDirection="column"
-      alignItems="flex-start"
-      shadow={3} 
-      backgroundColor={"gray.100"} 
-      mt={2} 
-      borderRadius={10}>
- 
-          <Input
-            multiline={true}
-            color={"lightBlue.900"} mt={2} padding={3}
-            value={bio}
-            onChangeText={setBio}
-            placeholder="Enter your description"
-          />
-
-      </Box>
-
-        <Text> What kind of gym goer are you? (basically the add tags part) </Text>
-
-
-<Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={3}>
-        {tags.map((str, index) => (
-          <Tags key={index} title={str} />
-        ))}
-
-        {!editMode && (
-          <Pressable onPress={() => setEditMode(true)}>
-            <Tags title={"+"} />
-          </Pressable>
-        )}
-
-        {editMode && (
-          <Input
-            multiline={false}
-            color={"lightBlue.900"}
-            mt={2}
-            padding={3}
-            value={addTag}
-            onChangeText={setAddTag}
-            placeholder="new tag"
-            width="50%"
-          />
-        )}
-      </Flex>
-
-      <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={3}>
-      {editMode && (
-        <Button
-          alignSelf="flex-start"
-          mt={2}
-          ml={2}
-          onPress={handleSave}
-          backgroundColor={"#0284C7"}
-          leftIcon={<AntDesign name="check" size={24} color="white" />}
-        >
-          Add
-        </Button>
-
-      )}
-      {editMode && (
-          <Button
-          alignSelf="flex-start"
-          mt={2}
-          ml={2}
-          onPress={handleCancel}
-          backgroundColor={"#0284C7"}
-          leftIcon={<AntDesign name="close" size={24} color="white" />}
-        >
-          Cancel
-        </Button>
-      )}
-         </Flex>
-        <Button onPress={finishSignUp} > Finish Sign Up </Button>
-          </View>
-        </View>
-      </SafeAreaView>
-    </Pressable>
+        const validateDate = (year: number | undefined, month: number | undefined, date: number | undefined): boolean => {
+          if (year === undefined || month === undefined || date === undefined) {
+            return false; // Incomplete date, validation failed
+          }
+        
+          // Check if the year is valid (e.g., within a reasonable range)
+          if (year < 1900 || year > new Date().getFullYear()) {
+            return false; // Invalid year
+          }
+        
+          // Check if the month is valid (between 1 and 12)
+          if (month < 1 || month > 12) {
+            return false; // Invalid month
+          }
+        
+          // Check if the date is valid for the given month and year
+          const lastDayOfMonth = new Date(year, month, 0).getDate();
+          if (date < 1 || date > lastDayOfMonth) {
+            return false; // Invalid date
+          }
+        
+          return true; // Date is valid
+        };
+        
+        // Function to handle input change and validate the date
+        const handleDateChange = (text: string, setState: React.Dispatch<React.SetStateAction<number | undefined>>) => {
+          if (text === '') {
+            setState(undefined); // If the input is empty, set the state to undefined
+            setErrorMessage(''); // Clear error message
+            return;
+          }
+          const value = parseInt(text);
+          setState(value);
+        
+          // If any of the date components are not valid, show error message
+          if (!validateDate(year, month, date)) {
+            setErrorMessage('Please enter a valid date');
+          } else {
+            setErrorMessage(''); // Clear error message if date is valid
+          }
+        };
+        
     
 
-    </NativeBaseProvider>
+        const theme = extendTheme({
+          colors: {
+            primary: {
+            50: '#7C2D12',
+            100: '#F97316',
+            200: "#171717",
+            300: "#FAFAFA"
+            },
+          },
+          components: {
+            Button: {
+              baseStyle: {
+                color: "primary.50",
+                rounded: "full",
+              },
+            },
+            Text: {
+              fontSize:"50",
+              fontFamily:"Roberto",
+              color: "primary.50"
+            }
+          },
+        });
+      
+
+
+    return (
+    <NativeBaseProvider theme={theme}>
+       <HStack px="5" py="10" justifyContent="flex-start" alignItems="center" w="100%" bg="primary.300">
+        <HStack alignItems="center" flex={1}>
+          <ChevronLeftIcon icon={<Icon size="md" name="back" color="primary.200" />} onPress={() => router.navigate("SignUp")}/>
+          <Text fontSize="20" fontWeight="bold" textAlign="center" flex="1" color="primary.200" mr="4" p="2">
+            Registration
+          </Text>
+        </HStack>
+        </HStack>
+
+
+
+        <SafeAreaView style= {{ flex: 1, backgroundColor: "#FFF" }}>
+        <ScrollView backgroundColor={"#FFFFFF"} contentContainerStyle={{ flexGrow: 1 }}>
+          <Box ml={"3"} mr={"3"} paddingTop={"10"} flex="1 ">
+
+
+  
+            <Text fontSize="28" fontFamily="Roberto" fontWeight="700" color="primary.50" lineHeight="28" p="3">Create your profile</Text>
+  
+            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="1">Your Birthday</Text>
+
+            <Box alignItems="left" flexDirection="row">
+            
+               <Input mx="3" w="25%" 
+               value={year !== undefined ? year.toString() : ''} 
+               onChangeText={text => handleDateChange(text, setYear)}
+               keyboardType="numeric" 
+               placeholder="Year"/>
+
+               <Input mx="3" w="25%" 
+               value={month !== undefined ? month.toString() : ''} 
+               onChangeText={text => handleDateChange(text, setMonth)}
+               keyboardType="numeric"  
+               placeholder="Month"/>
+
+               <Input mx="3" w="27%"   
+               value={date !== undefined ? date.toString() : ''}  
+               onChangeText={text => handleDateChange(text, setDate)}
+               keyboardType="numeric"  
+               placeholder="Date"/>
+
+
+            </Box>
+
+            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Gender</Text>
+
+            <Box mx="3" w="90%">
+              <Select selectedValue={gender} minWidth="200" accessibilityLabel="Choose Gender" placeholder="Gender" _selectedItem={{
+              bg: "teal.600",
+              endIcon: <CheckIcon size="5" />
+            }} mt={1} onValueChange={itemValue => setGender(itemValue)}>
+                <Select.Item label="Male" value="male" />
+                <Select.Item label="Female" value="female" />
+                <Select.Item label="Other" value="other" />
+              </Select>
+            </Box>
+
+
+            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Gym Experience</Text>
+
+            <Box mx="3" w="90%">
+              <Select selectedValue={gymExperience} minWidth="200" accessibilityLabel="Choose Gym Experience" placeholder="Gym Experience" _selectedItem={{
+              bg: "teal.600",
+              endIcon: <CheckIcon size="5" />
+            }} mt={1} onValueChange={itemValue => setGymExperience(itemValue)}>
+                <Select.Item label="Beginner" value="beginner" />
+                <Select.Item label="Intermediate" value="intermediate" />
+                <Select.Item label="Advanced" value="advanced" />
+              </Select>
+            </Box>
+
+
+          <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Bio</Text>
+
+          <Box alignItems="left">
+
+            <Input mx="3" w="90%" value = {bio} onChangeText={setBio} h={100} multiline />
+
+          </Box>
+
+          {errorMessage ? <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="3">
+               {errorMessage}
+              </Text> : null}
+
+                    
+
+
+            <Flex direction="column" flexGrow="1" justifyContent="flex-end">
+
+            <Button bg="primary.100" onPress={finishSignUp} > Next Step </Button>
+         
+            </Flex>
+            </Box>
+        </ScrollView>
+      </SafeAreaView>
+      </NativeBaseProvider>
+
+
+
 
     );
 
