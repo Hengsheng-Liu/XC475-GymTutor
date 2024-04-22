@@ -215,11 +215,11 @@ export default function SignUpScreen2() {
           setState(value);
         
           // If any of the date components are not valid, show error message
-          if (!validateDate(year, month, date)) {
-            setErrorMessage('Please enter a valid date');
-          } else {
-            setErrorMessage(''); // Clear error message if date is valid
-          }
+          // if (!validateDate(year, month, date)) {
+          //   setErrorMessage('Please enter a valid date');
+          // } else {
+          //   setErrorMessage(''); // Clear error message if date is valid
+          // }
         };
         
     
