@@ -51,7 +51,7 @@ export default function History(
   return (
     <Box mt={4}>
       <VStack>
-        <Heading mb={2}> Calendar</Heading>
+        <Heading mb={2}>Calendar</Heading>
         <Box
             shadow={3} 
             borderRadius={10}

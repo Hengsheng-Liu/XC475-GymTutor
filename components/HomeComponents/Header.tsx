@@ -14,7 +14,7 @@ const Header: React.FC<FriendProps> = ({ GymName }) => {
 
   return (
     <Row
-      mb={2}
+      mb={2} mr="1" ml="1"
       justifyContent={"space-between"}
       alignItems={"center"}
     >
@@ -26,7 +26,7 @@ const Header: React.FC<FriendProps> = ({ GymName }) => {
       </TouchableOpacity>
       <Spacer/>
       <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("./Notifications")} >
-      <Octicons name="bell-fill" size={40} color="#0284C7" />
+      <Octicons name="bell" size={40} color="#F97316" />
       </TouchableOpacity>
     </Row>
   );

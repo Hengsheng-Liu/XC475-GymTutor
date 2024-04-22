@@ -49,13 +49,14 @@ export default function Description({bio, onSave}: DescriptionProps) {
         {editMode ? (
           <Input
             multiline={true}
-            color={"lightBlue.900"} mt={2} padding={3}
+            color={"trueGray.900"} padding={3}
+            borderWidth="0"
             value={newBio}
             onChangeText={setNewBio}
             placeholder="Enter your description"
           />
         ) : (
-          <Text color={"lightBlue.900"} mt={2} padding={3}>
+          <Text color={"trueGray.900"} padding={3}>
             {bio}
           </Text>
         )}
@@ -71,7 +72,8 @@ export default function Description({bio, onSave}: DescriptionProps) {
               px={6}
 
               onPress={handleSave}
-              backgroundColor={"#0284C7"}
+              backgroundColor={"#F97316"}
+              _pressed={{ opacity: 0.5 }}
               leftIcon={<AntDesign name="check" size={24} color="white" />}
             >
               Save

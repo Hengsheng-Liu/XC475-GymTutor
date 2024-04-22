@@ -98,7 +98,7 @@ const FriendProfilePage = () => {
               <Flex>
                 <Row>
                   <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
-                    <FontAwesome name="chevron-left" size={24} color="#0C4A6E" />
+                    <FontAwesome name="chevron-left" size={24} color="#F97316" />
                   </TouchableOpacity>
                   <Header user={userInfo} />
                 </Row>
@@ -109,8 +109,8 @@ const FriendProfilePage = () => {
                   mt={6}
                   textAlign={"center"}
                 >
-                  <Button width="40%" variant={"outline"} borderRadius={16} onPress={() => router.push("/Friends")}>
-                    <Text fontSize="md" color="#0284C7" > {userInfo.friends.length} {userInfo.friends.length == 1 ? " Friend" : "Friends"} </Text>
+                  <Button width="40%" variant={"outline"} borderRadius={16} borderColor="#F97316" borderWidth="2">
+                    <Text fontSize="md" color="#C2410C" > {userInfo.friends.length} {userInfo.friends.length == 1 ? " Friend" : "Friends"} </Text>
                   </Button>
 
                   {currUser && (canAddFriend(currUser, userInfo) ? (
@@ -118,7 +118,9 @@ const FriendProfilePage = () => {
                       onPress={() => handleSendFriendRequest(currUser.uid, userInfo.uid)}
                       size="lg"
                       width="40%"
-                      backgroundColor="#0284C7"
+                      shadow="2"
+                      backgroundColor={"#F97316"}
+                      _pressed={{ opacity: 0.5 }}
                       borderRadius={16}
                     >
                       <Row>
@@ -132,7 +134,9 @@ const FriendProfilePage = () => {
                         onPress={() => openChat(userInfo)}
                         size="lg"
                         width="40%"
-                        backgroundColor="#0284C7"
+                        shadow="2"
+                        backgroundColor={"#F97316"}
+                        _pressed={{ opacity: 0.5 }}
                         borderRadius={16}
                       >
                         <Row>
@@ -145,6 +149,7 @@ const FriendProfilePage = () => {
                         size="lg"
                         width="40%"
                         backgroundColor="#3F9443"
+                        shadow="2"
                         borderRadius={16}
                       >
                         <Row>
@@ -158,7 +163,8 @@ const FriendProfilePage = () => {
                     <Popover
                       trigger={(triggerProps) => {
                         return (
-                          <Button {...triggerProps} size="lg" backgroundColor="#0284C7" borderRadius={16}>
+                          <Button {...triggerProps} size="lg" backgroundColor={"#F97316"} shadow="2"
+                            _pressed={{ opacity: 0.5 }} borderRadius={16}>
                             <Text fontSize="md" color="#FFF">Edit</Text>
                           </Button>
                         );

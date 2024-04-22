@@ -7,7 +7,7 @@ interface TagsProps {
 
 export default function Tags({ title }: TagsProps) { 
     return (
-        <Badge m = {2} ml={0} colorScheme={"blue"}>
+        <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
             {title}
         </Badge>
     );

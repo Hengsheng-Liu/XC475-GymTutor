@@ -41,7 +41,7 @@ interface Props {
           if (currUser && friend.icon !== "") {
             try {
               const url = await getUserIcon(friend.icon);
-              console.log("Found Icon URL: ", url);
+              // console.log("Found Icon URL: ", url);
               setFriendIcon(url);
             } catch (error) {
               console.error("Failed to fetch friend icon:", error);
@@ -125,12 +125,15 @@ interface Props {
             {selectedUser.name}, {selectedUser.age}
           </Text>
           <Text fontSize="sm" color="trueGray.500">{selectedUser.status}</Text>
+          <Text color= "trueGray.900" fontSize="sm" numberOfLines={2} textAlign="center" isTruncated maxWidth="85%">
+            {selectedUser.bio}
+          </Text>
           <Row alignItems="center" mr="2" ml="2" p="3" justifyContent={"space-between"}>
             <TouchableOpacity activeOpacity={0.7} onPress={() => handlePreviousUser()}>
                 <FontAwesome name="chevron-left" size={24} color="black" />
             </TouchableOpacity>
             <Spacer/>
-            <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
+            <Badge m = {2} colorScheme={"muted"} shadow={1} borderRadius={4}>
               {selectedUser.gymExperience.charAt(0).toUpperCase() + selectedUser.gymExperience.slice(1)}
             </Badge>
             <Spacer/>
@@ -141,20 +144,20 @@ interface Props {
           <Box overflow="hidden" mb={3}>
             <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly">
               {selectedUser.tags && selectedUser.tags.slice(0, 5).map((tag, index) => (
-                <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>{tag}</Badge>
+                <Badge m = {2} colorScheme={"muted"} shadow={1} borderRadius={4}>{tag}</Badge>
               ))}
             </Flex>
           </Box>
           <Flex direction="row" justifyContent="space-between" width="90%" m={3}>
-            <Button onPress={() => handleOpenProfile()} size="lg" width="45%" backgroundColor="#FAFAFA" borderColor="#0284C7" borderWidth={2} borderRadius={16}>
-              <Text fontSize="md" color="#0284C7" fontWeight="bold">View Profile</Text>
+            <Button onPress={() => handleOpenProfile()} size="lg" width="45%" backgroundColor="#FAFAFA" borderColor="#F97316" borderWidth={2} borderRadius={16}>
+              <Text fontSize="md" color="#F97316" fontWeight="bold">View Profile</Text>
             </Button>
             { canAddFriend(currUser, selectedUser) ? (
               <Button
               onPress={() => handleSendFriendRequest(currUser.uid, selectedUser.uid)}
               size="lg"
               width="45%"
-              backgroundColor= "#0284C7"
+              backgroundColor= "#F97316"
               borderRadius={16}
             >
                 <Row>
@@ -168,7 +171,7 @@ interface Props {
                   onPress={() => openChat(selectedUser)}
                   size="lg"
                   width="45%"
-                  backgroundColor= "#0284C7"
+                  backgroundColor= "#F97316"
                   borderRadius={16}
                   >
                     <Row>

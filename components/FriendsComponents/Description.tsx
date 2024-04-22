@@ -23,7 +23,7 @@ export default function Description({bio}: DescriptionProps) {
         backgroundColor={"gray.100"} 
         mt={2} 
         borderRadius={10}>
-          <Text color={"lightBlue.900"} mt={2} padding={3}>
+          <Text color={"trueGray.900"} mt={2} padding={3}>
             {bio}
           </Text>
       </Box>

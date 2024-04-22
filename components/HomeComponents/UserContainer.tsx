@@ -54,14 +54,6 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
             fetchUpdatedFriend();
         }
     }, [currUser, friend.uid,friend.icon]); // Depend on currUser and friend.uid
-
-    // TODO: Display user preview when clicked
-    const handleUserClick  = async () =>{
-        console.log("User is pressed")
-        console.log(friend.tags);
-        // Do something when user is clicked
-        // Open Profile
-    };
       
     return (
         <Flex>
@@ -71,7 +63,7 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
                 <Row justifyContent= {"space-between"} >
                     <Column overflow="hidden">    
                         <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated>{friend.name}, {friend.age}</Text>
-                        <Text color= "trueGray.900" fontSize="sm" isTruncated>{friend.status}</Text>
+                        <Text color= "trueGray.900" fontSize="sm" isTruncated maxWidth="85%">{friend.bio}</Text>
                     </Column>
                 </Row>
                 <Row justifyContent={"left"}>

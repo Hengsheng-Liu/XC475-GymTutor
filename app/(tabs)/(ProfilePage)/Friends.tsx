@@ -65,35 +65,36 @@ export default function FriendListScreen () {
 
   return (
     <NativeBaseProvider theme = {theme} >
-      <SafeAreaView style= {{backgroundColor:"#0284C7", flex:1}}>
-      <Box p={15} alignItems="center">
-            <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"space-evenly"}>
+      <SafeAreaView style= {{backgroundColor:"#FFFFFF", flex:1}}>
+      <Box p={15} pb={2} alignItems="center" justifyContent="space-between">
+            <Row alignItems={"center"}>
               <TouchableOpacity activeOpacity={0.7} onPress={() => handleGoBack()}>
-                <FontAwesome name="chevron-left" size={24} color="#FFF" />
+                <FontAwesome name="chevron-left" size={24} color="black" />
               </TouchableOpacity>
               <Spacer/>
               <Box>
-                <Heading fontSize="lg">Friends</Heading> 
+                <Heading fontSize="lg" color="trueGray.800" pr="1">Friends</Heading> 
               </Box>
               <Spacer/>
-            </Flex>
-          </Box>
-          <Row mb={1} space={2} alignItems="center">
-        <Input flex={1} marginX={4} mb={2}
-          InputLeftElement={
-            <Box paddingLeft={2}>
-              <TouchableOpacity activeOpacity={0.7} onPress={searchFriends} >
-                <FontAwesome name="search" size={24} color="#0284C7" />
-              </TouchableOpacity>
-            </Box>
-          }
-          placeholder="Type and look for your partner"
-          bgColor="trueGray.100"
-          onChangeText={setSearchTerm}
-          borderRadius="md"
-          borderWidth={1}
-          fontSize="md"
-        />
+              <Text fontSize="3xl">...</Text>
+            </Row>
+      </Box>
+        <Row alignItems="center">
+          <Input flex={1} marginX={4} mb={2}
+            InputLeftElement={
+              <Box paddingLeft={2}>
+                <TouchableOpacity activeOpacity={0.7} onPress={searchFriends} >
+                  <FontAwesome name="search" size={24} color="#0284C7" />
+                </TouchableOpacity>
+              </Box>
+            }
+            placeholder="Look for your friend here!"
+            bgColor="trueGray.100"
+            onChangeText={setSearchTerm}
+            borderRadius="md"
+            borderWidth={1}
+            fontSize="md"
+          />
         </Row>
       <ScrollView style={{backgroundColor:"#FFF"}}>
         {loading ? (

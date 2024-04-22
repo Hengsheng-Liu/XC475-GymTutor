@@ -9,6 +9,7 @@ import { GiftedChat, Composer, Send } from 'react-native-gifted-chat';
 import Fire from './data'
 import { globalState } from './globalState';
 import { generateChatId } from './data';
+import { FontAwesome } from '@expo/vector-icons';
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -41,7 +42,7 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
         backgroundColor: props.currentMessage.user._id === receiveUser.uid ? '#FED7AA' : '#F97316',
         alignSelf: props.currentMessage.user._id === receiveUser.uid ? 'flex-start' : 'flex-end',
       }}>
-        <Text style={{ color: props.currentMessage.user._id === 1 ? '#fff' : '#000' }}>
+        <Text style={{ color: props.currentMessage.user._id === receiveUser.uid ? '#171717' : '#FFF7ED', fontSize: 18 }}>
           {props.currentMessage.text}
         </Text>
       </View>
@@ -102,15 +103,17 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
     header: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: 10,
+      justifyContent: 'center',
+      paddingBottom: 10,
+      paddingTop: 70,
       backgroundColor: '#fff',
       borderBottomWidth: 1,
       borderBottomColor: '#e0e0e0',
     },
     userName: {
       fontWeight: 'bold',
-      fontSize: 18,
+      fontSize: 24,
+      textAlign: 'center',
     },
     chatContainer: {
       flex: 1,
@@ -157,7 +160,7 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
     },
     composer: {
       backgroundColor: '#F5F5F5',
-      borderRadius: 20,
+      borderRadius: 10,
       borderWidth: 1,
       borderColor: '#E4E9F2',
       paddingTop: 8.5,
@@ -185,11 +188,23 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
       fontWeight: 'bold',
       fontSize: 16
     },
+    backButton: {
+      position: 'absolute',  // Positions the button absolutely to stick to the left
+      left: 10,
+      paddingTop: 60,
+    }
   });
 
+  const handleGoBack = () => {
+    router.back();
+  };
+
   return (
-    <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? -1000 : 20}>
       <View style={styles.header}>
+        <TouchableOpacity style={styles.backButton} activeOpacity={0.7} onPress={() => handleGoBack()}>
+          <FontAwesome name="chevron-left" size={24} color="#171717" />
+        </TouchableOpacity>
         <Text style={styles.userName}>{receiveUser.name}</Text>
         <TouchableOpacity>
           {/* Icon for additional options */}
@@ -206,6 +221,19 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
         alwaysShowSend={true}
         renderComposer={renderComposer}
         renderSend={renderSend}
+        text={message}
+        onInputTextChanged={text => setMessage(text)}
+        textInputProps={{
+          returnKeyType: "send", // Label the return key as 'send'
+          onSubmitEditing: (e) => {
+            // When the user presses 'enter', check if the input is not just whitespace
+            if (e.nativeEvent.text.trim()) {
+              sendMessage([{ text: e.nativeEvent.text.trim() }]);
+            }
+          },
+          blurOnSubmit: false, // Prevents the keyboard from dismissing on submit
+          multiline: false,
+        }}
       />
     </KeyboardAvoidingView>
   );
