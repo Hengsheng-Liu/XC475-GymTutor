@@ -275,7 +275,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
             InputLeftElement={
               <Box paddingLeft={2}>
                 <TouchableOpacity activeOpacity={0.7} onPress={handleSearchUsers} >
-                  <FontAwesome name="search" size={24} color="#0284C7" />
+                  <FontAwesome name="search" size={24} color="#A3A3A3" />
                 </TouchableOpacity>
               </Box>
             }
@@ -310,8 +310,9 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
               <Pressable onPress={() => navigateToChatPage(user)} onLongPress={() => confirmAndDelete(user)}>
                 {({ isPressed }) => {
                   return <Box bg={isPressed ? "coolGray.200" : getBackgroundColor(user)}
-                    style={{ transform: [{ scale: isPressed ? 0.96 : 1 }] }}
-                    shadow="3" borderRadius="xl" mb={3} ml={1} mr={1} pr={1}>
+                    borderWidth="1px" // Specifies the border width and style
+                    borderColor="gray.300" // Sets the border color
+                  >
                     <ChatPreview friend={user} key={user.uid} />
                   </Box>
                 }}
