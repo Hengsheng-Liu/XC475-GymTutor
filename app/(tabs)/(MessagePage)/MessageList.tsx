@@ -156,7 +156,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
           <Spacer />
         </Column>
         <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("./FriendsChatCopy")} >
-          <AntDesign name="contacts" size={45} color="black" />
+          <AntDesign name="contacts" size={45} color="#EA580C" />
         </TouchableOpacity>
       </Row>
     );
