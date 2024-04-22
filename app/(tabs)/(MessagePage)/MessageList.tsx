@@ -17,6 +17,7 @@ import { firestore } from "@/firebaseConfig";
 import { filterUsersByName } from "@/components/FirebaseUserFunctions";
 import ChatPreview from "@/components/ChatComponents/ChatContainer";
 import { FontAwesome5, Octicons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -155,9 +156,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
           <Spacer />
         </Column>
         <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("./FriendsChatCopy")} >
-          <Image
-            source={require('../../../assets/images/Vector.png')}
-          />
+          <AntDesign name="contacts" size={45} color="black" />
         </TouchableOpacity>
       </Row>
     );
