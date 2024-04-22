@@ -18,9 +18,9 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
  // const [deleteTag, setDeleteTag] = useState("");
 
   const handleSave = () => {
-    if (addTag === "") {
-      onSaveTag(addTag as string);
-    }
+ 
+    onSaveTag(addTag as string);
+    
     setEditMode(false);
   }
   const handleCancel = () => {
