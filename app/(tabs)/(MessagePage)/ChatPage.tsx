@@ -196,7 +196,7 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
   });
 
   const handleGoBack = () => {
-    router.back();
+    router.navigate("MessageList");
   };
 
   return (

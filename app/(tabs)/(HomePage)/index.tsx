@@ -119,7 +119,7 @@ export default function SelectGym() {
         <Box m={2}>
           <GooglePlacesAutocomplete
             placeholder="Enter your zip code to search"
-
+            
             onPress={(data, details = null) => {
               setSearchLocation(details?.geometry.location);
             }}
@@ -130,11 +130,10 @@ export default function SelectGym() {
             styles={{
               container: {
                 flex: 0,
+                borderWidth:1,
+                borderColor:"#A3A3A3",
               },
-              textInput: {
-                height: 38,
-                fontSize: 16,
-              },
+
             }}
             fetchDetails
           />

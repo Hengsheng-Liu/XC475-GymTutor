@@ -197,6 +197,7 @@ export default function HomeScreen() {
           borderRadius="md"
           borderWidth={1}
           fontSize="md"
+          onSubmitEditing={handleSearchUsers}
         />
         </Row>
         {loading && 
