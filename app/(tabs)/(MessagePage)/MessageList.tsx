@@ -262,7 +262,11 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
     return messagingEntry && !messagingEntry.haveRead ? "coolGray.400" : "#FAFAFA";
   };
 
-
+  // Checks if there are unread messages for the user
+  const hasUnreadMessages = (user) => {
+    const messagingEntry = currentUserCurrentlyMessaging.find(entry => entry.userId === user.uid);
+    return messagingEntry && !messagingEntry.haveRead;
+  };
 
   return (
     <NativeBaseProvider theme={theme}>
@@ -308,15 +312,29 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
           <ScrollView style={{ flex: 1, zIndex: 0 }}>
             {users.map((user) => (
               <Pressable onPress={() => navigateToChatPage(user)} onLongPress={() => confirmAndDelete(user)}>
-                {({ isPressed }) => {
-                  return <Box bg={isPressed ? "coolGray.200" : getBackgroundColor(user)}
-                    borderWidth="1px" // Specifies the border width and style
-                    borderColor="gray.300" // Sets the border color
+                {({ isPressed }) => (
+                  <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} // Static background color
+                    borderWidth="1px"
+                    borderColor="gray.300"
+                    position="relative" // Needed to position the dot absolutely within the box
+                    p="0" // Add some padding inside the box
                   >
                     <ChatPreview friend={user} key={user.uid} />
+                    {hasUnreadMessages(user) && (
+                      <Box // Blue dot indicator
+                        position="absolute"
+                        right="4" // Positioning it to the right inside the box
+                        top="50%" // Vertically center
+
+                        size="12px" // Size of the dot
+                        bg="blue.500" // The color of the dot
+                        borderRadius="full" // Makes the box a circle
+                      />
+                    )}
                   </Box>
-                }}
-              </Pressable>))}
+                )}
+              </Pressable>
+            ))}
           </ScrollView>
         )}
       </SafeAreaView>
