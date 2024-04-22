@@ -65,8 +65,12 @@ export default function Header({ name, icon, gym, background }: HeaderProps) {
         try {
           const Avatar = await getUserPicture(icon, "Avatar");
           const backgroundImg = await getUserPicture(background, "Background");
+          if (Avatar){
           setUserIcon(Avatar);
+          }
+          if (backgroundImg){
           setBackgroundUrl(backgroundImg);
+          }
         } catch (error) {
           console.error("Failed to fetch user icon:", error);
         }
