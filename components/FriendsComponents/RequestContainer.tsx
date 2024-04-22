@@ -131,7 +131,7 @@ const FriendRequest: React.FC<FriendProps> = ({ friend, status }) => {
     const openChat = async (friend: any) => {
         console.log(findOrCreateChat(currUser.uid, friend.uid));
         globalState.user = friend; // Set the selected user in the global state
-        router.navigate("ChatPage"); // Then navigate to ChatPage
+        router.navigate("/ChatPage"); // Then navigate to ChatPage
     };
 
     return (

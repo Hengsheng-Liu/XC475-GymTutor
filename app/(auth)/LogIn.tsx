@@ -175,6 +175,7 @@ export default function LogInScreen() {
                 secureTextEntry
                 backgroundColor={"#FAFAFA"}
                 borderRadius={5}
+                onSubmitEditing={handleLogIn}
               />
             </Box>
             <Button
