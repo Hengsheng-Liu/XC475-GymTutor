@@ -22,9 +22,6 @@ export default function TabLayout() {
         tabBarShowLabel: false,
         tabBarActiveTintColor: "#F97316",
         tabBarInactiveTintColor: "#A5A5A5",
-        tabBarStyle:{
-          height: 100,
-        }
       }}
       >
         <Tabs.Screen
@@ -32,7 +29,7 @@ export default function TabLayout() {
           options={{
             title: "Message",
             headerShown: false,
-            tabBarIcon: (props) => <TabBarIcon {...props} name="comments" size={40}/>,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="comments" size={25}/>,
           }}
           
         />
@@ -41,7 +38,7 @@ export default function TabLayout() {
           options={{
             title: "SpotMe",
             headerShown: false,
-            tabBarIcon: (props) => <TabBarIcon {...props} name="group" size={40}/>,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="group" size={25}/>,
           }}
         />
         <Tabs.Screen
@@ -49,7 +46,7 @@ export default function TabLayout() {
           options={{
             title: "Profile",
             headerShown: false,
-            tabBarIcon: (props) => <TabBarIcon {...props} name="user" size={40}/>,
+            tabBarIcon: (props) => <TabBarIcon {...props} name="user" size={25}/>,
      
           }}
         />

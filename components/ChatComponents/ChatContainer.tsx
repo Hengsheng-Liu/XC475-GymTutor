@@ -6,7 +6,7 @@ import { generateChatId } from '@/app/(tabs)/(MessagePage)/data';
 import { firestore } from '../../firebaseConfig'
 import { getDoc, doc, collection } from 'firebase/firestore'
 import { useFocusEffect } from '@react-navigation/native';
-import { getUserIcon } from '@/components/FirebaseUserFunctions';
+import { getUserPicture } from '@/components/FirebaseUserFunctions';
 
 interface FriendProps {
     friend: IUser;
@@ -22,18 +22,18 @@ const ChatPreview: React.FC<FriendProps> = ({ friend }) => {
         async function fetchIcon() {
             if (currUser && friend.icon !== "") {
               try {
-                const url = await getUserIcon(friend.icon);
+                const url = await getUserPicture(friend.icon, "Avatar");
                 // console.log("Found Icon URL: ", url);
                 setFriendIcon(url);
               } catch (error) {
                 console.error("Failed to fetch friend icon:", error);
                 // Handle the error e.g., set a default icon or state
-                const url = await getUserIcon("Icon/Default/Avatar.png");
+                const url = await getUserPicture("Icon/Default/Avatar.png", "Avatar");
                 console.log("Used default Icon URL: ", url)
                 setFriendIcon(url);
               }
             } else {
-            const url = await getUserIcon("Icon/Default/Avatar.png");
+            const url = await getUserPicture("Icon/Default/Avatar.png", "Avatar");
             // console.log("Used default Icon URL: ", url)
             setFriendIcon(url);
           }
