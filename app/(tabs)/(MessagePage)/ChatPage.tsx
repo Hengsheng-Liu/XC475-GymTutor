@@ -10,6 +10,8 @@ import Fire from './data'
 import { globalState } from './globalState';
 import { generateChatId } from './data';
 import { FontAwesome } from '@expo/vector-icons';
+import { getUserPicture } from '@/components/FirebaseUserFunctions';
+import { Avatar, NativeBaseProvider } from 'native-base';
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -18,11 +20,13 @@ type Props = {
 
 const ChatPage: React.FC<Props> = ({ navigation }) => {
 
-  const { User } = useAuth();
+  const { User, currUser } = useAuth();
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
   const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
   const [loading, setLoading] = useState<boolean>(true); // State to track loading status
+  const [friendIcon, setFriendIcon] = useState<string>();
+  const [userIcon, setUserIcon] = useState<string>();
 
 
   // Accessing the user parameter passed to this screen
@@ -32,20 +36,79 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
     return null;
   }
 
+  // function renderMessage(props) {
+  //   return (
+  //     <View style={{
+  //       maxWidth: '70%',
+  //       margin: 5,
+  //       padding: 10,
+  //       borderRadius: 5,
+  //       backgroundColor: props.currentMessage.user._id === receiveUser.uid ? '#FED7AA' : '#F97316',
+  //       alignSelf: props.currentMessage.user._id === receiveUser.uid ? 'flex-start' : 'flex-end',
+  //     }}>
+  //       <Text style={{ color: props.currentMessage.user._id === receiveUser.uid ? '#171717' : '#FFF7ED', fontSize: 18 }}>
+  //         {props.currentMessage.text}
+  //       </Text>
+  //     </View>
+  //   );
+  // }
+
+  async function fetchIconByUser(inputUser) {
+    if (currUser && inputUser.icon) {
+      try {
+        const icon = await getUserPicture(inputUser.icon, "Avatar");
+        return icon
+      } catch (error) {
+        console.error("Failed to fetch friend icon:", error);
+      }
+    }
+    // Fallback to default icon if user icon is not available or there is an error
+    return getUserPicture("Icon/Default/Avatar.png", "Avatar");
+  }
+
+  useEffect(() => {
+    fetchIconByUser(currUser).then(url => {
+      setUserIcon(url);
+
+    });
+    fetchIconByUser(receiveUser).then(url => {
+      setFriendIcon(url);
+
+    })
+
+    console.log("User icon url:", userIcon);
+    console.log(friendIcon);
+  }, [currUser, receiveUser, userIcon, friendIcon])
+
   function renderMessage(props) {
     return (
-      <View style={{
-        maxWidth: '70%',
-        margin: 5,
-        padding: 10,
-        borderRadius: 5,
-        backgroundColor: props.currentMessage.user._id === receiveUser.uid ? '#FED7AA' : '#F97316',
-        alignSelf: props.currentMessage.user._id === receiveUser.uid ? 'flex-start' : 'flex-end',
-      }}>
-        <Text style={{ color: props.currentMessage.user._id === receiveUser.uid ? '#171717' : '#FFF7ED', fontSize: 18 }}>
-          {props.currentMessage.text}
-        </Text>
-      </View>
+      <NativeBaseProvider>
+        <View style={{
+          flexDirection: props.currentMessage.user._id === receiveUser.uid ? 'row' : 'row-reverse',
+          alignItems: 'center',
+          marginHorizontal: 10,
+          alignSelf: props.currentMessage.user._id === receiveUser.uid ? 'flex-start' : 'flex-end',
+        }}>
+          {/* Avatar */}
+          <Avatar m={1} size="45" source={{ uri: props.currentMessage.user._id === receiveUser.uid ? friendIcon : userIcon }} />
+          {/* Message bubble */}
+          <View style={{
+            maxWidth: '70%',
+            margin: 10,
+            padding: 10,
+            borderRadius: 5,
+            backgroundColor: props.currentMessage.user._id === receiveUser.uid ? '#FED7AA' : '#F97316',
+            alignSelf: props.currentMessage.user._id === receiveUser.uid ? 'flex-start' : 'flex-end',
+          }}>
+            <Text style={{
+              color: props.currentMessage.user._id === receiveUser.uid ? '#171717' : '#FFF7ED',
+              fontSize: 18
+            }}>
+              {props.currentMessage.text}
+            </Text>
+          </View>
+        </View>
+      </NativeBaseProvider>
     );
   }
 
