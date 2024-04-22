@@ -7,26 +7,31 @@ import {
   Column,
   IconButton,
   Image,
+  Center,
 } from "native-base";
 import { useAuth } from "@/Context/AuthContext";
 import { Entypo } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { Camera } from "expo-camera";
-import { getUserIcon } from "@/components/FirebaseUserFunctions";
+import { getUserPicture } from "@/components/FirebaseUserFunctions";
+import { ImageBackground, StyleSheet } from "react-native";
 
 interface HeaderProps {
   name: string;
   icon: string;
   gym: string;
+  background: string;
 }
 
-export default function Header({ name, icon, gym }: HeaderProps) {
+export default function Header({ name, icon, gym, background }: HeaderProps) {
   const { currUser } = useAuth();
   const [userIcon, setUserIcon] = useState<string>(
     require("@/assets/images/default-profile-pic.png")
   );
-
+  const [backgroundUrl, setBackgroundUrl] = useState<string>(
+    require("@/assets/images/Background.jpeg")
+  );
 
   const ReTakeAvatar = async () => {
     /*
@@ -42,65 +47,85 @@ export default function Header({ name, icon, gym }: HeaderProps) {
         console.log("Error fetching camera permissions:", e);
       });
     */
-      try {
-        const { status } = await Camera.requestCameraPermissionsAsync();
-        if (status === "granted") {
-          router.push({ pathname: "/Photo", params: { Avatar: true } });
-        } else {
-          alert("Please allow camera permissions to continue.");
-        }
-      } catch (e) {
-        console.log("Error fetching camera permissions:", e);
+    try {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      if (status === "granted") {
+        router.push({ pathname: "/Photo", params: { pictureType: "Avatar" } });
+      } else {
+        alert("Please allow camera permissions to continue.");
       }
+    } catch (e) {
+      console.log("Error fetching camera permissions:", e);
+    }
   };
 
   useEffect(() => {
-
-    async function fetchIcon() {
+    async function fetchPicture() {
       if (currUser && icon !== "") {
         try {
-          const url = await getUserIcon(icon);
-          console.log("Icon URL: ", url);
-          setUserIcon(url);
+          const Avatar = await getUserPicture(icon, "Avatar");
+          const backgroundImg = await getUserPicture(background, "Background");
+          setUserIcon(Avatar);
+          setBackgroundUrl(backgroundImg);
         } catch (error) {
           console.error("Failed to fetch user icon:", error);
-          
         }
       }
     }
 
     // Call the fetch function
-    fetchIcon();
+    fetchPicture();
     console.log("Icon: ", userIcon);
-  }, [icon, currUser]); 
+  }, [icon, currUser]);
 
   if (!currUser) return null;
 
   return (
     <Flex>
-      <Flex alignItems={"center"} marginBottom={2} flexDir={"row"}>
-        <Box>
-          <Image
-            size={130}
-            borderRadius={100}
-            source={{ uri: userIcon }}
-            alt="User Icon"
-          />
-          <IconButton
-            icon={<Entypo name="camera" size={28} color="#FB923C" />}
-            zIndex={1}
-            marginTop={"-10"}
-            marginLeft={"20"}
-            onPress={ReTakeAvatar}
-          />
-        </Box>
-        <Column marginLeft={2}>
+      <Flex marginBottom={2}>
+        <ImageBackground
+          source={{ uri: backgroundUrl }}
+          style={styles.image}
+        >
+          <Flex alignItems={"center"}
+          marginTop={"1/3"}
+          >
+            <Image
+              size={115}
+              borderRadius={100}
+              source={{ uri: userIcon }}
+              alt="User Icon"
+
+            />
+            <IconButton
+              icon={<Entypo name="camera" size={28} color="#FB923C" />}
+              zIndex={1}
+              marginTop={"-10"}
+              marginLeft={"20"}
+              onPress={ReTakeAvatar}
+            />
+          </Flex>
+        </ImageBackground>
+        <Flex  alignItems={"center"}>
           <Heading size="lg">{name}</Heading>
-          <Text isTruncated maxW="280" w="80%">
+          <Text isTruncated maxW="4/5" >
             {gym}
           </Text>
-        </Column>
+        </Flex>
       </Flex>
     </Flex>
   );
 }
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "column",
+  },
+  image: {
+    resizeMode: "cover",
+    justifyContent: "center",
+    width: "100%",
+    height: 200,
+    marginBottom: 25
+  },
+});

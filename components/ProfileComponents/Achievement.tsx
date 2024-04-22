@@ -55,7 +55,7 @@ export default function Achievement(
       </HStack>
       <HStack justifyContent={"space-around"} mt={2} alignItems={"center"}>
         {renderDisplay()}
-        <Pressable onPress={() => router.push("/AchievementPage")}>
+        <Pressable onPress={() => router.push("/AchievementPage")} _pressed={{opacity:0.5}}>
           <FontAwesome5 name="chevron-right" size={24} color={"#737373"} />
         </Pressable>
       </HStack>

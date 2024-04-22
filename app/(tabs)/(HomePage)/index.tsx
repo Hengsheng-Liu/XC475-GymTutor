@@ -88,12 +88,12 @@ export default function SelectGym() {
     components: {
       Text: {
         baseStyle: {
-          color: "#F0F9FF",
+          color: "#171717",
         },
       },
       Heading: {
         baseStyle: {
-          color: "#F0F9FF",
+          color: "#171717",
         },
       },
     },
@@ -105,7 +105,7 @@ export default function SelectGym() {
             <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"right"}>
             { (userGym[0] !== "" && userGym[1] !== "") && 
               <Pressable pr={2} onPress={() => router.replace("./Home")}>
-                <FontAwesome name="chevron-left" size={30} color="#FFF" />
+                <FontAwesome name="chevron-left" size={30} color="#171717" />
               </Pressable>
             }
               <Box>
@@ -113,12 +113,13 @@ export default function SelectGym() {
                 <Text> Find the gym that you go most often </Text>
               </Box>
               <Spacer/>
-              <FontAwesome name="map-o" size={50} color="#F0F9FF" />
+              <FontAwesome name="map-o" size={50} color="#EA580C" />
             </Flex>
         </Box>
         <Box m={2}>
           <GooglePlacesAutocomplete
             placeholder="Enter your zip code to search"
+
             onPress={(data, details = null) => {
               setSearchLocation(details?.geometry.location);
             }}
@@ -129,6 +130,10 @@ export default function SelectGym() {
             styles={{
               container: {
                 flex: 0,
+              },
+              textInput: {
+                height: 38,
+                fontSize: 16,
               },
             }}
             fetchDetails
@@ -148,6 +153,6 @@ export default function SelectGym() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0369A1",
+    backgroundColor: "#FAFAFA",
   },
 });

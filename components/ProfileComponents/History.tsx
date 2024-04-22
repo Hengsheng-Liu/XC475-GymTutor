@@ -2,7 +2,7 @@ import { ExpandableCalendar, CalendarProvider, WeekCalendar, CalendarUtils,Calen
 import { Box, VStack, Heading } from "native-base";
 import { useState,useMemo, useEffect} from "react";
 import { StyleSheet } from "react-native";
-import { DailyCheckIn, GetUserPicture } from "../FirebaseUserFunctions";
+import { DailyCheckIn } from "../FirebaseUserFunctions";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import { router } from "expo-router";
 interface CalendarProps {
@@ -41,16 +41,10 @@ export default function History(
     const dayData = history.find((x) => x.day === day.dateString);
     if(dayData && dayData?.photo) {
       try{
-      console.log(dayData.photo, "is in the array")
       router.push({pathname: '/PastPhoto',params:{ pictureUrl: dayData.photo, title: dayData.day}})
       }catch(e){
         console.log(e);
       }
-
-    }else if(dayData){
-      console.log(day.dateString, "is in the array but no photo");
-    }else{
-      console.log(day.dateString, "is not in the array");
     }
   }
   

@@ -44,6 +44,8 @@ import {
 } from "../../../components/FirebaseUserFunctions";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native";
+import { Camera } from "expo-camera";
+import { router } from "expo-router";
 // note - I originally wrote everything below in UserProfilePage.tsx under 'components', and tried importing
 // it from there, but for some reason that didn't work. So for now, I put the code in UserProfilePage in this file
 
@@ -80,13 +82,13 @@ const ProfilePage = () => {
       }
     }
   };
-const signOutUser = async () => {
+  const signOutUser = async () => {
     try {
       await signOut(getAuth());
     } catch (error) {
       console.error("Error signing out: ", error);
     }
-}
+  };
   const updateTags = async (addTag: string) => {
     if (User) {
       try {
@@ -98,6 +100,21 @@ const signOutUser = async () => {
       }
     }
   };
+  const NewBackground = async () => {
+    try {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      if (status === "granted") {
+        router.push({
+          pathname: "/Photo",
+          params: { pictureType: "Background" },
+        });
+      } else {
+        alert("Please allow camera permissions to continue.");
+      }
+    } catch (e) {
+      console.log("Error fetching camera permissions:", e);
+    }
+  };
   const theme = extendTheme({
     components: {
       Button: {
@@ -106,9 +123,7 @@ const signOutUser = async () => {
           rounded: "full",
         },
       },
-      Text: {
-        
-      }
+      Text: {},
     },
   });
 
@@ -116,46 +131,54 @@ const signOutUser = async () => {
     <NativeBaseProvider theme={theme}>
       <SafeAreaView style={{ backgroundColor: "#FFF" }}>
         <ScrollView backgroundColor={"#FFFFFF"}>
-        <Flex alignSelf={"flex-end"}>
-          <Popover
-          placement="bottom"
-            trigger={(triggerProps) => {
-              return (
-                <Flex >
-                  <Button width={55} bgColor={"#FFF"} {...triggerProps}>
-                    <Text>三</Text>
-                  </Button>
-                </Flex>
-              );
-            }}
-          >
-            <Popover.Content accessibilityLabel="Delete Customerd" w="56">
-              <Popover.Body>
-                <Pressable onPress={signOutUser}>
-                  <Text>Logout</Text>
-                </Pressable>
-              </Popover.Body>
-            </Popover.Content>
-          </Popover>
-        </Flex>
-          <Box ml={"3"} mr={"3"}>
+          <Flex alignSelf={"flex-end"}>
+            <Popover
+              placement="bottom"
+              trigger={(triggerProps) => {
+                return (
+                  <Flex>
+                    <Button width={55} bgColor={"#FFF"} {...triggerProps}>
+                      <Text>三</Text>
+                    </Button>
+                  </Flex>
+                );
+              }}
+            >
+              <Popover.Content w="56">
+                <Popover.Body>
+                  <Pressable onPress={() => NewBackground()} _pressed={{opacity:0.5}}>
+                    <Text>Background</Text>
+                  </Pressable>
+                  <Pressable onPress={signOutUser}  _pressed={{opacity:0.5}}>
+                    <Text>Logout</Text>
+                  </Pressable>
+                </Popover.Body>
+              </Popover.Content>
+            </Popover>
+          </Flex>
+          <Box>
             {userInfo && (
               <Flex>
                 <Header
                   name={userInfo.name}
                   gym={userInfo.gym}
                   icon={userInfo.icon}
+                  background={userInfo.background}
                 />
-
-                <Attribute description={userInfo.tags} onSaveTag={updateTags} />
-                <ButtonGroup
-                  friendCount={userInfo.friends.length + " Friends"}
-                  gym={userGym}
-                  History={history}
-                />
-                <Description bio={userInfo.bio} onSave={updateBio} />
-                <Achievement display={userInfo.display} />
-                <History history={userInfo.checkInHistory} />
+                <Box ml={"3"} mr={"3"}>
+                  <Attribute
+                    description={userInfo.tags}
+                    onSaveTag={updateTags}
+                  />
+                  <ButtonGroup
+                    friendCount={userInfo.friends.length + " Friends"}
+                    gym={userGym}
+                    History={history}
+                  />
+                  <Description bio={userInfo.bio} onSave={updateBio} />
+                  <Achievement display={userInfo.display} />
+                  <History history={userInfo.checkInHistory} />
+                </Box>
               </Flex>
             )}
           </Box>

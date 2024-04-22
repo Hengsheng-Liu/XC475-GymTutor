@@ -10,7 +10,8 @@ export default function Test() {
       try{
       const { status } = await Camera.requestCameraPermissionsAsync();
       if (status === "granted") {
-        router.push("/Photo");
+        router.push({ pathname: "/Photo", params: { pictureType: "CheckIn" } });
+
       } else {
         alert("Please allow camera permissions to continue.");
         router.push("/SelectWorkout");

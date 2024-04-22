@@ -1,36 +1,42 @@
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, View, Text, Image } from 'react-native';
 import { Flex } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { GetUserPicture } from '@/components/FirebaseUserFunctions';
+import { getUserPicture } from '@/components/FirebaseUserFunctions';
 import { Stack, useNavigation } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 export default function PastPhoto() {
     const { pictureUrl,title } = useLocalSearchParams();
-    const [url, setUrl] = useState<string | null>("");
-    const navigation = useNavigation();
+    const [url, setUrl] = useState<string | undefined>("");
     useEffect(() => {
-        console.log('pictureUrl:', pictureUrl);
         const fetchPictureUrl = async () => {
             try {
-                const url = await GetUserPicture(pictureUrl); 
+                const url = await getUserPicture(pictureUrl, "checkIn"); 
                 setUrl(url);
             } catch (error) {
                 console.error('Error fetching picture URL:', error);
             }
         };
-        navigation.setOptions({ title: title });
         fetchPictureUrl();
-    }, [pictureUrl,navigation]); 
+    }, [pictureUrl]); 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <View style ={styles.header}>
+                <Ionicons 
+                style={{flex:1}}
+                name="chevron-back-sharp" size={30} color="black" onPress={() => router.back()} />
+                <Text style={styles.title}>{title}</Text>
+                <View style={{flex:1}}>
+                </View>
+            </View>
             {url && (
                 <Image
                     style={{ width: "100%", height: "100%" }}
                     source={{ uri: url }}
                 />
             )}
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -39,5 +45,22 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-    }
+    },
+    header:{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 20,
+        padding: 10,
+        backgroundColor: '#f2f2f2',
+        width: '100%',        
+    },
+    title:{
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        flex:1
+    },
+
 });

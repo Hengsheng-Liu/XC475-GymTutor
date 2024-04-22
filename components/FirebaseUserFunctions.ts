@@ -22,6 +22,7 @@ import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
 import Achievement from './ProfileComponents/Achievement';
 import { CalendarUtils } from 'react-native-calendars';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 type Birthday = { day: number, month: number, year: number };
 export interface Achievementprops {
@@ -105,6 +106,7 @@ export interface IUser {
     birthday: Birthday;
     display: string[];
     CurrentlyMessaging: CurrentlyMessagingEntry[]
+    background: string;
 
 }
 
@@ -559,28 +561,22 @@ export const AddDate = async (uid: string, url:string|undefined) => {
         console.error("Error updating bio: ", error);
     }
 };
-export const getUserIcon = async (iconUrl: string): Promise<string> => {
+export const getUserPicture = async (iconUrl: string, type: string): Promise<string | undefined> => {
     try {
       const storage = getStorage();
       const storageRef = ref(storage, iconUrl);
       const url = await getDownloadURL(storageRef);
       return url;  
     } catch (error) {
-        console.error("Error getting user icon: ", error);
-        const url = await getUserIcon("Icon/Default/Avatar.png");
-        console.log("Used Default Icon URL: ", url);
-      return url;  // return the default icon URL
-    }
-  };
-  export const GetUserPicture = async (Url: string): Promise<string | undefined> => {
-    try {
-      const storage = getStorage();
-      const storageRef = ref(storage, Url);
-      const url = await getDownloadURL(storageRef);
-      return url;  
-    } catch (error) {
-      console.error("Error getting user picture: ", error);
-      return undefined 
+        console.error("Error getting user picture: ", error);
+        switch(type){
+            case "Avatar":
+                return getUserPicture("/Default/Avatar.png", "Avatar");
+            case "Background":
+                return getUserPicture("/Default/Background.jpeg", "Background");
+            default:
+                return undefined; 
+        }
     }
   };
 

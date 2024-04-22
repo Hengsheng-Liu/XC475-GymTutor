@@ -51,16 +51,6 @@ export default function TabLayout() {
      
           }}
         />
-        <Tabs.Screen
-          name = "Test"
-          options={{
-            title: "Test",
-            headerShown: false,
-            tabBarIcon: (props) => <TabBarIcon {...props} name="pencil" />,
-
-            
-          }}
-        />
       </Tabs>
 
 
