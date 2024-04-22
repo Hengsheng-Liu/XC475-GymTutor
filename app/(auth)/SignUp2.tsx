@@ -173,7 +173,7 @@ export default function SignUpScreen2() {
             });
         }   
         else {
-          Alert.alert("Error", "Please fill in all fields");
+          Alert.alert("Error", "Please fill in valid fields");
           }
 
         
@@ -254,7 +254,8 @@ export default function SignUpScreen2() {
     <NativeBaseProvider theme={theme}>
        <HStack px="5" py="10" justifyContent="flex-start" alignItems="center" w="100%" bg="primary.300">
         <HStack alignItems="center" flex={1}>
-          <ChevronLeftIcon icon={<Icon size="md" name="back" color="primary.200" />} onPress={() => router.navigate("SignUp")}/>
+          <Button bg="primary.300" startIcon={<ChevronLeftIcon size="md" color="primary.200"/>} onPress={() => router.navigate("SignUp")}></Button>
+
           <Text fontSize="20" fontWeight="bold" textAlign="center" flex="1" color="primary.200" mr="4" p="2">
             Registration
           </Text>
