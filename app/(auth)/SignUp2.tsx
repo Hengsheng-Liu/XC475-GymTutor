@@ -4,7 +4,8 @@ import { NativeBaseProvider, Select, Box, CheckIcon, Flex, Pressable, Input, But
   HStack,
   Icon,
    Text,
-   ScrollView
+   ScrollView,
+   Badge
 } from "native-base";
 import { AntDesign } from "@expo/vector-icons";
 import Tags from "../../components/ProfileComponents/Tags";
@@ -33,10 +34,10 @@ import { addUser } from "@/components/FirebaseUserFunctions"
 import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
 
 
-export const AddUserToDB = async (response: UserCredential, name: string, bio: string, gender: string, gymExperience: string, year: number, month: number, date: number) => {
+export const AddUserToDB = async (response: UserCredential, name: string, bio: string, gender: string, gymExperience: string, year: number, month: number, date: number, tags: string[]) => {
   const user = response.user;
 
-  await addUser(user.uid, user.email || "", "", "", name, 21, bio, gender, "", gymExperience ,{day: date, month: month, year: year}, defaultFilters, [""]);
+  await addUser(user.uid, user.email || "", "", "", name, 21, bio, gender, "", gymExperience ,{day: date, month: month, year: year}, defaultFilters, tags);
 
 };
 
@@ -72,7 +73,7 @@ export default function SignUpScreen2() {
     const [editMode, setEditMode] = useState(false);
     const [addTag, setAddTag] = useState("");
     const [tags, setTags] = useState<string[]>([]);
-
+    const [deleteMode, setDeleteMode] = useState(false);
 
 
     // // functions related to the calendar for Date of Birth
@@ -106,6 +107,20 @@ export default function SignUpScreen2() {
       }
       const handleCancel = () => {
         setEditMode(false);
+      }
+      const handleTagDelete = (index: number) => {
+
+        const updatedTags = [...tags];
+        updatedTags.splice(index, 1);
+        setTags(updatedTags);
+        setDeleteMode(false);
+    
+    
+    
+      }
+
+      const handleDeleteCancel = () => {
+        setDeleteMode(false);
       }
 
 
@@ -148,7 +163,7 @@ export default function SignUpScreen2() {
     console.log("password is", password);
     console.log("name is" + name as string);
 
-    if (year && month && date && gymExperience && gender && bio && validateDate(year, month, date)) {
+    if (year && month && date && gymExperience && gender && bio && validateDate(year, month, date) && tags) {
   //          await updateDB(userCredential);
 
 
@@ -159,7 +174,7 @@ export default function SignUpScreen2() {
             if (email && password) {
               const userCredential = await CreateUser(email as string, password as string);
               const user = userCredential.user;
-              await AddUserToDB(userCredential, name as string, bio, gender, gymExperience, year, month, date);
+              await AddUserToDB(userCredential, name as string, bio, gender, gymExperience, year, month, date, tags);
 
             } else {
               Alert.alert("Error", "User cannot be properly stored in firestore database."); 
@@ -334,6 +349,91 @@ export default function SignUpScreen2() {
             <Input mx="3" w="90%" value = {bio} onChangeText={setBio} h={100} multiline />
 
           </Box>
+
+          <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="3"> What kind of gym goer are you? </Text>
+
+
+<Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={3}>
+        {tags.map((tag, index) => (
+          <Pressable key={tag} onPress={() => deleteMode && handleTagDelete(index)}>
+          <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
+              {tag}
+          </Badge>
+          </Pressable>
+        ))}
+
+        {!editMode && !deleteMode && (
+          <Pressable onPress={() => setEditMode(true)}>
+          <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
+            {"+"}
+        </Badge>
+        </Pressable>
+        )}
+
+{!editMode && !deleteMode && (
+          <Pressable onPress={() => setDeleteMode(true)}>
+
+        <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
+            {"-"}
+        </Badge>
+        </Pressable>
+
+)}
+
+        {editMode && (
+          <Input
+            multiline={false}
+            color={"lightBlue.900"}
+            mt={2}
+            padding={3}
+            value={addTag}
+            onChangeText={setAddTag}
+            placeholder="new tag"
+            width="50%"
+          />
+        )}
+      </Flex>
+
+      <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={3}>
+      {editMode && (
+        <Button
+          alignSelf="flex-start"
+          mt={2}
+          ml={2}
+          onPress={handleSave}
+          backgroundColor={"primary.100"}
+          leftIcon={<AntDesign name="check" size={24} color="white" />}
+        >
+          Add
+        </Button>
+
+      )}
+      {editMode && (
+          <Button
+          alignSelf="flex-start"
+          mt={2}
+          ml={2}
+          onPress={handleCancel}
+          backgroundColor={"primary.100"}
+          leftIcon={<AntDesign name="close" size={24} color="white" />}
+        >
+          Cancel
+        </Button>
+      )}
+          {deleteMode && (
+          <Button
+          alignSelf="flex-start"
+          mt={2}
+          ml={2}
+          onPress={handleDeleteCancel}
+          backgroundColor={"primary.100"}
+          leftIcon={<AntDesign name="close" size={24} color="white" />}
+        >
+          Cancel
+        </Button>
+      )}
+               </Flex>
+
 
           {errorMessage ? <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="3">
                {errorMessage}
