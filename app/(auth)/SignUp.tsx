@@ -91,7 +91,8 @@ export default function SignUpScreen() {
       50: '#7C2D12',
       100: '#F97316',
       200: "#171717",
-      300: "#FAFAFA"
+      300: "#FAFAFA",
+      400: "#FFFFFF"
       },
     },
     components: {
@@ -110,28 +111,31 @@ export default function SignUpScreen() {
   });
 
   return (
+
     <NativeBaseProvider theme={theme}>
 
-       <HStack px="5" py="10" justifyContent="flex-start" alignItems="center" w="100%" bg="primary.300">
+
+       <HStack px="5" py="10" justifyContent="flex-start" alignItems="center" w="100%" bg="primary.400">
         <HStack alignItems="center" flex={1}>
          
-          <Button bg="primary.300" startIcon={<ChevronLeftIcon size="md" color="primary.200"/>} onPress={() => router.navigate("LogIn")}></Button>
-          <Text fontSize="20" fontWeight="bold" textAlign="center" flex="1" color="primary.200" mr="4" p="2">
+          <Button bg="primary.400" startIcon={<ChevronLeftIcon size="md" color="primary.200"/>} onPress={() => router.navigate("LogIn")}></Button>
+          <Text fontSize="20" fontWeight="bold" textAlign="center" flex="1" color="primary.200" mr="3" p="2">
             Registration
           </Text>
         </HStack>
         </HStack>
 
+        <SafeAreaView style= {{ flex: 1, backgroundColor: "#FFF" }}>
 
-      <SafeAreaView style= {{ flex: 1, backgroundColor: "#FFF" }}>
+
         <ScrollView backgroundColor={"#FFFFFF"} contentContainerStyle={{ flexGrow: 1 }}>
-          <Box ml={"3"} mr={"3"} paddingTop={"10"} flex="1 ">
+          <Box ml={"3"} mr={"3"} paddingTop={"10"} flex="1">
 
 
   
-            <Text fontSize="28" fontFamily="Roberto" fontWeight="700" color="primary.50" lineHeight="28" p="3">Create an account</Text>
+            <Text fontSize="28" fontFamily="Roberto" fontWeight="700" color="primary.200" lineHeight="28" p="3">Create an account</Text>
   
-            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="1">Your Name</Text>
+            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="1">Your Name</Text>
 
             <Box alignItems="left">
             
@@ -139,7 +143,7 @@ export default function SignUpScreen() {
 
             </Box>
 
-            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Email</Text>
+            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Email</Text>
 
             <Box alignItems="left">
 
@@ -147,7 +151,7 @@ export default function SignUpScreen() {
 
             </Box>
 
-            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Password</Text>
+            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Password</Text>
 
           <Box alignItems="left">
 
@@ -155,7 +159,7 @@ export default function SignUpScreen() {
 
           </Box>
 
-          <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Confirm Password</Text>
+          <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Confirm Password</Text>
 
           <Box alignItems="left">
 
@@ -172,8 +176,7 @@ export default function SignUpScreen() {
 
             <Flex direction="column" flexGrow="1" justifyContent="flex-end">
 
-            <Button bg="primary.100" onPress={handleSignUp} > Next </Button>
-         
+              <Button bg="primary.100" onPress={handleSignUp} rounded="md" > Next </Button>
             </Flex>
             </Box>
         </ScrollView>
