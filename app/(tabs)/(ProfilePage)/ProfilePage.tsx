@@ -145,7 +145,6 @@ const signOutUser = async () => {
     <NativeBaseProvider theme={theme}>
       <SafeAreaView style={{ backgroundColor: "#FFF" }}>
         <ScrollView backgroundColor={"#FFFFFF"}>
-<<<<<<< HEAD
           <Flex alignSelf={"flex-end"}>
             <Popover
               placement="bottom"
@@ -159,21 +158,6 @@ const signOutUser = async () => {
                 );
               }}
             >
-=======
-        <Flex alignSelf={"flex-end"}>
-          <Popover
-          placement="bottom"
-            trigger={(triggerProps) => {
-              return (
-                <Flex>
-                  <Button width={55} bgColor={"#FFF"} {...triggerProps}>
-                    <Text>三</Text>
-                  </Button>
-                </Flex>
-              );
-            }}
-          >
->>>>>>> fe42082cf12803a26346ec718bdc02afba0ce4d9
               <Popover.Content w="56">
                 <Popover.Body>
                   <Pressable onPress={() => NewBackground()} mb={1} _pressed={{opacity:0.5}}>
