@@ -148,7 +148,7 @@ const FriendProfilePage = () => {
                         size="lg"
                         width="40%"
                         shadow="2"
-                        backgroundColor="#3F9443"
+                        backgroundColor="#469DA5"
                         borderRadius={16}
                       >
                         <Row>

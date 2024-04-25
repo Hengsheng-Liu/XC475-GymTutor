@@ -148,7 +148,7 @@ const FriendProfilePage = () => {
                       <Button
                         size="lg"
                         width="40%"
-                        backgroundColor="#3F9443"
+                        backgroundColor="#469DA5"
                         shadow="2"
                         borderRadius={16}
                       >

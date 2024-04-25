@@ -106,6 +106,8 @@ export default function Header({ name, icon, gym, background }: HeaderProps) {
               zIndex={1}
               marginTop={"-10"}
               marginLeft={"20"}
+              _pressed={{ opacity: 0.5}}
+              background="transparent"
               onPress={ReTakeAvatar}
             />
           </Flex>

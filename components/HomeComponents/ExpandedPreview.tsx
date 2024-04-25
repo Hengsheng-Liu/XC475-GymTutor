@@ -124,8 +124,8 @@ interface Props {
           <Text fontSize="xl" fontWeight="bold">
             {selectedUser.name}, {selectedUser.age}
           </Text>
-          <Text fontSize="sm" color="trueGray.500">{selectedUser.status}</Text>
-          <Text color= "trueGray.900" fontSize="sm" numberOfLines={2} textAlign="center" isTruncated maxWidth="85%">
+          {/* <Text fontSize="sm" color="trueGray.500">{selectedUser.status}</Text> */}
+          <Text color= "trueGray.900" fontSize="sm" numberOfLines={2} textAlign="center" isTruncated maxWidth="75%">
             {selectedUser.bio}
           </Text>
           <Row alignItems="center" mr="2" ml="2" p="3" justifyContent={"space-between"}>
@@ -183,7 +183,7 @@ interface Props {
                   <Button
                     size="lg"
                     width="45%"
-                    backgroundColor= "#3F9443"
+                    backgroundColor= "#469DA5"
                     borderRadius={16}
                     >
                   <Row>
