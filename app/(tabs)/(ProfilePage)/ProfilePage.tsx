@@ -14,6 +14,7 @@ import {
   setDoc,
   Query,
   onSnapshot,
+  arrayRemove
 } from "firebase/firestore";
 import { useAuth } from "../../../Context/AuthContext";
 import { getAuth, signOut } from "firebase/auth";
@@ -82,7 +83,7 @@ const ProfilePage = () => {
       }
     }
   };
-  const signOutUser = async () => {
+const signOutUser = async () => {
     try {
       await signOut(getAuth());
     } catch (error) {
@@ -115,6 +116,19 @@ const ProfilePage = () => {
       console.log("Error fetching camera permissions:", e);
     }
   };
+  const deleteTags = async (deleteTag: string)=>  {
+
+    if (User) {
+      try {
+        await updateDoc(doc(firestore, "Users", User.uid), {
+          tags: arrayRemove(deleteTag),
+        });
+      } catch (error) {
+
+      }
+    }
+  }
+
   const theme = extendTheme({
     components: {
       Button: {
@@ -131,6 +145,7 @@ const ProfilePage = () => {
     <NativeBaseProvider theme={theme}>
       <SafeAreaView style={{ backgroundColor: "#FFF" }}>
         <ScrollView backgroundColor={"#FFFFFF"}>
+<<<<<<< HEAD
           <Flex alignSelf={"flex-end"}>
             <Popover
               placement="bottom"
@@ -144,18 +159,33 @@ const ProfilePage = () => {
                 );
               }}
             >
+=======
+        <Flex alignSelf={"flex-end"}>
+          <Popover
+          placement="bottom"
+            trigger={(triggerProps) => {
+              return (
+                <Flex>
+                  <Button width={55} bgColor={"#FFF"} {...triggerProps}>
+                    <Text>三</Text>
+                  </Button>
+                </Flex>
+              );
+            }}
+          >
+>>>>>>> fe42082cf12803a26346ec718bdc02afba0ce4d9
               <Popover.Content w="56">
                 <Popover.Body>
                   <Pressable onPress={() => NewBackground()} mb={1} _pressed={{opacity:0.5}}>
                     <Text>Change Background</Text>
                   </Pressable>
-                  <Pressable onPress={signOutUser}  _pressed={{opacity:0.5}}>
-                    <Text>Logout</Text>
-                  </Pressable>
-                </Popover.Body>
-              </Popover.Content>
-            </Popover>
-          </Flex>
+                  <Pressable onPress={signOutUser}  _pressed={{opacity:0.5}}>                  
+                  <Text>Logout</Text>
+                </Pressable>
+              </Popover.Body>
+            </Popover.Content>
+          </Popover>
+        </Flex>
           <Box>
             {userInfo && (
               <Flex>
@@ -164,21 +194,22 @@ const ProfilePage = () => {
                   gym={userInfo.gym}
                   icon={userInfo.icon}
                   background={userInfo.background}
+                  />
+                  <Box ml={"3"} mr={"3"}>
+                    <Attribute
+                      description={userInfo.tags}
+                      onSaveTag={updateTags}
+                      onDeleteTag={deleteTags}
+                    />
+                    <ButtonGroup
+                  friendCount={userInfo.friends.length + " Friends"}
+                  gym={userGym}
+                  History={history}
                 />
-                <Box ml={"3"} mr={"3"}>
-                  <Attribute
-                    description={userInfo.tags}
-                    onSaveTag={updateTags}
-                  />
-                  <ButtonGroup
-                    friendCount={userInfo.friends.length + " Friends"}
-                    gym={userGym}
-                    History={history}
-                  />
-                  <Description bio={userInfo.bio} onSave={updateBio} />
-                  <Achievement display={userInfo.display} />
-                  <History history={userInfo.checkInHistory} />
-                </Box>
+                <Description bio={userInfo.bio} onSave={updateBio} />
+                <Achievement display={userInfo.display} />
+                <History history={userInfo.checkInHistory} />               
+                </Box>              
               </Flex>
             )}
           </Box>
