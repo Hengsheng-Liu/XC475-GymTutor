@@ -157,6 +157,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
     return (
       <Row
         mb={2}
+        ml={2}
         justifyContent={"space-between"}
         alignItems={"center"}
       >

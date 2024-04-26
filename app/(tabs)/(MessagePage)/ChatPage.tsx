@@ -12,6 +12,7 @@ import { generateChatId } from './data';
 import { FontAwesome } from '@expo/vector-icons';
 import { getUserPicture } from '@/components/FirebaseUserFunctions';
 import { Avatar, NativeBaseProvider } from 'native-base';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -19,7 +20,7 @@ type Props = {
 
 
 const ChatPage: React.FC<Props> = ({ navigation }) => {
-
+  const insets = useSafeAreaInsets();
   const { User, currUser } = useAuth();
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
@@ -181,23 +182,9 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
     chatContainer: {
       flex: 1,
       padding: 10,
+
     },
-    inputContainer: {
-      flexDirection: 'row',
-      padding: 10,
-      borderTopWidth: 1,
-      borderTopColor: '#e0e0e0',
-      backgroundColor: '#fff',
-    },
-    input: {
-      flex: 1,
-      height: 40,
-      borderWidth: 1,
-      borderRadius: 20,
-      paddingHorizontal: 10,
-      borderColor: 'gray',
-      backgroundColor: '#ffffff',
-    },
+
     messageBubble: {
       padding: 10,
       borderRadius: 20,
@@ -237,14 +224,10 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
       marginRight: 10, // Adjust as necessary
     },
     sendButton: {
-      marginRight: 10,
-      marginBottom: 5,
-      borderWidth: 1, // Add a border
-      borderColor: '#000000', // Border color matching the text color
-      borderRadius: 15, // Rounded corners for the bubble effect
-      paddingVertical: 5, // Vertical padding inside the bubble
-      paddingHorizontal: 10, // Horizontal padding inside the bubble
-      backgroundColor: 'white', // Background color for the bubble
+      borderRadius: 10,
+      paddingVertical: 8, // Vertical padding inside the bubble
+      paddingHorizontal: 12, // Horizontal padding inside the bubble
+      backgroundColor: '#FFEDD5', // Background color for the bubble
     },
     sendText: {
       color: '#000000', // Customize the color
@@ -263,7 +246,7 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? -1000 : 20}>
+    <>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} activeOpacity={0.7} onPress={() => handleGoBack()}>
           <FontAwesome name="chevron-left" size={24} color="#171717" />
@@ -296,9 +279,12 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
           },
           blurOnSubmit: false, // Prevents the keyboard from dismissing on submit
           multiline: false,
+
+
         }}
+        bottomOffset={78}
       />
-    </KeyboardAvoidingView>
+    </>
   );
 }
 
