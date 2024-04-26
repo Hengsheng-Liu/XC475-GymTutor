@@ -7,27 +7,26 @@ import {
   VStack,
   Box,
   Input,
-  Button
+  Button,
 } from "native-base";
 import { FontAwesome6 } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 
-interface DescriptionProps{
+interface DescriptionProps {
   bio: string;
   onSave: (newBio: string) => void;
 }
 
-export default function Description({bio, onSave}: DescriptionProps) {
+export default function Description({ bio, onSave }: DescriptionProps) {
   const [editMode, setEditMode] = useState(false);
   const [newBio, setNewBio] = useState(bio);
 
   const handleSave = () => {
     onSave(newBio as string);
     setEditMode(false);
+  };
 
-  }
-  
   return (
     <VStack mt={"4"}>
       <HStack>
@@ -38,18 +37,19 @@ export default function Description({bio, onSave}: DescriptionProps) {
           </Pressable>
         )}
       </HStack>
-      <Box 
-      flexDirection="column"
-      alignItems="flex-start"
-      shadow={3} 
-      backgroundColor={"gray.100"} 
-      mt={2} 
-      borderRadius={10}>
-        
+      <Box
+        flexDirection="column"
+        alignItems="flex-start"
+        shadow={3}
+        backgroundColor={"gray.100"}
+        mt={2}
+        borderRadius={10}
+      >
         {editMode ? (
           <Input
             multiline={true}
-            color={"trueGray.900"} padding={3}
+            color={"trueGray.900"}
+            padding={3}
             borderWidth="0"
             value={newBio}
             onChangeText={setNewBio}
@@ -62,22 +62,37 @@ export default function Description({bio, onSave}: DescriptionProps) {
         )}
       </Box>
       {editMode && (
-
-              <Button
-              alignSelf="left"
-              mt={2}
-              width="auto"
-              justifyContent="center"
-              alignItems="center"
-              px={6}
-
-              onPress={handleSave}
-              backgroundColor={"#F97316"}
-              _pressed={{ opacity: 0.5 }}
-              leftIcon={<AntDesign name="check" size={24} color="white" />}
-            >
-              Save
-            </Button>
+        <Flex flexDir={"row"} justifyContent={'center'} >
+        <Button
+          alignSelf="left"
+          mt={2}
+          width="auto"
+          justifyContent="center"
+          alignItems="center"
+          px={6}
+          mr={'4'}
+          onPress={handleSave}
+          backgroundColor={"#F97316"}
+          _pressed={{ opacity: 0.5 }}
+          leftIcon={<AntDesign name="check" size={24} color="white" />}
+        >
+          Save
+        </Button>
+        <Button
+          alignSelf="left"
+          mt={2}
+          width="auto"
+          justifyContent="center"
+          alignItems="center"
+          px={6}
+          onPress={() => setEditMode(false)}
+          backgroundColor={"#F97316"}
+          _pressed={{ opacity: 0.5 }}
+          leftIcon={<AntDesign name="close" size={24} color="white" />}
+        >
+          Cancel
+        </Button>
+        </Flex>
       )}
     </VStack>
   );

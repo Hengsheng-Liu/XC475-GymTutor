@@ -41,17 +41,18 @@ export default function CheckInRoutine(
             <Button bg={"#EA580C"} width={175} onPress={navigation}>
                 <Text fontSize={20} fontWeight={700} color={"#FAFAFA"}>{ButtonText}</Text>
             </Button>
-            { !Process && !skipPhoto &&
-            <Pressable onPress={() => router.back()} marginTop={4} paddingX={5}>
-                <Text color = {"muted.500"} >Not yet</Text>
-            </Pressable>
-}
+
             {
               skipPhoto &&
               <Pressable onPress={() => router.push("SelectWorkout")} marginTop={4} paddingX={5}>
                 <Text color = {"muted.500"} >Skip</Text>
               </Pressable>
             }
+            { !Process &&
+            <Pressable onPress={() => router.navigate("Home")} marginTop={4} paddingX={5}>
+                <Text color = {"muted.500"} >Not yet</Text>
+            </Pressable>
+}
 
           </Center>
         </Flex>

@@ -131,9 +131,9 @@ export default function SelectGym() {
               container: {
                 flex: 0,
                 borderWidth:1,
+                borderRadius: 5,
                 borderColor:"#A3A3A3",
               },
-
             }}
             fetchDetails
           />

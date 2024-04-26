@@ -30,7 +30,6 @@ export function DailyProgress({
     <Center>
       <Modal isOpen={ModalVisible} onClose={() => setModalVisible(false)}>
         <Modal.Content>
-          <Modal.CloseButton />
           <Center>
             <Modal.Header>Daily Achievements!</Modal.Header>
           </Center>
@@ -54,7 +53,7 @@ export function DailyProgress({
                 bgColor={"#EA580C"}
                 onPress={() => {
                   setModalVisible(false);
-                  router.push("/CheckInSubmit");
+                  router.push("/Home");
                 }}
               >
                 Let's Go

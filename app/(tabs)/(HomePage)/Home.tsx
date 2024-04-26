@@ -19,7 +19,7 @@ import { defaultFilters } from "./Filter";
 import UserExpandedPreview from "@/components/HomeComponents/ExpandedPreview";
 import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
 import { CalendarUtils } from "react-native-calendars";
-
+//import { handleCheckIn } from "@/components/GeolocationFunction";
 export default function HomeScreen() {
   // const [gym, setGym] = useState<Gym>(); // State to store the gym
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -146,26 +146,9 @@ export default function HomeScreen() {
   };
   
   const handleCheckIn = async () => {
-    /*
-    const location = await GetUserLocation(); {
-      if (location) {
-        console.log(location);
-        setLocation(location);
-        if (pointInPolygon(location, bound.current)) {
-          router.push("/CheckIn");
-        } else {
-          router.push("/CheckIn");
-          alert(
-            "You are not at the gym location, please check in at the gym location"
-          );
-        }
-      } else {
-        alert("Please enable location services to check in");
-      }
-    }
-    */
-    router.push("/CheckIn");
+    router.push("/DailyPicture");
   };
+  
   
   // Function to update the users list after sending a friend request
   const updateFetchedUsers = (updatedUser: IUser) => {
@@ -270,7 +253,7 @@ export default function HomeScreen() {
           justifyContent={"center"}
           alignItems={"center"}
           _pressed={{ opacity: 0.5}}
-          onPress={handleCheckIn}
+          onPress={()=>handleCheckIn()}
         >
           <Text fontWeight="bold" fontSize="lg" color="#FFF"> Check In </Text> 
         </Button>

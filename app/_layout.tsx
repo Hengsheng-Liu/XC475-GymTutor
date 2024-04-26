@@ -6,6 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { AuthProvider } from '@/Context/AuthContext';
 import { Slot } from 'expo-router';
+import { NativeBaseProvider } from 'native-base';
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -49,7 +50,9 @@ function RootLayoutNav() {
 
   return (
       <AuthProvider>
+        <NativeBaseProvider>
         <Slot /> 
+        </NativeBaseProvider>
       </AuthProvider>
   );
 }
