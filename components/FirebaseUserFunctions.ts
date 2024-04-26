@@ -57,17 +57,17 @@ export const DefaultAchievement: Achievements = {
     Legs: [
         { name: "Leg Day Legend", curr: 0, max: 10, description: "Awarded for completing 10 check-ins with the leg day, showcasing dedication to lower body strength and development.", achieved: false },
     ],
-    Shoulder:[
-        {name:"Shoulder Sculptor", curr: 0, max: 10, description:"Awarded for accumulating 10 check-ins with the shoulder day, demonstrating commitment to shoulder muscle growth and definition.",achieved:false}
+    Shoulder: [
+        { name: "Shoulder Sculptor", curr: 0, max: 10, description: "Awarded for accumulating 10 check-ins with the shoulder day, demonstrating commitment to shoulder muscle growth and definition.", achieved: false }
     ],
-    Cardio:[
-        {name:"Cardio King", curr: 0, max: 10, description:"Awarded for achieving 10 check-ins with the cardio day, highlighting a focus on cardiovascular health and endurance.",achieved:false}
+    Cardio: [
+        { name: "Cardio King", curr: 0, max: 10, description: "Awarded for achieving 10 check-ins with the cardio day, highlighting a focus on cardiovascular health and endurance.", achieved: false }
     ],
-    Core:[
-        {name:"Core Crusher", curr: 0, max: 10, description:"Awarded for reaching 10 check-ins with the core day, showcasing dedication to core muscle strength and definition.",achieved:false}
+    Core: [
+        { name: "Core Crusher", curr: 0, max: 10, description: "Awarded for reaching 10 check-ins with the core day, showcasing dedication to core muscle strength and definition.", achieved: false }
     ],
-    FullBody:[
-        {name:"Full Body Fiend", curr: 0, max: 10, description:"Awarded for completing 10 check-ins with the full body day, demonstrating commitment to overall body strength and development.",achieved:false}
+    FullBody: [
+        { name: "Full Body Fiend", curr: 0, max: 10, description: "Awarded for completing 10 check-ins with the full body day, demonstrating commitment to overall body strength and development.", achieved: false }
     ],
     CheckIn: [
         { "name": "Check-In Champion", "curr": 0, "max": 15, "description": "Awarded for reaching 15 total check-ins.", "achieved": false },
@@ -133,7 +133,8 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters, n
                     memberIds = gymData.members;
                 }
                 if (memberIds.length === 0) {
-                    return [];}
+                    return [];
+                }
             }
 
         }
@@ -261,7 +262,7 @@ export async function addUser(
             icon: "Icon/Default/Avatar.png",
             achievements: [],
             gymExperience: gymExperience,
-            currentlyMessaging: [],
+            CurrentlyMessaging: [],
             filters: filters,
             birthday: birthday,
             Achievement: DefaultAchievement,
@@ -540,13 +541,13 @@ async function randomIt(): Promise<void> {
     // Example usage
     const randomName: string = generateRandomName(randomSex);
 }
-export const AddDate = async (uid: string, url:string|undefined) => {
+export const AddDate = async (uid: string, url: string | undefined) => {
     const Day = new Date();
     const Today = CalendarUtils.getCalendarDateString(Day);
     const newCheckIn: DailyCheckIn = {
         day: Today,
     };
-    if (url){
+    if (url) {
         newCheckIn.photo = url;
     }
 
@@ -562,22 +563,22 @@ export const AddDate = async (uid: string, url:string|undefined) => {
 };
 export const getUserPicture = async (iconUrl: string, type: string): Promise<string | undefined> => {
     try {
-      const storage = getStorage();
-      const storageRef = ref(storage, iconUrl);
-      const url = await getDownloadURL(storageRef);
-      return url;  
+        const storage = getStorage();
+        const storageRef = ref(storage, iconUrl);
+        const url = await getDownloadURL(storageRef);
+        return url;
     } catch (error) {
         console.error("Error getting user picture: ", error);
-        switch(type){
+        switch (type) {
             case "Avatar":
                 return getUserPicture("/Default/Avatar.png", "Avatar");
             case "Background":
                 return getUserPicture("/Default/Background.jpeg", "Background");
             default:
-                return undefined; 
+                return undefined;
         }
     }
-  };
+};
 export const getUserIcon = async (iconUrl: string): Promise<string | undefined> => {
     try {
         const storage = getStorage();

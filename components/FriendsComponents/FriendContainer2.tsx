@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Row, Column, Button, Pressable, Text, Spacer, Avatar } from 'native-base'
 import { IUser } from '@/components/FirebaseUserFunctions';
 import { router } from 'expo-router';
@@ -7,7 +7,7 @@ import { doc, updateDoc, arrayRemove } from 'firebase/firestore';
 import { firestore } from '@/firebaseConfig';
 import { findOrCreateChat } from '../../app/(tabs)/(MessagePage)/data';
 import { globalState } from '../../app/(tabs)/(MessagePage)/globalState';
-
+import { getUserIcon } from '@/components/FirebaseUserFunctions';
 
 interface FriendProps {
   friend: IUser;
@@ -18,7 +18,36 @@ const friendContainer: React.FC<FriendProps> = ({ friend, fetchData }) => {
 
   const [isPressed, setIsPressed] = useState<boolean>(false);
   const { currUser, updateCurrUser, updateFriend } = useAuth();
+  const [friendIcon, setFriendIcon] = useState<string>();
 
+  if (!currUser) return;
+
+
+  useEffect(() => {
+    async function fetchIcon() {
+      if (currUser && friend.icon !== "") {
+        try {
+          const url = await getUserIcon(friend.icon);
+          // console.log("Found Icon URL: ", url);
+          setFriendIcon(url);
+        } catch (error) {
+          console.error("Failed to fetch friend icon:", error);
+          // Handle the error e.g., set a default icon or state
+          const url = await getUserIcon("Icon/Default/Avatar.png");
+          console.log("Used default Icon URL: ", url)
+          setFriendIcon(url);
+        }
+      } else {
+        const url = await getUserIcon("Icon/Default/Avatar.png");
+        // console.log("Used default Icon URL: ", url)
+        setFriendIcon(url);
+      }
+    }
+
+    if (currUser) {
+      fetchIcon();
+    }
+  }, [currUser, friend.uid, friend.icon]); // Depend on currUser and friend.uid
 
   const handleUserClick = async (friend) => {
     setIsPressed(true);
@@ -69,7 +98,7 @@ const friendContainer: React.FC<FriendProps> = ({ friend, fetchData }) => {
       bg={isPressed ? "trueGray.200" : "trueGray.50"} // Change background color on hover
     >
       <Row alignItems="center" space="sm">
-        <Avatar size="md" source={friend.icon ? { uri: friend.icon } : require("@/assets/images/default-profile-pic.png")} />
+        <Avatar size="md" source={friendIcon ? { uri: friendIcon } : require("@/assets/images/default-profile-pic.png")} />
         <Row justifyContent="space-between" alignItems="center" flex={1}>
           <Column>
             <Text color="trueGray.900" fontSize="lg" fontWeight="bold">{friend.name}</Text>

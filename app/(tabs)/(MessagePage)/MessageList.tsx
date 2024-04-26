@@ -69,6 +69,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
     // - The screen is focused, and
     // - It is not the first load, or
     // - The first load has just completed and this is a subsequent update.
+
     if (isFocused && !firstLoad) {
       handleSearchUsers();
     }
@@ -97,9 +98,18 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
       // Extract user IDs from the messagedUsers array of tuples
       const userIds = messagedUsers.map(entry => entry.userId);
 
-      let usersQuery = userIds.length > 0 ?
-        query(collection(db, 'Users'), where('uid', 'in', userIds)) :
-        query(collection(db, 'Users'), where("gym", "!=", "")); // This option gets all users (a bit roundabout)
+      // If there are no user IDs, set users to an empty array and stop further execution
+      if (userIds.length === 0) {
+        setUsers([]);
+        setLoading(false);
+        console.log("No users currently being messaged.");
+        return;
+      }
+
+
+
+      let usersQuery = query(collection(db, 'Users'), where('uid', 'in', userIds));
+
 
       // Testing trick. Search "all" to show all users
       if (searchTerm === "all") {
@@ -252,14 +262,6 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
     }
   };
 
-  // Based on haveRead field in CurrentlyMessaging, determine the background color of chat records
-  const getBackgroundColor = (user) => {
-
-    // Find the messaging entry for the given user
-    const messagingEntry = currentUserCurrentlyMessaging.find(entry => entry.userId === user.uid);
-    // If haveRead is false, return the gray color, otherwise return the default
-    return messagingEntry && !messagingEntry.haveRead ? "coolGray.400" : "#FAFAFA";
-  };
 
   // Checks if there are unread messages for the user
   const hasUnreadMessages = (user) => {
@@ -270,7 +272,8 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView
-        style={{ backgroundColor: "#FFF", flex: 1, padding: 15 }}
+        style={{ backgroundColor: "#FFF", flex: 1, padding: 0 }}
+      // padding is set to 0 to make message records look like entries rather than boxes.
       >
         <FriendHeader />
         <Row mb={1} space={2} alignItems="center">
@@ -294,8 +297,8 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
         {loading &&
           <Column flex={1} alignItems="center" alignContent="center" justifyContent="center">
             <Spacer />
-            <Spinner size="md" mb={2} color="#0284C7" accessibilityLabel="Loading posts" />
-            <Heading color="#0284C7" fontSize="md"> Loading</Heading>
+            <Spinner size="md" mb={2} color="#F97316" accessibilityLabel="Loading posts" />
+            <Heading color="#F97316" fontSize="md"> Loading</Heading>
           </Column>}
         {!firstLoad && !loading && users.length === 0 ? (
           <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -314,9 +317,9 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
                 {({ isPressed }) => (
                   <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} // Static background color
                     borderWidth="1px"
-                    borderColor="gray.300"
+                    borderColor="#E5E5E5"
                     position="relative" // Needed to position the dot absolutely within the box
-                    p="0" // Add some padding inside the box
+                    p="1" // Add some padding inside the box
                   >
                     <ChatPreview friend={user} key={user.uid} />
                     {hasUnreadMessages(user) && (
