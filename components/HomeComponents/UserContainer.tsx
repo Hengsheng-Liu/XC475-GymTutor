@@ -33,7 +33,7 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
             if (currUser && friend.icon !== "") {
               try {
                 const url = await getUserPicture(friend.icon, "Avatar");
-                console.log("Found Icon URL: ", url);
+                // console.log("Found Icon URL: ", url);
                 setFriendIcon(url);
               } catch (error) {
                 console.error("Failed to fetch friend icon:", error);
@@ -56,19 +56,15 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
     }, [currUser, friend.uid,friend.icon]); // Depend on currUser and friend.uid
       
     return (
-        <Flex>
-            <Row alignItems="center" space="sm">
-                <Avatar m={2} size="xl" source={{ uri: friendIcon }} />
-                <Column justifyContent={"space-evenly"}>
-                <Row justifyContent= {"space-between"} >
-                    <Column overflow="hidden">    
-                        <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated>{friend.name}, {friend.age}</Text>
-                        <Text color= "trueGray.900" fontSize="sm" isTruncated maxWidth="85%">{friend.bio}</Text>
-                    </Column>
-                </Row>
-                <Row justifyContent={"left"}>
-                    <Attribute description={friend.tags} />
-                </Row>
+        <Flex >
+            <Row alignItems="center" space="sm" >
+                <Avatar m={2} mr={0.5} size="xl" source={{ uri: friendIcon }} />
+                <Column justifyContent={"space-evenly"} flex={1}>   
+                    <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated maxWidth="85%">{friend.name}</Text>
+                    <Text color= "trueGray.900" fontSize="sm" isTruncated maxWidth="95%">{friend.bio}</Text>
+                    <Row justifyContent={"left"} >
+                        <Attribute description={friend.tags} />
+                    </Row>
                 </Column>
             </Row>
         </Flex>

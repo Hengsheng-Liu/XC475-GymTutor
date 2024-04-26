@@ -43,7 +43,7 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
 
   return (
     <>
-      <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={3}>
+      <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={2} mb={2}>
         {description.map((tag) => (
           <Pressable key={tag}
           onLongPress={() => handleTagDelete(tag)} _pressed={{ opacity: 0.5 }}
@@ -63,67 +63,49 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
         )}
 
         {editMode && (
+          <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={3} mb={4}>
           <Input
             multiline={false}
             color={"lightBlue.900"}
-            mt={2}
             padding={3}
             value={addTag}
             onChangeText={setAddTag}
             placeholder="new tag"
-            width="50%"
+            width="60%"
           />
-        )}
-      </Flex>
-
-      <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={3}>
-      {editMode && (
-        <Button
-          alignSelf="flex-start"
-          mt={2}
-          ml={2}
-          onPress={handleSave}
-          backgroundColor={"#F97316"}
-          leftIcon={<AntDesign name="check" size={24} color="white" />}
-          _pressed={{ opacity: 0.5 }}
-        >
-          Add
-        </Button>
-
-      )}
-      {editMode && (
           <Button
-          alignSelf="flex-start"
-          mt={2}
-          ml={2}
-          onPress={handleCancel}
-          
-          backgroundColor={"#F97316"}
-          leftIcon={<AntDesign name="close" size={24} color="white" 
-          _pressed={{ opacity: 0.5 }}
-          />
-        }
-        >
-          Cancel
-        </Button>
-      )}
+            alignSelf="flex-start"
+            ml={2}
+            onPress={handleSave}
+            backgroundColor={"#F97316"}
+            leftIcon={<AntDesign name="check" size={24} color="white" />}
+            _pressed={{ opacity: 0.5 }}
+          >
+          </Button>
+          <Button
+            alignSelf="flex-start"
+            ml={2}
+            onPress={handleCancel}
+            backgroundColor={"#F97316"}
+            leftIcon={<AntDesign name="close" size={24} color="white" />} 
+            _pressed={{ opacity: 0.5 }}
+          >
+          </Button>
+        </Flex>)}
         {deleteMode && (
           <Button
-          alignSelf="flex-start"
-          mt={2}
-          ml={2}
-          onPress={handleDeleteCancel}
-          
-          backgroundColor={"#F97316"}
-          leftIcon={<AntDesign name="close" size={24} color="white" 
-          _pressed={{ opacity: 0.5 }}
-          />
-        }
-        >
-          Cancel
-        </Button>
-      )}
-         </Flex>
+            alignSelf="flex-start"
+            mt={2}
+            ml={2}
+            onPress={handleDeleteCancel}
+            
+            backgroundColor={"#F97316"}
+            leftIcon={<AntDesign name="close" size={24} color="white" />} 
+            _pressed={{ opacity: 0.5 }}>
+            Cancel
+          </Button>
+        )}
+      </Flex>
     </>
   );
 }

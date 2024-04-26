@@ -27,7 +27,7 @@ export default function ChooseGym({
   Address,
 }: props) {
   const cancelRef = React.useRef(null);
-  const { User, currUser, updateUserGym } = useAuth();
+  const { User, currUser, userGym, updateUserGym } = useAuth();
   const db = firestore;
   const [gymBounding, setGymBounding] = React.useState<GeoPoint[]>();
 
@@ -43,9 +43,9 @@ export default function ChooseGym({
   const updateGym = async () => {
     console.log("Updating gym", place_id, title);
     if (!User) return;
-    if (currUser) {
-      console.log("Updating previous gym", currUser.gymId, currUser.gym);
-      const prevGymDocRef = doc(db, "Gyms", currUser.gymId);
+    if (currUser && userGym) {
+      console.log("Updating previous gym", userGym[0], userGym[1]);
+      const prevGymDocRef = doc(db, "Gyms", userGym[0]);
       try {
         const docSnap = await getDoc(prevGymDocRef);
         let members: string[] = [];

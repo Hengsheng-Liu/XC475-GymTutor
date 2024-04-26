@@ -30,10 +30,10 @@ export default function Description({ bio, onSave }: DescriptionProps) {
   return (
     <VStack mt={"4"}>
       <HStack>
-        <Heading mr={"3"}>Description</Heading>
+        <Heading mr={"3"} mb={1}>Description</Heading>
         {!editMode && (
-          <Pressable onPress={() => setEditMode(true)}>
-            <FontAwesome6 name="pencil" size={22} color="black" />
+          <Pressable justifyContent="center" justifyItems="center" onPress={() => setEditMode(true)}>
+            <FontAwesome6 name="pencil" size={20} color="black" />
           </Pressable>
         )}
       </HStack>

@@ -84,7 +84,7 @@ export default function FriendListScreen () {
             InputLeftElement={
               <Box paddingLeft={2}>
                 <TouchableOpacity activeOpacity={0.7} onPress={searchFriends} >
-                  <FontAwesome name="search" size={24} color="#0284C7" />
+                  <FontAwesome name="search" size={24} color="#A3A3A3" />
                 </TouchableOpacity>
               </Box>
             }
@@ -105,11 +105,12 @@ export default function FriendListScreen () {
           </Column>
         ) : friends.length === 0 ? (
           <View style={{flex:1, justifyContent:"center", alignItems:"center", paddingLeft:3, paddingRight:3}}>
-            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
+            <Text/>
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
               Oops! It seems like there are no friends to display.
             </Text> 
             < Text/>
-            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
               Try exploring and discover more amazing users!
             </Text>   
           </View>

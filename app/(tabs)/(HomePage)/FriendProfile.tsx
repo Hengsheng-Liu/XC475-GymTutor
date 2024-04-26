@@ -97,7 +97,7 @@ const FriendProfilePage = () => {
             {userInfo && (
               <Flex>
                 <Row>
-                  <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
+                  <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/Home")}>
                     <FontAwesome name="chevron-left" size={24} color="#F97316" />
                   </TouchableOpacity>
                   <Header user={userInfo} />
@@ -148,7 +148,7 @@ const FriendProfilePage = () => {
                       <Button
                         size="lg"
                         width="40%"
-                        backgroundColor="#3F9443"
+                        backgroundColor="#469DA5"
                         shadow="2"
                         borderRadius={16}
                       >

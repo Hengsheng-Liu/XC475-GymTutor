@@ -53,7 +53,7 @@ export default function Achievement(
   return (
     <VStack mt={4}>
       <HStack>
-        <Heading mr={3}>Achievements</Heading>
+        <Heading mr={3} mb= {1}>Achievements</Heading>
       </HStack>
       <HStack justifyContent={"space-around"} mt={2} alignItems={"center"}>
         {renderDisplay()}

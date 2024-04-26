@@ -99,7 +99,7 @@ const CheckedUserPreview: React.FC<FriendProps> = ({ friend }) => {
                 <Column justifyContent={"space-evenly"}>
                 <Row justifyContent= {"space-between"} >
                     <Column overflow="hidden">    
-                        <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated>{friend.name}, {friend.age}</Text>
+                        <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated maxWidth="85%">{friend.name}</Text>
                     </Column>
                 </Row>
                 </Column>
