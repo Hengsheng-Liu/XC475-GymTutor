@@ -219,26 +219,26 @@ const FilterScreen = () => {
 
   return (
     <NativeBaseProvider theme={theme}>
-      <SafeAreaView style={{backgroundColor:"#F97316", flex: 1}}>
+      <SafeAreaView style={{backgroundColor:"#FFF", flex: 1}}>
       <Box p={15} alignItems="center">
             <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"space-evenly"}>
               <TouchableOpacity activeOpacity={0.7} onPress={() => handleGoBack()}>
-                <FontAwesome name="chevron-left" size={24} color="#FFF" />
+                <FontAwesome name="chevron-left" size={24} color="black" />
               </TouchableOpacity>
               <Spacer/>
               <Box>
-                <Heading fontSize="lg" color="#FFF" pl="2">Filters</Heading> 
+                <Heading fontSize="lg" color="black" pl="3"> Filters</Heading> 
               </Box>
               <Spacer/>
               <TouchableOpacity activeOpacity={0.7} onPress={() => handleResetFilters()} >
-                <Text color="#FFF" fontSize="md" fontWeight="bold">Reset</Text>
+                <Text color="black" fontSize="md" fontWeight="bold">Reset</Text>
               </TouchableOpacity>
             </Flex>
           </Box>
         <ScrollView style={{flex:1, backgroundColor:"#FFF"}}>
         <View bgColor="#FFF" flex={1} paddingLeft={15} paddingRight={15} >
-          <Heading pt={2} pb={2} fontSize="md" color="trueGray.700">Basic Information</Heading>
-          <Text pt={2} pb={2} fontSize="md">Sex </Text>
+          <Heading pt={2} pb={4} fontSize="lg" color="trueGray.700">Basic Information</Heading>
+          <Text pt={3} pb={3} fontSize="md">Sex </Text>
           <Row justifyContent="space-evenly">
             <Checkbox 
               value="male"
@@ -259,7 +259,7 @@ const FilterScreen = () => {
             <Text>{ageRange[0]} - {ageRange[1]}</Text>
           </Row>
           <Spacer/>
-          <Row justifyContent={"center"} >
+          <Row justifyContent={"center"} pt={3} >
           <MultiSlider
             values={ageRange}
             onValuesChange={(values) => setAgeRange(values)}
@@ -271,8 +271,8 @@ const FilterScreen = () => {
             selectedStyle= {{backgroundColor: "#F97316"}}
           />
         </Row>
-          <Text pt={4} pb={3} fontSize="md">Experience Level </Text>
-          <Row justifyContent="space-evenly">
+          <Text pt={4} pb={5} fontSize="md">Experience Level </Text>
+          <Row justifyContent="space-evenly" pt={3}>
             <Checkbox 
               value="beginnner"
               isChecked={beginner}

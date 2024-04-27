@@ -50,11 +50,11 @@ export default function LogInScreen() {
 
   const handleLogIn = async () => {
     // Skip credentials (Developer use only)
-    // const userCredential = await SignIn("a@gmail.com", "password"); // (to skip the email verification)
-    // const user = userCredential.user;
-    // if (user) {
-    //   router.replace("/LoadingPage");
-    // }
+    const userCredential = await SignIn("a@gmail.com", "password"); // (to skip the email verification)
+    const user = userCredential.user;
+    if (user) {
+      router.replace("/LoadingPage");
+    }
 
     if (email && password) {
       try {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../../../Context/AuthContext";
 import { Box, Popover, HStack, Row, Icon, Text, Button, NativeBaseProvider, ScrollView, Flex } from "native-base";
-import Header from "../../../components/FriendsComponents/Header";
+import Header from "../../../components/FriendsComponents/Header2";
 import Description from "../../../components/FriendsComponents/Description";
 import Achievement from "../../../components/FriendsComponents/Achievement";
 import Attribute from "../../../components/FriendsComponents/Attribute";
@@ -93,20 +93,25 @@ const FriendProfilePage = () => {
     <NativeBaseProvider theme={theme}>
       <SafeAreaView style={{ backgroundColor: "#FFF" }}>
         <ScrollView backgroundColor={"#FFFFFF"}>
-          <Box ml={"3"} mr={"3"}>
+          <Box>
             {userInfo && (
               <Flex>
-                <Row>
+                <Row m={3} mt={0}>
                   <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
                     <FontAwesome name="chevron-left" size={24} color="#F97316" />
                   </TouchableOpacity>
-                  <Header user={userInfo} />
                 </Row>
+                  <Header
+                      name={userInfo.name}
+                      gym={userInfo.gym}
+                      icon={userInfo.icon}
+                      background={userInfo.background}
+                    />
                 <Attribute description={userInfo.tags} />
                 <HStack
                   space={3}
                   justifyContent={"space-around"}
-                  mt={6}
+                  mt={6} ml={"3"} mr={"3"}
                   textAlign={"center"}
                 >
                   <Button width="40%" variant={"outline"} borderRadius={16} borderColor="#F97316" borderWidth="2">
@@ -165,7 +170,7 @@ const FriendProfilePage = () => {
                         return (
                           <Button {...triggerProps} size="lg" backgroundColor={"#F97316"} shadow="2"
                             _pressed={{ opacity: 0.5 }} borderRadius={16}>
-                            <Text fontSize="md" color="#FFF">Edit</Text>
+                            <Text fontSize="md" fontWeight="bold" color="#FFF">More</Text>
                           </Button>
                         );
                       }}>
@@ -187,10 +192,11 @@ const FriendProfilePage = () => {
                       </Popover.Content>
                     </Popover>}
                 </HStack>
-
-                <Description bio={userInfo.bio} />
-                <Achievement display={userInfo.display} />
-                <History history={userInfo.checkInHistory} />
+                <Flex ml={"3"} mr={"3"}>
+                  <Description bio={userInfo.bio} />
+                  <Achievement display={userInfo.display} />
+                  <History history={userInfo.checkInHistory} />
+                </Flex>
               </Flex>
             )}
           </Box>
