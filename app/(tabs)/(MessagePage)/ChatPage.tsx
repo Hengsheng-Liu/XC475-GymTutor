@@ -12,6 +12,7 @@ import { generateChatId } from './data';
 import { FontAwesome } from '@expo/vector-icons';
 import { getUserPicture } from '@/components/FirebaseUserFunctions';
 import { Avatar, NativeBaseProvider } from 'native-base';
+import { border } from 'native-base/lib/typescript/theme/styled-system';
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -158,6 +159,7 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
   const styles = StyleSheet.create({
     keyboardAvoidingView: {
       flex: 1,
+
     },
     container: {
       flex: 1,
@@ -188,6 +190,7 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
       borderTopWidth: 1,
       borderTopColor: '#e0e0e0',
       backgroundColor: '#fff',
+      
     },
     input: {
       flex: 1,
@@ -233,7 +236,6 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
     },
     sendContainer: {
       justifyContent: 'center',
-      height: 44,
       marginRight: 10, // Adjust as necessary
     },
     sendButton: {
@@ -263,7 +265,7 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? -1000 : 20}>
+    <KeyboardAvoidingView style={styles.keyboardAvoidingView}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} activeOpacity={0.7} onPress={() => handleGoBack()}>
           <FontAwesome name="chevron-left" size={24} color="#171717" />
@@ -296,6 +298,7 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
           },
           blurOnSubmit: false, // Prevents the keyboard from dismissing on submit
           multiline: false,
+          
         }}
       />
     </KeyboardAvoidingView>

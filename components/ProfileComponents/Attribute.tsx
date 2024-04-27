@@ -45,7 +45,9 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
     <>
       <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={2} mb={2}>
         {description.map((tag) => (
-          <Pressable key={tag} onPress={() => deleteMode && handleTagDelete(tag)}>
+          <Pressable key={tag}
+          onLongPress={() => handleTagDelete(tag)} _pressed={{ opacity: 0.5 }}
+          >
           <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
               {tag}
           </Badge>
@@ -56,13 +58,6 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
           <Pressable onPress={() => setEditMode(true)}>
             <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
               {"+"}
-          </Badge>
-          </Pressable>
-        )}
-         {!editMode && !deleteMode && (
-          <Pressable onPress={() => setDeleteMode(true)}>
-            <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
-              {"-"}
           </Badge>
           </Pressable>
         )}

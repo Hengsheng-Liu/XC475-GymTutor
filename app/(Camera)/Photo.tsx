@@ -164,6 +164,11 @@ export default function photo() {
       <View style={styles.container}>
         {cameraOpen && !base64Img ? (
           <SafeAreaView style={styles.cameraContainer}>
+            <Box> 
+            <TouchableOpacity onPress={() => Goback()}>
+            <Entypo name="chevron-left" size={36} color="black" />
+            </TouchableOpacity>
+            </Box>
             <Camera
               type={type}
               style={{ width: "100%", height: "90%" }}

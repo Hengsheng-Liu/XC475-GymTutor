@@ -144,7 +144,7 @@ export default function LogInScreen() {
       <Pressable style={styles.contentView} onPress={Keyboard.dismiss}>
         <SafeAreaView style={styles.contentView}>
           <Flex flex={"1"} marginX={10} bg={"#F97316"}>
-            <Flex flexDir={"row"} marginTop={"1/4"} alignItems={"center"}>
+            <Flex flexDir={"row"} marginTop={"1/4"} alignItems={"center"} justifyContent={"center"}>
               <Heading mt={3} size={"lg"} color={"#FAFAFA"}>
                 Welcome to
               </Heading>

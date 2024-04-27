@@ -45,6 +45,7 @@ export default function Test() {
       Title={"Take a picture to prove it."}
       ButtonText={"Use Camera"}
       skipPhoto
+      
     />
   );
 }

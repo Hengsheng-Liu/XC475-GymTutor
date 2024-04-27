@@ -133,9 +133,9 @@ export default function SignUpScreen() {
 
 
   
-            <Text fontSize="28" fontFamily="Roberto" fontWeight="700" color="primary.200" lineHeight="28" p="3">Create an account</Text>
+            <Text fontSize="28"  fontWeight="700" color="primary.200" lineHeight="28" p="3">Create an account</Text>
   
-            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="1">Your Name</Text>
+            <Text fontSize="16"  fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="1">Your Name</Text>
 
             <Box alignItems="left">
             
@@ -143,7 +143,7 @@ export default function SignUpScreen() {
 
             </Box>
 
-            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Email</Text>
+            <Text fontSize="16" fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Email</Text>
 
             <Box alignItems="left">
 
@@ -151,7 +151,7 @@ export default function SignUpScreen() {
 
             </Box>
 
-            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Password</Text>
+            <Text fontSize="16"  fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Password</Text>
 
           <Box alignItems="left">
 
@@ -159,7 +159,7 @@ export default function SignUpScreen() {
 
           </Box>
 
-          <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Confirm Password</Text>
+          <Text fontSize="16" fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Confirm Password</Text>
 
           <Box alignItems="left">
 
