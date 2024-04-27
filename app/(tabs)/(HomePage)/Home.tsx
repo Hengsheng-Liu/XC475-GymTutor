@@ -183,7 +183,7 @@ export default function HomeScreen() {
         <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/Filter")} >
           <Octicons name="filter" size={35} color="#F97316" />
         </TouchableOpacity>
-        <Input flex={1}
+        <Input flex={1} mb="1.5"
           InputLeftElement={
             <Box paddingLeft={2}>
               <TouchableOpacity activeOpacity={0.7} onPress={handleSearchUsers} >
@@ -248,7 +248,7 @@ export default function HomeScreen() {
               {({ isPressed }) => {
               return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} 
                           style={{transform: [{ scale: isPressed ? 0.96 : 1 }]}} 
-                          shadow="3" borderRadius="xl" mb ={2}>
+                          shadow="1" borderRadius="xl" mb ={2}>
                         <UserPreview friend={user} key={user.uid} />
                       </Box>}}
             </Pressable>))}

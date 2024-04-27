@@ -26,7 +26,7 @@ const Header: React.FC<FriendProps> = ({ GymName }) => {
       </TouchableOpacity>
       <Spacer/>
       <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("./Notifications")} >
-      <Octicons name="bell" size={40} color="#F97316" />
+      <Octicons name="bell" size={36} color="#F97316" />
       </TouchableOpacity>
     </Row>
   );
