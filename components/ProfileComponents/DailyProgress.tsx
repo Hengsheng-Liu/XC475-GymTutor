@@ -50,13 +50,14 @@ export function DailyProgress({
           <Modal.Footer>
             <Button.Group space={2}>
               <Button
-                bgColor={"#EA580C"}
+                background={"#EA580C"}
+                _pressed={{opacity: 0.5}}
                 onPress={() => {
                   setModalVisible(false);
                   router.push("/Home");
                 }}
               >
-                Let's Go
+                <Text fontSize="md" color="#FFFFFF">Let's Go!</Text>
               </Button>
             </Button.Group>
           </Modal.Footer>

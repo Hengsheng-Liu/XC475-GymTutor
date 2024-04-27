@@ -78,7 +78,7 @@ const ChatPreview: React.FC<FriendProps> = ({ friend }) => {
     return (
         <Flex>
             <Row alignItems="center" space="sm">
-                <Avatar m={2} w={90} h={90} source={{ uri: friendIcon }} />
+                <Avatar m={2} mr={1} w={70} h={70} source={{ uri: friendIcon }} />
                 <Column>
                     <Row justifyContent={"space-between"} >
                         <Column overflow="hidden" width="190">

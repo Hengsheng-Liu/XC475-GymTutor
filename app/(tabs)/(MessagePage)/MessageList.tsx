@@ -166,7 +166,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
           <Spacer />
         </Column>
         <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("./FriendsChatCopy")} >
-          <AntDesign name="contacts" size={45} color="#EA580C" />
+          <AntDesign name="contacts" size={45} color="#F97316" />
         </TouchableOpacity>
       </Row>
     );
@@ -295,7 +295,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
           />
         </Row>
         {loading &&
-          <Column flex={1} alignItems="center" alignContent="center" justifyContent="center">
+          <Column flex={1} pt={10} alignItems="center" alignContent="center" justifyContent="center">
             <Spacer />
             <Spinner size="md" mb={2} color="#F97316" accessibilityLabel="Loading posts" />
             <Heading color="#F97316" fontSize="md"> Loading</Heading>

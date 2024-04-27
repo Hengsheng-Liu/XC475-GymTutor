@@ -231,7 +231,7 @@ export default function HomeScreen() {
               {({ isPressed }) => {
               return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} 
                           style={{transform: [{ scale: isPressed ? 0.96 : 1 }]}} 
-                          shadow="1" borderRadius="xl" mb ={2}>
+                          shadow="1" borderRadius="xl" mb ={3}>
                         <UserPreview friend={user} key={user.uid} />
                       </Box>}}
             </Pressable>))}

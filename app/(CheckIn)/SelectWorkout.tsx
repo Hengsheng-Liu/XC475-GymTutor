@@ -97,8 +97,8 @@ export default function SelectWorkout() {
     <CheckInRoutine
       navigation={submitCheckIn}
       Icon={Tags}
-      Title={"Select your workout."}
-      ButtonText={"Yes"}
+      Title={"Select your workout!"}
+      ButtonText={"Continue"}
       Tags
       selectedBodyParts={selected}
       setSelectedBodyParts={setSelected}

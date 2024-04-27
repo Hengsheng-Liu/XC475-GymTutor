@@ -36,8 +36,8 @@ export default function FriendListScreen () {
   }, [User]);
 
   const fetchData = async () => {
-    setFriends([]);
     setLoading(true);
+    setFriends([]);
     try {
       if (currUser){  
         const fetchedFriends = await fetchUsers(currUser, currUser.friends);
@@ -53,30 +53,35 @@ export default function FriendListScreen () {
   const searchFriends = async () => {
     // Filter list of users by name if provided
     setLoading(true);
+    await fetchData();
     if (searchTerm && searchTerm !== "" && friends.length > 0) {
         setFriends(filterUsersByName(friends, searchTerm));
-    } 
+    } else {
+      await fetchData();
+    }
     setLoading(false);
     }
 
   const handleGoBack = () => {
-    router.replace("/ProfilePage");
+    router.back();
   };
 
   return (
     <NativeBaseProvider theme = {theme} >
       <SafeAreaView style= {{backgroundColor:"#FFFFFF", flex:1}}>
-      <Box p={15} pb={2} alignItems="center" justifyContent="space-between">
+      <Box p={15} pb={3} alignItems="center" justifyContent="space-between" > 
             <Row alignItems={"center"}>
               <TouchableOpacity activeOpacity={0.7} onPress={() => handleGoBack()}>
                 <FontAwesome name="chevron-left" size={24} color="black" />
               </TouchableOpacity>
               <Spacer/>
               <Box>
-                <Heading fontSize="lg" color="trueGray.800" pr="1">Friends</Heading> 
+                <Heading fontSize="lg" color="trueGray.800">Friends</Heading> 
               </Box>
               <Spacer/>
-              <Text fontSize="3xl">...</Text>
+              <TouchableOpacity activeOpacity={0.7}>
+                <FontAwesome name="chevron-left" size={24} color="#FFFFFF" />
+              </TouchableOpacity>
             </Row>
       </Box>
         <Row alignItems="center">
@@ -91,6 +96,7 @@ export default function FriendListScreen () {
             placeholder="Look for your friend here!"
             bgColor="trueGray.100"
             onChangeText={setSearchTerm}
+            onSubmitEditing={searchFriends}
             borderRadius="md"
             borderWidth={1}
             fontSize="md"
@@ -98,12 +104,21 @@ export default function FriendListScreen () {
         </Row>
       <ScrollView style={{backgroundColor:"#FFF"}}>
         {loading ? (
-          <Column flex={1} alignItems="center" alignContent="center" justifyContent="center">
+          <Box flex={1} pt={20}>
             <Spacer/>
-            <Spinner size="md" mb={2} color="#0284C7" accessibilityLabel="Loading posts" />
-            <Heading color="#0284C7" fontSize="md"> Loading</Heading>
+            <Column flex={1} alignItems="center" alignContent="center" justifyContent="center">
+            <Spacer/>
+            <Spinner size="md" mb={2} color="#F97316" accessibilityLabel="Loading posts" />
+            <Heading color="#F97316" fontSize="md"> Loading</Heading>
           </Column>
-        ) : friends.length === 0 ? (
+          </Box>
+        ) : friends.length !== 0 ? (
+          <Flex p={1} pt={3} >
+            {friends.map((user) => (
+              <FriendContainer friend= {user} fetchData={fetchData} key={user.uid}/>
+            ))}
+          </Flex> 
+        ) : (
           <View style={{flex:1, justifyContent:"center", alignItems:"center", paddingLeft:3, paddingRight:3}}>
             <Text/>
             <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
@@ -114,12 +129,6 @@ export default function FriendListScreen () {
               Try exploring and discover more amazing users!
             </Text>   
           </View>
-        ) : (
-          <Flex p={1} pt={3} >
-            {friends.map((user) => (
-              <FriendContainer friend= {user} fetchData={fetchData} key={user.uid}/>
-            ))}
-          </Flex>  
         )}
       </ScrollView>
       </SafeAreaView>

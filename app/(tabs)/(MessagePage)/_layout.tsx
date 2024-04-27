@@ -7,7 +7,7 @@ export default function authLayout() {
     <Stack>
       <Stack.Screen name="MessageList" options={{ headerShown: false, title: "" }} />
       <Stack.Screen name="ChatPage" options={{ headerShown: false, title: "" }} />
-      <Stack.Screen name="FriendsChatCopy" options={{ headerShown: true, title: "Friends" }} />
+      <Stack.Screen name="FriendsChatCopy" options={{ headerShown: false, title: "Friends" }} />
 
     </Stack>
   )

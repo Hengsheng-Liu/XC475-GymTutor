@@ -20,7 +20,7 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
   const handleSave = () => {
  
     onSaveTag(addTag as string);
-    
+    setAddTag("");
     setEditMode(false);
   }
   const handleCancel = () => {
@@ -70,7 +70,7 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
             padding={3}
             value={addTag}
             onChangeText={setAddTag}
-            placeholder="new tag"
+            placeholder="Add a new tag"
             width="60%"
           />
           <Button
