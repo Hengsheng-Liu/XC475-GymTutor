@@ -12,11 +12,7 @@ import { generateChatId } from './data';
 import { FontAwesome } from '@expo/vector-icons';
 import { getUserPicture } from '@/components/FirebaseUserFunctions';
 import { Avatar, NativeBaseProvider } from 'native-base';
-<<<<<<< HEAD
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-=======
-import { border } from 'native-base/lib/typescript/theme/styled-system';
->>>>>>> ac506adcc9d3b07a79775091d59387aae9e8dde8
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -189,27 +185,6 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
       padding: 10,
 
     },
-<<<<<<< HEAD
-
-=======
-    inputContainer: {
-      flexDirection: 'row',
-      padding: 10,
-      borderTopWidth: 1,
-      borderTopColor: '#e0e0e0',
-      backgroundColor: '#fff',
-      
-    },
-    input: {
-      flex: 1,
-      height: 40,
-      borderWidth: 1,
-      borderRadius: 20,
-      paddingHorizontal: 10,
-      borderColor: 'gray',
-      backgroundColor: '#ffffff',
-    },
->>>>>>> ac506adcc9d3b07a79775091d59387aae9e8dde8
     messageBubble: {
       padding: 10,
       borderRadius: 20,
@@ -270,11 +245,7 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-<<<<<<< HEAD
     <>
-=======
-    <KeyboardAvoidingView style={styles.keyboardAvoidingView}>
->>>>>>> ac506adcc9d3b07a79775091d59387aae9e8dde8
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} activeOpacity={0.7} onPress={() => handleGoBack()}>
           <FontAwesome name="chevron-left" size={24} color="#171717" />
@@ -307,12 +278,8 @@ const ChatPage: React.FC<Props> = ({ navigation }) => {
           },
           blurOnSubmit: false, // Prevents the keyboard from dismissing on submit
           multiline: false,
-<<<<<<< HEAD
 
 
-=======
-          
->>>>>>> ac506adcc9d3b07a79775091d59387aae9e8dde8
         }}
         bottomOffset={78}
       />
