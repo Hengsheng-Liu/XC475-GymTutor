@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Row, Column, Button, Pressable, Text, Spacer, Avatar } from 'native-base'
+import { Row, Column, Button, Pressable, Text, Spacer, Avatar, Box } from 'native-base'
 import { IUser } from '@/components/FirebaseUserFunctions';
 import { router } from 'expo-router';
 import { useAuth } from '@/Context/AuthContext';
@@ -67,10 +67,19 @@ const friendContainer: React.FC<FriendProps> = ({ friend, fetchData }) => {
         const updatedUser = { ...currUser };
         const friendIndex = updatedUser.friends.indexOf(friendUID);
         updatedUser.friends.splice(friendIndex, 1);
+
+        const friendRequests = currUser.friendRequests;
+        const updatedRequests = friendRequests.filter(request => {
+            if (request.friend === friendUID) {
+                return;
+            } else {
+                    return request;
+            }});
+        updatedUser.friendRequests = updatedRequests;
         updateCurrUser(updatedUser);
+        // Remove friendUid from user's friends list
+        updateDoc(userRef, { friends: arrayRemove(friendUID), friendRequests: updatedUser.friendRequests });
       }
-      // Remove friendUid from user's friends list
-      updateDoc(userRef, { friends: arrayRemove(friendUID) });
 
       if (friend) {
         const updatedFriend = { ...friend };
@@ -90,26 +99,25 @@ const friendContainer: React.FC<FriendProps> = ({ friend, fetchData }) => {
   };
 
   return (
-    <Pressable
-      onPress={() => handleUserClick(friend)}
-      onPressOut={() => setIsPressed(false)}
-      p={3} mb={2}
-      borderRadius="xl" borderWidth={1} borderColor="trueGray.50" shadow="3"
-      bg={isPressed ? "trueGray.200" : "trueGray.50"} // Change background color on hover
-    >
-      <Row alignItems="center" space="sm">
-        <Avatar size="md" source={friendIcon ? { uri: friendIcon } : require("@/assets/images/default-profile-pic.png")} />
-        <Row justifyContent="space-between" alignItems="center" flex={1}>
-          <Column>
-            <Text color="trueGray.900" fontSize="lg" fontWeight="bold">{friend.name}</Text>
-          </Column>
-          <Spacer />
-          {currUser && < Button background="#0EA5E9" _pressed={{opacity: 0.5}} height={5} pt={0} pb={0} alignItems="center" onPress={() => removeFriend(currUser.uid, friend.uid)}>
-            <Text color="#FFF" fontSize="xs" fontWeight="bold">  Unfollow  </Text>
-          </Button>
-          }
-        </Row>
-      </Row>
+    <Pressable onPress={() => handleUserClick(friend)}> 
+          {({ isPressed }) => {
+              return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} 
+                          style={{transform: [{ scale: isPressed ? 0.96 : 1 }]}} 
+                          shadow="3" borderRadius="xl" mb ={2} p={3}>
+              <Row alignItems="center" space="sm">
+                  <Avatar size="md" source={{ uri: friendIcon}} />
+                  <Row justifyContent="space-between" alignItems="center" flex={1}>
+                      <Column>
+                          <Text color="trueGray.900" fontSize="lg" fontWeight="bold">{friend.name}</Text>
+                      </Column>
+                      <Spacer />
+                      {currUser && < Button backgroundColor="#0EA5E9" _pressed={{opacity: 0.5}}  height={5} pt={0} pb={0} alignItems="center" onPress={() => removeFriend(currUser.uid, friend.uid)}>
+                          <Text color="#FFF" fontSize="xs" fontWeight="bold">  Unfollow  </Text>
+                      </Button>
+                      }
+                  </Row>
+              </Row>
+            </Box>}}
     </Pressable>
   );
 };

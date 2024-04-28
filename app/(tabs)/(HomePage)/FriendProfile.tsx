@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../Context/AuthContext";
 import { Box, Popover, HStack, Row, Icon, Text, Button, NativeBaseProvider, ScrollView, Flex } from "native-base";
 import Header from "../../../components/FriendsComponents/Header2";
@@ -15,7 +15,7 @@ import { canMessage, canAddFriend } from "@/components/FriendsComponents/FriendF
 import { TouchableOpacity } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { firestore } from "@/firebaseConfig";
-import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, arrayRemove, onSnapshot } from "firebase/firestore";
 
 import { SvgUri } from "react-native-svg";
 
@@ -26,6 +26,26 @@ import FriendRequest from "@/components/FriendsComponents/RequestContainer";
 const FriendProfilePage = () => {
   const { friend, currUser, updateCurrUser, updateFriend } = useAuth();
   const [userInfo, setUserInfo] = useState<IUser | null>(friend);
+
+  useEffect(() => {
+    if (!friend) return;
+    const fetchUser = async () => {
+      const unsub = onSnapshot(
+        doc(firestore, "Users", friend.uid),
+        (docSnapshot) => {
+          if (docSnapshot.exists()) {
+            const data = docSnapshot.data() as IUser;
+            setUserInfo(data);
+          } else {
+            console.log("No user data available");
+          }
+        }
+      );
+      return () => unsub();
+    };
+
+    fetchUser();
+  }, [friend]);
 
   const openChat = async (friend: any) => {
     if (currUser) {
@@ -68,10 +88,18 @@ const FriendProfilePage = () => {
         const updatedUser = { ...currUser };
         const friendIndex = updatedUser.friends.indexOf(friendUID);
         updatedUser.friends.splice(friendIndex, 1);
+        const friendRequests = currUser.friendRequests;
+        const updatedRequests = friendRequests.filter(request => {
+            if (request.friend === friendUID) {
+                return;
+            } else {
+                    return request;
+            }});
+        updatedUser.friendRequests = updatedRequests;
         updateCurrUser(updatedUser);
+        // Remove friendUid from user's friends list
+        updateDoc(userRef, { friends: arrayRemove(friendUID), friendRequests: updatedUser.friendRequests });
       }
-      // Remove friendUid from user's friends list
-      updateDoc(userRef, { friends: arrayRemove(friendUID) });
 
       if (friend) {
         const updatedFriend = { ...friend };
@@ -114,7 +142,7 @@ const FriendProfilePage = () => {
                   mt={6} ml={"3"} mr={"3"}
                   textAlign={"center"}
                 >
-                  <Button width="40%" variant={"outline"} borderRadius={16} borderColor="#F97316" borderWidth="2">
+                  <Button width="40%" variant={"outline"} borderRadius={16} borderColor="#F97316" borderWidth="2" background= "#FFF" _pressed= {{}}>
                     <Text fontSize="md" color="#C2410C" > {userInfo.friends.length} {userInfo.friends.length == 1 ? " Friend" : "Friends"} </Text>
                   </Button>
 
