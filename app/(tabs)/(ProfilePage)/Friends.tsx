@@ -15,12 +15,15 @@ import FriendContainer from '../../../components/FriendsComponents/FriendContain
 import fetchUsers from '../../../components/FriendsComponents/FetchUsers';
 import theme from '@/components/theme';
 import { getCurrUser } from '@/components/FirebaseUserFunctions';
+import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
 
 export default function FriendListScreen () {
   const [friends, setFriends] = useState<IUser[]>([]);
   const {User, currUser, updateCurrUser, friend, updateFriend} = useAuth(); 
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
+
 
   if (!User) return; // Check if user is null
 
@@ -33,7 +36,7 @@ export default function FriendListScreen () {
     // });
 
     // return () => unsubscribe();
-  }, [User]);
+  }, [User, isFocused]);
 
   const fetchData = async () => {
     setLoading(true);

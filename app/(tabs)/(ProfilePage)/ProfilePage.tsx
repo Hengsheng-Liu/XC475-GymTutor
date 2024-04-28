@@ -74,6 +74,7 @@ const ProfilePage = () => {
 
     fetchUser();
   }, [User]);
+
   const updateBio = async (newBio: string) => {
     if (User) {
       try {
@@ -186,7 +187,7 @@ const signOutUser = async () => {
                       onDeleteTag={deleteTags}
                     />
                     <ButtonGroup
-                  friendCount={userInfo.friends.length + (userInfo.friends.length == 1 ? " Friend" : "Friends")}
+                  friendCount={userInfo.friends.length + (userInfo.friends.length == 1 ? " Friend" : " Friends")}
                   gym={userGym}
                   History={history}
                 />

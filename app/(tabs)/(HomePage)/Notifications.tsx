@@ -14,6 +14,7 @@ import { getCurrUser } from '@/components/FirebaseUserFunctions';
 import { firestore } from '@/firebaseConfig';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { router } from 'expo-router';
+import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -27,7 +28,8 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
   const [acceptedRequests, setAcceptedRequests] = useState<IUser[]>([]); // State to store accepted friend requests
   const {User} = useAuth(); 
   const [loading, setLoading] = useState<boolean>(true); // State to track loading status
-  
+  const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
+
   if (!User) return; // Check if user is null
 
   useEffect(() => {
@@ -39,7 +41,7 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
     });
 
     return () => unsubscribe();
-  }, [User]);
+  }, [User, isFocused]);
 
   const fetchData = async () => {
     setLoading(true);

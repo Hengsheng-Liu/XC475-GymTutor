@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../Context/AuthContext";
 import { Box, Popover, HStack, Row, Icon, Text, Button, NativeBaseProvider, ScrollView, Flex } from "native-base";
 import Header from "../../../components/FriendsComponents/Header2";
@@ -15,7 +15,7 @@ import { canMessage, canAddFriend } from "@/components/FriendsComponents/FriendF
 import { TouchableOpacity } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { firestore } from "@/firebaseConfig";
-import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, arrayRemove, onSnapshot } from "firebase/firestore";
 
 import { SvgUri } from "react-native-svg";
 
@@ -25,6 +25,26 @@ import { globalState } from '@/app/(tabs)/(MessagePage)/globalState';
 const FriendProfilePage = () => {
   const { friend, currUser, updateCurrUser, updateFriend } = useAuth();
   const [userInfo, setUserInfo] = useState<IUser | null>(friend);
+
+  useEffect(() => {
+    if (!friend) return;
+    const fetchUser = async () => {
+      const unsub = onSnapshot(
+        doc(firestore, "Users", friend.uid),
+        (docSnapshot) => {
+          if (docSnapshot.exists()) {
+            const data = docSnapshot.data() as IUser;
+            setUserInfo(data);
+          } else {
+            console.log("No user data available");
+          }
+        }
+      );
+      return () => unsub();
+    };
+
+    fetchUser();
+  }, [friend]);
 
   const openChat = async (friend: any) => {
     if (currUser) {

@@ -33,7 +33,7 @@ export default function CheckInRoutine(
               <FontAwesome name="chevron-left" size={24} color="#A3A3A3" />
             </Button>
             <Spacer/>
-            <Button _pressed={{opacity: 0.5}} backgroundColor="#FFF" onPress={() => router.navigate("/Home")}>
+            <Button _pressed={{opacity: 0.5}} backgroundColor="#FFF" onPress={() => router.push("/Home")}>
               <Entypo name="cross" size={30} color="#A3A3A3" />
             </Button>
           </Row>
