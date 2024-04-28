@@ -104,7 +104,7 @@ const friendContainer: React.FC<FriendProps> = ({ friend, fetchData }) => {
             <Text color="trueGray.900" fontSize="lg" fontWeight="bold">{friend.name}</Text>
           </Column>
           <Spacer />
-          {currUser && < Button backgroundColor="#F97316" height={5} pt={0} pb={0} alignItems="center" onPress={() => removeFriend(currUser.uid, friend.uid)}>
+          {currUser && < Button background="#0EA5E9" _pressed={{opacity: 0.5}} height={5} pt={0} pb={0} alignItems="center" onPress={() => removeFriend(currUser.uid, friend.uid)}>
             <Text color="#FFF" fontSize="xs" fontWeight="bold">  Unfollow  </Text>
           </Button>
           }

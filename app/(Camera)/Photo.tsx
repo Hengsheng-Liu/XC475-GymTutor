@@ -164,6 +164,11 @@ export default function photo() {
       <View style={styles.container}>
         {cameraOpen && !base64Img ? (
           <SafeAreaView style={styles.cameraContainer}>
+            <Box pb={2} pl={1} pt={6} mt={2}> 
+              <TouchableOpacity onPress={() => Goback()}>
+                <Entypo name="chevron-left" size={36} color="#EA580C" />
+              </TouchableOpacity>
+            </Box>
             <Camera
               type={type}
               style={{ width: "100%", height: "90%" }}
@@ -174,7 +179,11 @@ export default function photo() {
               flexDir={"row"}
               justifyContent={"space-around"}
               alignItems={"center"}
-              marginTop={2}
+              marginTop={4}
+              pt={2}
+              pb={4}
+              marginBottom={4}
+              justifyItems="center"
             >
               {/*
                 <TouchableOpacity onPress={() => router.replace("ProfilePage")}>
@@ -182,7 +191,7 @@ export default function photo() {
                 </TouchableOpacity>
                 */}
               <TouchableOpacity onPress={UserpickImage}>
-                <FontAwesome name="photo" size={26} color="#EA580C" />
+                <FontAwesome name="photo" size={35} color="#EA580C" />
               </TouchableOpacity>
               <TouchableOpacity onPress={takePicture}>
                 <Box
@@ -204,7 +213,7 @@ export default function photo() {
                 />
               </TouchableOpacity>
               <TouchableOpacity onPress={toggleCameraType}>
-                <Entypo name="cycle" size={26} color="#EA580C" />
+                <Entypo name="cycle" size={35} color="#EA580C" />
               </TouchableOpacity>
             </Flex>
           </SafeAreaView>

@@ -1,8 +1,13 @@
-import { NativeBaseProvider, Heading, VStack, Center, Box, Button, Pressable,Text,Flex, Icon} from "native-base";
+import { NativeBaseProvider, Spacer, Heading, VStack, Row, Center, Box, Button, Pressable,Text,Flex, Icon} from "native-base";
 import React from "react";
 import { router } from "expo-router";
 import { SvgProps } from "react-native-svg";
 import BodyPart from "./BodyPart";
+import { TouchableOpacity } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Entypo } from '@expo/vector-icons';
+
 interface CheckInOneProps {
     navigation: () => void;
     Icon: React.FC<SvgProps>
@@ -22,40 +27,41 @@ export default function CheckInRoutine(
 ) {
   return (
     <NativeBaseProvider>
-      
-      <VStack backgroundColor={"#FFF"} flex={1}>
+      <SafeAreaView style= {{backgroundColor:"#FFFFFF", flex:1}}>
+          <Row alignItems={"center"}>
+            <Button _pressed={{opacity: 0.5}} backgroundColor="#FFF" onPress={() => router.back()}>
+              <FontAwesome name="chevron-left" size={24} color="#A3A3A3" />
+            </Button>
+            <Spacer/>
+            <Button _pressed={{opacity: 0.5}} backgroundColor="#FFF" onPress={() => router.navigate("/Home")}>
+              <Entypo name="cross" size={30} color="#A3A3A3" />
+            </Button>
+          </Row>
         <Flex alignItems={"center"} justifyContent={"center"}flex={1}>
           <Box> 
             <Flex flexDir={"row"} justifyContent={"center"}>
-            <Icon/>
+              <Icon/>
             </Flex>
-            <Heading marginTop={"10"}>{Title}</Heading>
+            <Heading marginTop="10" mb="8" textAlign="center">{Title}</Heading>
           </Box>
-          <Box>
+          <Box alignItems="center">
             {Tags && <BodyPart
               selectedBodyParts={selectedBodyParts || []}
               setSelectedBodyParts={setSelectedBodyParts as React.Dispatch<React.SetStateAction<string[]>>}
             />}
           </Box>
-          <Center margin={"50"}>
-            <Button bg={"#EA580C"} width={175} onPress={navigation}>
+            <Button background="#EA580C" rounded={10} width={175} _pressed={{opacity: 0.5}} onPress={navigation}>
                 <Text fontSize={20} fontWeight={700} color={"#FAFAFA"}>{ButtonText}</Text>
             </Button>
-            { !Process && !skipPhoto &&
-            <Pressable onPress={() => router.back()} marginTop={4} paddingX={5}>
-                <Text color = {"muted.500"} >Not yet</Text>
-            </Pressable>
-}
+
             {
               skipPhoto &&
-              <Pressable onPress={() => router.push("SelectWorkout")} marginTop={4} paddingX={5}>
-                <Text color = {"muted.500"} >Skip</Text>
+              <Pressable _pressed={{opacity: 0.5}} onPress={() => router.push("SelectWorkout")} marginTop={3} paddingX={5}>
+                <Text color = {"muted.500"} fontSize="md" >Skip photo</Text>
               </Pressable>
             }
-
-          </Center>
         </Flex>
-      </VStack>
+      </SafeAreaView>
     </NativeBaseProvider>
   );
 }

@@ -4,19 +4,23 @@ import { IUser } from '@/components/FirebaseUserFunctions';
 import { useAuth } from "@/Context/AuthContext";
 import { NativeBaseProvider } from 'native-base';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Flex, Text } from "native-base";
+import { Flex, Text, Spacer, Box, Heading, Row, Input, Column, Spinner, View } from "native-base";
 import { firestore } from '@/firebaseConfig';
 import { doc, onSnapshot } from 'firebase/firestore';
-
+import { FontAwesome } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native';
 import FriendContainer2 from '../../../components/FriendsComponents/FriendContainer2';
 import fetchUsers from '../../../components/FriendsComponents/FetchUsers';
 import theme from '@/components/theme';
 import { getCurrUser } from '@/components/FirebaseUserFunctions';
+import { router } from "expo-router";
+import { filterUsersByName } from '@/components/FirebaseUserFunctions';
 
 export default function FriendListScreen() {
   const [friends, setFriends] = useState<IUser[]>([]);
   const { User } = useAuth();
   const [loading, setLoading] = useState<boolean>(true);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   if (!User) return; // Check if user is null
 
@@ -36,8 +40,8 @@ export default function FriendListScreen() {
     const currUser = await getCurrUser(User.uid);
     if (!currUser) return;
 
-    setFriends([]);
     setLoading(true);
+    setFriends([]);
     try {
       const fetchedFriends = await fetchUsers(currUser, currUser.friends);
       setFriends(fetchedFriends);
@@ -48,21 +52,79 @@ export default function FriendListScreen() {
     setLoading(false);
   };
 
+  const searchFriends = async () => {
+    // Filter list of users by name if provided
+    setLoading(true);
+    if (searchTerm && searchTerm !== "" && friends.length > 0) {
+        setFriends(filterUsersByName(friends, searchTerm));
+    }  else {
+      fetchData();
+    }
+    setLoading(false);
+    }
+
+
   return (
     <NativeBaseProvider theme={theme} >
-      <SafeAreaView style={{ backgroundColor: "#FFF", flex: 1, padding: 15 }}>
+      <SafeAreaView style={{ backgroundColor: "#FFF", flex: 1 }}>
+        <Box padding={15} pb={3} alignItems="center" justifyContent="space-between">
+              <Row alignItems={"center"}>
+                <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
+                  <FontAwesome name="chevron-left" size={24} color="black" />
+                </TouchableOpacity>
+                <Spacer/>
+                <Box>
+                  <Heading fontSize="lg" color="trueGray.800">Friends</Heading> 
+                </Box>
+                <Spacer/>
+                <TouchableOpacity activeOpacity={0.7}>
+                  <FontAwesome name="chevron-left" size={24} color="#FFFFFF" />
+                </TouchableOpacity>
+              </Row>
+        </Box>
+        <Row alignItems="center">
+          <Input flex={1} marginX={4} mb={2}
+            InputLeftElement={
+              <Box paddingLeft={2}>
+                <TouchableOpacity activeOpacity={0.7} onPress={searchFriends} >
+                  <FontAwesome name="search" size={24} color="#A3A3A3" />
+                </TouchableOpacity>
+              </Box>
+            }
+            placeholder="Look for your friend here!"
+            bgColor="trueGray.100"
+            onChangeText={setSearchTerm}
+            onSubmitEditing={searchFriends}
+            borderRadius="md"
+            borderWidth={1}
+            fontSize="md"
+          />
+        </Row>
         <ScrollView>
           {loading ? (
-            <ActivityIndicator size="large" color="#0000ff" />
-          ) : friends.length === 0 ? (
-            <Text>No friends. Try connecting with some users!</Text>
-          ) : (
-            <Flex p={1}>
-              {friends.map((user) => (
-                < FriendContainer2 friend={user} key={user.uid} />
-              ))}
-            </Flex>
-          )}
+            <Column flex={1} mt={10} alignItems="center" alignContent="center" justifyContent="center">
+            <Spacer/>
+            <Spinner size="md" mb={2} color="#F97316" accessibilityLabel="Loading posts" />
+            <Heading color="#F97316" fontSize="md"> Loading</Heading>
+          </Column>
+        ) : friends.length === 0 ? (
+          <View style={{flex:1, justifyContent:"center", alignItems:"center", paddingLeft:3, paddingRight:3}}>
+            <Text/>
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
+              Oops! It seems like there are no friends to display.
+            </Text> 
+            < Text/>
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
+              Try exploring and discover more amazing users!
+            </Text>   
+          </View>
+        ) : (
+          <Flex p={1} pt={3} >
+            {friends.map((user) => (
+              <FriendContainer2 friend= {user} fetchData={fetchData} key={user.uid}/>
+            ))}
+          </Flex>  
+        )}
         </ScrollView>
       </SafeAreaView>
     </NativeBaseProvider>

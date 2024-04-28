@@ -42,9 +42,10 @@ export default function Test() {
     <CheckInRoutine
       navigation={goPhotoPage}
       Icon={CameraSVG}
-      Title={"Take a picture to prove it."}
+      Title={"Great Job! Let's take a picture to remember your workout!"}
       ButtonText={"Use Camera"}
       skipPhoto
+      
     />
   );
 }

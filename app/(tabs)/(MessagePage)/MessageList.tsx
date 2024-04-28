@@ -156,8 +156,12 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
 
     return (
       <Row
+<<<<<<< HEAD
         mb={2}
         ml={2}
+=======
+        mb={2} mr="1" ml="1"
+>>>>>>> ac506adcc9d3b07a79775091d59387aae9e8dde8
         justifyContent={"space-between"}
         alignItems={"center"}
       >
@@ -167,7 +171,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
           <Spacer />
         </Column>
         <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("./FriendsChatCopy")} >
-          <AntDesign name="contacts" size={45} color="#EA580C" />
+          <AntDesign name="contacts" size={45} color="#F97316" />
         </TouchableOpacity>
       </Row>
     );
@@ -273,11 +277,11 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView
-        style={{ backgroundColor: "#FFF", flex: 1, padding: 0 }}
+        style={{ backgroundColor: "#FFF", flex: 1, paddingTop: 10 }}
       // padding is set to 0 to make message records look like entries rather than boxes.
       >
         <FriendHeader />
-        <Row mb={1} space={2} alignItems="center">
+        <Row mb={1} mr="1" ml="1"space={2} alignItems="center">
           <Input flex={1}
             InputLeftElement={
               <Box paddingLeft={2}>
@@ -296,7 +300,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
           />
         </Row>
         {loading &&
-          <Column flex={1} alignItems="center" alignContent="center" justifyContent="center">
+          <Column flex={1} pt={10} alignItems="center" alignContent="center" justifyContent="center">
             <Spacer />
             <Spinner size="md" mb={2} color="#F97316" accessibilityLabel="Loading posts" />
             <Heading color="#F97316" fontSize="md"> Loading</Heading>

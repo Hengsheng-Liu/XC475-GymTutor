@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge } from 'native-base';
+import { Badge, Text } from 'native-base';
 
 interface TagsProps {
     title: string;

@@ -11,7 +11,10 @@ import {
   ScrollView,
   HStack,
   Button,
+  Row,
 } from "native-base";
+import { TouchableOpacity } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 import { SafeAreaView, StyleSheet,View} from "react-native";
 import AchievementModal from "../../../components/ProfileComponents/AchievementsModal";
 import { firestore } from "../../../firebaseConfig";
@@ -80,6 +83,22 @@ const AchievementPage = () => {
   }, []);
   return (
     <NativeBaseProvider>
+      <SafeAreaView style= {{backgroundColor:"#FFFFFF", flex:1}}>
+      <Box p={15} pb={3} alignItems="center" justifyContent="space-between">
+            <Row alignItems={"center"}>
+              <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
+                <FontAwesome name="chevron-left" size={24} color="black" />
+              </TouchableOpacity>
+              <Spacer/>
+              <Box>
+                <Heading fontSize="lg" color="trueGray.800">Your Badges</Heading> 
+              </Box>
+              <Spacer/>
+              <TouchableOpacity activeOpacity={0.7}>
+                <FontAwesome name="chevron-left" size={24} color="#FFFFFF" />
+              </TouchableOpacity>
+            </Row>
+      </Box>
       <ScrollView style={styles.container}>
           <Flex justifyContent={"flex-end"}flexDir={"column"} margin={1}>
             {Complete.length > 0 && <Box marginBottom={5}>
@@ -133,6 +152,7 @@ const AchievementPage = () => {
      
       </Flex>
       }
+      </SafeAreaView>
     </NativeBaseProvider>
   );
 };

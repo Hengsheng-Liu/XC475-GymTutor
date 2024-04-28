@@ -20,7 +20,7 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
   const handleSave = () => {
  
     onSaveTag(addTag as string);
-    
+    setAddTag("");
     setEditMode(false);
   }
   const handleCancel = () => {
@@ -45,7 +45,9 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
     <>
       <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={2} mb={2}>
         {description.map((tag) => (
-          <Pressable key={tag} onPress={() => deleteMode && handleTagDelete(tag)}>
+          <Pressable key={tag}
+          onLongPress={() => handleTagDelete(tag)} _pressed={{ opacity: 0.5 }}
+          >
           <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
               {tag}
           </Badge>
@@ -59,13 +61,6 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
           </Badge>
           </Pressable>
         )}
-         {!editMode && !deleteMode && (
-          <Pressable onPress={() => setDeleteMode(true)}>
-            <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
-              {"-"}
-          </Badge>
-          </Pressable>
-        )}
 
         {editMode && (
           <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={3} mb={4}>
@@ -75,7 +70,7 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
             padding={3}
             value={addTag}
             onChangeText={setAddTag}
-            placeholder="new tag"
+            placeholder="Add a new tag"
             width="60%"
           />
           <Button

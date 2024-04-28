@@ -121,14 +121,14 @@ interface Props {
             size="2xl"
             source={{ uri: friendIcon }}
           />
-          <Text fontSize="xl" fontWeight="bold">
+          <Text fontSize="xl" fontWeight="bold" isTruncated maxWidth="85%">
             {selectedUser.name}, {selectedUser.age}
           </Text>
           {/* <Text fontSize="sm" color="trueGray.500">{selectedUser.status}</Text> */}
           <Text color= "trueGray.900" fontSize="sm" numberOfLines={2} textAlign="center" isTruncated maxWidth="75%">
             {selectedUser.bio}
           </Text>
-          <Row alignItems="center" mr="2" ml="2" p="3" justifyContent={"space-between"}>
+          <Row alignItems="center" mr="2" ml="2" mb={0} p="3" pt="2" pb="0" justifyContent={"space-between"}>
             <TouchableOpacity activeOpacity={0.7} onPress={() => handlePreviousUser()}>
                 <FontAwesome name="chevron-left" size={24} color="black" />
             </TouchableOpacity>
@@ -140,10 +140,10 @@ interface Props {
             <TouchableOpacity activeOpacity={0.7} onPress={() => handleNextUser()}>
                 <FontAwesome name="chevron-right" size={24} color="black" />
             </TouchableOpacity>
-            </Row> 
-          <Box overflow="hidden" mb={3}>
+          </Row> 
+          <Box overflow="hidden" mb={3} marginX={9}>
             <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly">
-              {selectedUser.tags && selectedUser.tags.slice(0, 5).map((tag, index) => (
+              {selectedUser.tags && selectedUser.tags.slice(0, 4).map((tag, index) => (
                 <Badge m = {2} colorScheme={"muted"} shadow={1} borderRadius={4}>{tag}</Badge>
               ))}
             </Flex>

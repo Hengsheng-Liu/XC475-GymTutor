@@ -65,7 +65,7 @@ export default function SelectWorkout() {
     if(InProgressHolder.length > 0 || CompletedHolder.length > 0){
       setModalVisible(true);
     }else{
-      router.push("/CheckInSubmit");
+      router.push("/Home");
     }
     try {
       await updateDoc(userRef, {
@@ -97,8 +97,8 @@ export default function SelectWorkout() {
     <CheckInRoutine
       navigation={submitCheckIn}
       Icon={Tags}
-      Title={"Select your workout."}
-      ButtonText={"Yes"}
+      Title={"Select your workout!"}
+      ButtonText={"Continue"}
       Tags
       selectedBodyParts={selected}
       setSelectedBodyParts={setSelected}

@@ -43,9 +43,9 @@ export default function BodyPart({
   
 
   return (
-    <Flex flexDir={"row"} flexWrap={"wrap"} marginX={10} paddingTop={35}>
+    <Flex flexDir={"row"} justifyContent="center" flexWrap={"wrap"} alignItems="center" marginX={10} paddingTop={0} pb={5}>
       {BodyParts.map((part) => (
-        <Pressable key={part} onPress={() => handleSelect(part)}>
+        <Pressable  key={part} onPress={() => handleSelect(part)}>
           <Badge
             key={part}
             variant="solid"
