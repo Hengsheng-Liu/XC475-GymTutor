@@ -79,7 +79,7 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
 
   // Handle navigation. 
   const handleGoBack = () => {
-    router.replace("/Home");
+    router.back();
   };
 
   return (

@@ -67,10 +67,18 @@ const FriendProfilePage = () => {
         const updatedUser = { ...currUser };
         const friendIndex = updatedUser.friends.indexOf(friendUID);
         updatedUser.friends.splice(friendIndex, 1);
+        const friendRequests = currUser.friendRequests;
+        const updatedRequests = friendRequests.filter(request => {
+            if (request.friend === friendUID) {
+                return;
+            } else {
+                    return request;
+            }});
+        updatedUser.friendRequests = updatedRequests;
         updateCurrUser(updatedUser);
+        // Remove friendUid from user's friends list
+        updateDoc(userRef, { friends: arrayRemove(friendUID), friendRequests: updatedUser.friendRequests });
       }
-      // Remove friendUid from user's friends list
-      updateDoc(userRef, { friends: arrayRemove(friendUID) });
 
       if (friend) {
         const updatedFriend = { ...friend };
@@ -113,7 +121,7 @@ const FriendProfilePage = () => {
                   mt={6} ml={"3"} mr={"3"}
                   textAlign={"center"}
                 >
-                  <Button width="40%" variant={"outline"} borderRadius={16} borderColor="#F97316" borderWidth="2">
+                  <Button width="40%" variant={"outline"} borderRadius={16} borderColor="#F97316" background= "#FFF" borderWidth="2" _pressed= {{}}>
                     <Text fontSize="md" color="#C2410C" > {userInfo.friends.length} {userInfo.friends.length == 1 ? " Friend" : "Friends"} </Text>
                   </Button>
 
