@@ -5,7 +5,7 @@ import { ScrollView, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "@/Context/AuthContext";
-import { IUser, getUsers, updateUsers, removeFieldFromUsers, Gym } from "@/components/FirebaseUserFunctions";
+import { IUser, getUsers, updateUsers, removeFieldFromUsers, getCurrUser, Gym } from "@/components/FirebaseUserFunctions";
 import UserPreview from "../../../components/HomeComponents/UserContainer";
 import CheckedUserPreview from "../../../components/HomeComponents/CheckedUserContainer";
 import Header from "../../../components/HomeComponents/Header";
@@ -19,6 +19,7 @@ import { defaultFilters } from "./Filter";
 import UserExpandedPreview from "@/components/HomeComponents/ExpandedPreview";
 import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
 import { CalendarUtils } from "react-native-calendars";
+import { updateCurrentUser } from "firebase/auth";
 //import { handleCheckIn } from "@/components/GeolocationFunction";
 export default function HomeScreen() {
   // const [gym, setGym] = useState<Gym>(); // State to store the gym
@@ -29,7 +30,7 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
   const [firstLoad, setFirstLoad] = useState<boolean>(true); // State to track first load
   const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
-  const { User, currUser, userGym } = useAuth();
+  const { User, currUser, updateCurrUser, userGym } = useAuth();
   const [location, setLocation] = useState<number[]>([]);
   const bound = useRef<number[][]>([]); // State to store the gym boundary
   const [checkIn, setCheckIn] = useState<boolean>(false); // State to store the gym boundary
@@ -87,7 +88,7 @@ export default function HomeScreen() {
     }
   };
 
-  // TODO: Display user preview when clicked
+  // Display user preview when clicked
   const handlePreviewClick = (friend: IUser) => {
     setSelectedUser(friend);
     setIsOpen(true);
@@ -105,6 +106,9 @@ export default function HomeScreen() {
       setCheckedUsers([]);
       setOtherUsers([]);
       setLoading(true);
+
+      const currUser2 = await getCurrUser(User.uid);
+      updateCurrUser(currUser2);
 
       let fetchedUsers: IUser[];
       if (searchTerm === "") {
@@ -124,6 +128,9 @@ export default function HomeScreen() {
         fetchedUsers = await getUsers(currUser.uid, userGym[0], defaultFilters, searchTerm);
         console.log("Fetched users with name: ", searchTerm);
       }
+
+      fetchedUsers = fetchedUsers.filter((user) => user.uid !== currUser.uid);
+      fetchedUsers = fetchedUsers.filter((user) => !currUser.blockedUsers.includes(user.uid));
 
       // Filter users that have checked in today
       const checkedUsers = fetchedUsers.filter((user) => {
@@ -202,24 +209,24 @@ export default function HomeScreen() {
           ) : (
           <ScrollView style={{flex:1, zIndex:0}}>
             <Row>
-            <Column flex={1}>
+            <Column flex={1} mr={1}>
               {checkedUsers.slice(0, Math.ceil(checkedUsers.length/2)).map((user) => (
               <Pressable onPress={()=> handlePreviewClick(user)} key = {user.uid}>
                 {({ isPressed }) => {
                 return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} 
                             style={{transform: [{ scale: isPressed ? 0.96 : 1 }]}} 
-                            shadow="3" borderRadius="xl" mb ={2} ml={1} mr={1} pr={1}>
+                            shadow="3" borderRadius="xl" mb ={3} ml={1} mr={1} pl={0.5} pr={0.5}>
                           <CheckedUserPreview friend={user} key={user.uid} />
                         </Box>}}
               </Pressable>))}
             </Column>
-            <Column flex={1}>
+            <Column flex={1} ml={1}>
               {checkedUsers.slice(Math.ceil(checkedUsers.length/2)).map((user) => (
               <Pressable onPress={()=> handlePreviewClick(user)} key = {user.uid}>
                 {({ isPressed }) => {
                 return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} 
                             style={{transform: [{ scale: isPressed ? 0.96 : 1 }]}} 
-                            shadow="3" borderRadius="xl" mb ={2}>
+                            shadow="3" borderRadius="xl" mb ={3} mr={0.5} pl={0.5} pr={0.5}>
                           <CheckedUserPreview friend={user} key={user.uid} />
                         </Box>}}
               </Pressable>))}

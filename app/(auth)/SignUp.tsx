@@ -39,6 +39,7 @@ export default function SignUpScreen() {
   const [name, setName] = useState<string>('');
 
   const { CreateUser } = useAuth();
+
   const handlePasswordChange = (text: string) => {
     setPassword(text);
     if (text !== confirmPassword) {
@@ -47,6 +48,7 @@ export default function SignUpScreen() {
       setPasswordMatchError(false);
     }
   };
+
   const handleConfirmPasswordChange = (text: string) => {
     setConfirmPassword(text);
     if (password !== text) {
@@ -57,7 +59,17 @@ export default function SignUpScreen() {
   };
 
   const handleSignUp = async () => {
+
+    // Regex for basic email validation
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
     if (name && email && password && confirmPassword && password === confirmPassword) {
+
+      if (!emailRegex.test(email)) {
+        Alert.alert("Error", "Please enter a valid email address");
+        return;
+      }
+
       console.log('name is ' + name);
       try {
         router.navigate({
@@ -69,14 +81,14 @@ export default function SignUpScreen() {
 
           }
         });
-        
+
         // const userCredential = await CreateUser(email, password);
         // const user = userCredential.user;
 
       } catch (error: any) {
         Alert.alert("Error", error.message);
       }
-      
+
     } else {
       if (password !== confirmPassword) {
         Alert.alert("Error", "Passwords do not match");
@@ -88,11 +100,11 @@ export default function SignUpScreen() {
   const theme = extendTheme({
     colors: {
       primary: {
-      50: '#7C2D12',
-      100: '#F97316',
-      200: "#171717",
-      300: "#FAFAFA",
-      400: "#FFFFFF"
+        50: '#7C2D12',
+        100: '#F97316',
+        200: "#171717",
+        300: "#FAFAFA",
+        400: "#FFFFFF"
       },
     },
     components: {
@@ -103,8 +115,8 @@ export default function SignUpScreen() {
         },
       },
       Text: {
-        fontSize:"50",
-        fontFamily:"Roberto",
+        fontSize: "50",
+        fontFamily: "Roberto",
         color: "primary.50"
       }
     },
@@ -115,70 +127,70 @@ export default function SignUpScreen() {
     <NativeBaseProvider theme={theme}>
 
 
-       <HStack px="5" py="10" justifyContent="flex-start" alignItems="center" w="100%" bg="primary.400">
-        <HStack alignItems="center" flex={1}>
-         
-          <Button bg="primary.400" startIcon={<ChevronLeftIcon size="md" color="primary.200"/>} onPress={() => router.navigate("LogIn")}></Button>
-          <Text fontSize="20" fontWeight="bold" textAlign="center" flex="1" color="primary.200" mr="3" p="2">
-            Registration
-          </Text>
-        </HStack>
-        </HStack>
+      <HStack px="5" mt="5" py="10" justifyContent="space-between" alignItems="center" w="100%" bg="primary.400">
 
-        <SafeAreaView style= {{ flex: 1, backgroundColor: "#FFF" }}>
+
+        <Button bg="primary.400" startIcon={<ChevronLeftIcon size="md" color="primary.200" />} onPress={() => router.navigate("LogIn")}></Button>
+        <Text fontSize="20" fontWeight="bold" textAlign="center" flex="1" color="primary.200" mr="10" p="2">
+          Registration
+        </Text>
+
+      </HStack>
+
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#FFF" }}>
 
 
         <ScrollView backgroundColor={"#FFFFFF"} contentContainerStyle={{ flexGrow: 1 }}>
           <Box ml={"3"} mr={"3"} paddingTop={"10"} flex="1">
 
 
-  
-            <Text fontSize="28"  fontWeight="700" color="primary.200" lineHeight="28" p="3">Create an account</Text>
-  
-            <Text fontSize="16"  fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="1">Your Name</Text>
 
-            <Box alignItems="left">
-            
-               <Input mx="3" w="90%" value={name} onChangeText={setName} />
+            <Text fontSize="28" fontWeight="700" color="primary.200" lineHeight="28" p="3">Create an account</Text>
 
-            </Box>
-
-            <Text fontSize="16" fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Email</Text>
+            <Text fontSize="16" fontWeight="400" color="primary.200" lineHeight="20" letterSpacing="0.25" p="3" mt="1">Your Name</Text>
 
             <Box alignItems="left">
 
-              <Input mx="3" w="90%" value = {email} onChangeText={setEmail} />
+              <Input mx="3" w="90%" value={name} onChangeText={setName} />
 
             </Box>
 
-            <Text fontSize="16"  fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Password</Text>
+            <Text fontSize="16" fontWeight="400" color="primary.200" lineHeight="20" letterSpacing="0.25" p="3" mt="3">Email</Text>
 
-          <Box alignItems="left">
+            <Box alignItems="left">
 
-            <Input mx="3" w="90%" value = {password} onChangeText={handlePasswordChange} secureTextEntry />
+              <Input mx="3" w="90%" value={email} onChangeText={setEmail} />
 
-          </Box>
+            </Box>
 
-          <Text fontSize="16" fontWeight="400" color="primary.200" lineHeight="20"letterSpacing="0.25" p="3" mt="3">Confirm Password</Text>
+            <Text fontSize="16" fontWeight="400" color="primary.200" lineHeight="20" letterSpacing="0.25" p="3" mt="3">Password</Text>
 
-          <Box alignItems="left">
+            <Box alignItems="left">
 
-            <Input mx="3" w="90%" value = {confirmPassword} onChangeText={handleConfirmPasswordChange} secureTextEntry />
+              <Input mx="3" w="90%" value={password} onChangeText={handlePasswordChange} secureTextEntry />
 
-          </Box>
-                    
+            </Box>
+
+            <Text fontSize="16" fontWeight="400" color="primary.200" lineHeight="20" letterSpacing="0.25" p="3" mt="3">Confirm Password</Text>
+
+            <Box alignItems="left">
+
+              <Input mx="3" w="90%" value={confirmPassword} onChangeText={handleConfirmPasswordChange} secureTextEntry />
+
+            </Box>
 
 
-            
-            {passwordMatchError && <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20"letterSpacing="0.25" p="3" mt="3">
+
+
+            {passwordMatchError && <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20" letterSpacing="0.25" p="3" mt="3">
               Passwords do not match
-              </Text>}
+            </Text>}
 
             <Flex direction="column" flexGrow="1" justifyContent="flex-end">
 
               <Button bg="primary.100" onPress={handleSignUp} rounded="md" > Next </Button>
             </Flex>
-            </Box>
+          </Box>
         </ScrollView>
       </SafeAreaView>
     </NativeBaseProvider>

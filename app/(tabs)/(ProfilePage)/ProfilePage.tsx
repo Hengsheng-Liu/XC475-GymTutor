@@ -74,6 +74,7 @@ const ProfilePage = () => {
 
     fetchUser();
   }, [User]);
+
   const updateBio = async (newBio: string) => {
     if (User) {
       try {
@@ -150,7 +151,7 @@ const signOutUser = async () => {
               placement="bottom"
               trigger={(triggerProps) => {
                 return (
-                  <Flex>
+                  <Flex alignItems="center">
                     <Button mb={1} mr={2.5} p={0} bgColor={"#FFF"} _pressed={{opacity:0.5}}{...triggerProps}>
                       <Text fontSize="xl">三</Text>
                     </Button>
@@ -186,7 +187,7 @@ const signOutUser = async () => {
                       onDeleteTag={deleteTags}
                     />
                     <ButtonGroup
-                  friendCount={userInfo.friends.length + " Friends"}
+                  friendCount={userInfo.friends.length + (userInfo.friends.length == 1 ? " Friend" : " Friends")}
                   gym={userGym}
                   History={history}
                 />

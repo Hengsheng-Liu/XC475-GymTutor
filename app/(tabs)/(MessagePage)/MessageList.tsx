@@ -119,11 +119,13 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
       const querySnapshot = await getDocs(usersQuery);
       const usersData: IUser[] = [];
 
-      // Save user data if it is not the current User
+      // Save user data if it is not the current User and it isn't blocked
       querySnapshot.forEach(snap => {
         const userData = snap.data() as IUser;
         if (userData.uid !== currUser.uid) {
-          usersData.push(userData);
+          if (!currUser.blockedUsers.includes(userData.uid)){
+            usersData.push(userData);
+          }
         }
       });
 
@@ -156,7 +158,8 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
 
     return (
       <Row
-        mb={2} mr="1" ml="1"
+        mb={2}
+        ml={2}
         justifyContent={"space-between"}
         alignItems={"center"}
       >
@@ -276,7 +279,7 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
       // padding is set to 0 to make message records look like entries rather than boxes.
       >
         <FriendHeader />
-        <Row mb={1} mr="1" ml="1"space={2} alignItems="center">
+        <Row mb={1} mr="1" ml="1" space={2} alignItems="center">
           <Input flex={1}
             InputLeftElement={
               <Box paddingLeft={2}>

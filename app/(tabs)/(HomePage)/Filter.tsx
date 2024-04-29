@@ -174,7 +174,7 @@ const FilterScreen = () => {
     if (changed) {
       applyChanges(newFilters);
     };
-    router.replace("/Home");
+    router.back();
   };
 
   // Handle navigation. Ask user if they want to save changes before leaving
@@ -183,7 +183,7 @@ const FilterScreen = () => {
     if (changed) {
       setDialogOpen(true);
     } else {
-      router.replace("/Home");
+      router.back();
     }
   };
 
@@ -214,7 +214,7 @@ const FilterScreen = () => {
     if(changed){
       applyChanges(newFilters);
     }
-    router.replace("/Home");
+    router.back();
   };
 
   return (
@@ -322,7 +322,7 @@ const FilterScreen = () => {
           <AlertDialog.Footer>
             <Button.Group space={2}>
               <Button bgColor="#0284C7" onPress={handleCloseDialog}>Cancel</Button>
-              <Button bgColor="#0284C7" onPress={() => router.push("/Home")}> Do not save </Button>
+              <Button bgColor="#0284C7" onPress={() => router.back()}> Do not save </Button>
               <Button bgColor="#0284C7" onPress={handleSaveFilters}> Save </Button>
             </Button.Group>
           </AlertDialog.Footer>

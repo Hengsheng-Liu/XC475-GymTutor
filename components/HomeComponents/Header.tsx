@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Flex, Spacer, Row, Text, Box, Heading } from "native-base";
+import { Flex, Spacer, Button, Row, Text, Box, Heading } from "native-base";
 import { TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
@@ -18,15 +18,16 @@ const Header: React.FC<FriendProps> = ({ GymName }) => {
       justifyContent={"space-between"}
       alignItems={"center"}
     >
-      <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/(tabs)/(HomePage)/")} >
-        <Heading size="md" color="trueGray.900" isTruncated maxW="90%">
+      <Row flex={1} justifyContent={"left"} justifyItems={"left"}>
+      <Button maxW="95%" justifyContent={"left"} justifyItems={"left"} p={0} m={0} flex={1} _pressed={{opacity: 0.5}} background="transparent" onPress={() => router.push("/(tabs)/(HomePage)/")} >
+        <Heading size="md" color="trueGray.900" isTruncated >
             {GymName}
           </Heading>
           <Text underline >Click to change your gym</Text>
-      </TouchableOpacity>
-      <Spacer/>
+      </Button>
+      </Row>
       <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("./Notifications")} >
-      <Octicons name="bell" size={36} color="#F97316" />
+        <Octicons name="bell" size={36} color="#F97316" />
       </TouchableOpacity>
     </Row>
   );

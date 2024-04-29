@@ -14,6 +14,7 @@ import { getCurrUser } from '@/components/FirebaseUserFunctions';
 import { firestore } from '@/firebaseConfig';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { router } from 'expo-router';
+import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -25,9 +26,11 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
   const [historyRequests, setHistoryRequests] = useState<IUser[]>([]); // State to store history friend requests
   const [rejectedRequests, setRejectedRequests] = useState<IUser[]>([]); // State to store rejected friend requests
   const [acceptedRequests, setAcceptedRequests] = useState<IUser[]>([]); // State to store accepted friend requests
-  const {User} = useAuth(); 
+  const {User, currUser, updateCurrUser} = useAuth(); 
   const [loading, setLoading] = useState<boolean>(true); // State to track loading status
-  
+  const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
+  const db = firestore;
+
   if (!User) return; // Check if user is null
 
   useEffect(() => {
@@ -36,14 +39,16 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
     const userDocRef = doc(firestore, 'Users', User.uid);
     const unsubscribe = onSnapshot(userDocRef, () => { // Set up listener for changes in user's document
       fetchData(); // Fetch data whenever the document changes
+
     });
 
     return () => unsubscribe();
-  }, [User]);
+  }, [User, isFocused]);
 
   const fetchData = async () => {
     setLoading(true);
     const currUser = await getCurrUser(User.uid);
+    updateCurrUser(currUser);
     if (!currUser) return;
 
     setRequests([]);
@@ -79,7 +84,7 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
 
   // Handle navigation. 
   const handleGoBack = () => {
-    router.replace("/Home");
+    router.back();
   };
 
   return (

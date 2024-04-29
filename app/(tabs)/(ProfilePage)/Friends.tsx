@@ -15,27 +15,32 @@ import FriendContainer from '../../../components/FriendsComponents/FriendContain
 import fetchUsers from '../../../components/FriendsComponents/FetchUsers';
 import theme from '@/components/theme';
 import { getCurrUser } from '@/components/FirebaseUserFunctions';
+import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
 
 export default function FriendListScreen () {
   const [friends, setFriends] = useState<IUser[]>([]);
   const {User, currUser, updateCurrUser, friend, updateFriend} = useAuth(); 
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
+
 
   if (!User) return; // Check if user is null
 
   useEffect(() => {
     fetchData();
 
-    // const userDocRef = doc(firestore, 'Users', User.uid);
-    // const unsubscribe = onSnapshot(userDocRef, () => { // Set up listener for changes in user's document
-    //   fetchData(); // Fetch data whenever the document changes
-    // });
+    const userDocRef = doc(firestore, 'Users', User.uid);
+    const unsubscribe = onSnapshot(userDocRef, () => { // Set up listener for changes in user's document
+      fetchData(); // Fetch data whenever the document changes
+    });
 
-    // return () => unsubscribe();
-  }, [User]);
+    return () => unsubscribe();
+  }, [User, isFocused]);
 
   const fetchData = async () => {
+    const currUser2 = await getCurrUser(User.uid);
+    updateCurrUser(currUser2);
     setLoading(true);
     setFriends([]);
     try {

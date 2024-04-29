@@ -104,7 +104,7 @@ export default function SelectGym() {
         <Box margin={2} mt={3}>
             <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"right"}>
             { (userGym[0] !== "" && userGym[1] !== "") && 
-              <Pressable pr={2} onPress={() => router.replace("./Home")}>
+              <Pressable pr={2} onPress={() => router.back()}>
                 <FontAwesome name="chevron-left" size={30} color="#171717" />
               </Pressable>
             }
