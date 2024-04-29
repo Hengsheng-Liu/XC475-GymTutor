@@ -47,7 +47,7 @@ export const expoConfig = {
       [
         "expo-router",
         {
-          origin: "https://spot-me.vercel.app",
+          origin: "https://spot-me",
         },
       ],
       [
