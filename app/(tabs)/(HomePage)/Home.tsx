@@ -130,7 +130,7 @@ export default function HomeScreen() {
       }
 
       fetchedUsers = fetchedUsers.filter((user) => user.uid !== currUser.uid);
-      fetchedUsers = fetchedUsers.filter((user) => !currUser.blockedUsers.includes(user.uid));
+      fetchedUsers = fetchedUsers.filter((user) => !currUser2.blockedUsers.includes(user.uid));
 
       // Filter users that have checked in today
       const checkedUsers = fetchedUsers.filter((user) => {
