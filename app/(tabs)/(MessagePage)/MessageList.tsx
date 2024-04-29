@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { View, ScrollView, TouchableOpacity, Alert, Image } from "react-native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { CurrentlyMessagingEntry, IUser } from "@/components/FirebaseUserFunctions";
 import { useAuth } from "@/Context/AuthContext";
 import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
@@ -19,11 +18,8 @@ import ChatPreview from "@/components/ChatComponents/ChatContainer";
 import { FontAwesome5, Octicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 
-type Props = {
-  navigation: StackNavigationProp<any>;
-};
 
-const MessageList: React.FC<Props> = ({ navigation }) => {
+const MessageList = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
   const [users, setUsers] = useState<IUser[]>([]); // State to store users
@@ -123,8 +119,10 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
       querySnapshot.forEach(snap => {
         const userData = snap.data() as IUser;
         if (userData.uid !== currUser.uid) {
-          if (!currUser.blockedUsers.includes(userData.uid)){
-            usersData.push(userData);
+          if (!currUser.blockedUsers.includes(userData.uid)) {
+            if (currUser.friends.includes(userData.uid)) {
+              usersData.push(userData);
+            }
           }
         }
       });

@@ -14,12 +14,9 @@ import { getUserPicture } from '@/components/FirebaseUserFunctions';
 import { Avatar, NativeBaseProvider } from 'native-base';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-type Props = {
-  navigation: StackNavigationProp<any>;
-};
 
 
-const ChatPage: React.FC<Props> = ({ navigation }) => {
+const ChatPage: React.FC<Props> = () => {
   const insets = useSafeAreaInsets();
   const { User, currUser } = useAuth();
   const [messages, setMessages] = useState([]);
