@@ -59,11 +59,13 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
         <Flex >
             <Row alignItems="center" space="sm" >
                 <Avatar m={2} mr={0.5} size="xl" source={{ uri: friendIcon }} />
-                <Column justifyContent={"space-evenly"} flex={1}>   
+                <Column justifyContent={"space-evenly"} flex={1} >   
                     <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated maxWidth="85%">{friend.name}</Text>
-                    <Text color= "trueGray.900" fontSize="sm" isTruncated maxWidth="95%">{friend.bio}</Text>
+                    <Text numberOfLines={1} color= "trueGray.900" fontSize="sm" isTruncated maxWidth="95%">{friend.bio}</Text>
                     <Row justifyContent={"left"} >
-                        <Attribute description={friend.tags} />
+                        {friend.tags.length !== 0 ? <Attribute description={friend.tags} /> :
+                        <Text></Text>
+                        }
                     </Row>
                 </Column>
             </Row>

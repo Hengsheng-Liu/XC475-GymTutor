@@ -305,11 +305,11 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
           </Column>}
         {!firstLoad && !loading && users.length === 0 ? (
           <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
               No current chats found. 🤔
             </Text>
             < Text />
-            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
               Try connecting with some people!
             </Text>
           </View>

@@ -66,7 +66,12 @@ export default function SignUpScreen2() {
 
   const [editMode, setEditMode] = useState(false);
   const [addTag, setAddTag] = useState("");
+
   const [tags, setTags] = useState<string[]>([]);
+  const [FitnessGoalTags] = useState(['Muscle mass', 'Bulking', 'Strength', 'Aesthetics']);
+  const [ActivitiesTags] = useState(['Basic', 'Powerlifting', 'Cardio']);
+  const [WorkoutTimeTags] = useState(['Morning', 'Afternoon', 'Night']);
+  const [selectedTags, setSelectedTags] = useState([]);
   const [deleteMode, setDeleteMode] = useState(false);
 
   // state to dynamically track how many days in the month
@@ -91,26 +96,15 @@ export default function SignUpScreen2() {
 
   // 2 functions below are for adding tags
   const handleSave = () => {
-    const MAX_TAG_LENGTH = 10; // Example: set maximum tag length to 10 characters
-    // onSaveTag(addTag as string);
-    if (addTag.length > MAX_TAG_LENGTH) {
-      // Alert the user that the tag exceeds the character limit
-      // You can display a toast message, show an alert, or handle it in any way you prefer
-      alert(`Tag must be ${MAX_TAG_LENGTH} characters or fewer`);
-      return;
-    }
-    
-    if (addTag.trim() !== "") {
-      setTags(prevTags => [...prevTags, addTag]);
-    }
-    setEditMode(false);
-    console.log("name is" + name);
-    console.log('email is ' + email);
-    console.log('password is ' + password);
 
+    setTags(selectedTags);
+    setEditMode(false);
   }
   const handleCancel = () => {
+    setSelectedTags([]);
+    setTags([]);
     setEditMode(false);
+    console.log(selectedTags);
   }
   const handleTagDelete = (index: number) => {
 
@@ -120,9 +114,22 @@ export default function SignUpScreen2() {
     setDeleteMode(false);
   }
 
+  const handleEdit = (index: number) => {
+
+    setEditMode(true);
+  }
+
   const handleDeleteCancel = () => {
     setDeleteMode(false);
   }
+
+  const handleToggleTag = (tag) => {
+    if (selectedTags.includes(tag)) {
+      setSelectedTags(selectedTags.filter(t => t !== tag)); // Remove the tag
+    } else {
+      setSelectedTags([...selectedTags, tag]); // Add the tag
+    }
+  };
 
 
   //   const AddUserToDB = async () => {
@@ -412,85 +419,109 @@ export default function SignUpScreen2() {
             <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.200" lineHeight="20" letterSpacing="0.25" p="3" mt="3"> What kind of gym goer are you? </Text>
 
 
-            <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={3}>
-              {tags.map((tag, index) => (
-                <Pressable key={tag} onPress={() => deleteMode && handleTagDelete(index)}>
-                  <Badge m={2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
-                    {tag}
-                  </Badge>
-                </Pressable>
-              ))}
+            <Flex flexDirection="column" mt={3}>
+              <Text fontSize="lg" mb={2} bold>Manage Tags</Text>
 
-              {!editMode && !deleteMode && (
-                <Pressable onPress={() => setEditMode(true)}>
-                  <Badge m={2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
-                    {"+"}
-                  </Badge>
-                </Pressable>
-              )}
+              {!editMode && (<Flex flexDirection="row" flexWrap="wrap" justifyContent="space-evenly">
 
-              {!editMode && !deleteMode && (
-                <Pressable onPress={() => setDeleteMode(true)}>
-
-                  <Badge m={2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
-                    {"-"}
-                  </Badge>
-                </Pressable>
-
+                {selectedTags.map((tag, index) => (
+                  <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
+                    <Badge
+                      m={2}
+                      ml={0}
+                      colorScheme={selectedTags.includes(tag) ? "blue" : "muted"}
+                      shadow={1}
+                      borderRadius={4}
+                    >
+                      {tag}
+                    </Badge>
+                  </Pressable>
+                ))}
+              </Flex>
               )}
 
               {editMode && (
-                <Input
-                  multiline={false}
-                  color={"lightBlue.900"}
-                  mt={2}
-                  padding={3}
-                  value={addTag}
-                  onChangeText={setAddTag}
-                  placeholder="new tag"
-                  width="50%"
-                />
+                <Flex flexDirection="column" mt={3}>
+                  <Text fontSize="md" mb={1}>Fitness Goals:</Text>
+                  <Flex flexDirection="row" flexWrap="wrap" justifyContent="space-evenly">
+                    {FitnessGoalTags.map((tag, index) => (
+                      <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
+                        <Badge
+                          m={2}
+                          ml={0}
+                          colorScheme={selectedTags.includes(tag) ? "blue" : "muted"}
+                          shadow={1}
+                          borderRadius={4}
+                        >
+                          {tag}
+                        </Badge>
+                      </Pressable>
+                    ))}
+                  </Flex>
+                  <Text fontSize="md" mb={1}>Activities:</Text>
+                  <Flex flexDirection="row" flexWrap="wrap" justifyContent="space-evenly">
+                    {ActivitiesTags.map((tag, index) => (
+                      <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
+                        <Badge
+                          m={2}
+                          ml={0}
+                          colorScheme={selectedTags.includes(tag) ? "blue" : "muted"}
+                          shadow={1}
+                          borderRadius={4}
+                        >
+                          {tag}
+                        </Badge>
+                      </Pressable>
+                    ))}
+                  </Flex>
+                  <Text fontSize="md" mb={1}>Preferred Workout Times:</Text>
+                  <Flex flexDirection="row" flexWrap="wrap" justifyContent="space-evenly">
+                    {WorkoutTimeTags.map((tag, index) => (
+                      <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
+                        <Badge
+                          m={2}
+                          ml={0}
+                          colorScheme={selectedTags.includes(tag) ? "blue" : "muted"}
+                          shadow={1}
+                          borderRadius={4}
+                        >
+                          {tag}
+                        </Badge>
+                      </Pressable>
+                    ))}
+                  </Flex>
+                </Flex>
               )}
-            </Flex>
 
-            <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={3}>
-              {editMode && (
-                <Button
-                  alignSelf="flex-start"
-                  mt={2}
-                  ml={2}
+              <Flex flexDirection="row" justifyContent="center" mt={4}>
+                {!editMode && (<Button
+                  onPress={handleEdit}
+                  backgroundColor="primary.100"
+                  m={2}
+                >
+                  Edit
+                </Button>
+                )}
+                {editMode && (<Button
                   onPress={handleSave}
-                  backgroundColor={"primary.100"}
+                  backgroundColor="primary.100"
                   leftIcon={<AntDesign name="check" size={24} color="white" />}
+                  m={2}
                 >
-                  Add
+                  Save Changes
                 </Button>
+                )}
 
-              )}
-              {editMode && (
-                <Button
-                  alignSelf="flex-start"
-                  mt={2}
-                  ml={2}
+                {editMode && (<Button
                   onPress={handleCancel}
-                  backgroundColor={"primary.100"}
+                  backgroundColor="primary.100"
                   leftIcon={<AntDesign name="close" size={24} color="white" />}
+                  m={2}
                 >
                   Cancel
                 </Button>
-              )}
-              {deleteMode && (
-                <Button
-                  alignSelf="flex-start"
-                  mt={2}
-                  ml={2}
-                  onPress={handleDeleteCancel}
-                  backgroundColor={"primary.100"}
-                  leftIcon={<AntDesign name="close" size={24} color="white" />}
-                >
-                  Cancel
-                </Button>
-              )}
+                )}
+              </Flex>
             </Flex>
 
 

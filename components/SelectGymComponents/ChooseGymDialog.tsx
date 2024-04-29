@@ -41,9 +41,8 @@ export default function ChooseGym({
   };
 
   const updateGym = async () => {
-    console.log("Updating gym", place_id, title);
     if (!User) return;
-    if (currUser && userGym) {
+    if (currUser && userGym && userGym[0] !== "" && userGym[1] !== "") {
       console.log("Updating previous gym", userGym[0], userGym[1]);
       const prevGymDocRef = doc(db, "Gyms", userGym[0]);
       try {
@@ -64,6 +63,7 @@ export default function ChooseGym({
   
     const gymDocRef = doc(db, "Gyms", place_id);
     try {
+      console.log("Updating new gym", place_id, title);
       const docSnap = await getDoc(gymDocRef);
       let members: string[] = [];
       if (docSnap.exists()) {
@@ -74,14 +74,7 @@ export default function ChooseGym({
         if (!members.includes(User.uid)) {
           members.push(User.uid);
         }
-        await setDoc(
-          gymDocRef,
-          {
-            members: members,
-            bounding: bound,
-          },
-          { merge: true }
-        );
+        await updateDoc( gymDocRef, { members: members });
         console.log("Updated gym members:", members);
       } else {
         const bound = await nominatimGymSearch(Geometry);
