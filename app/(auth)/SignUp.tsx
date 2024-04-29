@@ -116,7 +116,6 @@ export default function SignUpScreen() {
       },
       Text: {
         fontSize: "50",
-        fontFamily: "Roberto",
         color: "primary.50"
       }
     },
@@ -127,7 +126,7 @@ export default function SignUpScreen() {
     <NativeBaseProvider theme={theme}>
 
 
-      <HStack px="5" mt="5" py="10" justifyContent="space-between" alignItems="center" w="100%" bg="primary.400">
+      <HStack px="5" mt="1" py="10" justifyContent="space-between" alignItems="center" w="100%" bg="primary.400">
 
 
         <Button bg="primary.400" startIcon={<ChevronLeftIcon size="md" color="primary.200" />} onPress={() => router.navigate("LogIn")}></Button>
@@ -182,13 +181,13 @@ export default function SignUpScreen() {
 
 
 
-            {passwordMatchError && <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20" letterSpacing="0.25" p="3" mt="3">
+            {passwordMatchError && <Text fontSize="16" fontWeight="400" color="primary.50" lineHeight="20" letterSpacing="0.25" p="3" mt="3">
               Passwords do not match
             </Text>}
 
             <Flex direction="column" flexGrow="1" justifyContent="flex-end">
 
-              <Button bg="primary.100" onPress={handleSignUp} rounded="md" > Next </Button>
+              <Button background={"#F97316"} _pressed={{ opacity: 0.5 }} onPress={handleSignUp} rounded="md" > Next </Button>
             </Flex>
           </Box>
         </ScrollView>

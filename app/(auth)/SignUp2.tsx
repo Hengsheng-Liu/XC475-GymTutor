@@ -56,26 +56,19 @@ export default function SignUpScreen2() {
   const [month, setMonth] = useState<number | undefined>();
   const [date, setDate] = useState<number | undefined>();
   const [errorMessage, setErrorMessage] = useState<string>('');
-
-
   const [gymExperience, setGymExperience] = useState<string>('');
 
   // const [age, setAge] = useState<string | undefined>();
   const [bio, setBio] = useState<string | undefined>();
   const [gender, setGender] = useState<string | undefined>();
-
-  const [editMode, setEditMode] = useState(false);
-  const [addTag, setAddTag] = useState("");
-
   const [tags, setTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState([]);
   const [FitnessGoalTags] = useState(['Muscle mass', 'Bulking', 'Strength', 'Aesthetics']);
   const [ActivitiesTags] = useState(['Basic', 'Powerlifting', 'Cardio']);
   const [WorkoutTimeTags] = useState(['Morning', 'Afternoon', 'Night']);
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [deleteMode, setDeleteMode] = useState(false);
 
-  // state to dynamically track how many days in the month
-  const [days, setDays] = useState([]);
+
+
 
   // // functions related to the calendar for Date of Birth
   // const dateOnChange = (event: any, selectedDate: any) => {
@@ -94,34 +87,6 @@ export default function SignUpScreen2() {
   //     showMode('date');
   //   };
 
-  // 2 functions below are for adding tags
-  const handleSave = () => {
-
-    setTags(selectedTags);
-    setEditMode(false);
-  }
-  const handleCancel = () => {
-    setSelectedTags([]);
-    setTags([]);
-    setEditMode(false);
-    console.log(selectedTags);
-  }
-  const handleTagDelete = (index: number) => {
-
-    const updatedTags = [...tags];
-    updatedTags.splice(index, 1);
-    setTags(updatedTags);
-    setDeleteMode(false);
-  }
-
-  const handleEdit = (index: number) => {
-
-    setEditMode(true);
-  }
-
-  const handleDeleteCancel = () => {
-    setDeleteMode(false);
-  }
 
   const handleToggleTag = (tag) => {
     if (selectedTags.includes(tag)) {
@@ -164,6 +129,16 @@ export default function SignUpScreen2() {
   //     }
   // }
   //   };
+  const checkWords = (text) => {
+    const wordCount = text.split(/\s+/).filter(Boolean).length; // Split by spaces, filter out empty strings
+    if (wordCount <= 50) {
+      return true;
+    } else {
+      // Optionally, you can provide feedback to the user when the word limit is reached.
+      alert('You have reached the maximum word limit of 50 words.');
+      return false
+    }
+  };
   const finishSignUp = async () => {
 
 
@@ -179,7 +154,8 @@ export default function SignUpScreen2() {
       console.log("email is ", email);
       console.log("password is", password);
       console.log("name is" + name as string);
-      if (email && password) {
+      if (email && password && checkWords(bio)) {
+        setTags(selectedTags);
         const userCredential = await CreateUser(email as string, password as string);
         const user = userCredential.user;
         await AddUserToDB(userCredential, name as string, bio, gender, gymExperience, year, month, date, tags);
@@ -245,15 +221,8 @@ export default function SignUpScreen2() {
     // }
   };
 
-  const handleBioTextChange = (text) => {
-    const wordCount = text.split(/\s+/).filter(Boolean).length; // Split by spaces, filter out empty strings
-    if (wordCount <= 50) {
-      setBio(text);
-    } else {
-      // Optionally, you can provide feedback to the user when the word limit is reached.
-      alert('You have reached the maximum word limit of 50 words.');
-    }
-  };
+
+
 
   const theme = extendTheme({
     colors: {
@@ -275,38 +244,15 @@ export default function SignUpScreen2() {
       },
       Text: {
         fontSize: "50",
-        fontFamily: "Roberto",
         color: "primary.50"
       }
     },
   });
 
 
-
-  // For calculating available dates to choose from ---------------------
-  // Generate years dynamically (used in the dropdown manu)
-  const years = Array.from({ length: 70 }, (_, i) => `${new Date().getFullYear() - i}`);
-
-  // Months (1-12)
-  const months = Array.from({ length: 12 }, (_, i) => `${i + 1}`);
-
-  // Update days based on month and year
-  useEffect(() => {
-    const getDaysInMonth = (month, year) => {
-      return new Date(year, month, 0).getDate(); // Days in given month and year
-    };
-
-    if (month && year) {
-      const numDays = getDaysInMonth(month, year);
-      const daysArray = Array.from({ length: numDays }, (_, i) => `${i + 1}`);
-      setDays(daysArray);
-    }
-  }, [month, year]); // Recalculate when month or year changes
-  // ---------------------------------------------------------------------------------------------------------
-
   return (
     <NativeBaseProvider theme={theme}>
-      <HStack px="5" mt="5" py="10" justifyContent="space-between" alignItems="center" w="100%" bg="primary.400">
+      <HStack px="5" mt="1" py="10" justifyContent="space-between" alignItems="center" w="100%" bg="primary.400">
 
 
         <Button bg="primary.400" startIcon={<ChevronLeftIcon size="md" color="primary.200" />} onPress={() => router.navigate("LogIn")}></Button>
@@ -324,9 +270,9 @@ export default function SignUpScreen2() {
 
 
 
-            <Text fontSize="28" fontFamily="Roberto" fontWeight="700" color="primary.200" lineHeight="28" p="3">Create your profile</Text>
+            <Text fontSize="28" fontWeight="700" color="primary.200" lineHeight="28" p="3">Create your profile</Text>
 
-            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.200" lineHeight="20" letterSpacing="0.25" p="3" mt="1">Your Birthday</Text>
+            <Text fontSize="16" fontWeight="400" color="primary.200" lineHeight="20" letterSpacing="0.25" p="3" mt="1">Your Birthday</Text>
 
             <Box flexDirection="row" alignItems="center" justifyContent="space-between" paddingX={6} ml={-1.5}>
 
@@ -342,9 +288,77 @@ export default function SignUpScreen2() {
                 mt={1}
                 onValueChange={itemValue => setYear(parseInt(itemValue))}
               >
-                {years.map(year => <Select.Item key={year} label={year} value={year} />)}
+                <Select.Item label="2023" value="2023" />
+                <Select.Item label="2022" value="2022" />
+                <Select.Item label="2021" value="2021" />
+                <Select.Item label="2020" value="2020" />
+                <Select.Item label="2019" value="2019" />
+                <Select.Item label="2018" value="2018" />
+                <Select.Item label="2017" value="2017" />
+                <Select.Item label="2016" value="2016" />
+                <Select.Item label="2015" value="2015" />
+                <Select.Item label="2014" value="2014" />
+                <Select.Item label="2013" value="2013" />
+                <Select.Item label="2012" value="2012" />
+                <Select.Item label="2011" value="2011" />
+                <Select.Item label="2010" value="2010" />
+                <Select.Item label="2009" value="2009" />
+                <Select.Item label="2008" value="2008" />
+                <Select.Item label="2007" value="2007" />
+                <Select.Item label="2006" value="2006" />
+                <Select.Item label="2005" value="2005" />
+                <Select.Item label="2004" value="2004" />
+                <Select.Item label="2003" value="2003" />
+                <Select.Item label="2002" value="2002" />
+                <Select.Item label="2001" value="2001" />
+                <Select.Item label="2000" value="2000" />
+                <Select.Item label="1999" value="1999" />
+                <Select.Item label="1998" value="1998" />
+                <Select.Item label="1997" value="1997" />
+                <Select.Item label="1996" value="1996" />
+                <Select.Item label="1995" value="1995" />
+                <Select.Item label="1994" value="1994" />
+                <Select.Item label="1993" value="1993" />
+                <Select.Item label="1992" value="1992" />
+                <Select.Item label="1991" value="1991" />
+                <Select.Item label="1990" value="1990" />
+                <Select.Item label="1989" value="1989" />
+                <Select.Item label="1988" value="1988" />
+                <Select.Item label="1987" value="1987" />
+                <Select.Item label="1986" value="1986" />
+                <Select.Item label="1985" value="1985" />
+                <Select.Item label="1984" value="1984" />
+                <Select.Item label="1983" value="1983" />
+                <Select.Item label="1982" value="1982" />
+                <Select.Item label="1981" value="1981" />
+                <Select.Item label="1980" value="1980" />
+                <Select.Item label="1979" value="1979" />
+                <Select.Item label="1978" value="1978" />
+                <Select.Item label="1977" value="1977" />
+                <Select.Item label="1976" value="1976" />
+                <Select.Item label="1975" value="1975" />
+                <Select.Item label="1974" value="1974" />
+                <Select.Item label="1973" value="1973" />
+                <Select.Item label="1972" value="1972" />
+                <Select.Item label="1971" value="1971" />
+                <Select.Item label="1970" value="1970" />
+                <Select.Item label="1969" value="1969" />
+                <Select.Item label="1968" value="1968" />
+                <Select.Item label="1967" value="1967" />
+                <Select.Item label="1966" value="1966" />
+                <Select.Item label="1965" value="1965" />
+                <Select.Item label="1964" value="1964" />
+                <Select.Item label="1963" value="1963" />
+                <Select.Item label="1962" value="1962" />
+                <Select.Item label="1961" value="1961" />
+                <Select.Item label="1960" value="1960" />
+                <Select.Item label="1959" value="1959" />
+                <Select.Item label="1958" value="1958" />
+                <Select.Item label="1957" value="1957" />
+                <Select.Item label="1956" value="1956" />
+                <Select.Item label="1955" value="1955" />
+                <Select.Item label="1954" value="1954" />
               </Select>
-
               {/* Month Select */}
               <Select
                 selectedValue={month?.toString()}
@@ -358,7 +372,18 @@ export default function SignUpScreen2() {
                 mt={1}
                 onValueChange={itemValue => setMonth(parseInt(itemValue))}
               >
-                {months.map(month => <Select.Item key={month} label={month} value={month} />)}
+                <Select.Item label="January" value="1" />
+                <Select.Item label="February" value="2" />
+                <Select.Item label="March" value="3" />
+                <Select.Item label="April" value="4" />
+                <Select.Item label="May" value="5" />
+                <Select.Item label="June" value="6" />
+                <Select.Item label="July" value="7" />
+                <Select.Item label="August" value="8" />
+                <Select.Item label="September" value="9" />
+                <Select.Item label="October" value="10" />
+                <Select.Item label="November" value="11" />
+                <Select.Item label="December" value="12" />
               </Select>
 
               {/* Date Select */}
@@ -374,13 +399,43 @@ export default function SignUpScreen2() {
                 mt={1}
                 onValueChange={itemValue => setDate(parseInt(itemValue))}
               >
-                {days.map(day => <Select.Item key={day} label={day} value={day} />)}
+                <Select.Item label="1" value="1" />
+                <Select.Item label="2" value="2" />
+                <Select.Item label="3" value="3" />
+                <Select.Item label="4" value="4" />
+                <Select.Item label="5" value="5" />
+                <Select.Item label="6" value="6" />
+                <Select.Item label="7" value="7" />
+                <Select.Item label="8" value="8" />
+                <Select.Item label="9" value="9" />
+                <Select.Item label="10" value="10" />
+                <Select.Item label="11" value="11" />
+                <Select.Item label="12" value="12" />
+                <Select.Item label="13" value="13" />
+                <Select.Item label="14" value="14" />
+                <Select.Item label="15" value="15" />
+                <Select.Item label="16" value="16" />
+                <Select.Item label="17" value="17" />
+                <Select.Item label="18" value="18" />
+                <Select.Item label="19" value="19" />
+                <Select.Item label="20" value="20" />
+                <Select.Item label="21" value="21" />
+                <Select.Item label="22" value="22" />
+                <Select.Item label="23" value="23" />
+                <Select.Item label="24" value="24" />
+                <Select.Item label="25" value="25" />
+                <Select.Item label="26" value="26" />
+                <Select.Item label="27" value="27" />
+                <Select.Item label="28" value="28" />
+                <Select.Item label="29" value="29" />
+                <Select.Item label="30" value="30" />
+                <Select.Item label="31" value="31" />
               </Select>
 
 
             </Box>
 
-            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.200" lineHeight="20" letterSpacing="0.25" p="3" mt="3">Gender</Text>
+            <Text fontSize="16" fontWeight="400" color="primary.200" lineHeight="20" letterSpacing="0.25" p="3" mt="3">Gender</Text>
 
             <Box mx="3" w="90%">
               <Select selectedValue={gender} minWidth="200" accessibilityLabel="Choose Gender" placeholder="Gender" _selectedItem={{
@@ -394,7 +449,7 @@ export default function SignUpScreen2() {
             </Box>
 
 
-            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.200" lineHeight="20" letterSpacing="0.25" p="3" mt="3">Gym Experience</Text>
+            <Text fontSize="16" fontWeight="400" color="primary.200" lineHeight="20" letterSpacing="0.25" p="3" mt="3">Gym Experience</Text>
 
             <Box mx="3" w="90%">
               <Select selectedValue={gymExperience} minWidth="200" accessibilityLabel="Choose Gym Experience" placeholder="Gym Experience" _selectedItem={{
@@ -408,124 +463,77 @@ export default function SignUpScreen2() {
             </Box>
 
 
-            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.200" lineHeight="20" letterSpacing="0.25" p="3" mt="3">Bio</Text>
+            <Text fontSize="16" fontWeight="400" color="primary.200" lineHeight="20" letterSpacing="0.25" p="3" mt="3">Bio</Text>
 
             <Box alignItems="left">
 
-              <Input mx="3" w="90%" value={bio} onChangeText={handleBioTextChange} h={100} multiline placeholder="Maximum 50 words" />
+              <Input mx="3" w="90%" value={bio} onChangeText={setBio} multiline={false} placeholder="Maximum 50 words" />
 
             </Box>
 
-            <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.200" lineHeight="20" letterSpacing="0.25" p="3" mt="3"> What kind of gym goer are you? </Text>
+            <Text fontSize="16" fontWeight="400" color="primary.200" lineHeight="20" letterSpacing="0.25" p="3" mt="3"> What kind of gym goer are you? </Text>
 
 
-            <Flex flexDirection="column" mt={3}>
-              <Text fontSize="lg" mb={2} bold>Manage Tags</Text>
+            <Flex flexDirection="column" mt={3} px="3">
 
-              {!editMode && (<Flex flexDirection="row" flexWrap="wrap" justifyContent="space-evenly">
 
-                {selectedTags.map((tag, index) => (
-                  <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
-                    <Badge
-                      m={2}
-                      ml={0}
-                      colorScheme={selectedTags.includes(tag) ? "blue" : "muted"}
-                      shadow={1}
-                      borderRadius={4}
-                    >
-                      {tag}
-                    </Badge>
-                  </Pressable>
-                ))}
-              </Flex>
-              )}
 
-              {editMode && (
-                <Flex flexDirection="column" mt={3}>
-                  <Text fontSize="md" mb={1}>Fitness Goals:</Text>
-                  <Flex flexDirection="row" flexWrap="wrap" justifyContent="space-evenly">
-                    {FitnessGoalTags.map((tag, index) => (
-                      <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
-                        <Badge
-                          m={2}
-                          ml={0}
-                          colorScheme={selectedTags.includes(tag) ? "blue" : "muted"}
-                          shadow={1}
-                          borderRadius={4}
-                        >
-                          {tag}
-                        </Badge>
-                      </Pressable>
-                    ))}
-                  </Flex>
-                  <Text fontSize="md" mb={1}>Activities:</Text>
-                  <Flex flexDirection="row" flexWrap="wrap" justifyContent="space-evenly">
-                    {ActivitiesTags.map((tag, index) => (
-                      <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
-                        <Badge
-                          m={2}
-                          ml={0}
-                          colorScheme={selectedTags.includes(tag) ? "blue" : "muted"}
-                          shadow={1}
-                          borderRadius={4}
-                        >
-                          {tag}
-                        </Badge>
-                      </Pressable>
-                    ))}
-                  </Flex>
-                  <Text fontSize="md" mb={1}>Preferred Workout Times:</Text>
-                  <Flex flexDirection="row" flexWrap="wrap" justifyContent="space-evenly">
-                    {WorkoutTimeTags.map((tag, index) => (
-                      <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
-                        <Badge
-                          m={2}
-                          ml={0}
-                          colorScheme={selectedTags.includes(tag) ? "blue" : "muted"}
-                          shadow={1}
-                          borderRadius={4}
-                        >
-                          {tag}
-                        </Badge>
-                      </Pressable>
-                    ))}
-                  </Flex>
+              <Flex flexDirection="column" mt={3}>
+                <Text fontSize="md" mb={1}>Fitness Goals:</Text>
+                <Flex flexDirection="row" flexWrap="wrap" justifyContent="space-evenly">
+                  {FitnessGoalTags.map((tag, index) => (
+                    <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
+                      <Badge
+                        m={2}
+                        ml={0}
+                        colorScheme={selectedTags.includes(tag) ? "primary.100" : "muted"}
+                        shadow={1}
+                        borderRadius={4}
+                      >
+                        {tag}
+                      </Badge>
+                    </Pressable>
+                  ))}
                 </Flex>
-              )}
-
-              <Flex flexDirection="row" justifyContent="center" mt={4}>
-                {!editMode && (<Button
-                  onPress={handleEdit}
-                  backgroundColor="primary.100"
-                  m={2}
-                >
-                  Edit
-                </Button>
-                )}
-                {editMode && (<Button
-                  onPress={handleSave}
-                  backgroundColor="primary.100"
-                  leftIcon={<AntDesign name="check" size={24} color="white" />}
-                  m={2}
-                >
-                  Save Changes
-                </Button>
-                )}
-
-                {editMode && (<Button
-                  onPress={handleCancel}
-                  backgroundColor="primary.100"
-                  leftIcon={<AntDesign name="close" size={24} color="white" />}
-                  m={2}
-                >
-                  Cancel
-                </Button>
-                )}
+                <Text fontSize="md" mb={1}>Activities:</Text>
+                <Flex flexDirection="row" flexWrap="wrap" justifyContent="space-evenly">
+                  {ActivitiesTags.map((tag, index) => (
+                    <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
+                      <Badge
+                        m={2}
+                        ml={0}
+                        colorScheme={selectedTags.includes(tag) ? "primary.100" : "muted"}
+                        shadow={1}
+                        borderRadius={4}
+                      >
+                        {tag}
+                      </Badge>
+                    </Pressable>
+                  ))}
+                </Flex>
+                <Text fontSize="md" mb={1}>Preferred Workout Times:</Text>
+                <Flex flexDirection="row" flexWrap="wrap" justifyContent="space-evenly">
+                  {WorkoutTimeTags.map((tag, index) => (
+                    <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
+                      <Badge
+                        m={2}
+                        ml={0}
+                        colorScheme={selectedTags.includes(tag) ? "primary.100" : "muted"}
+                        shadow={1}
+                        borderRadius={4}
+                      >
+                        {tag}
+                      </Badge>
+                    </Pressable>
+                  ))}
+                </Flex>
               </Flex>
+
+
             </Flex>
 
 
-            {errorMessage ? <Text fontSize="16" fontFamily="Roberto" fontWeight="400" color="primary.50" lineHeight="20" letterSpacing="0.25" p="3" mt="3">
+            {errorMessage ? <Text fontSize="16" fontWeight="400" color="primary.50" lineHeight="20" letterSpacing="0.25" p="3" mt="3">
               {errorMessage}
             </Text> : null}
 
@@ -534,7 +542,7 @@ export default function SignUpScreen2() {
 
             <Flex direction="column" flexGrow="1" justifyContent="flex-end">
 
-              <Button mt="3" bg="primary.100" onPress={finishSignUp} rounded="md" > Next Step </Button>
+              <Button mt="3" background="#F97316" _pressed={{ opacity: 0.5 }} onPress={finishSignUp} rounded="md" > Next Step </Button>
 
             </Flex>
           </Box>

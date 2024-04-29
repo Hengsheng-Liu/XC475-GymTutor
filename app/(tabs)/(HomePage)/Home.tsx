@@ -49,19 +49,19 @@ export default function HomeScreen() {
       router.push("/index");
     }
     if (currUser) {
-        // updateUsers(); // Uncomment when we want to update users with new fields / random values
-        handleSearchUsers();
-        fetchGym();
-        setFirstLoad(false);
-        checkUser();
-      };
+      // updateUsers(); // Uncomment when we want to update users with new fields / random values
+      handleSearchUsers();
+      fetchGym();
+      setFirstLoad(false);
+      checkUser();
+    };
   }, [isFocused]);
 
   const checkUser = () => {
     if (currUser) {
       const History = currUser.checkInHistory.map((each) => each.day);
       if (History && History.includes(Today)) {
-        setCheckIn(true); 
+        setCheckIn(true);
       };
     };
   };
@@ -123,7 +123,7 @@ export default function HomeScreen() {
         // Testing keyword to show all users on their gym
         fetchedUsers = await getUsers(currUser.uid, userGym[0], defaultFilters);
         console.log("Fetched all gym users!");
-      } else { 
+      } else {
         // Search by name
         fetchedUsers = await getUsers(currUser.uid, userGym[0], defaultFilters, searchTerm);
         console.log("Fetched users with name: ", searchTerm);
@@ -136,10 +136,10 @@ export default function HomeScreen() {
       const checkedUsers = fetchedUsers.filter((user) => {
         if (user.checkInHistory.length !== 0) {
           const lastCheckIn = user.checkInHistory[user.checkInHistory.length - 1];
-          if ( lastCheckIn && lastCheckIn.day && lastCheckIn.day === Today && lastCheckIn.photo) {
+          if (lastCheckIn && lastCheckIn.day && lastCheckIn.day === Today && lastCheckIn.photo) {
             return user;
           }
-        } 
+        }
         return;
       });
       console.log("Checked users: ", checkedUsers.map((user) => [user.name, user.checkInHistory[user.checkInHistory.length - 1].day]));
@@ -151,101 +151,104 @@ export default function HomeScreen() {
       setLoading(false);
     };
   };
-  
+
   const handleCheckIn = async () => {
     router.push("/DailyPicture");
   };
-  
-  
+
+
   // Function to update the users list after sending a friend request
   const updateFetchedUsers = (updatedUser: IUser) => {
     const updatedUsers = users.map((user) => (user.uid === updatedUser.uid ? updatedUser : user));
     setUsers(updatedUsers);
   };
-    
-  return ( 
+
+  return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView
-        style={{ backgroundColor: "#FFF", flex: 1, padding: 10, paddingHorizontal: 5}}
+        style={{ backgroundColor: "#FFF", flex: 1, padding: 10, paddingHorizontal: 5 }}
       >
-        { userGym && <Header GymName={userGym[1]} />}
+        {userGym && <Header GymName={userGym[1]} />}
         <Row mb={1} mr="1" ml="1" space={2} alignItems="center">
-        <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/Filter")} >
-          <Octicons name="filter" size={35} color="#F97316" />
-        </TouchableOpacity>
-        <Input flex={1} mb="1.5"
-          InputLeftElement={
-            <Box paddingLeft={2}>
-              <TouchableOpacity activeOpacity={0.7} onPress={handleSearchUsers} >
-                <FontAwesome name="search" size={24} color="#A3A3A3" />
-              </TouchableOpacity>
-            </Box>
-          }
-          placeholder="Spot someone in this gym"
-          bgColor="trueGray.100"
-          onChangeText={setSearchTerm}
-          borderRadius="md"
-          borderWidth={1}
-          fontSize="md"
-          onSubmitEditing={handleSearchUsers}
-        />
+          <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/Filter")} >
+            <Octicons name="filter" size={35} color="#F97316" />
+          </TouchableOpacity>
+          <Input flex={1} mb="1.5"
+            InputLeftElement={
+              <Box paddingLeft={2}>
+                <TouchableOpacity activeOpacity={0.7} onPress={handleSearchUsers} >
+                  <FontAwesome name="search" size={24} color="#A3A3A3" />
+                </TouchableOpacity>
+              </Box>
+            }
+            placeholder="Spot someone in this gym"
+            bgColor="trueGray.100"
+            onChangeText={setSearchTerm}
+            borderRadius="md"
+            borderWidth={1}
+            fontSize="md"
+            onSubmitEditing={handleSearchUsers}
+          />
         </Row>
-        {loading && 
-            <Column flex={1} alignItems="center" alignContent="center" justifyContent="center">
-              <Spacer/>
-              <Spinner size="md" mb={2} color="#F97316" accessibilityLabel="Loading posts" />
-              <Heading color="#F97316" fontSize="md"> Loading</Heading>
-            </Column>}
+        {loading &&
+          <Column flex={1} alignItems="center" alignContent="center" justifyContent="center">
+            <Spacer />
+            <Spinner size="md" mb={2} color="#F97316" accessibilityLabel="Loading posts" />
+            <Heading color="#F97316" fontSize="md"> Loading</Heading>
+          </Column>}
         {!firstLoad && !loading && users.length === 0 ? (
-          <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
             <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
               Oops! There are no users matching your search. 🤔
-            </Text> 
-            < Text/>
+            </Text>
+            < Text />
             <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
               Try broadening your search to discover more amazing users!
-            </Text>   
+            </Text>
           </View>
-          ) : (
-          <ScrollView style={{flex:1, zIndex:0}}>
+        ) : (
+          <ScrollView style={{ flex: 1, zIndex: 0 }}>
             <Row>
-            <Column flex={1} mr={1}>
-              {checkedUsers.slice(0, Math.ceil(checkedUsers.length/2)).map((user) => (
-              <Pressable onPress={()=> handlePreviewClick(user)} key = {user.uid}>
-                {({ isPressed }) => {
-                return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} 
-                            style={{transform: [{ scale: isPressed ? 0.96 : 1 }]}} 
-                            shadow="3" borderRadius="xl" mb ={3} ml={1} mr={1} pl={0.5} pr={0.5}>
-                          <CheckedUserPreview friend={user} key={user.uid} />
-                        </Box>}}
-              </Pressable>))}
-            </Column>
-            <Column flex={1} ml={1}>
-              {checkedUsers.slice(Math.ceil(checkedUsers.length/2)).map((user) => (
-              <Pressable onPress={()=> handlePreviewClick(user)} key = {user.uid}>
-                {({ isPressed }) => {
-                return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} 
-                            style={{transform: [{ scale: isPressed ? 0.96 : 1 }]}} 
-                            shadow="3" borderRadius="xl" mb ={3} mr={0.5} pl={0.5} pr={0.5}>
-                          <CheckedUserPreview friend={user} key={user.uid} />
-                        </Box>}}
-              </Pressable>))}
-            </Column>
+              <Column flex={1} mr={1}>
+                {checkedUsers.slice(0, Math.ceil(checkedUsers.length / 2)).map((user) => (
+                  <Pressable onPress={() => handlePreviewClick(user)} key={user.uid}>
+                    {({ isPressed }) => {
+                      return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"}
+                        style={{ transform: [{ scale: isPressed ? 0.96 : 1 }] }}
+                        shadow="3" borderRadius="xl" mb={3} ml={1} mr={1} pl={0.5} pr={0.5}>
+                        <CheckedUserPreview friend={user} key={user.uid} />
+                      </Box>
+                    }}
+                  </Pressable>))}
+              </Column>
+              <Column flex={1} ml={1}>
+                {checkedUsers.slice(Math.ceil(checkedUsers.length / 2)).map((user) => (
+                  <Pressable onPress={() => handlePreviewClick(user)} key={user.uid}>
+                    {({ isPressed }) => {
+                      return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"}
+                        style={{ transform: [{ scale: isPressed ? 0.96 : 1 }] }}
+                        shadow="3" borderRadius="xl" mb={3} mr={0.5} pl={0.5} pr={0.5}>
+                        <CheckedUserPreview friend={user} key={user.uid} />
+                      </Box>
+                    }}
+                  </Pressable>))}
+              </Column>
             </Row>
-            
+
             {otherUsers.map((user) => (
-            <Pressable onPress={()=> handlePreviewClick(user)} key = {user.uid}>
-              {({ isPressed }) => {
-              return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} 
-                          style={{transform: [{ scale: isPressed ? 0.96 : 1 }]}} 
-                          shadow="1" borderRadius="xl" mb ={3}>
-                        <UserPreview friend={user} key={user.uid} />
-                      </Box>}}
-            </Pressable>))}
+              <Pressable onPress={() => handlePreviewClick(user)} key={user.uid}>
+                {({ isPressed }) => {
+                  return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"}
+                    style={{ transform: [{ scale: isPressed ? 0.96 : 1 }] }}
+                    shadow="1" borderRadius="xl" mb={3}>
+                    <UserPreview friend={user} key={user.uid} />
+                  </Box>
+                }}
+              </Pressable>))}
           </ScrollView>
-          )}
-        {selectedUser && 
-          <UserExpandedPreview users={users} user={selectedUser} isOpen={isOpen} onClose={handleCloseModal} updateFetchedUsers={updateFetchedUsers}/>
+        )}
+        {selectedUser &&
+          <UserExpandedPreview users={users} user={selectedUser} isOpen={isOpen} onClose={handleCloseModal} updateFetchedUsers={updateFetchedUsers} />
         }
         <Button
           size={"lg"}
@@ -259,10 +262,10 @@ export default function HomeScreen() {
           background={"#F97316"}
           justifyContent={"center"}
           alignItems={"center"}
-          _pressed={{ opacity: 0.5}}
-          onPress={()=>handleCheckIn()}
+          _pressed={{ opacity: 0.5 }}
+          onPress={() => handleCheckIn()}
         >
-          <Text fontWeight="bold" fontSize="lg" color="#FFF"> Check In </Text> 
+          <Text fontWeight="bold" fontSize="lg" color="#FFF"> Check In </Text>
         </Button>
       </SafeAreaView>
     </NativeBaseProvider>
