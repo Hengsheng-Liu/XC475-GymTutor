@@ -91,7 +91,15 @@ export default function SignUpScreen2() {
 
   // 2 functions below are for adding tags
   const handleSave = () => {
+    const MAX_TAG_LENGTH = 10; // Example: set maximum tag length to 10 characters
     // onSaveTag(addTag as string);
+    if (addTag.length > MAX_TAG_LENGTH) {
+      // Alert the user that the tag exceeds the character limit
+      // You can display a toast message, show an alert, or handle it in any way you prefer
+      alert(`Tag must be ${MAX_TAG_LENGTH} characters or fewer`);
+      return;
+    }
+    
     if (addTag.trim() !== "") {
       setTags(prevTags => [...prevTags, addTag]);
     }

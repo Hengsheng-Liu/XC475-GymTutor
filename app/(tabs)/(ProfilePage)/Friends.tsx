@@ -30,15 +30,17 @@ export default function FriendListScreen () {
   useEffect(() => {
     fetchData();
 
-    // const userDocRef = doc(firestore, 'Users', User.uid);
-    // const unsubscribe = onSnapshot(userDocRef, () => { // Set up listener for changes in user's document
-    //   fetchData(); // Fetch data whenever the document changes
-    // });
+    const userDocRef = doc(firestore, 'Users', User.uid);
+    const unsubscribe = onSnapshot(userDocRef, () => { // Set up listener for changes in user's document
+      fetchData(); // Fetch data whenever the document changes
+    });
 
-    // return () => unsubscribe();
+    return () => unsubscribe();
   }, [User, isFocused]);
 
   const fetchData = async () => {
+    const currUser2 = await getCurrUser(User.uid);
+    updateCurrUser(currUser2);
     setLoading(true);
     setFriends([]);
     try {

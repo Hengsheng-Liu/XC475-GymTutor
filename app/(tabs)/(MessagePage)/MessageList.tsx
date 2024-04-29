@@ -119,11 +119,13 @@ const MessageList: React.FC<Props> = ({ navigation }) => {
       const querySnapshot = await getDocs(usersQuery);
       const usersData: IUser[] = [];
 
-      // Save user data if it is not the current User
+      // Save user data if it is not the current User and it isn't blocked
       querySnapshot.forEach(snap => {
         const userData = snap.data() as IUser;
         if (userData.uid !== currUser.uid) {
-          usersData.push(userData);
+          if (!currUser.blockedUsers.includes(userData.uid)){
+            usersData.push(userData);
+          }
         }
       });
 

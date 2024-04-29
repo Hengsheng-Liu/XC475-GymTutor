@@ -116,6 +116,45 @@ const FriendProfilePage = () => {
     }
   };
 
+  const blockUser = async (userUID: string, userToBlockUID: string) => {
+    const userRef = doc(firestore, 'Users', userUID);
+    const userToBlockRef = doc(firestore, 'Users', userToBlockUID);
+
+    try {
+      if (currUser) { 
+        const updatedUser = { ...currUser };
+        const friendIndex = updatedUser.friends.indexOf(userToBlockUID);
+        updatedUser.friends.splice(friendIndex, 1);
+        const friendRequests = currUser.friendRequests;
+        const updatedRequests = friendRequests.filter(request => {
+            if (request.friend === userToBlockUID) {
+                return;
+            } else {
+                    return request;
+            }});
+        updatedUser.friendRequests = updatedRequests;
+        updateCurrUser(updatedUser);
+        
+        // Update current user's document
+        await updateDoc(userRef, { friends: arrayRemove(userToBlockUID), blockedUsers: arrayUnion(userToBlockUID), friendRequests: updatedUser.friendRequests });
+          } 
+        if (friend) {
+          const updatedFriend = { ...friend };
+          const userIndex = updatedFriend.friends.indexOf(userUID);
+          updatedFriend.friends.splice(userIndex, 1);
+          updateFriend(updatedFriend);
+        }
+        // Update user to block's document
+        updateDoc(userToBlockRef, { friends: arrayRemove(userUID), blockedUsers: arrayUnion(userUID),  });
+
+        console.log('User blocked successfully');
+    } catch (error) {
+        console.error('Error blocking user:', error);
+        throw error;
+    }
+  router.back();
+};
+
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView style={{ backgroundColor: "#FFF" }}>
@@ -205,14 +244,12 @@ const FriendProfilePage = () => {
                         <Popover.Arrow />
                         <Popover.Body p={2}>
                           <Box>
+                            { canMessage(currUser, userInfo) &&
                             <Button backgroundColor="#E2E8F0" borderRadius={8} mb={1} onPress={() => removeFriend(currUser.uid, userInfo.uid)}>
                               <Text fontSize="xs">Unfollow</Text>
-                            </Button>
-                            <Button backgroundColor="#E2E8F0" borderRadius={8} mb={1} onPress={() => console.log("Report")}>
-                              <Text fontSize="xs">Report</Text>
-                            </Button>
-                            <Button backgroundColor="#E2E8F0" borderRadius={8} onPress={() => console.log("Share")}>
-                              <Text fontSize="xs">Share</Text>
+                            </Button>}
+                            <Button backgroundColor="#E2E8F0" borderRadius={8} onPress={() => blockUser(currUser.uid, userInfo.uid)}>
+                              <Text fontSize="xs">Block</Text>
                             </Button>
                           </Box>
                         </Popover.Body>
