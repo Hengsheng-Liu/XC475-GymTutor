@@ -15,10 +15,23 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
   const [editMode, setEditMode] = useState(false);
   const [deleteMode, setDeleteMode] = useState(false);
   const [addTag, setAddTag] = useState("");
- // const [deleteTag, setDeleteTag] = useState("");
+  const MAX_TAG_LENGTH = 10;
+
+  // const [deleteTag, setDeleteTag] = useState("");
 
   const handleSave = () => {
- 
+    if (addTag.length > MAX_TAG_LENGTH) {
+      // Alert the user that the tag exceeds the character limit
+      // You can display a toast message, show an alert, or handle it in any way you prefer
+      alert(`Tag must be ${MAX_TAG_LENGTH} characters or fewer`);
+      return;
+    }
+    if (addTag.length === 0 || (addTag.trim() !== "")) {
+      // Alert the user that the tag exceeds the character limit
+      // You can display a toast message, show an alert, or handle it in any way you prefer
+      alert(`Tag must be not be empty`);
+      return;
+    }
     onSaveTag(addTag as string);
     setAddTag("");
     setEditMode(false);

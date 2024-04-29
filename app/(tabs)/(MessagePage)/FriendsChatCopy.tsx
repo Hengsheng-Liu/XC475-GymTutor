@@ -18,7 +18,7 @@ import { filterUsersByName } from '@/components/FirebaseUserFunctions';
 
 export default function FriendListScreen() {
   const [friends, setFriends] = useState<IUser[]>([]);
-  const { User } = useAuth();
+  const { User, updateCurrUser } = useAuth();
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -38,6 +38,7 @@ export default function FriendListScreen() {
   const fetchData = async () => {
 
     const currUser = await getCurrUser(User.uid);
+    updateCurrUser(currUser);
     if (!currUser) return;
 
     setLoading(true);

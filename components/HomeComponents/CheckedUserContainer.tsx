@@ -95,14 +95,11 @@ const CheckedUserPreview: React.FC<FriendProps> = ({ friend }) => {
                 </Badge>
             </Row>*/}
             <Row alignItems="center" space="sm">
-                <Avatar m={2} size="md" source={{ uri: friendIcon }} />
-                <Column justifyContent={"space-evenly"}>
-                <Row justifyContent= {"space-between"} >
-                    <Column overflow="hidden">    
-                        <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated maxWidth="85%">{friend.name}</Text>
-                    </Column>
+                <Avatar m={2} mr={0} size="md" source={{ uri: friendIcon }} />
+                <Row overflow="hidden" flex={1}>
+                <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated maxW="95%">{friend.name}</Text>
                 </Row>
-                </Column>
+
             </Row>
         </Flex>
     );

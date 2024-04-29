@@ -150,7 +150,8 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters, n
             if (applyFilters[0]) {
                 // Filter by sex if specified
                 if (applyFilters[1] && sex.length > 0) {
-                    usersQuery = query(usersQuery, where("sex", "in", sex));
+                    let sex2 = [...sex, "other"]
+                    usersQuery = query(usersQuery, where("sex", "in", sex2));
                 }
 
                 // Filter by age if specified
@@ -259,14 +260,15 @@ export async function addUser(
             gym: gym,
             gymId: gymId,
             checkInHistory: [],
-            icon: "Icon/Default/Avatar.png",
+            icon: sex === "female" ? "gs://spotme-8591a.appspot.com/Default/WomenProfile.jpg" : "gs://spotme-8591a.appspot.com/Default/MenProfile.jpg",
             achievements: [],
             gymExperience: gymExperience,
             CurrentlyMessaging: [],
             filters: filters,
             birthday: birthday,
             Achievement: DefaultAchievement,
-            display: []
+            display: [],
+            background: "gs://spotme-8591a.appspot.com/Default/backgroundImage.jpg"
         });
 
         console.log("Document written for user: ", uid);
@@ -571,9 +573,9 @@ export const getUserPicture = async (iconUrl: string, type: string): Promise<str
         console.error("Error getting user picture: ", error);
         switch (type) {
             case "Avatar":
-                return getUserPicture("/Default/Avatar.png", "Avatar");
+                return getUserPicture("gs://spotme-8591a.appspot.com/Default/MenProfile.jpg", "Avatar");
             case "Background":
-                return getUserPicture("/Default/Background.jpeg", "Background");
+                return getUserPicture("gs://spotme-8591a.appspot.com/Default/backgroundImage.jpg", "Background");
             default:
                 return undefined;
         }
