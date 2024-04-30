@@ -4,9 +4,7 @@ import CheckCircle from "../../assets/images/checkIn/CheckCircle.svg";
 import { router } from "expo-router";
 import CheckInRoutine from "@/components/CheckInComponents/CheckInRoutine";
 export default function CheckIn() {
-    const submitCheckIn = () => {
-      
-      //router.push("/SelectWorkout")
+    const submitCheckIn = () => {      
       router.push("/DailyPicture")
     }
   return (
