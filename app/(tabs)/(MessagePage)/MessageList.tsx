@@ -166,7 +166,7 @@ const MessageList = () => {
           <Text> Keep in touch with your friends</Text>
           <Spacer />
         </Column>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("./FriendsChatCopy")} >
+        <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/FriendsChatCopy")} >
           <AntDesign name="contacts" size={45} color="#F97316" />
         </TouchableOpacity>
       </Row>

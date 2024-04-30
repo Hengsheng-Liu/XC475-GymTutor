@@ -101,7 +101,7 @@ export default function ChooseGym({
     updateUserGym(place_id, title);
     handleOpenGymDialog(false);
     updateUserGym2();
-    router.push("/(tabs)/(HomePage)/Home");
+    router.push("/Home");
   };
 
   return (

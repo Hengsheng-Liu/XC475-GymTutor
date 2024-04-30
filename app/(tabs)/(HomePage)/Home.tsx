@@ -46,7 +46,7 @@ export default function HomeScreen() {
   // Initialize gym data
   useEffect(() => {
     if (!userGym || userGym[0] === "" || userGym[1] === "") {
-      router.push("/index");
+      router.push("/");
     }
     if (currUser) {
       // updateUsers(); // Uncomment when we want to update users with new fields / random values
@@ -271,10 +271,6 @@ export default function HomeScreen() {
     </NativeBaseProvider>
   );
 }
-//insde the gym: 42.352057232511406, -71.11682641206473
-// outside the gym: 42.35249135900813, -71.11565509642959
-//42.35193439884672, -71.11673198835226
-//42.352164385569864, -71.11695979401712
 /*
     const location = await GetUserLocation();
     if (checkIn) {
