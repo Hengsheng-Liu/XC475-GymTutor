@@ -62,11 +62,20 @@ export default function SignUpScreen2() {
   const [bio, setBio] = useState<string | undefined>();
   const [gender, setGender] = useState<string | undefined>();
   const [tags, setTags] = useState<string[]>([]);
-  const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState<{ [key: string]: boolean }>({});
   const [FitnessGoalTags] = useState(['Muscle mass', 'Bulking', 'Strength', 'Aesthetics']);
   const [ActivitiesTags] = useState(['Basic', 'Powerlifting', 'Cardio']);
   const [WorkoutTimeTags] = useState(['Morning', 'Afternoon', 'Night']);
-
+  const [selected1, setSelected1] = useState(false);
+  const [selected2, setSelected2] = useState(false);
+  const [selected3, setSelected3] = useState(false);
+  const [selected4, setSelected4] = useState(false);
+  const [selected5, setSelected5] = useState(false);
+  const [selected6, setSelected6] = useState(false);
+  const [selected7, setSelected7] = useState(false);
+  const [selected8, setSelected8] = useState(false);
+  const [selected9, setSelected9] = useState(false);
+  const [selected10, setSelected10] = useState(false);
 
 
 
@@ -89,11 +98,10 @@ export default function SignUpScreen2() {
 
 
   const handleToggleTag = (tag) => {
-    if (selectedTags.includes(tag)) {
-      setSelectedTags(selectedTags.filter(t => t !== tag)); // Remove the tag
-    } else {
-      setSelectedTags([...selectedTags, tag]); // Add the tag
-    }
+    setSelectedTags(prevTags => ({
+      ...prevTags,
+      [tag]: !prevTags[tag] // Toggle the boolean value for the tag
+    }));
   };
 
 
@@ -467,7 +475,7 @@ export default function SignUpScreen2() {
 
             <Box alignItems="left">
 
-              <Input mx="3" w="90%" value={bio} onChangeText={setBio} multiline={false} placeholder="Maximum 50 words" />
+              <Input mx="3" w="90%" value={bio} h="100" onSubmitEditing={() => setBio} multiline={true} placeholder="Maximum 50 words" />
 
             </Box>
 
@@ -481,12 +489,24 @@ export default function SignUpScreen2() {
               <Flex flexDirection="column" mt={3}>
                 <Text fontSize="md" mb={1}>Fitness Goals:</Text>
                 <Flex flexDirection="row" flexWrap="wrap" justifyContent="space-evenly">
+                  <Pressable key={FitnessGoalTags[0]} onPress={() => setSelected1(prev => !prev)}>
+                    <Badge
+                      m={2}
+                      ml={0}
+                      colorScheme={selected1 ? "primary.100" : "muted"}
+                      shadow={1}
+                      borderRadius={4}
+                    >
+                      {FitnessGoalTags[0]}
+                    </Badge>
+                  </Pressable>
+
                   {FitnessGoalTags.map((tag, index) => (
                     <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
                       <Badge
                         m={2}
                         ml={0}
-                        colorScheme={selectedTags.includes(tag) ? "primary.100" : "muted"}
+                        colorScheme={selectedTags[tag] ? "primary.100" : "muted"}
                         shadow={1}
                         borderRadius={4}
                       >
@@ -502,7 +522,7 @@ export default function SignUpScreen2() {
                       <Badge
                         m={2}
                         ml={0}
-                        colorScheme={selectedTags.includes(tag) ? "primary.100" : "muted"}
+                        colorScheme={selectedTags[tag] ? "primary.100" : "muted"}
                         shadow={1}
                         borderRadius={4}
                       >
@@ -518,7 +538,7 @@ export default function SignUpScreen2() {
                       <Badge
                         m={2}
                         ml={0}
-                        colorScheme={selectedTags.includes(tag) ? "primary.100" : "muted"}
+                        colorScheme={selectedTags[tag] ? "primary.100" : "muted"}
                         shadow={1}
                         borderRadius={4}
                       >
