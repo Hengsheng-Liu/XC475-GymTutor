@@ -1,7 +1,8 @@
 import Tags from "./Tags";
-import { Flex,Pressable, Badge, Input, Button } from "native-base";
+import { Flex,Pressable, Badge, Input, Button, IconButton } from "native-base";
 import React, { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
+import { Feather } from '@expo/vector-icons';
 
 interface props{
     description:string[];
@@ -26,13 +27,11 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
       alert(`Tag must be ${MAX_TAG_LENGTH} characters or fewer`);
       return;
     }
-    if (addTag.length === 0 || (addTag.trim() !== "")) {
-      // Alert the user that the tag exceeds the character limit
-      // You can display a toast message, show an alert, or handle it in any way you prefer
+    if (addTag.length === 0 || (addTag.trim() === "")) {
       alert(`Tag must be not be empty`);
       return;
     }
-    onSaveTag(addTag as string);
+    onSaveTag(addTag.trim() as string);
     setAddTag("");
     setEditMode(false);
   }
@@ -58,12 +57,21 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
     <>
       <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={2} mb={2}>
         {description.map((tag) => (
-          <Pressable key={tag}
-          onLongPress={() => handleTagDelete(tag)} _pressed={{ opacity: 0.5 }}
-          >
+          <Pressable key={tag} _pressed={{ opacity: 0.5 }}>
           <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
               {tag}
           </Badge>
+          { editMode && (
+            <IconButton
+            onPress={() => handleTagDelete(tag)}
+            icon={<Feather name="x-circle" size={15} color="#A3A3A3"/>} // Adjust the size as needed
+            variant="unstyled"
+            position="absolute"
+            top="-8"
+            right="-8"
+          />
+          )
+          }
           </Pressable>
         ))}
 
@@ -79,7 +87,7 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
           <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly" mt={3} mb={4}>
           <Input
             multiline={false}
-            color={"lightBlue.900"}
+            _focus={{borderColor: "#F97316", backgroundColor: "white"}}
             padding={3}
             value={addTag}
             onChangeText={setAddTag}
