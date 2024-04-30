@@ -139,12 +139,31 @@ export default function SignUpScreen22() {
     }
   };
 
+
   const finishSignUp = async () => {
     try {
       const year = pickerDate.getFullYear();
       const month = pickerDate.getMonth();
       const day = pickerDate.getDate();
       updateTags();
+
+      if (tags.length == 0) {
+        Alert.alert("Select at least 1 tag to get started");
+        return;
+      }
+
+      // Function to check tags count from each category
+      const checkCategoryTags = (categoryTags) => tags.filter(tag => categoryTags.includes(tag)).length <= 1;
+
+      // Verify each category has at most one tag
+      const isValidFitnessGoal = checkCategoryTags(FitnessGoalTags);
+      const isValidActivity = checkCategoryTags(ActivitiesTags);
+      const isValidWorkoutTime = checkCategoryTags(WorkoutTimeTags);
+
+      if (!isValidFitnessGoal || !isValidActivity || !isValidWorkoutTime) {
+        Alert.alert("Error", "Please select at most one tag from each category.");
+        return;
+      }
 
       if (year && month && day && gymExperience && gender && bio && tags) {
         if (email && password && checkWords(bio)) {
@@ -220,7 +239,7 @@ export default function SignUpScreen22() {
             <Button
               bg="primary.400"
               startIcon={<ChevronLeftIcon size="md" color="primary.200" />}
-              onPress={() => router.navigate("LogIn")}
+              onPress={() => router.navigate("SignUp")}
             ></Button>
             <Text
               fontSize="20"
@@ -234,7 +253,7 @@ export default function SignUpScreen22() {
               Registration
             </Text>
           </Flex>
-          <Box ml={"3"} mr={"3"} flex="1 ">
+          <Box marginTop={"8"} ml={"3"} mr={"3"} flex="1 ">
             <Text
               fontSize="28"
               fontWeight="700"
@@ -245,32 +264,36 @@ export default function SignUpScreen22() {
               Create your profile
             </Text>
 
-            <Text
-              fontSize="16"
-              fontWeight="400"
-              color="primary.200"
-              lineHeight="20"
-              letterSpacing="0.25"
-              p="3"
-              mt="1"
-            >
-              Your Birthday
-            </Text>
-            <Box
-              flexDirection="row"
-              alignItems="center"
-              justifyContent="space-between"
-              ml={1}
-              mr={3}
-            >
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={pickerDate}
-                mode="date"
-                display="default"
-                onChange={onChange}
-              />
-            </Box>
+            <View style={{ flexDirection: 'row', alignItems: 'center', padding: 2, marginTop: 8 }}>
+              <Text
+                fontSize="16"
+                fontWeight="400"
+                color="primary.200"
+                lineHeight="20"
+                letterSpacing="0.25"
+                p="3"
+                mt="1"
+                marginRight="-4" // Adjust spacing between text and date picker
+              >
+                Your Birthday
+              </Text>
+              <Box
+                flexDirection="row"
+                alignItems="center"
+                justifyContent="space-between"
+                ml={1}
+                mr={3}
+              >
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={pickerDate}
+                  mode="date"
+                  display="default"
+                  onChange={onChange}
+                />
+              </Box>
+            </View>
+
 
             <Box
               flexDirection="row"
@@ -354,34 +377,28 @@ export default function SignUpScreen22() {
               Bio
             </Text>
 
-            <Box alignItems="left">
+            <Box alignItems="left" overflow="wrap">
               <Input
                 mx="3"
                 w="90%"
                 value={bio}
                 h="50"
+                overflow={"wrap"}
+                flexWrap={"wrap"}
+                numberOfLines={3}
                 onChangeText={(text) => setBio(text)}
                 multiline={false}
                 placeholder="Maximum 50 words"
+                _focus={{
+                  borderColor: "primary.100",  // Change to your preferred color
+                  backgroundColor: "white", // Change background color on focus
+                }}
               />
             </Box>
 
-            <Text
-              fontSize="16"
-              fontWeight="400"
-              color="primary.200"
-              lineHeight="20"
-              letterSpacing="0.25"
-              p="3"
-              mt="3"
-            >
-              {" "}
-              What kind of gym goer are you?{" "}
-            </Text>
-
             <Flex flexDirection="column" mt={3} px="3">
               <Flex flexDirection="column" mt={3}>
-                <Text fontSize="md" mb={1}>
+                <Text fontSize="md" m={1}>
                   Fitness Goals:
                 </Text>
                 <Flex
@@ -394,7 +411,7 @@ export default function SignUpScreen22() {
                       <Badge
                         m={2}
                         ml={0}
-                        colorScheme={selectedTags[tag] ? "primary.100" : "muted"}
+                        backgroundColor={selectedTags[tag] ? "#fac8a2" : "white"}
                         shadow={1}
                         borderRadius={4}
                       >
@@ -403,7 +420,7 @@ export default function SignUpScreen22() {
                     </Pressable>
                   ))}
                 </Flex>
-                <Text fontSize="md" mb={1}>
+                <Text fontSize="md" m={1}>
                   Activities:
                 </Text>
                 <Flex
@@ -416,7 +433,7 @@ export default function SignUpScreen22() {
                       <Badge
                         m={2}
                         ml={0}
-                        colorScheme={selectedTags[tag] ? "primary.100" : "muted"}
+                        backgroundColor={selectedTags[tag] ? "#fac8a2" : "white"}
                         shadow={1}
                         borderRadius={4}
                       >
@@ -425,7 +442,7 @@ export default function SignUpScreen22() {
                     </Pressable>
                   ))}
                 </Flex>
-                <Text fontSize="md" mb={1}>
+                <Text fontSize="md" m={1}>
                   Preferred Workout Times:
                 </Text>
                 <Flex
@@ -438,7 +455,7 @@ export default function SignUpScreen22() {
                       <Badge
                         m={2}
                         ml={0}
-                        colorScheme={selectedTags[tag] ? "primary.100" : "muted"}
+                        backgroundColor={selectedTags[tag] ? "#fac8a2" : "white"}
                         shadow={1}
                         borderRadius={4}
                       >
