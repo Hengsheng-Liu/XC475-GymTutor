@@ -7,12 +7,12 @@ import {
   Keyboard,
   TextInput,
 } from "react-native";
-import { firestore } from "../../firebaseConfig";
+import { firestore, auth } from "../../firebaseConfig";
 import { router } from "expo-router";
-import { UserCredential } from "firebase/auth";
-import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { UserCredential, fetchSignInMethodsForEmail } from "firebase/auth";
 import { useAuth } from "../../Context/AuthContext";
 import { addUser } from "@/components/FirebaseUserFunctions"
+import { getDocs, query, where, collection } from "firebase/firestore";
 import {
   Box,
   Button,
@@ -30,6 +30,7 @@ import {
   Icon,
   ChevronLeftIcon
 } from "native-base";
+
 
 export default function SignUpScreen() {
   const [email, setEmail] = useState<string>('');
@@ -67,6 +68,14 @@ export default function SignUpScreen() {
 
       if (!emailRegex.test(email)) {
         Alert.alert("Error", "Please enter a valid email address");
+        return;
+      }
+
+      // Firestore query to check for existing email
+      const querySnapshot = await getDocs(query(collection(firestore, 'Users'), where('email', '==', email)));
+
+      if (!querySnapshot.empty) {
+        Alert.alert("Error", "Email already in use. Please use a different email.");
         return;
       }
 
