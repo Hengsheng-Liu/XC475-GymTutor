@@ -38,7 +38,7 @@ export default function SignUpScreen() {
   const [confirmPassword, setConfirmPassword] = useState<string | undefined>();
   const [passwordMatchError, setPasswordMatchError] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
-
+ 
   const { CreateUser } = useAuth();
 
   const handlePasswordChange = (text: string) => {
@@ -139,11 +139,13 @@ export default function SignUpScreen() {
           justifyContent="space-between"
           alignItems="center"
         >
-          <Button
-            bg="primary.400"
-            startIcon={<ChevronLeftIcon size="md" color="primary.200" />}
-            onPress={() => router.navigate("LogIn")}
-          ></Button>
+          <Pressable
+          padding={"2"}
+          onPress={() => router.navigate("LogIn")}
+          _pressed={{ opacity: 0.5 }}
+          >
+            <ChevronLeftIcon size="md" color="primary.200" />
+          </Pressable>
           <Text
             fontSize="20"
             fontWeight="bold"

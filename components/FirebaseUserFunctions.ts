@@ -142,6 +142,7 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters, n
 
         // Query  users from their gym.
         // TODO: Maybe query only nearby users.
+        
         let usersQuery = query(collection(db, 'Users'), where('uid', 'in', memberIds));
 
         // Apply additional filters if provided

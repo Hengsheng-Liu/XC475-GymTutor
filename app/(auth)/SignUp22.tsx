@@ -15,6 +15,7 @@ import {
   Text,
   ScrollView,
   Badge,
+  FlatList,
 } from "native-base";
 import { AntDesign } from "@expo/vector-icons";
 import Tags from "../../components/ProfileComponents/Tags";
@@ -34,7 +35,7 @@ import { useAuth } from "../../Context/AuthContext";
 import { useRoute } from "@react-navigation/native";
 import { addUser } from "@/components/FirebaseUserFunctions";
 import { Filters, defaultFilters } from "@/app/(tabs)/(HomePage)/Filter";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 export const AddUserToDB = async (
   response: UserCredential,
@@ -84,7 +85,7 @@ export default function SignUpScreen22() {
 
   const yearRange = [1940, 2023];
   const { CreateUser } = useAuth();
-
+  const emptyData = [];
   const { name, email, password } = useLocalSearchParams();
   const [month, setMonth] = useState<string>("");
   const [date, setDate] = useState<string>("");
@@ -166,7 +167,7 @@ export default function SignUpScreen22() {
           ); // Assuming this function adds the user details to your Firestore.
 
           router.navigate({
-            pathname: "LogIn",
+            pathname: "/LoadingPage",
           });
         } else {
           Alert.alert(
@@ -182,7 +183,6 @@ export default function SignUpScreen22() {
       Alert.alert("Error", "Failed to complete the registration process.");
     }
   };
-
 
   const theme = extendTheme({
     colors: {
@@ -217,11 +217,13 @@ export default function SignUpScreen22() {
             justifyContent="space-between"
             alignItems="center"
           >
-            <Button
-              bg="primary.400"
-              startIcon={<ChevronLeftIcon size="md" color="primary.200" />}
+            <Pressable
+              padding={"2"}
               onPress={() => router.navigate("LogIn")}
-            ></Button>
+              _pressed={{ opacity: 0.5 }}
+            >
+              <ChevronLeftIcon size="md" color="primary.200" />
+            </Pressable>
             <Text
               fontSize="20"
               fontWeight="bold"
@@ -394,7 +396,9 @@ export default function SignUpScreen22() {
                       <Badge
                         m={2}
                         ml={0}
-                        colorScheme={selectedTags[tag] ? "primary.100" : "muted"}
+                        colorScheme={
+                          selectedTags[tag] ? "primary.100" : "muted"
+                        }
                         shadow={1}
                         borderRadius={4}
                       >
@@ -416,7 +420,9 @@ export default function SignUpScreen22() {
                       <Badge
                         m={2}
                         ml={0}
-                        colorScheme={selectedTags[tag] ? "primary.100" : "muted"}
+                        colorScheme={
+                          selectedTags[tag] ? "primary.100" : "muted"
+                        }
                         shadow={1}
                         borderRadius={4}
                       >
@@ -438,7 +444,9 @@ export default function SignUpScreen22() {
                       <Badge
                         m={2}
                         ml={0}
-                        colorScheme={selectedTags[tag] ? "primary.100" : "muted"}
+                        colorScheme={
+                          selectedTags[tag] ? "primary.100" : "muted"
+                        }
                         shadow={1}
                         borderRadius={4}
                       >
