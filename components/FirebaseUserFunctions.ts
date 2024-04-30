@@ -591,6 +591,17 @@ export const getUserIcon = async (iconUrl: string): Promise<string | undefined> 
         console.error("Error getting user icon: ", error);
         return undefined;
     }
+}
+export const getAchievement= async (AchievementUrl: string): Promise<string | null> => {
+    try {
+        const storage = getStorage();
+        const storageRef = ref(storage, AchievementUrl);
+        const url = await getDownloadURL(storageRef);
+        return url;
+    } catch (error) {
+        console.error("Error getting user icon: ", error);
+        return null;
+    }
 
 }
 

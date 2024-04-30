@@ -45,6 +45,7 @@ export default function Test() {
       Title={"Great Job! Let's take a picture to remember your workout!"}
       ButtonText={"Use Camera"}
       skipPhoto
+      Process
       
     />
   );

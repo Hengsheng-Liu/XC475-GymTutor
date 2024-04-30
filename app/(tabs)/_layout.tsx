@@ -26,6 +26,7 @@ export default function TabLayout() {
   } else {
     return (
       <Tabs
+       initialRouteName="my-child" backBehavior="history"
       screenOptions={{
         tabBarShowLabel: false,
         tabBarActiveTintColor: "#F97316",

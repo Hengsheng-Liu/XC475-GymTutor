@@ -10,7 +10,7 @@ export default function CheckInSubmit() {
     }
 
   return (
-        <CheckInRoutine navigation={submitCheckIn} Icon={CheckOut} Title={"You Are Checked In!"} ButtonText={"Let's Go!"} Process/>
+        <CheckInRoutine navigation={submitCheckIn} Icon={CheckOut} Title={"You Are Checked In!"} ButtonText={"Let's Go!"}/>
 
   );
 }

@@ -1,7 +1,7 @@
 import { Flex, HStack, Heading, VStack } from "native-base";
 import DefaultDisplay from "@/components/FriendsComponents/DefaultDisplay";
 import React, { useEffect } from "react";
-import { getSVG } from "@/components/ProfileComponents/AchievementFunction";
+import  getSVG from "@/components/ProfileComponents/AchievementFunction";
 interface AchievementProps {
   display: string[];
 }

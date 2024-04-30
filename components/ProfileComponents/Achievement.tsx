@@ -14,7 +14,7 @@ import DefaultDisplay from "./DefaultDisplay";
 import { router} from "expo-router";
 import { SvgUri } from "react-native-svg";
 import React, { useEffect } from "react";
-import { getSVG } from "./AchievementFunction";
+import getSVG  from "./AchievementFunction";
 interface AchievementProps {
   display: string[];
 }
