@@ -22,7 +22,7 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   const { User } = useAuth(); 
   if (!User) {
-    return <Redirect href="/LogIn" />;
+    return <Redirect href="LogIn" />;
   } else {
     return (
       <Tabs

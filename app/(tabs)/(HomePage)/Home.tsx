@@ -159,7 +159,7 @@ export default function HomeScreen() {
       return;
     }
     */
-    router.push("/DailyPicture");
+    router.replace("/DailyPicture");
   };
 
 

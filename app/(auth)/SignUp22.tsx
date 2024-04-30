@@ -235,23 +235,9 @@ export default function SignUpScreen22() {
           justifyContent="space-between"
           alignItems="center"
         >
-          <Button
-            bg="primary.400"
-            startIcon={<ChevronLeftIcon size="md" color="primary.200" />}
-            onPress={() => router.navigate("SignUp")}
-          ></Button>
-          <Text
-            fontSize="20"
-            fontWeight="bold"
-            textAlign="center"
-            flex="1"
-            color="primary.200"
-            mr="10"
-            p="2"
-          >
             <Pressable
               padding={"2"}
-              onPress={() => router.navigate("LogIn")}
+              onPress={() => router.back()}
               _pressed={{ opacity: 0.5 }}
             >
               <ChevronLeftIcon size="md" color="primary.200" />

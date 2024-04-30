@@ -65,7 +65,7 @@ export default function SelectWorkout() {
     if(InProgressHolder.length > 0 || CompletedHolder.length > 0){
       setModalVisible(true);
     }else{
-      router.push("/Home");
+      router.replace("/Home");
     }
     try {
       await updateDoc(userRef, {
