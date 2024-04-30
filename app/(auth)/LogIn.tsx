@@ -164,6 +164,7 @@ export default function LogInScreen() {
                 backgroundColor={"#FAFAFA"}
                 borderRadius={5}
                 shadow={2}
+                autoCorrect={false} 
               />
               <Text color={"#FAFAFA"} marginTop={5}>
                 Password

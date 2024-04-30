@@ -6,7 +6,7 @@ import {
   Icon,
   Text,
   ScrollView,
-  Badge
+  Badge,
 } from "native-base";
 import { AntDesign } from "@expo/vector-icons";
 import Tags from "../../components/ProfileComponents/Tags";
