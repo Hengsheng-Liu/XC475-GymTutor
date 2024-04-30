@@ -112,8 +112,8 @@ export default function Header({ name, icon, gym, background }: HeaderProps) {
             />
           </Flex>
         </ImageBackground>
-        <Flex  alignItems={"center"}>
-          <Heading size="lg">{name}</Heading>
+        <Flex  alignItems={"center"} overflow="hidden">
+          <Heading textAlign="center" numberOfLines={2} maxWidth="90%" size="lg">{name}</Heading>
           <Text isTruncated maxW="4/5" >
             {gym}
           </Text>

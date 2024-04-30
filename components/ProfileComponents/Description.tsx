@@ -40,7 +40,9 @@ export default function Description({ bio, onSave }: DescriptionProps) {
       <Box 
       flexDirection="column"
       alignItems="flex-start"
-      shadow={1} 
+      shadow={1}
+      height={100}
+      maxHeight={100}
       backgroundColor={"gray.100"} 
       mt={2} 
       borderRadius={10}>
@@ -50,7 +52,11 @@ export default function Description({ bio, onSave }: DescriptionProps) {
             multiline={true}
             color={"trueGray.900"}
             padding={3}
-            borderWidth="0"
+            borderRadius={10}
+            borderWidth="2"
+            height={100}
+            maxHeight={100}
+            _focus={{borderColor: "#F97316", backgroundColor: "gray.100"}}
             value={newBio}
             onChangeText={setNewBio}
             placeholder="Enter your description"

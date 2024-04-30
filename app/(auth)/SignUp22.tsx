@@ -184,9 +184,7 @@ export default function SignUpScreen22() {
             tags
           ); // Assuming this function adds the user details to your Firestore.
 
-          router.navigate({
-            pathname: "LogIn",
-          });
+          router.replace("/LoadingPage");
         } else {
           Alert.alert(
             "Error",

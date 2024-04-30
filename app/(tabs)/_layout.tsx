@@ -37,6 +37,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(MessagePage)"
           options={{
+            href:"/MessageList",
             title: "Message",
             headerShown: false,
             tabBarIcon: ({focused, ...props}) => (focused ? 
@@ -48,6 +49,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(HomePage)"
           options={{
+            href: "/Home",
             title: "SpotMe",
             headerShown: false,
             tabBarIcon: ({focused, ...props}) => (focused ? 
@@ -58,6 +60,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(ProfilePage)"
           options={{
+            href:"/ProfilePage",
             title: "Profile",
             headerShown: false,
             tabBarIcon: ({focused, ...props}) => (focused ? 
