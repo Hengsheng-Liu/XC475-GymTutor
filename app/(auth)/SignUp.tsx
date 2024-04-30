@@ -7,12 +7,12 @@ import {
   Keyboard,
   TextInput,
 } from "react-native";
-import { firestore } from "../../firebaseConfig";
+import { firestore, auth } from "../../firebaseConfig";
 import { router } from "expo-router";
-import { UserCredential } from "firebase/auth";
-import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { UserCredential, fetchSignInMethodsForEmail } from "firebase/auth";
 import { useAuth } from "../../Context/AuthContext";
-import { addUser } from "@/components/FirebaseUserFunctions";
+import { addUser } from "@/components/FirebaseUserFunctions"
+import { getDocs, query, where, collection } from "firebase/firestore";
 import {
   Box,
   Button,
@@ -30,6 +30,7 @@ import {
   Icon,
   ChevronLeftIcon,
 } from "native-base";
+
 
 export default function SignUpScreen() {
   const [email, setEmail] = useState<string>("");
@@ -74,7 +75,15 @@ export default function SignUpScreen() {
         return;
       }
 
-      console.log("name is " + name);
+      // Firestore query to check for existing email
+      const querySnapshot = await getDocs(query(collection(firestore, 'Users'), where('email', '==', email)));
+
+      if (!querySnapshot.empty) {
+        Alert.alert("Error", "Email already in use. Please use a different email.");
+        return;
+      }
+
+      console.log('name is ' + name);
       try {
         router.navigate({
           pathname: "SignUp22",
@@ -124,7 +133,7 @@ export default function SignUpScreen() {
 
   return (
     <NativeBaseProvider theme={theme}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#FFF",}}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#FFF", }}>
         <Flex
           flexDir={"row"}
           justifyContent="space-between"
@@ -148,7 +157,7 @@ export default function SignUpScreen() {
           </Text>
         </Flex>
 
-        <Box paddingTop={"10"} flex="1" paddingLeft={2} 
+        <Box paddingTop={"10"} flex="1" paddingLeft={2}
         >
           <Text fontSize="28" fontWeight="700" color="primary.200" ml={2}>
             Create an account
