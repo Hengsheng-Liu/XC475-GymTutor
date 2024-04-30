@@ -67,22 +67,7 @@ export const AddUserToDB = async (
 };
 
 export default function SignUpScreen22() {
-  const monthDays = {
-    "1": 31,
-    "2": 28,
-    "3": 31,
-    "4": 30,
-    "5": 31,
-    "6": 30,
-    "7": 31,
-    "8": 31,
-    "9": 30,
-    "10": 31,
-    "11": 30,
-    "12": 31,
-  };
 
-  const yearRange = [1940, 2023];
   const { CreateUser } = useAuth();
 
   const { name, email, password } = useLocalSearchParams();
@@ -103,7 +88,7 @@ export default function SignUpScreen22() {
     "Strength",
     "Aesthetics",
   ]);
-  const [ActivitiesTags] = useState(["Basic", "Powerlifting", "Cardio"]);
+  const [ActivitiesTags] = useState(["Basic", "Powerlifting", "Cardio", "Recreational"]);
   const [WorkoutTimeTags] = useState(["Morning", "Afternoon", "Night"]);
 
   const onChange = (event, selectedDate) => {
@@ -118,15 +103,11 @@ export default function SignUpScreen22() {
     }));
   };
 
-  const updateTags = () => {
-    // Filter the keys of selectedTags where the value is true
-    const activeTags = Object.keys(selectedTags).filter(
-      (key) => selectedTags[key]
-    );
-
-    // Update the tags state with these active tags
+  useEffect(() => {
+    const activeTags = Object.keys(selectedTags).filter(key => selectedTags[key]);
     setTags(activeTags);
-  };
+
+  }, [selectedTags]);
 
   const checkWords = (text: string) => {
     const charCount = text.trim().length; // Trim to remove leading/trailing whitespace and count characters
@@ -145,7 +126,22 @@ export default function SignUpScreen22() {
       const year = pickerDate.getFullYear();
       const month = pickerDate.getMonth();
       const day = pickerDate.getDate();
-      updateTags();
+
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth();
+      const currentDay = currentDate.getDate();
+
+      // Calculate age
+      let age = currentYear - year;
+      if (currentMonth < month || (currentMonth === month && currentDay < day)) {
+        age--; // Subtract a year if the current date is before the birth date
+      }
+
+      if (age < 18) {
+        Alert.alert("Error", "You must be at least 18 years old.");
+        return;
+      }
 
       if (tags.length == 0) {
         Alert.alert("Select at least 1 tag to get started");
@@ -161,7 +157,7 @@ export default function SignUpScreen22() {
       const isValidWorkoutTime = checkCategoryTags(WorkoutTimeTags);
 
       if (!isValidFitnessGoal || !isValidActivity || !isValidWorkoutTime) {
-        Alert.alert("Error", "Please select at most one tag from each category.");
+        Alert.alert("Error", "You can select at most one tag from each category.");
         return;
       }
 
