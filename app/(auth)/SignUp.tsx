@@ -73,7 +73,7 @@ export default function SignUpScreen() {
       console.log('name is ' + name);
       try {
         router.navigate({
-          pathname: "SignUp2",
+          pathname: "SignUp22",
           params: {
             name: name,
             password: password,
