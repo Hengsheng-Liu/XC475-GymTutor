@@ -50,8 +50,8 @@ const FriendProfilePage = () => {
   const openChat = async (friend: any) => {
     if (currUser) {
       console.log(findOrCreateChat(currUser.uid, friend.uid));
-      globalState.user = friend; // Set the selected user in the global state
-      router.navigate("ChatPage"); // Then navigate to ChatPage
+      globalState.user = friend; 
+      router.navigate("ChatPage"); 
     };
   };
 

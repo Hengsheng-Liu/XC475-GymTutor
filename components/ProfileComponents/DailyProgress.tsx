@@ -12,7 +12,7 @@ import {
   Progress,
 } from "native-base";
 import { Achievementprops } from "../FirebaseUserFunctions";
-import { getSVG } from "./AchievementFunction";
+import  getSVG  from "./AchievementFunction";
 import { router } from "expo-router";
 interface DailyProgressProps {
   Inprogress: Achievementprops[];
