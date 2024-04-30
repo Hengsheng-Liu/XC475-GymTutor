@@ -48,18 +48,18 @@ export default function SelectWorkout() {
           }
         }
       )
-        UpdateAchievement["CheckIn"].forEach((item) => {
-          item.curr += 1;
-          if (item.curr === item.max) {
-            CompletedHolder.push(item);
-            item.achieved = true;
-          }else if(item.curr < item.max){
-            InProgressHolder.push(item);
-          }
-
-        }
-      );
     })
+    UpdateAchievement["CheckIn"].forEach((item) => {
+      item.curr += 1;
+      if (item.curr === item.max) {
+        CompletedHolder.push(item);
+        item.achieved = true;
+      }else if(item.curr < item.max){
+        InProgressHolder.push(item);
+      }
+
+    }
+  );
     setInprogress(InProgressHolder);
     setCompleted(CompletedHolder);
     if(InProgressHolder.length > 0 || CompletedHolder.length > 0){

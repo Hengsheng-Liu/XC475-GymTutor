@@ -162,11 +162,15 @@ const signOutUser = async () => {
               <Popover.Content w="56">
                 <Popover.Body>
                   <Pressable onPress={() => NewBackground()} mb={1} _pressed={{opacity:0.5}}>
-                    <Text>Change Background</Text>
+                    <Text>Edit Background</Text>
+                  </Pressable>
+                  <Pressable onPress={() => router.push({pathname:"/AchievementPage",params:{edit:true,display:userInfo?.display}})} _pressed={{opacity:0.5}}>
+                    <Text>Edit Achievements</Text>
                   </Pressable>
                   <Pressable onPress={signOutUser}  _pressed={{opacity:0.5}}>                  
                   <Text>Logout</Text>
-                </Pressable>
+                  </Pressable>
+
               </Popover.Body>
             </Popover.Content>
           </Popover>

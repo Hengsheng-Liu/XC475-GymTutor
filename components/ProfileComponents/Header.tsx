@@ -65,11 +65,11 @@ export default function Header({ name, icon, gym, background }: HeaderProps) {
         try {
           const Avatar = await getUserPicture(icon, "Avatar");
           const backgroundImg = await getUserPicture(background, "Background");
-          if (Avatar){
-          setUserIcon(Avatar);
+          if (Avatar) {
+            setUserIcon(Avatar);
           }
-          if (backgroundImg){
-          setBackgroundUrl(backgroundImg);
+          if (backgroundImg) {
+            setBackgroundUrl(backgroundImg);
           }
         } catch (error) {
           console.error("Failed to fetch user icon:", error);
@@ -87,34 +87,29 @@ export default function Header({ name, icon, gym, background }: HeaderProps) {
   return (
     <Flex>
       <Flex marginBottom={2}>
-        <ImageBackground
-          source={{ uri: backgroundUrl }}
-          style={styles.image}
-        >
-          <Flex alignItems={"center"}
-          marginTop={"1/3"}
-          >
+        <ImageBackground source={{ uri: backgroundUrl }} style={styles.image}>
+
+          <Flex alignItems={"center"} marginTop={"1/3"}>
             <Image
               size={115}
               borderRadius={100}
               source={{ uri: userIcon }}
               alt="User Icon"
-
             />
             <IconButton
               icon={<Entypo name="camera" size={28} color="#FB923C" />}
               zIndex={1}
               marginTop={"-10"}
               marginLeft={"20"}
-              _pressed={{ opacity: 0.5}}
+              _pressed={{ opacity: 0.5 }}
               background="transparent"
               onPress={ReTakeAvatar}
             />
           </Flex>
         </ImageBackground>
-        <Flex  alignItems={"center"}>
+        <Flex alignItems={"center"}>
           <Heading size="lg">{name}</Heading>
-          <Text isTruncated maxW="4/5" >
+          <Text isTruncated maxW="4/5">
             {gym}
           </Text>
         </Flex>
@@ -132,6 +127,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "100%",
     height: 200,
-    marginBottom: 25
+    marginBottom: 25,
   },
 });
