@@ -28,15 +28,6 @@ export default function CheckInRoutine(
   return (
     <NativeBaseProvider>
       <SafeAreaView style= {{backgroundColor:"#FFFFFF", flex:1}}>
-          <Row alignItems={"center"}>
-            <Button _pressed={{opacity: 0.5}} backgroundColor="#FFF" onPress={() => router.back()}>
-              <FontAwesome name="chevron-left" size={24} color="#A3A3A3" />
-            </Button>
-            <Spacer/>
-            <Button _pressed={{opacity: 0.5}} backgroundColor="#FFF" onPress={() => router.push("/Home")}>
-              <Entypo name="cross" size={30} color="#A3A3A3" />
-            </Button>
-          </Row>
         <Flex alignItems={"center"} justifyContent={"center"}flex={1}>
           <Box> 
             <Flex flexDir={"row"} justifyContent={"center"}>
@@ -53,13 +44,18 @@ export default function CheckInRoutine(
             <Button background="#EA580C" rounded={10} width={175} _pressed={{opacity: 0.5}} onPress={navigation}>
                 <Text fontSize={20} fontWeight={700} color={"#FAFAFA"}>{ButtonText}</Text>
             </Button>
-
             {
               skipPhoto &&
-              <Pressable _pressed={{opacity: 0.5}} onPress={() => router.push("SelectWorkout")} marginTop={3} paddingX={5}>
+              <Pressable _pressed={{opacity: 0.5}} onPress={() => router.push("/SelectWorkout")} marginTop={3} paddingX={5}>
                 <Text color = {"muted.500"} fontSize="md" >Skip photo</Text>
               </Pressable>
             }
+            {
+              Process &&
+              <Pressable _pressed={{opacity: 0.5}} onPress={() => router.push("/Home")} marginTop={3} paddingX={5}>
+                <Text color = {"muted.500"} fontSize="md" >Not Yet</Text>
+              </Pressable>
+            }        
         </Flex>
       </SafeAreaView>
     </NativeBaseProvider>
