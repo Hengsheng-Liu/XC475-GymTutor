@@ -106,7 +106,7 @@ const signOutUser = async () => {
     try {
       const { status } = await Camera.requestCameraPermissionsAsync();
       if (status === "granted") {
-        router.push({
+        router.replace({
           pathname: "/Photo",
           params: { pictureType: "Background" },
         });

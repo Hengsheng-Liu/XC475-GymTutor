@@ -46,13 +46,13 @@ export default function CheckInRoutine(
             </Button>
             {
               skipPhoto &&
-              <Pressable _pressed={{opacity: 0.5}} onPress={() => router.push("/SelectWorkout")} marginTop={3} paddingX={5}>
+              <Pressable _pressed={{opacity: 0.5}} onPress={() => router.replace("/SelectWorkout")} marginTop={3} paddingX={5}>
                 <Text color = {"muted.500"} fontSize="md" >Skip photo</Text>
               </Pressable>
             }
             {
               Process &&
-              <Pressable _pressed={{opacity: 0.5}} onPress={() => router.push("/Home")} marginTop={3} paddingX={5}>
+              <Pressable _pressed={{opacity: 0.5}} onPress={() => router.replace("/Home")} marginTop={3} paddingX={5}>
                 <Text color = {"muted.500"} fontSize="md" >Not Yet</Text>
               </Pressable>
             }        
