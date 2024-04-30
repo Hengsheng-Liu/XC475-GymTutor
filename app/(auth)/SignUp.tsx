@@ -178,7 +178,11 @@ export default function SignUpScreen() {
           </Text>
 
           <Box alignItems="left">
-            <Input mx="3" w="90%" value={name} onChangeText={setName} />
+            <Input mx="3" w="90%" value={name} onChangeText={setName}
+              _focus={{
+                borderColor: "primary.100",  // Change to your preferred color
+                backgroundColor: "white", // Change background color on focus
+              }} />
           </Box>
 
           <Text
@@ -194,7 +198,11 @@ export default function SignUpScreen() {
           </Text>
 
           <Box alignItems="left">
-            <Input mx="3" w="90%" value={email} onChangeText={setEmail} />
+            <Input mx="3" w="90%" value={email} onChangeText={text => setEmail(text.toLowerCase())}
+              _focus={{
+                borderColor: "primary.100",  // Change to your preferred color
+                backgroundColor: "white", // Change background color on focus
+              }} />
           </Box>
 
           <Text
@@ -216,6 +224,10 @@ export default function SignUpScreen() {
               value={password}
               onChangeText={handlePasswordChange}
               secureTextEntry
+              _focus={{
+                borderColor: "primary.100",  // Change to your preferred color
+                backgroundColor: "white", // Change background color on focus
+              }}
             />
           </Box>
 
@@ -238,6 +250,10 @@ export default function SignUpScreen() {
               value={confirmPassword}
               onChangeText={handleConfirmPasswordChange}
               secureTextEntry
+              _focus={{
+                borderColor: "primary.100",  // Change to your preferred color
+                backgroundColor: "white", // Change background color on focus
+              }}
             />
           </Box>
 

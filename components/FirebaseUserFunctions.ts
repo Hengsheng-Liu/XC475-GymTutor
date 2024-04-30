@@ -136,8 +136,11 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters, n
                 if (memberIds.length === 0) {
                     return [];
                 }
+            } else {
+                return [];
             }
-
+        } else {
+            return [];
         }
 
         // Query  users from their gym.
