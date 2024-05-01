@@ -154,13 +154,13 @@ export default function SignUpScreen22() {
         Alert.alert("Error", "You must be at least 18 years old.");
         return;
       }
-      if (!Goal || !Activity || !WhoAreYou) {
+      if (!Activity || !WhoAreYou) {
         Alert.alert(
           "Please select one tag for each category to continue."
         );
         return;
       }
-      const tags = [Goal, Activity, WhoAreYou];
+      const tags = [Activity, WhoAreYou];
       if (
         year &&
         month &&
@@ -365,14 +365,6 @@ export default function SignUpScreen22() {
               >
                 {WhoAreYouTags1.map((tag, index) => (
                   <Tag tag = {tag} setTag={setWhoAreYou} state ={WhoAreYou}/>
-                ))}
-              </Flex>
-              <Text fontSize="md" mt={2} mb={2} m={1}>
-                Fitness Goals:
-              </Text>
-              <Flex flexDirection="row" justifyContent="space-evenly">
-                {FitnessGoalTags.map((tag, index) => (
-                  <Tag tag = {tag} setTag={setGoal} state = {Goal}/>
                 ))}
               </Flex>
               <Text fontSize="md" mt={2} mb={2} m={1}>
