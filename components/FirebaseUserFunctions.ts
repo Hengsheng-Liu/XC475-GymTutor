@@ -73,6 +73,7 @@ export const DefaultAchievement: Achievements = {
         { "name": "Check-In Champion", "curr": 0, "max": 15, "description": "Awarded for reaching 15 total check-ins.", "achieved": false },
         { "name": "Consistency Conqueror", "curr": 0, "max": 25, "description": "Awarded for making 25 check-ins in a single month.", "achieved": false },
         { "name": "Iron Dedication", "curr": 0, "max": 50, "description": "Awarded for hitting 50 consecutive check-ins without missing a day.", "achieved": false },
+        { "name": "SpotMe Superstar", "curr": 0, "max": 100, "description": "Awarded for achieving 100 total check-ins.", "achieved": false }
     ]
 };
 
@@ -144,6 +145,7 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters, n
 
         // Query  users from their gym.
         // TODO: Maybe query only nearby users.
+        
         let usersQuery = query(collection(db, 'Users'), where('uid', 'in', memberIds));
 
         // Apply additional filters if provided

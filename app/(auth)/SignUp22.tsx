@@ -15,6 +15,7 @@ import {
   Text,
   ScrollView,
   Badge,
+  FlatList,
 } from "native-base";
 import { AntDesign } from "@expo/vector-icons";
 import Tags from "../../components/ProfileComponents/Tags";
@@ -34,7 +35,7 @@ import { useAuth } from "../../Context/AuthContext";
 import { useRoute } from "@react-navigation/native";
 import { addUser } from "@/components/FirebaseUserFunctions";
 import { Filters, defaultFilters } from "@/app/(tabs)/(HomePage)/Filter";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 export const AddUserToDB = async (
   response: UserCredential,
@@ -69,7 +70,7 @@ export const AddUserToDB = async (
 export default function SignUpScreen22() {
 
   const { CreateUser } = useAuth();
-
+  const emptyData = [];
   const { name, email, password } = useLocalSearchParams();
   const [month, setMonth] = useState<string>("");
   const [date, setDate] = useState<string>("");
@@ -196,7 +197,6 @@ export default function SignUpScreen22() {
     }
   };
 
-
   const theme = extendTheme({
     colors: {
       primary: {
@@ -229,33 +229,35 @@ export default function SignUpScreen22() {
           justifyContent="space-between"
           alignItems="center"
         >
-          <Button
-            bg="primary.400"
-            startIcon={<ChevronLeftIcon size="md" color="primary.200" />}
-            onPress={() => router.navigate("SignUp")}
-          ></Button>
-          <Text
-            fontSize="20"
-            fontWeight="bold"
-            textAlign="center"
-            flex="1"
-            color="primary.200"
-            mr="10"
-            p="2"
-          >
-            Registration
-          </Text>
-        </Flex>
-        <Box marginTop={"8"} ml={"3"} mr={"3"} flex="1 ">
-          <Text
-            fontSize="28"
-            fontWeight="700"
-            color="primary.200"
-            lineHeight="28"
-            p="3"
-          >
-            Create your profile
-          </Text>
+            <Pressable
+              padding={"2"}
+              onPress={() => router.back()}
+              _pressed={{ opacity: 0.5 }}
+            >
+              <ChevronLeftIcon size="md" color="primary.200" />
+            </Pressable>
+            <Text
+              fontSize="20"
+              fontWeight="bold"
+              textAlign="center"
+              flex="1"
+              color="primary.200"
+              mr="10"
+              p="2"
+            >
+              Registration
+            </Text>
+          </Flex>
+          <Box ml={"3"} mr={"3"} flex="1 ">
+            <Text
+              fontSize="28"
+              fontWeight="700"
+              color="primary.200"
+              lineHeight="28"
+              p="3"
+            >
+              Create your profile
+            </Text>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', padding: 2, marginTop: 8 }}>
             <Text

@@ -81,7 +81,7 @@ export const handleCheckIn = async (userGym:[string, string] | undefined, checkI
     } else {
       if (location) {
         if (pointInPolygon(location, GymBound)) {
-          router.push("/CheckIn");
+          router.replace("/CheckIn");
         } else {
           alert(
             "You are not at the gym location, please check in at the gym location"
