@@ -385,7 +385,8 @@ export default function SignUpScreen22() {
               </Flex>
             </Flex>
           </Flex>
-            <Flex alignItems={"center"} mt={8}>
+        </Flex>
+        <Flex flex={1} alignItems={"center"} justifyContent={"flex-end"} justifyItems={"flex-end"} pb={1}>
               <Button
                 background={"#F97316"}
                 _pressed={{ opacity: 0.5 }}
@@ -403,7 +404,6 @@ export default function SignUpScreen22() {
                 </Heading>
               </Button>
             </Flex>
-        </Flex>
       </SafeAreaView>
     </NativeBaseProvider>
   );
