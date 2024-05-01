@@ -84,7 +84,7 @@ const CheckedUserPreview: React.FC<FriendProps> = ({ friend }) => {
             <Row mr="1" ml="1" alignItems="center" justifyContent="center">
                 <Image source={{ uri: friendPicture }} alt="Check In Picture" size="xl" height="180" resizeMode="cover" borderRadius="10" flex="1"/>
             </Row>
-            <Row justifyContent="center">
+            <Row justifyContent="center" alignItems="center" minH={12}>
                 <Text fontSize="sm" numberOfLines={2} textAlign="center" isTruncated maxWidth="85%">
                     {<Text color="trueGray.600">{friend.bio}</Text>}
                 </Text>

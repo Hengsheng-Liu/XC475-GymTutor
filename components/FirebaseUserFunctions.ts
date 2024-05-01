@@ -101,12 +101,11 @@ export interface IUser {
     icon: string;
     Achievement: Achievements;
     gymExperience: string;
-    currentlyMessaging: String[];
     gymId: string;
     filters: Filters;
     birthday: Birthday;
     display: string[];
-    CurrentlyMessaging: CurrentlyMessagingEntry[]
+    currentlyMessaging: CurrentlyMessagingEntry[]
     background: string;
 
 }
@@ -178,8 +177,7 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters, n
             const { applyFilters, sex, age, gymExperience } = filters;
             // Filter by sex if specified
             if (applyFilters[1] && sex.length > 0) {
-                let sex2 = [...sex, "other"]
-                usersData = usersData.filter(user => sex2.includes(user.sex));
+                usersData = usersData.filter(user => sex.includes(user.sex));
             }
 
             // Filter by gym experience if specified
@@ -271,15 +269,14 @@ export async function addUser(
             gym: gym,
             gymId: gymId,
             checkInHistory: [],
-            icon: sex === "female" ? "gs://spotme-8591a.appspot.com/Default/WomenProfile.jpg" : "gs://spotme-8591a.appspot.com/Default/MenProfile.jpg",
-            achievements: [],
+            icon: sex === "female" ? "gs://spotme-8591a.appspot.com/Default/WomenProfile.png" : sex === "male" ? "gs://spotme-8591a.appspot.com/Default/MenProfile.png" : "gs://spotme-8591a.appspot.com/Default/default.png",
             gymExperience: gymExperience,
-            CurrentlyMessaging: [],
+            currentlyMessaging: [],
             filters: filters,
             birthday: birthday,
             Achievement: DefaultAchievement,
             display: [],
-            background: "gs://spotme-8591a.appspot.com/Default/backgroundImage.jpg"
+            background: "gs://spotme-8591a.appspot.com/Default/background.jpg"
         });
 
         console.log("Document written for user: ", uid);
@@ -413,6 +410,11 @@ export async function updateUsers(): Promise<void> {
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
+                friends: [],
+                friendRequests: [],
+                rejectedRequests: [],
+                blockedUsers: [],
+                currentlyMessaging: [],
             };
 
             // Update document if any field is missing
@@ -584,9 +586,9 @@ export const getUserPicture = async (iconUrl: string, type: string): Promise<str
         console.error("Error getting user picture: ", error);
         switch (type) {
             case "Avatar":
-                return getUserPicture("gs://spotme-8591a.appspot.com/Default/MenProfile.jpg", "Avatar");
+                return getUserPicture("gs://spotme-8591a.appspot.com/Default/default.png", "Avatar");
             case "Background":
-                return getUserPicture("gs://spotme-8591a.appspot.com/Default/backgroundImage.jpg", "Background");
+                return getUserPicture("gs://spotme-8591a.appspot.com/Default/background.jpg", "Background");
             default:
                 return undefined;
         }

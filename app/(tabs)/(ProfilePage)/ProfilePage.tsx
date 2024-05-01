@@ -184,7 +184,7 @@ const signOutUser = async () => {
                   icon={userInfo.icon}
                   background={userInfo.background}
                   />
-                  <Box ml={"3"} mr={"3"}>
+                  <Box ml={"3"} mr={"3"} pb={6} mb={6}>
                     <Attribute
                       description={userInfo.tags}
                       onSaveTag={updateTags}

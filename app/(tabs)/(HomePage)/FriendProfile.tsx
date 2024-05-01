@@ -5,7 +5,7 @@ import Header from "../../../components/FriendsComponents/Header2";
 import Description from "../../../components/FriendsComponents/Description";
 import Achievement from "../../../components/FriendsComponents/Achievement";
 import Attribute from "../../../components/FriendsComponents/Attribute";
-import History from "../../../components/ProfileComponents/History";
+import History from "../../../components/FriendsComponents/History";
 import DropdownButton from "@/components/FriendsComponents/dropDownButton";
 import { IUser } from "../../../components/FirebaseUserFunctions";
 import { SafeAreaView } from "react-native";
@@ -257,7 +257,7 @@ const FriendProfilePage = () => {
                       </Popover.Content>
                     </Popover>}
                 </HStack>
-                <Flex ml={"3"} mr={"3"}>
+                <Flex ml={"3"} mr={"3"} pb={6} mb={6}>
                   <Description bio={userInfo.bio} />
                   <Achievement display={userInfo.display} />
                   <History history={userInfo.checkInHistory} />

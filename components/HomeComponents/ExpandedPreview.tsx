@@ -125,7 +125,7 @@ interface Props {
             {selectedUser.name}, {selectedUser.age}
           </Text>
           {/* <Text fontSize="sm" color="trueGray.500">{selectedUser.status}</Text> */}
-          <Text color= "trueGray.900" fontSize="sm" numberOfLines={2} textAlign="center" isTruncated maxWidth="75%">
+          <Text color= "trueGray.900" fontSize="sm" height={20} numberOfLines={2} textAlign="center" isTruncated maxWidth="75%">
             {selectedUser.bio}
           </Text>
           <Row alignItems="center" mr="2" ml="2" mb={0} p="3" pt="2" pb="0" justifyContent={"space-between"}>
