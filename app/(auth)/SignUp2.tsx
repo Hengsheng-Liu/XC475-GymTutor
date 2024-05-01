@@ -233,7 +233,7 @@ export default function SignUpScreen22() {
           </Text>
         </Flex>
         <Flex ml={"3"} mr={"3"}>
-          <Text fontSize="28" fontWeight="700" lineHeight="28" p="3" pt="0">
+          <Text fontSize="28" fontWeight="700" lineHeight="28" p="3" pb="1">
             Create your profile
           </Text>
 
@@ -250,7 +250,7 @@ export default function SignUpScreen22() {
               fontWeight="400"
               lineHeight="20"
               letterSpacing="0.25"
-              ml={2}
+              ml={2} mt={3} mb={3}
             >
               Your Birthday:
             </Text>
@@ -275,7 +275,7 @@ export default function SignUpScreen22() {
             fontWeight="400"
             lineHeight="20"
             letterSpacing="0.25"
-            p="3"
+            p="3" pt="2" pb="2"
           >
             Gender
           </Text>
@@ -303,7 +303,7 @@ export default function SignUpScreen22() {
             fontWeight="400"
             lineHeight="20"
             letterSpacing="0.25"
-            p="3"
+            p="3" pb="1"
           >
             Gym Experience
           </Text>
@@ -331,7 +331,7 @@ export default function SignUpScreen22() {
             fontWeight="400"
             lineHeight="20"
             letterSpacing="0.25"
-            p="3"
+            p="3" pb="1"
           >
             Bio
           </Text>
@@ -355,7 +355,7 @@ export default function SignUpScreen22() {
             />
           </Box>
 
-          <Flex flexDirection="column" mt={3} px="3">
+          <Flex flexDirection="column" mt={2} px="3">
             <Flex flexDirection="column">
             <Text fontSize="md" m={1} mt={2} mb={2} >
                 Who Are You?:
