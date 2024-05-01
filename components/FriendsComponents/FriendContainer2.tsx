@@ -85,11 +85,20 @@ const friendContainer: React.FC<FriendProps> = ({ friend, fetchData }) => {
         const updatedFriend = { ...friend };
         const userIndex = updatedFriend.friends.indexOf(userUID);
         updatedFriend.friends.splice(userIndex, 1);
-        updateFriend(updatedFriend);
-      }
-      // Remove userId from friend's friends list
-      updateDoc(friendRef, { friends: arrayRemove(userUID) });
 
+        const friendRequests = friend.friendRequests;
+        const updatedRequests = friendRequests.filter(request => {
+            if (request.friend === currUser.uid) {
+                return;
+            } else {
+                    return request;
+            }});
+        updatedFriend.friendRequests = updatedRequests;
+        updateFriend(updatedFriend);
+        // Remove userId from friend's friends list
+        updateDoc(friendRef, { friends: arrayRemove(userUID), friendRequests: updatedFriend.friendRequests  });
+      }
+      
       console.log('Friend removed successfully');
     } catch (error) {
       console.error('Error removing friend:', error);
