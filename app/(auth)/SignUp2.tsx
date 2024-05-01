@@ -356,7 +356,6 @@ export default function SignUpScreen22() {
               </Text>
               <Flex
                 flexDirection="row"
-                flexWrap="wrap"
                 justifyContent="space-evenly"
               >
                 {FitnessGoalTags.map((tag, index) => (
@@ -378,7 +377,6 @@ export default function SignUpScreen22() {
               </Text>
               <Flex
                 flexDirection="row"
-                flexWrap="wrap"
                 justifyContent="space-evenly"
               >
                 {ActivitiesTags.map((tag, index) => (
