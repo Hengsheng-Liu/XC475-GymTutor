@@ -41,7 +41,7 @@ export default function History(
     const dayData = history.find((x) => x.day === day.dateString);
     if(dayData && dayData?.photo) {
       try{
-      router.push({pathname: '/PastPhoto',params:{ pictureUrl: dayData.photo, title: dayData.day}})
+      router.push({pathname: '/PastPhoto2',params:{ pictureUrl: dayData.photo, title: dayData.day}})
       }catch(e){
         console.log(e);
       }

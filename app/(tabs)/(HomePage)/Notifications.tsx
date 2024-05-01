@@ -26,17 +26,24 @@ const NotificationScreen = () => {
   const [acceptedRequests, setAcceptedRequests] = useState<IUser[]>([]); // State to store accepted friend requests
   const { User, currUser, updateCurrUser } = useAuth();
   const [loading, setLoading] = useState<boolean>(true); // State to track loading status
+  const [firstLoad, setFirstLoad] = useState<boolean>(false); // State to track first load
   const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
   const db = firestore;
 
   if (!User) return; // Check if user is null
 
   useEffect(() => {
-    fetchData();
+    if (!firstLoad) {
+      setFirstLoad(true);
+      fetchData();
+    }
+    if (!loading) {
+      fetchData();
+    }
 
     const userDocRef = doc(firestore, 'Users', User.uid);
     const unsubscribe = onSnapshot(userDocRef, () => { // Set up listener for changes in user's document
-      fetchData(); // Fetch data whenever the document changes
+        fetchData(); // Fetch data whenever the document changes
 
     });
 
@@ -93,10 +100,12 @@ const NotificationScreen = () => {
           </TouchableOpacity>
           <Spacer />
           <Box>
-            <Heading fontSize="lg" color="trueGray.800" pr="2">Notifications</Heading>
+            <Heading fontSize="lg" color="trueGray.800">Notifications</Heading>
           </Box>
-          <Spacer />
-          <Text fontSize="3xl">...</Text>
+          <Spacer/>
+          <TouchableOpacity>
+            <FontAwesome name="chevron-left" size={24} color="#FFF" />
+          </TouchableOpacity>
         </Flex>
         <ScrollView style={{ flex: 1, backgroundColor: "#FFF", padding: 15, paddingTop: 0 }}>
           {loading && (
