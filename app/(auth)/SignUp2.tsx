@@ -10,12 +10,8 @@ import {
   Button,
   ChevronLeftIcon,
   Text,
-<<<<<<< HEAD
-  Badge, Heading,
-=======
   Badge,
   Heading,
->>>>>>> 527239c01639db64ffedc0aac66d41a9c443ee8d
 } from "native-base";
 import { AntDesign } from "@expo/vector-icons";
 import Tags from "../../components/ProfileComponents/Tags";
@@ -93,11 +89,11 @@ export default function SignUpScreen22() {
     <Badge
       m={1}
       background={
-        tag === state ? "#7C2D12" : "#FDBA74"
+        tag === state ? "#FDBA74" : "#F7D2AB"
       }
       _text={{
         fontSize: 14,
-        color: tag === state ? "#FAFAFA" : "#211912",
+        color: "#211912",
       }}
       shadow={1}
       borderRadius={4}
@@ -114,7 +110,6 @@ export default function SignUpScreen22() {
     "Foodie",
     "Gym Rat",
     "Busy Bee",
-    "Casual Mover",
     "Outdoorsy"
   ];
   const FitnessGoalTags = ["Bulking", "Cutting", "Strength", "Aesthetics"];
@@ -212,11 +207,12 @@ export default function SignUpScreen22() {
 
   return (
     <NativeBaseProvider theme={theme}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#FFF" }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#FFF"}}>
         <Flex
           flexDir={"row"}
           justifyContent="space-between"
           alignItems="center"
+          pb="5" pt="0"
         >
           <Pressable
             padding={"2"}
@@ -361,7 +357,7 @@ export default function SignUpScreen22() {
 
           <Flex flexDirection="column" mt={3} px="3">
             <Flex flexDirection="column">
-            <Text fontSize="md" m={1}>
+            <Text fontSize="md" m={1} mt={2} mb={2} >
                 Who Are You?:
               </Text>
               <Flex flexDirection="row"
@@ -371,7 +367,7 @@ export default function SignUpScreen22() {
                   <Tag tag = {tag} setTag={setWhoAreYou} state ={WhoAreYou}/>
                 ))}
               </Flex>
-              <Text fontSize="md" m={1}>
+              <Text fontSize="md" mt={2} mb={2} m={1}>
                 Fitness Goals:
               </Text>
               <Flex flexDirection="row" justifyContent="space-evenly">
@@ -379,16 +375,17 @@ export default function SignUpScreen22() {
                   <Tag tag = {tag} setTag={setGoal} state = {Goal}/>
                 ))}
               </Flex>
-              <Text fontSize="md" m={1}>
+              <Text fontSize="md" mt={2} mb={2} m={1}>
                 Activities:
               </Text>
-              <Flex flexDirection="row" justifyContent="space-evenly">
+              <Flex flexDirection="row" flexWrap={"wrap"} justifyContent="space-evenly">
                 {ActivitiesTags.map((tag, index) => (
                   <Tag tag = {tag} setTag={setActivity} state={Activity}/>
                 ))}
               </Flex>
             </Flex>
-            <Flex alignItems={"center"} mt={10}>
+          </Flex>
+            <Flex alignItems={"center"} mt={8}>
               <Button
                 background={"#F97316"}
                 _pressed={{ opacity: 0.5 }}
@@ -396,6 +393,9 @@ export default function SignUpScreen22() {
                 rounded="md"
                 height={"12"}
                 shadow="3"
+                width="90%"
+                pt="3.5"
+                pb="3.5"
                 borderRadius="5"
               >
                 <Heading color={"#FFF"} fontStyle="normal" fontSize="md">
@@ -403,7 +403,6 @@ export default function SignUpScreen22() {
                 </Heading>
               </Button>
             </Flex>
-          </Flex>
         </Flex>
       </SafeAreaView>
     </NativeBaseProvider>
