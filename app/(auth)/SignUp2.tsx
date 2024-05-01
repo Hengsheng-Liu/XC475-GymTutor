@@ -10,7 +10,12 @@ import {
   Button,
   ChevronLeftIcon,
   Text,
+<<<<<<< HEAD
   Badge, Heading,
+=======
+  Badge,
+  Heading,
+>>>>>>> 527239c01639db64ffedc0aac66d41a9c443ee8d
 } from "native-base";
 import { AntDesign } from "@expo/vector-icons";
 import Tags from "../../components/ProfileComponents/Tags";
@@ -57,7 +62,6 @@ export const AddUserToDB = async (
 };
 
 export default function SignUpScreen22() {
-
   const { CreateUser } = useAuth();
   const emptyData = [];
   const { name, email, password } = useLocalSearchParams();
@@ -68,32 +72,58 @@ export default function SignUpScreen22() {
   const [gymExperience, setGymExperience] = useState<string>("");
   const [gender, setGender] = useState<string | undefined>();
   const [bio, setBio] = useState<string | undefined>();
-  const [tags, setTags] = useState<string[]>([]);
-  const [selectedTags, setSelectedTags] = useState<{ [key: string]: boolean }>(
-    {}
-  );
-  const WhoAreYouTags = ["Wellness Fan", "Early Riser", "Adventurer", "Foodie", "Gym Rat", "Busy Bee", "Homebody", "Outdoorsy"]
-  const FitnessGoalTags = ["Bulking", "Cutting", "Strength","Aesthetics"];
+  const [Goal, setGoal] = useState<string | undefined>();
+  const [Activity, setActivity] = useState<string | undefined>();
+  const [WhoAreYou, setWhoAreYou] = useState<string | undefined>();
+  interface TagProps {
+    tag: string;
+    setTag: React.Dispatch<React.SetStateAction<string | undefined>>
+    state: string | undefined
+  }
+  const Tag = ({tag,setTag,state}:TagProps) => {
+    const handlePress = () => {
+    if (tag === state) {
+      setTag(undefined);
+      return;
+    }
+      setTag(tag);
+    };
+    return(
+    <Pressable key={tag} onPress={() => handlePress()}>
+    <Badge
+      m={1}
+      background={
+        tag === state ? "#7C2D12" : "#FDBA74"
+      }
+      _text={{
+        fontSize: 14,
+        color: tag === state ? "#FAFAFA" : "#211912",
+      }}
+      shadow={1}
+      borderRadius={4}
+    >
+      {tag}
+    </Badge>
+  </Pressable>
+    )
+  }
+  const WhoAreYouTags1 = [
+    "Wellness Guru",
+    "Early Riser",
+    "Adventurer",
+    "Foodie",
+    "Gym Rat",
+    "Busy Bee",
+    "Casual Mover",
+    "Outdoorsy"
+  ];
+  const FitnessGoalTags = ["Bulking", "Cutting", "Strength", "Aesthetics"];
   const ActivitiesTags = ["Powerlifting", "Cardio", "Recreational", "Sports", "Group Class", "Lifting", "Dance"];
-
+  
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setPickerDate(currentDate);
   };
-
-  const handleToggleTag = (tag) => {
-    setSelectedTags((prevTags) => ({
-      ...prevTags,
-      [tag]: !prevTags[tag],
-    }));
-  };
-
-  useEffect(() => {
-    const activeTags = Object.keys(selectedTags).filter(key => selectedTags[key]);
-    setTags(activeTags);
-
-  }, [selectedTags]);
-
   const checkWords = (text: string) => {
     const charCount = text.trim().length; // Trim to remove leading/trailing whitespace and count characters
     if (charCount <= 200) {
@@ -104,7 +134,6 @@ export default function SignUpScreen22() {
       return false;
     }
   };
-
 
   const finishSignUp = async () => {
     try {
@@ -119,7 +148,10 @@ export default function SignUpScreen22() {
 
       // Calculate age
       let age = currentYear - year;
-      if (currentMonth < month || (currentMonth === month && currentDay < day)) {
+      if (
+        currentMonth < month ||
+        (currentMonth === month && currentDay < day)
+      ) {
         age--; // Subtract a year if the current date is before the birth date
       }
 
@@ -127,26 +159,23 @@ export default function SignUpScreen22() {
         Alert.alert("Error", "You must be at least 18 years old.");
         return;
       }
-
-      if (tags.length == 0) {
-        Alert.alert("Select at least 1 tag to get started");
+      if (!Goal || !Activity || !WhoAreYou) {
+        Alert.alert(
+          "Please select one tag for each category to continue."
+        );
         return;
       }
-
-      // Function to check tags count from each category
-      const checkCategoryTags = (categoryTags) => tags.filter(tag => categoryTags.includes(tag)).length <= 2;
-
-      // Verify each category has at most one tag
-      const isValidFitnessGoal = checkCategoryTags(FitnessGoalTags);
-      const isValidActivity = checkCategoryTags(ActivitiesTags);
-      const isValidWorkoutTime = checkCategoryTags(WhoAreYouTags);
-
-      if (!isValidFitnessGoal || !isValidActivity || !isValidWorkoutTime) {
-        Alert.alert("Error", "You can select at most two tags from each category.");
-        return;
-      }
-
-      if (year && month && day && gymExperience && gender && bio && tags && checkWords(bio)) {
+      const tags = [Goal, Activity, WhoAreYou];
+      if (
+        year &&
+        month &&
+        day &&
+        gymExperience &&
+        gender &&
+        bio &&
+        tags &&
+        checkWords(bio)
+      ) {
         if (email && password) {
           const userCredential = await CreateUser(
             email as string,
@@ -163,7 +192,7 @@ export default function SignUpScreen22() {
             month,
             day,
             tags
-          ); // Assuming this function adds the user details to your Firestore.
+          ); 
 
           router.replace("/LoadingPage");
         } else {
@@ -173,7 +202,7 @@ export default function SignUpScreen22() {
           );
         }
       } else {
-        console.log("Please ensure all fields are correctly filled.");
+        Alert.alert("Please ensure all fields are correctly filled.");
       }
     } catch (error) {
       console.error("Sign up failed:", error);
@@ -207,27 +236,27 @@ export default function SignUpScreen22() {
             Registration
           </Text>
         </Flex>
-        <Box ml={"3"} mr={"3"} flex="1 ">
-          <Text
-            fontSize="28"
-            fontWeight="700"
-            lineHeight="28"
-            p="3"
-          >
+        <Flex ml={"3"} mr={"3"}>
+          <Text fontSize="28" fontWeight="700" lineHeight="28" p="3">
             Create your profile
           </Text>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', padding: 2, marginTop: 8 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              padding: 2,
+              marginTop: 8,
+            }}
+          >
             <Text
               fontSize="16"
               fontWeight="400"
               lineHeight="20"
               letterSpacing="0.25"
-              p="3"
-              mt="1"
-              marginRight="-4" // Adjust spacing between text and date picker
+              ml={2}
             >
-              Your Birthday
+              Your Birthday:
             </Text>
             <Box
               flexDirection="row"
@@ -245,14 +274,12 @@ export default function SignUpScreen22() {
               />
             </Box>
           </View>
-
           <Text
             fontSize="16"
             fontWeight="400"
             lineHeight="20"
             letterSpacing="0.25"
             p="3"
-            mt="0"
           >
             Gender
           </Text>
@@ -281,7 +308,6 @@ export default function SignUpScreen22() {
             lineHeight="20"
             letterSpacing="0.25"
             p="3"
-            mt="3"
           >
             Gym Experience
           </Text>
@@ -293,7 +319,7 @@ export default function SignUpScreen22() {
               accessibilityLabel="Choose Gym Experience"
               placeholder="Gym Experience"
               _selectedItem={{
-                bg: "#fac8a2"
+                bg: "#fac8a2",
               }}
               mt={1}
               onValueChange={(itemValue) => setGymExperience(itemValue)}
@@ -310,7 +336,6 @@ export default function SignUpScreen22() {
             lineHeight="20"
             letterSpacing="0.25"
             p="3"
-            mt="3"
           >
             Bio
           </Text>
@@ -328,84 +353,43 @@ export default function SignUpScreen22() {
               multiline={false}
               placeholder="Create a bio! (200 characters max)"
               _focus={{
-                borderColor: "#F97316",  // Change to your preferred color
+                borderColor: "#F97316", // Change to your preferred color
                 backgroundColor: "white", // Change background color on focus
               }}
             />
           </Box>
 
-          <Flex flexDirection="column" mt={1} px="3">
-            <Flex flexDirection="column" mt={3}>
+          <Flex flexDirection="column" mt={3} px="3">
+            <Flex flexDirection="column">
             <Text fontSize="md" m={1}>
-                Who are you?
+                Who Are You?:
               </Text>
-              <Flex
-                flexDirection="row"
-                flexWrap="wrap"
-                justifyContent="space-evenly"
+              <Flex flexDirection="row"
+              flexWrap={"wrap"} justifyContent="space-evenly"
               >
-                {WhoAreYouTags.map((tag, index) => (
-                  <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
-                    <Badge
-                      m={2}
-                      ml={0}
-                      backgroundColor={selectedTags[tag] ? "#fac8a2" : "white"}
-                      shadow={1}
-                      borderRadius={4}
-                    >
-                      {tag}
-                    </Badge>
-                  </Pressable>
+                {WhoAreYouTags1.map((tag, index) => (
+                  <Tag tag = {tag} setTag={setWhoAreYou} state ={WhoAreYou}/>
                 ))}
               </Flex>
               <Text fontSize="md" m={1}>
                 Fitness Goals:
               </Text>
-              <Flex
-                flexDirection="row"
-                flexWrap="wrap"
-                justifyContent="space-evenly"
-              >
+              <Flex flexDirection="row" justifyContent="space-evenly">
                 {FitnessGoalTags.map((tag, index) => (
-                  <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
-                    <Badge
-                      m={2}
-                      ml={0}
-                      backgroundColor={selectedTags[tag] ? "#fac8a2" : "white"}
-                      shadow={1}
-                      borderRadius={4}
-                    >
-                      {tag}
-                    </Badge>
-                  </Pressable>
+                  <Tag tag = {tag} setTag={setGoal} state = {Goal}/>
                 ))}
               </Flex>
               <Text fontSize="md" m={1}>
                 Activities:
               </Text>
-              <Flex
-                flexDirection="row"
-                flexWrap="wrap"
-                justifyContent="space-evenly"
-              >
+              <Flex flexDirection="row" justifyContent="space-evenly">
                 {ActivitiesTags.map((tag, index) => (
-                  <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
-                    <Badge
-                      m={2}
-                      ml={0}
-                      backgroundColor={selectedTags[tag] ? "#fac8a2" : "white"}
-                      shadow={1}
-                      borderRadius={4}
-                    >
-                      {tag}
-                    </Badge>
-                  </Pressable>
+                  <Tag tag = {tag} setTag={setActivity} state={Activity}/>
                 ))}
               </Flex>
             </Flex>
-            <Flex alignItems={"center"}  ml={4} mr={4}>
+            <Flex alignItems={"center"} mt={10}>
               <Button
-                mt={3} width="100%" pt="3.5" pb="3.5"
                 background={"#F97316"}
                 _pressed={{ opacity: 0.5 }}
                 onPress={finishSignUp}
@@ -420,8 +404,10 @@ export default function SignUpScreen22() {
               </Button>
             </Flex>
           </Flex>
-        </Box>
+        </Flex>
       </SafeAreaView>
     </NativeBaseProvider>
   );
+
 }
+
