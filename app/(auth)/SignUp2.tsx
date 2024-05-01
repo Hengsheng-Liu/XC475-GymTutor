@@ -232,7 +232,7 @@ export default function SignUpScreen22() {
           </Text>
         </Flex>
         <Flex ml={"3"} mr={"3"}>
-          <Text fontSize="28" fontWeight="700" lineHeight="28" p="3">
+          <Text fontSize="28" fontWeight="700" lineHeight="28" p="3" pt="1">
             Create your profile
           </Text>
 
