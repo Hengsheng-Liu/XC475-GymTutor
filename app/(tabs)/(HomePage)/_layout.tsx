@@ -9,7 +9,7 @@ export default function HomeLayout() {
         <Stack.Screen name="Notifications" options={{ headerShown: false, navigationBarHidden: true }} />
         <Stack.Screen name="Filter" options={{ headerShown: false, navigationBarHidden: false } }/>
         <Stack.Screen name="index" options={{ headerShown: false, navigationBarHidden: true  }}/>
-        <Stack.Screen name="FriendProfile" options={{ headerShown: false, navigationBarHidden: true, title:"", headerTitle:"" }}/>
+        <Stack.Screen name="FriendProfile" options={{ headerShown: false, navigationBarHidden: true}}/>
       </Stack>
   );
 }
