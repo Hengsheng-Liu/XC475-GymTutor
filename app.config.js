@@ -21,7 +21,7 @@ export const expoConfig = {
       },
     },
     android: {
-      package: "com.spot-me.spotme",
+      package: "com.spot_me.spotme",
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#ffffff",
