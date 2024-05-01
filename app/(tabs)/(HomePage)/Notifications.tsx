@@ -44,12 +44,11 @@ const NotificationScreen = () => {
   }, [User, isFocused]);
 
   const fetchData = async () => {
+    setRequests([]);
     setLoading(true);
     const currUser = await getCurrUser(User.uid);
     updateCurrUser(currUser);
     if (!currUser) return;
-
-    setRequests([]);
     try {
       const friendRequests = currUser.friendRequests;
 

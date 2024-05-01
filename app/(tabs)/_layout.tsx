@@ -20,8 +20,8 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const { User } = useAuth(); 
-  if (!User) {
+  const { User, currUser } = useAuth(); 
+  if (!User || !currUser) {
     return <Redirect href="/LogIn" />;
   } else {
     return (
@@ -49,7 +49,8 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(HomePage)"
           options={{
-            href: "/Home",
+            href: (currUser.gym === "" || currUser.gymId === "") ? "/Home" : "/", // Check if this helped. It blinks from one page to the other when it doesn't have a gym
+            // href:"/Home", use this if not working
             title: "SpotMe",
             headerShown: false,
             tabBarIcon: ({focused, ...props}) => (focused ? 
