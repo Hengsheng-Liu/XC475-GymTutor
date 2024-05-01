@@ -278,8 +278,7 @@ export default function SignUpScreen22() {
               accessibilityLabel="Choose Gender"
               placeholder="Gender"
               _selectedItem={{
-                bg: "teal.600",
-                endIcon: <CheckIcon size="5" />,
+                bgColor: "#fac8a2",
               }}
               mt={1}
               onValueChange={(itemValue) => setGender(itemValue)}
@@ -293,7 +292,6 @@ export default function SignUpScreen22() {
           <Text
             fontSize="16"
             fontWeight="400"
-            color="primary.200"
             lineHeight="20"
             letterSpacing="0.25"
             p="3"
@@ -309,8 +307,7 @@ export default function SignUpScreen22() {
               accessibilityLabel="Choose Gym Experience"
               placeholder="Gym Experience"
               _selectedItem={{
-                bg: "teal.600",
-                endIcon: <CheckIcon size="5" />,
+                bg: "#fac8a2"
               }}
               mt={1}
               onValueChange={(itemValue) => setGymExperience(itemValue)}
@@ -324,7 +321,6 @@ export default function SignUpScreen22() {
           <Text
             fontSize="16"
             fontWeight="400"
-            color="primary.200"
             lineHeight="20"
             letterSpacing="0.25"
             p="3"
