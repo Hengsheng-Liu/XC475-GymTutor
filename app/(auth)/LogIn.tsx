@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React from "react";
+import { useRef } from "react";
 import {
   Alert,
   StyleSheet,
@@ -47,6 +47,7 @@ export default function LogInScreen() {
   const [email, setEmail] = useState<string | undefined>();
   const [password, setPassword] = useState<string | undefined>();
   const { SignIn } = useAuth();
+  const Password_focus = useRef();
 
   const handleLogIn = async () => {
     // Skip credentials (Developer use only)
@@ -165,6 +166,7 @@ export default function LogInScreen() {
                 borderRadius={5}
                 shadow={2}
                 autoCorrect={false}
+                onSubmitEditing={() => Password_focus.current.focus()}
               />
               <Text color={"#FAFAFA"} marginTop={5}>
                 Password
@@ -180,6 +182,7 @@ export default function LogInScreen() {
                 borderRadius={5}
                 onSubmitEditing={handleLogIn}
                 shadow={2}
+                ref={Password_focus}
               />
             </Box>
             <Button
