@@ -131,15 +131,7 @@ export default function LogInScreen() {
     }
   }, [googleResponse]);
   */
-  useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      setUser(user);
-      if (user) {
-        router.replace("/LoadingPage");
-      }
-    });
-  }, []);
-
+ 
   return (
     <NativeBaseProvider>
       <Pressable style={styles.contentView} onPress={Keyboard.dismiss}>

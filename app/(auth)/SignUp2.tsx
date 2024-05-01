@@ -153,13 +153,13 @@ export default function SignUpScreen22() {
         Alert.alert("Error", "You must be at least 18 years old.");
         return;
       }
-      if (!Goal || !Activity || !WhoAreYou) {
+      if (!Activity || !WhoAreYou) {
         Alert.alert(
           "Please select one tag for each category to continue."
         );
         return;
       }
-      const tags = [Goal, Activity, WhoAreYou];
+      const tags = [Activity, WhoAreYou];
       if (
         year &&
         month &&
@@ -232,7 +232,7 @@ export default function SignUpScreen22() {
           </Text>
         </Flex>
         <Flex ml={"3"} mr={"3"}>
-          <Text fontSize="28" fontWeight="700" lineHeight="28" p="3" pt="1">
+          <Text fontSize="28" fontWeight="700" lineHeight="28" p="3" pb="1">
             Create your profile
           </Text>
 
@@ -249,7 +249,7 @@ export default function SignUpScreen22() {
               fontWeight="400"
               lineHeight="20"
               letterSpacing="0.25"
-              ml={2}
+              ml={2} mt={3} mb={3}
             >
               Your Birthday:
             </Text>
@@ -274,7 +274,7 @@ export default function SignUpScreen22() {
             fontWeight="400"
             lineHeight="20"
             letterSpacing="0.25"
-            p="3"
+            p="3" pt="2" pb="2"
           >
             Gender
           </Text>
@@ -302,7 +302,7 @@ export default function SignUpScreen22() {
             fontWeight="400"
             lineHeight="20"
             letterSpacing="0.25"
-            p="3"
+            p="3" pb="1"
           >
             Gym Experience
           </Text>
@@ -330,7 +330,7 @@ export default function SignUpScreen22() {
             fontWeight="400"
             lineHeight="20"
             letterSpacing="0.25"
-            p="3"
+            p="3" pb="1"
           >
             Bio
           </Text>
@@ -354,7 +354,7 @@ export default function SignUpScreen22() {
             />
           </Box>
 
-          <Flex flexDirection="column" mt={3} px="3">
+          <Flex flexDirection="column" mt={2} px="3">
             <Flex flexDirection="column">
             <Text fontSize="md" m={1} mt={2} mb={2} >
                 Who Are You?:
@@ -364,14 +364,6 @@ export default function SignUpScreen22() {
               >
                 {WhoAreYouTags1.map((tag, index) => (
                   <Tag tag = {tag} setTag={setWhoAreYou} state ={WhoAreYou}/>
-                ))}
-              </Flex>
-              <Text fontSize="md" mt={2} mb={2} m={1}>
-                Fitness Goals:
-              </Text>
-              <Flex flexDirection="row" justifyContent="space-evenly">
-                {FitnessGoalTags.map((tag, index) => (
-                  <Tag tag = {tag} setTag={setGoal} state = {Goal}/>
                 ))}
               </Flex>
               <Text fontSize="md" mt={2} mb={2} m={1}>

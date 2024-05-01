@@ -84,7 +84,7 @@ export default function FriendListScreen () {
                 <Heading fontSize="lg" color="trueGray.800">Friends</Heading> 
               </Box>
               <Spacer/>
-              <TouchableOpacity activeOpacity={0.7}>
+              <TouchableOpacity>
                 <FontAwesome name="chevron-left" size={24} color="#FFFFFF" />
               </TouchableOpacity>
             </Row>

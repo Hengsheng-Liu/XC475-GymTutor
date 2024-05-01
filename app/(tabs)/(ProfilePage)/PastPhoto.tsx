@@ -1,10 +1,9 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { StyleSheet, View, Text, Image } from 'react-native';
-import { Flex } from 'native-base';
+import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
+import { Flex, Spacer, Box, Heading } from 'native-base';
 import React, { useEffect, useState } from 'react';
+import { FontAwesome } from '@expo/vector-icons';
 import { getUserPicture } from '@/components/FirebaseUserFunctions';
-import { Stack, useNavigation } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 export default function PastPhoto() {
     const { pictureUrl,title } = useLocalSearchParams();
@@ -22,14 +21,19 @@ export default function PastPhoto() {
     }, [pictureUrl]); 
     return (
         <SafeAreaView style={styles.container}>
-            <View style ={styles.header}>
-                <Ionicons 
-                style={{flex:1}}
-                name="chevron-back-sharp" size={30} color="black" onPress={() => router.back()} />
-                <Text style={styles.title}>{title}</Text>
-                <View style={{flex:1}}>
-                </View>
-            </View>
+            <Flex p={15} mt={8} flexDirection={"row"} alignItems={"center"} justifyContent={"space-evenly"}>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
+                <FontAwesome name="chevron-left" size={24} color="black" />
+            </TouchableOpacity>
+            <Spacer />
+            <Box>
+                <Heading fontSize="lg" color="trueGray.800" pr="2">{title}</Heading>
+            </Box>
+            <Spacer/>
+            <TouchableOpacity>
+                <FontAwesome name="chevron-left" size={24} color='#f2f2f2' />
+            </TouchableOpacity>
+            </Flex>
             {url && (
                 <Image
                     style={{ width: "100%", height: "100%" }}
