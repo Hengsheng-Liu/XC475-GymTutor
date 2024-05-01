@@ -49,9 +49,9 @@ const friendContainer: React.FC<FriendProps> = ({ friend, fetchData }) => {
     }
   }, [currUser, friend.uid, friend.icon]); // Depend on currUser and friend.uid
 
-  const handleUserClick = async (friend) => {
+  const handleUserClick = (friend) => {
     setIsPressed(true);
-    await updateFriend(friend);
+    updateFriend(friend);
     console.log(findOrCreateChat(currUser?.uid, friend.uid));
     globalState.user = friend; // Set the selected user in the global state
     router.navigate("ChatPage"); // Then navigate to ChatPage

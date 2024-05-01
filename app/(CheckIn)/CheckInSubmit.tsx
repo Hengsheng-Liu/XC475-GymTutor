@@ -5,7 +5,7 @@ import { router } from "expo-router";
 import CheckInRoutine from "@/components/CheckInComponents/CheckInRoutine";
 export default function CheckInSubmit() {
     const submitCheckIn = () => {
-        router.push("/Home")
+        router.replace("/Home")
         
     }
 

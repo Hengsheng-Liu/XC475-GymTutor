@@ -158,15 +158,15 @@ const FriendProfilePage = () => {
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView style={{ backgroundColor: "#FFF" }}>
+        <Row m={3}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
+              <FontAwesome name="chevron-left" size={24} color="#F97316" />
+          </TouchableOpacity>
+        </Row>  
         <ScrollView backgroundColor={"#FFFFFF"}>
           <Box>
             {userInfo && (
               <Flex>
-                <Row m={3} mt={0}>
-                  <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
-                      <FontAwesome name="chevron-left" size={24} color="#F97316" />
-                  </TouchableOpacity>
-                </Row>  
                   <Header
                     name={userInfo.name}
                     gym={userInfo.gym}

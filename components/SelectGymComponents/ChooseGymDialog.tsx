@@ -101,7 +101,7 @@ export default function ChooseGym({
     updateUserGym(place_id, title);
     handleOpenGymDialog(false);
     updateUserGym2();
-    router.push("/Home");
+    router.replace("/Home");
   };
 
   return (
@@ -125,7 +125,9 @@ export default function ChooseGym({
             >
               Cancel
             </Button>
-            <Button colorScheme="green" onPress={handleSubmit}>
+            <Button bgColor={"#F97316"} onPress={handleSubmit}
+            _pressed={{opacity: 0.5}}
+            >
               Submit
             </Button>
           </Button.Group>

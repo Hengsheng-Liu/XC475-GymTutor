@@ -43,8 +43,8 @@ const friendContainer: React.FC<FriendProps> = ({ friend, fetchData }) => {
         }
     }, [currUser, friend.uid,friend.icon]); // Depend on currUser and friend.uid
     
-    const handleUserClick = async () => {
-        await updateFriend(friend);
+    const handleUserClick = () => {
+        updateFriend(friend);
         router.push("/FriendProfile2");
     };
 

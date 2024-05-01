@@ -8,24 +8,13 @@ import {
   Pressable,
   Input,
   Button,
-  extendTheme,
   ChevronLeftIcon,
-  HStack,
-  Icon,
   Text,
-  ScrollView,
   Badge,
 } from "native-base";
 import { AntDesign } from "@expo/vector-icons";
 import Tags from "../../components/ProfileComponents/Tags";
-import {
-  Alert,
-  StyleSheet,
-  View,
-  SafeAreaView,
-  Keyboard,
-  TextInput,
-} from "react-native";
+import { Alert, View, SafeAreaView } from "react-native";
 import { firestore } from "../../firebaseConfig";
 import { router, useLocalSearchParams } from "expo-router";
 import { UserCredential } from "firebase/auth";
@@ -34,6 +23,8 @@ import { useAuth } from "../../Context/AuthContext";
 import { useRoute } from "@react-navigation/native";
 import { addUser } from "@/components/FirebaseUserFunctions";
 import { Filters, defaultFilters } from "@/app/(tabs)/(HomePage)/Filter";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import theme from "@/components/theme";
 
 export const AddUserToDB = async (
   response: UserCredential,
@@ -65,32 +56,18 @@ export const AddUserToDB = async (
   );
 };
 
-// interface RouteParams {
-//   email: string;
-//   password: string;
-// }
+export default function SignUpScreen22() {
 
-export default function SignUpScreen2() {
   const { CreateUser } = useAuth();
-
-
-  // const route = useRoute();
-  // const { email, password } = route.params as RouteParams;
-
+  const emptyData = [];
   const { name, email, password } = useLocalSearchParams();
-
-  // const [date, setDate] = useState(new Date(1598051730000));
-  // const [mode, setMode] = useState('date');
-  // const [show, setShow] = useState(false);
-  const [year, setYear] = useState<number | undefined>();
-  const [month, setMonth] = useState<number | undefined>();
-  const [date, setDate] = useState<number | undefined>();
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [month, setMonth] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+  const [year, setYear] = useState<string>("");
+  const [pickerDate, setPickerDate] = useState(new Date());
   const [gymExperience, setGymExperience] = useState<string>("");
-
-  // const [age, setAge] = useState<string | undefined>();
-  const [bio, setBio] = useState<string | undefined>();
   const [gender, setGender] = useState<string | undefined>();
+  const [bio, setBio] = useState<string | undefined>();
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<{ [key: string]: boolean }>(
     {}
@@ -101,601 +78,361 @@ export default function SignUpScreen2() {
     "Strength",
     "Aesthetics",
   ]);
-  const [ActivitiesTags] = useState(["Basic", "Powerlifting", "Cardio"]);
+  const [ActivitiesTags] = useState(["Basic", "Powerlifting", "Cardio", "Recreational"]);
   const [WorkoutTimeTags] = useState(["Morning", "Afternoon", "Night"]);
-  const [selected1, setSelected1] = useState(false);
-  const [selected2, setSelected2] = useState(false);
-  const [selected3, setSelected3] = useState(false);
-  const [selected4, setSelected4] = useState(false);
-  const [selected5, setSelected5] = useState(false);
-  const [selected6, setSelected6] = useState(false);
-  const [selected7, setSelected7] = useState(false);
-  const [selected8, setSelected8] = useState(false);
-  const [selected9, setSelected9] = useState(false);
-  const [selected10, setSelected10] = useState(false);
 
-  // // functions related to the calendar for Date of Birth
-  // const dateOnChange = (event: any, selectedDate: any) => {
-  //     const currentDate = selectedDate;
-  //     console.log("currentdate", currentDate);
-  //     setShow(false);
-  //     setDate(currentDate);
-  //   };
-
-  //   const showMode = (currentMode: any) => {
-  //     setShow(true);
-  //     setMode(currentMode);
-  //   };
-
-  //   const showDatepicker = () => {
-  //     showMode('date');
-  //   };
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setPickerDate(currentDate);
+  };
 
   const handleToggleTag = (tag) => {
     setSelectedTags((prevTags) => ({
       ...prevTags,
-      [tag]: !prevTags[tag], // Toggle the boolean value for the tag
+      [tag]: !prevTags[tag],
     }));
   };
 
-  //   const AddUserToDB = async () => {
-  //     const db = firestore;
+  useEffect(() => {
+    const activeTags = Object.keys(selectedTags).filter(key => selectedTags[key]);
+    setTags(activeTags);
 
-  //     if (User?.uid) {
-  //     try {
-  //         await setDoc(doc(db, "Users", User.uid), {
-  //         achievements: [],
-  //         age: date,
-  //         bio: bio,
-  //         blockedUsers: [],
-  //         checkInHistory: [],
-  //         currentlyMessaging: [],
-  //         email: email,
-  //         friendRequests: [],
-  //         friends: [],
-  //         gym: "",
-  //         gymExperience: "",
-  //         icon: "",
+  }, [selectedTags]);
 
-  //         name: name,
-  //         rejectedRequests: [],
-  //         sex: gender,
-  //         tags: [],
-  //         uid: uid,
-
-  //       });
-
-  //     } catch (error) {
-  //       console.error("Error adding document: ", error);
-  //     }
-  // }
-  //   };
-  const checkWords = (text) => {
-    const wordCount = text.split(/\s+/).filter(Boolean).length; // Split by spaces, filter out empty strings
-    if (wordCount <= 50) {
+  const checkWords = (text: string) => {
+    const charCount = text.trim().length; // Trim to remove leading/trailing whitespace and count characters
+    if (charCount <= 200) {
       return true;
     } else {
-      // Optionally, you can provide feedback to the user when the word limit is reached.
-      alert("You have reached the maximum word limit of 50 words.");
+      // Provide feedback to the user when the character limit is exceeded
+      alert("Please make sure your bio is under 200 characters.");
       return false;
     }
   };
+
+
   const finishSignUp = async () => {
-    console.log("email is ", email);
-    console.log("password is", password);
-    console.log(("name is" + name) as string);
+    try {
+      const year = pickerDate.getFullYear();
+      const month = pickerDate.getMonth();
+      const day = pickerDate.getDate();
 
-    if (
-      year &&
-      month &&
-      date &&
-      gymExperience &&
-      gender &&
-      bio &&
-      validateDate(year, month, date) &&
-      tags
-    ) {
-      //          await updateDB(userCredential);
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth();
+      const currentDay = currentDate.getDate();
 
-      console.log("email is ", email);
-      console.log("password is", password);
-      console.log(("name is" + name) as string);
-      if (email && password && checkWords(bio)) {
-        setTags(selectedTags);
-        const userCredential = await CreateUser(
-          email as string,
-          password as string
-        );
-        const user = userCredential.user;
-        await AddUserToDB(
-          userCredential,
-          name as string,
-          bio,
-          gender,
-          gymExperience,
-          year,
-          month,
-          date,
-          tags
-        );
-      } else {
-        Alert.alert(
-          "Error",
-          "User cannot be properly stored in firestore database."
-        );
+      // Calculate age
+      let age = currentYear - year;
+      if (currentMonth < month || (currentMonth === month && currentDay < day)) {
+        age--; // Subtract a year if the current date is before the birth date
       }
 
-      router.navigate({
-        pathname: "LogIn",
-      });
-    } else {
-      Alert.alert("Error", "Please fill in valid fields");
+      if (age < 18) {
+        Alert.alert("Error", "You must be at least 18 years old.");
+        return;
+      }
+
+      if (tags.length == 0) {
+        Alert.alert("Select at least 1 tag to get started");
+        return;
+      }
+
+      // Function to check tags count from each category
+      const checkCategoryTags = (categoryTags) => tags.filter(tag => categoryTags.includes(tag)).length <= 1;
+
+      // Verify each category has at most one tag
+      const isValidFitnessGoal = checkCategoryTags(FitnessGoalTags);
+      const isValidActivity = checkCategoryTags(ActivitiesTags);
+      const isValidWorkoutTime = checkCategoryTags(WorkoutTimeTags);
+
+      if (!isValidFitnessGoal || !isValidActivity || !isValidWorkoutTime) {
+        Alert.alert("Error", "You can select at most one tag from each category.");
+        return;
+      }
+
+      if (year && month && day && gymExperience && gender && bio && tags && checkWords(bio)) {
+        if (email && password) {
+          const userCredential = await CreateUser(
+            email as string,
+            password as string
+          ); // Assuming CreateUser is a function that handles Firebase auth.
+          const user = userCredential.user;
+          await AddUserToDB(
+            userCredential,
+            name as string,
+            bio,
+            gender,
+            gymExperience,
+            year,
+            month,
+            day,
+            tags
+          ); // Assuming this function adds the user details to your Firestore.
+
+          router.replace("/LoadingPage");
+        } else {
+          Alert.alert(
+            "Error",
+            "User cannot be properly stored in Firestore database."
+          );
+        }
+      } else {
+        console.log("Please ensure all fields are correctly filled.");
+      }
+    } catch (error) {
+      console.error("Sign up failed:", error);
+      Alert.alert("Error", "Failed to complete the registration process.");
     }
   };
-
-  const validateDate = (
-    year: number | undefined,
-    month: number | undefined,
-    date: number | undefined
-  ): boolean => {
-    if (year === undefined || month === undefined || date === undefined) {
-      return false; // Incomplete date, validation failed
-    }
-
-    // Check if the year is valid (e.g., within a reasonable range)
-    if (year < 1900 || year > new Date().getFullYear()) {
-      return false; // Invalid year
-    }
-
-    // Check if the month is valid (between 1 and 12)
-    if (month < 1 || month > 12) {
-      return false; // Invalid month
-    }
-
-    // Check if the date is valid for the given month and year
-    const lastDayOfMonth = new Date(year, month, 0).getDate();
-    if (date < 1 || date > lastDayOfMonth) {
-      return false; // Invalid date
-    }
-
-    return true; // Date is valid
-  };
-
-  // Function to handle input change and validate the date
-  const handleDateChange = (
-    text: string,
-    setState: React.Dispatch<React.SetStateAction<number | undefined>>
-  ) => {
-    if (text === "") {
-      setState(undefined); // If the input is empty, set the state to undefined
-      setErrorMessage(""); // Clear error message
-      return;
-    }
-    const value = parseInt(text);
-    setState(value);
-
-    // If any of the date components are not valid, show error message
-    // if (!validateDate(year, month, date)) {
-    //   setErrorMessage('Please enter a valid date');
-    // } else {
-    //   setErrorMessage(''); // Clear error message if date is valid
-    // }
-  };
-
-  const theme = extendTheme({
-    colors: {
-      primary: {
-        50: "#7C2D12",
-        100: "#F97316",
-        200: "#171717",
-        300: "#FAFAFA",
-        400: "#FFFFFF",
-      },
-    },
-    components: {
-      Button: {
-        baseStyle: {
-          color: "primary.50",
-          rounded: "full",
-        },
-      },
-      Text: {
-        fontSize: "50",
-        color: "primary.50",
-      },
-    },
-  });
 
   return (
     <NativeBaseProvider theme={theme}>
-      <HStack
-        px="5"
-        mt="1"
-        py="10"
-        justifyContent="space-between"
-        alignItems="center"
-        w="100%"
-        bg="primary.400"
-      >
-        <Button
-          bg="primary.400"
-          startIcon={<ChevronLeftIcon size="md" color="primary.200" />}
-          onPress={() => router.navigate("LogIn")}
-        ></Button>
-        <Text
-          fontSize="20"
-          fontWeight="bold"
-          textAlign="center"
-          flex="1"
-          color="primary.200"
-          mr="10"
-          p="2"
-        >
-          Registration
-        </Text>
-      </HStack>
-
       <SafeAreaView style={{ flex: 1, backgroundColor: "#FFF" }}>
-        <ScrollView
-          backgroundColor={"#FFFFFF"}
-          contentContainerStyle={{ flexGrow: 1 }}
+        <Flex
+          flexDir={"row"}
+          justifyContent="space-between"
+          alignItems="center"
         >
-          <Box ml={"3"} mr={"3"} paddingTop={"10"} flex="1 ">
+            <Pressable
+              padding={"2"}
+              onPress={() => router.back()}
+              _pressed={{ opacity: 0.5 }}
+            >
+              <ChevronLeftIcon size="md" color="#171717" />
+            </Pressable>
+            <Text
+              fontSize="20"
+              fontWeight="bold"
+              textAlign="center"
+              flex="1"
+              mr="10"
+              p="2"
+            >
+              Registration
+            </Text>
+          </Flex>
+          <Box ml={"3"} mr={"3"} flex="1 ">
             <Text
               fontSize="28"
               fontWeight="700"
-              color="primary.200"
               lineHeight="28"
               p="3"
             >
               Create your profile
             </Text>
 
+          <View style={{ flexDirection: 'row', alignItems: 'center', padding: 2, marginTop: 8 }}>
             <Text
               fontSize="16"
               fontWeight="400"
-              color="primary.200"
               lineHeight="20"
               letterSpacing="0.25"
               p="3"
               mt="1"
+              marginRight="-4" // Adjust spacing between text and date picker
             >
               Your Birthday
             </Text>
-
             <Box
               flexDirection="row"
               alignItems="center"
               justifyContent="space-between"
-              paddingX={6}
-              ml={-1.5}
+              ml={1}
+              mr={3}
             >
-              <Select
-                selectedValue={year?.toString()}
-                minWidth="100"
-                accessibilityLabel="Choose Year"
-                placeholder="Year"
-                _selectedItem={{
-                  bg: "teal.600",
-                  endIcon: <CheckIcon size="5" />,
-                }}
-                mt={1}
-                onValueChange={(itemValue) => setYear(parseInt(itemValue))}
-              >
-                {Array.from(
-                  { length: yearRange[1] - yearRange[0] + 1 },
-                  (_, i) => yearRange[1] - i
-                ).map((year) => (
-                  <Select.Item
-                    key={year.toString()}
-                    label={year.toString()}
-                    value={year.toString()}
-                  />
-                ))}
-              </Select>
-              {/* Month Select */}
-              <Select
-                selectedValue={month?.toString()}
-                minWidth="100"
-                accessibilityLabel="Choose Month"
-                placeholder="Month"
-                _selectedItem={{
-                  bg: "teal.600",
-                  endIcon: <CheckIcon size="5" />,
-                }}
-                mt={1}
-                onValueChange={(itemValue) => setMonth(parseInt(itemValue))}
-              >
-                {Object.entries(monthDays).map(([month, days], index) => (
-                  <Select.Item
-                    key={month}
-                    label={month}
-                    value={(index + 1).toString()}
-                  />
-                ))}
-              </Select>
-
-              {/* Date Select */}
-              <Select
-                selectedValue={date?.toString()}
-                minWidth="100"
-                accessibilityLabel="Choose Date"
-                placeholder="Date"
-                _selectedItem={{
-                  bg: "teal.600",
-                  endIcon: <CheckIcon size="5" />,
-                }}
-                mt={1}
-                onValueChange={(itemValue) => setDate(parseInt(itemValue))}
-              >
-                {month
-                  ? Array.from(
-                      { length: monthDays[month] },
-                      (_, i) => i + 1
-                    ).map((date) => (
-                      <Select.Item
-                        key={date.toString()}
-                        label={date.toString()}
-                        value={date.toString()}
-                      />
-                    ))
-                  : null}
-              </Select>
-            </Box>
-
-            <Text
-              fontSize="16"
-              fontWeight="400"
-              color="primary.200"
-              lineHeight="20"
-              letterSpacing="0.25"
-              p="3"
-              mt="3"
-            >
-              Gender
-            </Text>
-
-            <Box mx="3" w="90%">
-              <Select
-                selectedValue={gender}
-                minWidth="200"
-                accessibilityLabel="Choose Gender"
-                placeholder="Gender"
-                _selectedItem={{
-                  bg: "teal.600",
-                  endIcon: <CheckIcon size="5" />,
-                }}
-                mt={1}
-                onValueChange={(itemValue) => setGender(itemValue)}
-              >
-                <Select.Item label="Male" value="male" />
-                <Select.Item label="Female" value="female" />
-                <Select.Item label="Other" value="other" />
-              </Select>
-            </Box>
-
-            <Text
-              fontSize="16"
-              fontWeight="400"
-              color="primary.200"
-              lineHeight="20"
-              letterSpacing="0.25"
-              p="3"
-              mt="3"
-            >
-              Gym Experience
-            </Text>
-
-            <Box mx="3" w="90%">
-              <Select
-                selectedValue={gymExperience}
-                minWidth="200"
-                accessibilityLabel="Choose Gym Experience"
-                placeholder="Gym Experience"
-                _selectedItem={{
-                  bg: "teal.600",
-                  endIcon: <CheckIcon size="5" />,
-                }}
-                mt={1}
-                onValueChange={(itemValue) => setGymExperience(itemValue)}
-              >
-                <Select.Item label="Beginner" value="beginner" />
-                <Select.Item label="Intermediate" value="intermediate" />
-                <Select.Item label="Advanced" value="advanced" />
-              </Select>
-            </Box>
-
-            <Text
-              fontSize="16"
-              fontWeight="400"
-              color="primary.200"
-              lineHeight="20"
-              letterSpacing="0.25"
-              p="3"
-              mt="3"
-            >
-              Bio
-            </Text>
-
-            <Box alignItems="left">
-              <Input
-                mx="3"
-                w="90%"
-                value={bio}
-                h="100"
-                onSubmitEditing={() => setBio}
-                multiline={true}
-                placeholder="Maximum 50 words"
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={pickerDate}
+                mode="date"
+                display="default"
+                onChange={onChange}
               />
             </Box>
+          </View>
 
-            <Text
-              fontSize="16"
-              fontWeight="400"
-              color="primary.200"
-              lineHeight="20"
-              letterSpacing="0.25"
-              p="3"
-              mt="3"
+
+          <Box
+            flexDirection="row"
+            alignItems="center"
+            justifyContent="space-between"
+            paddingX={6}
+            ml={-1.5}
+          ></Box>
+
+          <Text
+            fontSize="16"
+            fontWeight="400"
+            lineHeight="20"
+            letterSpacing="0.25"
+            p="3"
+            mt="3"
+          >
+            Gender
+          </Text>
+
+          <Box mx="3" w="90%">
+            <Select
+              selectedValue={gender}
+              minWidth="200"
+              accessibilityLabel="Choose Gender"
+              placeholder="Gender"
+              _selectedItem={{
+                bgColor: "#fac8a2",
+              }}
+              mt={1}
+              onValueChange={(itemValue) => setGender(itemValue)}
             >
-              {" "}
-              What kind of gym goer are you?{" "}
-            </Text>
+              <Select.Item label="Male" value="male" />
+              <Select.Item label="Female" value="female" />
+              <Select.Item label="Other" value="other" />
+            </Select>
+          </Box>
 
-            <Flex flexDirection="column" mt={3} px="3">
-              <Flex flexDirection="column" mt={3}>
-                <Text fontSize="md" mb={1}>
-                  Fitness Goals:
-                </Text>
-                <Flex
-                  flexDirection="row"
-                  flexWrap="wrap"
-                  justifyContent="space-evenly"
-                >
-                  <Pressable
-                    key={FitnessGoalTags[0]}
-                    onPress={() => setSelected1((prev) => !prev)}
-                  >
+          <Text
+            fontSize="16"
+            fontWeight="400"
+            lineHeight="20"
+            letterSpacing="0.25"
+            p="3"
+            mt="3"
+          >
+            Gym Experience
+          </Text>
+
+          <Box mx="3" w="90%">
+            <Select
+              selectedValue={gymExperience}
+              minWidth="200"
+              accessibilityLabel="Choose Gym Experience"
+              placeholder="Gym Experience"
+              _selectedItem={{
+                bg: "#fac8a2"
+              }}
+              mt={1}
+              onValueChange={(itemValue) => setGymExperience(itemValue)}
+            >
+              <Select.Item label="Beginner" value="beginner" />
+              <Select.Item label="Intermediate" value="intermediate" />
+              <Select.Item label="Advanced" value="advanced" />
+            </Select>
+          </Box>
+
+          <Text
+            fontSize="16"
+            fontWeight="400"
+            lineHeight="20"
+            letterSpacing="0.25"
+            p="3"
+            mt="3"
+          >
+            Bio
+          </Text>
+
+          <Box alignItems="left" overflow="wrap">
+            <Input
+              mx="3"
+              w="90%"
+              value={bio}
+              h="50"
+              overflow={"wrap"}
+              flexWrap={"wrap"}
+              numberOfLines={3}
+              onChangeText={(text) => setBio(text)}
+              multiline={false}
+              placeholder="Create a bio! (200 characters max)"
+              _focus={{
+                borderColor: "#F97316",  // Change to your preferred color
+                backgroundColor: "white", // Change background color on focus
+              }}
+            />
+          </Box>
+
+          <Flex flexDirection="column" mt={3} px="3">
+            <Flex flexDirection="column" mt={3}>
+              <Text fontSize="md" m={1}>
+                Fitness Goals:
+              </Text>
+              <Flex
+                flexDirection="row"
+                flexWrap="wrap"
+                justifyContent="space-evenly"
+              >
+                {FitnessGoalTags.map((tag, index) => (
+                  <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
                     <Badge
                       m={2}
                       ml={0}
-                      colorScheme={selected1 ? "primary.100" : "muted"}
+                      backgroundColor={selectedTags[tag] ? "#fac8a2" : "white"}
                       shadow={1}
                       borderRadius={4}
                     >
-                      {FitnessGoalTags[0]}
+                      {tag}
                     </Badge>
                   </Pressable>
-
-                  {FitnessGoalTags.map((tag, index) => (
-                    <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
-                      <Badge
-                        m={2}
-                        ml={0}
-                        colorScheme={
-                          selectedTags[tag] ? "primary.100" : "muted"
-                        }
-                        shadow={1}
-                        borderRadius={4}
-                      >
-                        {tag}
-                      </Badge>
-                    </Pressable>
-                  ))}
-                </Flex>
-                <Text fontSize="md" mb={1}>
-                  Activities:
-                </Text>
-                <Flex
-                  flexDirection="row"
-                  flexWrap="wrap"
-                  justifyContent="space-evenly"
-                >
-                  {ActivitiesTags.map((tag, index) => (
-                    <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
-                      <Badge
-                        m={2}
-                        ml={0}
-                        colorScheme={
-                          selectedTags[tag] ? "primary.100" : "muted"
-                        }
-                        shadow={1}
-                        borderRadius={4}
-                      >
-                        {tag}
-                      </Badge>
-                    </Pressable>
-                  ))}
-                </Flex>
-                <Text fontSize="md" mb={1}>
-                  Preferred Workout Times:
-                </Text>
-                <Flex
-                  flexDirection="row"
-                  flexWrap="wrap"
-                  justifyContent="space-evenly"
-                >
-                  {WorkoutTimeTags.map((tag, index) => (
-                    <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
-                      <Badge
-                        m={2}
-                        ml={0}
-                        colorScheme={
-                          selectedTags[tag] ? "primary.100" : "muted"
-                        }
-                        shadow={1}
-                        borderRadius={4}
-                      >
-                        {tag}
-                      </Badge>
-                    </Pressable>
-                  ))}
-                </Flex>
+                ))}
+              </Flex>
+              <Text fontSize="md" m={1}>
+                Activities:
+              </Text>
+              <Flex
+                flexDirection="row"
+                flexWrap="wrap"
+                justifyContent="space-evenly"
+              >
+                {ActivitiesTags.map((tag, index) => (
+                  <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
+                    <Badge
+                      m={2}
+                      ml={0}
+                      backgroundColor={selectedTags[tag] ? "#fac8a2" : "white"}
+                      shadow={1}
+                      borderRadius={4}
+                    >
+                      {tag}
+                    </Badge>
+                  </Pressable>
+                ))}
+              </Flex>
+              <Text fontSize="md" m={1}>
+                Preferred Workout Times:
+              </Text>
+              <Flex
+                flexDirection="row"
+                flexWrap="wrap"
+                justifyContent="space-evenly"
+              >
+                {WorkoutTimeTags.map((tag, index) => (
+                  <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
+                    <Badge
+                      m={2}
+                      ml={0}
+                      backgroundColor={selectedTags[tag] ? "#fac8a2" : "white"}
+                      shadow={1}
+                      borderRadius={4}
+                    >
+                      {tag}
+                    </Badge>
+                  </Pressable>
+                ))}
               </Flex>
             </Flex>
-
-            {errorMessage ? (
-              <Text
-                fontSize="16"
-                fontWeight="400"
-                color="primary.50"
-                lineHeight="20"
-                letterSpacing="0.25"
-                p="3"
-                mt="3"
-              >
-                {errorMessage}
-              </Text>
-            ) : null}
-
-            <Flex direction="column" flexGrow="1" justifyContent="flex-end">
+            <Flex alignItems={"center"}>
               <Button
-                mt="3"
-                background="#F97316"
+                mt={10}
+                background={"#F97316"}
                 _pressed={{ opacity: 0.5 }}
                 onPress={finishSignUp}
                 rounded="md"
+                height={"12"}
+                width={"95%"}
               >
-                {" "}
-                Next Step{" "}
+                Next
               </Button>
             </Flex>
-          </Box>
-        </ScrollView>
+          </Flex>
+        </Box>
       </SafeAreaView>
     </NativeBaseProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  contentView: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  container: {
-    flex: 1,
-    marginHorizontal: 50,
-    backgroundColor: "white",
-    paddingTop: 20,
-  },
-  titleContainer: {
-    flex: 1.2,
-    justifyContent: "center",
-  },
-  titleText: {
-    fontSize: 35,
-    textAlign: "center",
-    fontWeight: "200",
-  },
-  loginTextField: {
-    borderBottomWidth: 1,
-    height: 60,
-    fontSize: 30,
-    marginVertical: 10,
-    fontWeight: "300",
-    marginBottom: 20,
-  },
-  mainContent: {
-    flex: 6,
-  },
-});

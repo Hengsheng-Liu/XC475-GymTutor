@@ -134,7 +134,7 @@ export default function LogInScreen() {
     auth.onAuthStateChanged((user) => {
       setUser(user);
       if (user) {
-        router.replace("/");
+        router.replace("/LoadingPage");
       }
     });
   }, []);

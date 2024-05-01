@@ -10,11 +10,11 @@ export default function Test() {
       try{
       const { status } = await Camera.requestCameraPermissionsAsync();
       if (status === "granted") {
-        router.push({ pathname: "/Photo", params: { pictureType: "CheckIn" } });
+        router.replace({ pathname: "/Photo", params: { pictureType: "CheckIn" } });
 
       } else {
         alert("Please allow camera permissions to continue.");
-        router.push("/SelectWorkout");
+        router.replace("/SelectWorkout");
       }
     }catch(e){
       console.log("Error fetching camera permissions:", e);

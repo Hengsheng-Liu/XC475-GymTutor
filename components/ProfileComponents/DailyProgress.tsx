@@ -54,7 +54,7 @@ export function DailyProgress({
                 _pressed={{opacity: 0.5}}
                 onPress={() => {
                   setModalVisible(false);
-                  router.push("/Home");
+                  router.replace("/Home");
                 }}
               >
                 <Text fontSize="md" color="#FFFFFF">Let's Go!</Text>

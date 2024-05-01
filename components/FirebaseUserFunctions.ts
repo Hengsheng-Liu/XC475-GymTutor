@@ -73,6 +73,7 @@ export const DefaultAchievement: Achievements = {
         { "name": "Check-In Champion", "curr": 0, "max": 15, "description": "Awarded for reaching 15 total check-ins.", "achieved": false },
         { "name": "Consistency Conqueror", "curr": 0, "max": 25, "description": "Awarded for making 25 check-ins in a single month.", "achieved": false },
         { "name": "Iron Dedication", "curr": 0, "max": 50, "description": "Awarded for hitting 50 consecutive check-ins without missing a day.", "achieved": false },
+        { "name": "SpotMe Superstar", "curr": 0, "max": 100, "description": "Awarded for achieving 100 total check-ins.", "achieved": false }
     ]
 };
 
@@ -144,6 +145,7 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters, n
 
         // Query  users from their gym.
         // TODO: Maybe query only nearby users.
+        
         let usersQuery = query(collection(db, 'Users'), where('uid', 'in', memberIds));
 
         // Apply additional filters if provided
@@ -151,27 +153,18 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters, n
             const { applyFilters, sex, age, gymExperience } = filters;
             // Check if filters should be applied in general
             if (applyFilters[0]) {
-                // Filter by sex if specified
-                if (applyFilters[1] && sex.length > 0) {
-                    let sex2 = [...sex, "other"]
-                    usersQuery = query(usersQuery, where("sex", "in", sex2));
-                }
+
 
                 // Filter by age if specified
                 if (applyFilters[2] && age.length === 2) {
                     usersQuery = query(usersQuery, where("age", ">=", age[0]), where("age", "<=", age[1]));
                 }
-
-                // Filter by gym experience if specified
-                if (applyFilters[3] && gymExperience.length > 0) {
-                    usersQuery = query(usersQuery, where("gymExperience", "in", gymExperience));
-                };
             };
         };
 
         // Get each user and save their data
         const querySnapshot = await getDocs(usersQuery);
-        const usersData: IUser[] = [];
+        let usersData: IUser[] = [];
 
         // Save user data if it is not the current User
         querySnapshot.forEach(snap => {
@@ -180,6 +173,20 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters, n
                 usersData.push(userData);
             }
         });
+
+        if (filters) {
+            const { applyFilters, sex, age, gymExperience } = filters;
+            // Filter by sex if specified
+            if (applyFilters[1] && sex.length > 0) {
+                let sex2 = [...sex, "other"]
+                usersData = usersData.filter(user => sex2.includes(user.sex));
+            }
+
+            // Filter by gym experience if specified
+            if (applyFilters[3] && gymExperience.length > 0) {
+                usersData = usersData.filter(user => gymExperience.includes(user.gymExperience));
+            };
+        }
 
         // Filter list of users by name if provided
         if (name && name !== "" && usersData.length > 0) {
@@ -191,7 +198,8 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters, n
     } catch (error) {
         // Throw error for handling in the caller function
         console.error('Error querying users:', error);
-        throw error;
+        //throw error;
+        return [];
     }
 };
 

@@ -48,9 +48,9 @@ const FriendRequest: React.FC<FriendProps> = ({ friend, status }) => {
     if (!currUser) return;
 
     // Display user profile when user clicks on notification
-    const handleUserClick  = async () =>{
-        await updateFriend(friend);
-        router.push("/FriendProfile2");
+    const handleUserClick  = () =>{
+        updateFriend(friend);
+        router.push("/FriendProfile");
     };
 
     // Function to add friends

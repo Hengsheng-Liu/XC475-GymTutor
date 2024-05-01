@@ -153,7 +153,13 @@ export default function HomeScreen() {
   };
 
   const handleCheckIn = async () => {
-    router.push("/DailyPicture");
+    /*
+    if (checkIn) {
+      alert("You have already checked in today");
+      return;
+    }
+    */
+    router.replace("/DailyPicture");
   };
 
 

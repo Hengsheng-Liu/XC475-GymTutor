@@ -56,9 +56,11 @@ export default function Achievement({ display }: AchievementProps) {
             alignItems={"center"}
             justifyContent={"center"}
           >
-            <Box width="100%" height="100%" borderRadius={10} overflow="hidden">
+            <Flex width="100%" height="100%" borderRadius={10} overflow="hidden"
+            justifyContent={"center"} alignItems={"center"} backgroundColor={"muted.200"}
+            >
               {SVGS ? SVGS[index] : <Center><Text>Loading...</Text></Center>}
-            </Box>
+            </Flex>
           </Flex>
         );
       }
@@ -71,6 +73,13 @@ export default function Achievement({ display }: AchievementProps) {
         <Heading mr={3} mb={1}>
           Achievements
         </Heading>
+        <Pressable
+          mt = {1}
+          onPress={() => router.push({pathname:"/AchievementPage",params:{edit:true,display}})}
+          _pressed={{ opacity: 0.5 }}
+        >
+          <FontAwesome6 name="pencil" size={20} color="black" />
+        </Pressable>
       </HStack>
       <HStack justifyContent={"space-around"} mt={2} alignItems={"center"}>
         {renderDisplay()}

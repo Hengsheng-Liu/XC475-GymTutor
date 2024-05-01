@@ -36,6 +36,7 @@ export default function Attribute({description, onSaveTag, onDeleteTag}:props) {
     setEditMode(false);
   }
   const handleCancel = () => {
+    setAddTag("");
     setEditMode(false);
   }
 

@@ -20,8 +20,8 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const { User } = useAuth(); 
-  if (!User) {
+  const { User, currUser } = useAuth(); 
+  if (!User || !currUser) {
     return <Redirect href="/LogIn" />;
   } else {
     return (
@@ -37,7 +37,8 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(MessagePage)"
           options={{
-            title: "Message",
+            href:"/MessageList",
+            title: "",
             headerShown: false,
             tabBarIcon: ({focused, ...props}) => (focused ? 
               <ChatLogo width="40" height="40" scale="100%" {...props}/> : 
@@ -48,7 +49,9 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(HomePage)"
           options={{
-            title: "SpotMe",
+            href: (currUser.gym === "" || currUser.gymId === "") ? "/" : "/Home" , // Check if this helped. It blinks from one page to the other when it doesn't have a gym
+            // href:"/Home", use this if not working
+            title: "",
             headerShown: false,
             tabBarIcon: ({focused, ...props}) => (focused ? 
               <Logo width="40" height="40" scale="100%" {...props}/> : 
@@ -58,7 +61,8 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(ProfilePage)"
           options={{
-            title: "Profile",
+            href:"/ProfilePage",
+            title: "",
             headerShown: false,
             tabBarIcon: ({focused, ...props}) => (focused ? 
               <ProfileLogo width="40" height="40" scale="100%" {...props}/> : 
