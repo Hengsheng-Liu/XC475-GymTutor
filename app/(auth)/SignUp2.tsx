@@ -72,7 +72,8 @@ export default function SignUpScreen22() {
   const [selectedTags, setSelectedTags] = useState<{ [key: string]: boolean }>(
     {}
   );
-  const WhoAreYouTags = ["Wellness Guru", "Early Riser", "Adventurer", "Foodie", "Gym Rat", "Busy Bee", "Group Fitness Fan"]
+  const WhoAreYouTags1 = ["Wellness Guru", "Early Riser", "Adventurer", "Foodie"]
+  const WhoAreYouTags2 = ["Gym Rat", "Busy Bee", "Casual Mover"]
   const FitnessGoalTags = [
     "Muscle mass",
     "Bulking",
@@ -144,7 +145,7 @@ export default function SignUpScreen22() {
       // Verify each category has at most one tag
       const isValidFitnessGoal = checkCategoryTags(FitnessGoalTags);
       const isValidActivity = checkCategoryTags(ActivitiesTags);
-      const isValidWorkoutTime = checkCategoryTags(WhoAreYouTags);
+      const isValidWorkoutTime = checkCategoryTags(WhoAreYouTags1.concat(WhoAreYouTags2));
 
       if (!isValidFitnessGoal || !isValidActivity || !isValidWorkoutTime) {
         Alert.alert("Error", "You can select at most one tag from each category.");
@@ -355,7 +356,6 @@ export default function SignUpScreen22() {
               </Text>
               <Flex
                 flexDirection="row"
-                flexWrap="wrap"
                 justifyContent="space-evenly"
               >
                 {FitnessGoalTags.map((tag, index) => (
@@ -377,7 +377,6 @@ export default function SignUpScreen22() {
               </Text>
               <Flex
                 flexDirection="row"
-                flexWrap="wrap"
                 justifyContent="space-evenly"
               >
                 {ActivitiesTags.map((tag, index) => (
@@ -399,10 +398,27 @@ export default function SignUpScreen22() {
               </Text>
               <Flex
                 flexDirection="row"
-                flexWrap="wrap"
                 justifyContent="space-evenly"
               >
-                {WhoAreYouTags.map((tag, index) => (
+                {WhoAreYouTags1.map((tag, index) => (
+                  <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
+                    <Badge
+                      m={2}
+                      ml={0}
+                      backgroundColor={selectedTags[tag] ? "#fac8a2" : "white"}
+                      shadow={1}
+                      borderRadius={4}
+                    >
+                      {tag}
+                    </Badge>
+                  </Pressable>
+                ))}
+
+              </Flex>
+              <Flex
+                flexDirection="row"
+                justifyContent="space-evenly">
+                {WhoAreYouTags2.map((tag, index) => (
                   <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
                     <Badge
                       m={2}
