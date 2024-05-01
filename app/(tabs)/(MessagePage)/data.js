@@ -129,21 +129,21 @@ export const updateMessaging = async (userDocRef, otherUserId, readStatus) => {
   const userDoc = await getDoc(userDocRef);
 
   const userData = userDoc.data();
-  const currentlyMessaging = userData.CurrentlyMessaging || [];
+  const currentlyMessaging = userData.currentlyMessaging || [];
 
   // Create a new array for updated currentlyMessaging data
   let updatedMessaging = currentlyMessaging.filter(entry => entry.userId !== otherUserId);
   updatedMessaging.push({ userId: otherUserId, timeAsNumber: Date.now(), haveRead: readStatus });
 
   // Update the document with the modified currentlyMessaging array
-  await updateDoc(userDocRef, { CurrentlyMessaging: updatedMessaging });
+  await updateDoc(userDocRef, { currentlyMessaging: updatedMessaging });
 };
 
 // Helper function to update the haveRead field in the currentlyMessaging array
 export const updateHaveReadStatus = async (userDocRef, otherUserId) => {
   const userDoc = await getDoc(userDocRef);
   const userData = userDoc.data();
-  const currentlyMessaging = userData.CurrentlyMessaging || [];
+  const currentlyMessaging = userData.currentlyMessaging || [];
 
   // Map through the currentlyMessaging data to update the haveRead status for a specific userId
   const updatedMessaging = currentlyMessaging.map(entry => {
@@ -154,7 +154,7 @@ export const updateHaveReadStatus = async (userDocRef, otherUserId) => {
   });
 
   // Update the document with the modified currentlyMessaging array
-  await updateDoc(userDocRef, { CurrentlyMessaging: updatedMessaging });
+  await updateDoc(userDocRef, { currentlyMessaging: updatedMessaging });
 };
 
 
@@ -181,12 +181,12 @@ export async function findOrCreateChat(userId1, userId2) {
 
 
 
-    // Save each others chatId in the CurrentlyMessaging
+    // Save each others chatId in the currentlyMessaging
 
     await updateMessaging(user1DocRef, userId2, true);
     await updateMessaging(user2DocRef, userId1, false);
 
-    console.log("Updated Currently messaging for both users", userId1, userId2);
+    console.log("Updated currently messaging for both users", userId1, userId2);
   } else {
     // If session already exists, once the user press into the chat page, change the readStatus to mark read.
     updateHaveReadStatus(doc(firestore, "Users", userId1), userId2, true);

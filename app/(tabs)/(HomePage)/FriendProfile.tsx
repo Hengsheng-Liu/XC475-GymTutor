@@ -257,7 +257,7 @@ const FriendProfilePage = () => {
                       </Popover.Content>
                     </Popover>}
                 </HStack>
-                <Flex ml={"3"} mr={"3"}>
+                <Flex ml={"3"} mr={"3"} pb={6} mb={6}>
                   <Description bio={userInfo.bio} />
                   <Achievement display={userInfo.display} />
                   <History history={userInfo.checkInHistory} />

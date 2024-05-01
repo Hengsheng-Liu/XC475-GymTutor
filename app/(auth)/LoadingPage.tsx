@@ -12,7 +12,7 @@ export default function LoadingScreen() {
     useEffect(() => {
       const timer = setTimeout(() => {
           setLoadingComplete(true);
-      }, 1500); // Wait 1.5 seconds
+      }, 2000); // Wait 2 seconds
 
       return () => clearTimeout(timer); // Cleanup function
     }, []);

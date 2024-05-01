@@ -40,7 +40,7 @@ const MessageList = () => {
     // Set up the real-time listener
     const unsubscribe = onSnapshot(currentUserDocRef, (doc) => {
       const userData = doc.data();
-      const CurrentlyMessagingData = userData?.CurrentlyMessaging;
+      const CurrentlyMessagingData = userData?.currentlyMessaging;
 
       // Update state with the latest data
       setCurrentUserCurrentlyMessaging(CurrentlyMessagingData);
@@ -219,7 +219,7 @@ const MessageList = () => {
       const otherUserData = otherUserDoc.data();
 
       const currentUserEntryToRemove = currentUserCurrentlyMessaging.find(entry => entry.userId === user.uid);
-      const otherUserEntryToRemove = otherUserData?.CurrentlyMessaging.find(entry => entry.userId === User.uid);
+      const otherUserEntryToRemove = otherUserData?.currentlyMessaging.find(entry => entry.userId === User.uid);
 
       // Create a reference to the chat document
       const chatDocRef = doc(firestore, "Chat", chatId);
@@ -246,10 +246,10 @@ const MessageList = () => {
 
       if (currentUserEntryToRemove && otherUserEntryToRemove) {
         await updateDoc(currentUserDocRef, {
-          CurrentlyMessaging: arrayRemove(currentUserEntryToRemove)
+          currentlyMessaging: arrayRemove(currentUserEntryToRemove)
         });
         await updateDoc(otherUserDocRef, {
-          CurrentlyMessaging: arrayRemove(otherUserEntryToRemove)
+          currentlyMessaging: arrayRemove(otherUserEntryToRemove)
         });
 
         console.log("Both users' CurrentlyMessaging fields updated successfully");

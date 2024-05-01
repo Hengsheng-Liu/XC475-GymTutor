@@ -1,4 +1,4 @@
-import { AlertDialog, Button, Center } from "native-base";
+import { AlertDialog, Button, Center, Text } from "native-base";
 import React, { useEffect } from "react";
 import { router } from "expo-router";
 import { getCurrUser } from "@/components/FirebaseUserFunctions";
@@ -113,22 +113,23 @@ export default function ChooseGym({
       <AlertDialog.Content>
         <AlertDialog.CloseButton />
         <AlertDialog.Header>
-          Want Choose this Gym as your Gym?
+          Do you want to choose this gym?
         </AlertDialog.Header>
         <AlertDialog.Body>{title}</AlertDialog.Body>
         <AlertDialog.Footer>
           <Button.Group space={2}>
             <Button
-              colorScheme="coolGray"
+              background="#A3A3A3" shadow="3" 
+              _pressed={{opacity: 0.7}}
               onPress={closeGymDialog}
               ref={cancelRef}
             >
-              Cancel
+              <Text color="#FFF" fontWeight="bold">Cancel</Text>
             </Button>
-            <Button bgColor={"#F97316"} onPress={handleSubmit}
-            _pressed={{opacity: 0.5}}
-            >
-              Submit
+            <Button background={"#F97316"} shadow="3" onPress={handleSubmit}
+              _pressed={{opacity: 0.7}}
+              >
+              <Text color="#FFF" fontWeight="bold">Submit</Text>
             </Button>
           </Button.Group>
         </AlertDialog.Footer>

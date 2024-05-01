@@ -14,12 +14,12 @@ import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 
 
-const defaultValues = {ageRange: [18, 100], gymExperience: ["beginner", "intermediate", "advanced"], sex: ["male", "female"]};
+const defaultValues = {ageRange: [18, 100], gymExperience: ["beginner", "intermediate", "advanced"], sex: ["male", "female", "other"]};
 
 export type Filters = {
   applyFilters: boolean[]; // Save which filters are to be applied. 0: All, 1: Age, 2: Sex, 3: Gym Experience
   age: number[]; // Save age range: 0: Min, 1: Max
-  sex: string[]; // Male / Female
+  sex: string[]; // Male / Female / Other
   gymExperience: string[]; // Options: Beginner, Intermediate, Advanced
 };
 
@@ -40,7 +40,7 @@ const FilterScreen = () => {
 
     const [male, setMale] = useState<boolean>(filters.sex.includes("male")); // stores whether male box is checked
     const [female, setFemale] = useState<boolean>(filters.sex.includes("female")); // stores whether female box is checked
-
+    const [other, setOther] = useState<boolean>(filters.sex.includes("other")); // stores whether other box is checked
     const [beginner, setBeginner] = useState<boolean>(filters.gymExperience.includes("beginner")); // stores whether beginner box is checked
     const [intermediate, setIntermediate] = useState<boolean>(filters.gymExperience.includes("intermediate")); // stores whether intermediate box is checked
     const [advanced, setAdvanced] = useState<boolean>(filters.gymExperience.includes("advanced")); // stores whether advanced box is checked
@@ -81,11 +81,14 @@ const FilterScreen = () => {
     let [newMinAge, newMaxAge] = defaultValues.ageRange;
 
     // Check if it's necessary to filter by sex
-    if ((male && female) || (!male && !female)) {
+    if ((male && female && other) || (!male && !female && !other)) {
       applyFilters[1] = false;
     } else {
       applyFilters[1] = true;
-      newSex = male? ["male"] : ["female"];
+      newSex = [];
+      if (male) newSex.push("male");
+      if (female) newSex.push("female");
+      if (other) newSex.push("other");
     };
 
     // Check if there were any changes in sex selection
@@ -248,6 +251,12 @@ const FilterScreen = () => {
               defaultIsChecked={female}
               colorScheme="orange"
               onChange={() => setFemale(!female)}>Female</Checkbox>
+            <Checkbox 
+              value="other"
+              isChecked={other}
+              defaultIsChecked={other}
+              colorScheme="orange"
+              onChange={() => setOther(!other)}>Other</Checkbox>
           </Row>
           <Row justifyContent={'left'} pt={5}>
             <Text fontSize="md">Age </Text>
@@ -317,9 +326,9 @@ const FilterScreen = () => {
           </AlertDialog.Body>
           <AlertDialog.Footer>
             <Button.Group space={2}>
-              <Button bgColor="#F97316" shadow="3" onPress={handleCloseDialog}><Text color="#FFF" fontWeight="bold">Cancel</Text></Button>
-              <Button bgColor="#F97316" shadow="3" onPress={() => router.back()}><Text color="#FFF" fontWeight="bold">Don't save</Text></Button>
-              <Button bgColor="#F97316" shadow="3" onPress={handleSaveFilters}><Text color="#FFF" fontWeight="bold">Save</Text></Button>
+              <Button background="#F97316" shadow="3" _pressed={{opacity: 0.7}} onPress={handleCloseDialog}><Text color="#FFF" fontWeight="bold">Cancel</Text></Button>
+              <Button background="#F97316" shadow="3" _pressed={{opacity: 0.7}} onPress={() => router.back()}><Text color="#FFF" fontWeight="bold">Don't save</Text></Button>
+              <Button background="#F97316" shadow="3" _pressed={{opacity: 0.7}} onPress={handleSaveFilters}><Text color="#FFF" fontWeight="bold">Save</Text></Button>
             </Button.Group>
           </AlertDialog.Footer>
         </AlertDialog.Content>

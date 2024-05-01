@@ -10,7 +10,7 @@ import {
   Button,
   ChevronLeftIcon,
   Text,
-  Badge,
+  Badge, Heading,
 } from "native-base";
 import { AntDesign } from "@expo/vector-icons";
 import Tags from "../../components/ProfileComponents/Tags";
@@ -72,14 +72,9 @@ export default function SignUpScreen22() {
   const [selectedTags, setSelectedTags] = useState<{ [key: string]: boolean }>(
     {}
   );
-  const WhoAreYouTags = ["Wellness Guru", "Early Riser", "Adventurer", "Foodie", "Gym Rat", "Busy Bee", "Group Fitness Fan"]
-  const FitnessGoalTags = [
-    "Muscle mass",
-    "Bulking",
-    "Strength",
-    "Aesthetics",
-  ];
-  const ActivitiesTags = ["Basic", "Powerlifting", "Cardio", "Recreational"];
+  const WhoAreYouTags = ["Wellness Fan", "Early Riser", "Adventurer", "Foodie", "Gym Rat", "Busy Bee", "Homebody", "Outdoorsy"]
+  const FitnessGoalTags = ["Bulking", "Cutting", "Strength","Aesthetics"];
+  const ActivitiesTags = ["Powerlifting", "Cardio", "Recreational", "Sports", "Group Class", "Lifting", "Dance"];
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -139,7 +134,7 @@ export default function SignUpScreen22() {
       }
 
       // Function to check tags count from each category
-      const checkCategoryTags = (categoryTags) => tags.filter(tag => categoryTags.includes(tag)).length <= 1;
+      const checkCategoryTags = (categoryTags) => tags.filter(tag => categoryTags.includes(tag)).length <= 2;
 
       // Verify each category has at most one tag
       const isValidFitnessGoal = checkCategoryTags(FitnessGoalTags);
@@ -147,7 +142,7 @@ export default function SignUpScreen22() {
       const isValidWorkoutTime = checkCategoryTags(WhoAreYouTags);
 
       if (!isValidFitnessGoal || !isValidActivity || !isValidWorkoutTime) {
-        Alert.alert("Error", "You can select at most one tag from each category.");
+        Alert.alert("Error", "You can select at most two tags from each category.");
         return;
       }
 
@@ -251,22 +246,13 @@ export default function SignUpScreen22() {
             </Box>
           </View>
 
-
-          <Box
-            flexDirection="row"
-            alignItems="center"
-            justifyContent="space-between"
-            paddingX={6}
-            ml={-1.5}
-          ></Box>
-
           <Text
             fontSize="16"
             fontWeight="400"
             lineHeight="20"
             letterSpacing="0.25"
             p="3"
-            mt="3"
+            mt="0"
           >
             Gender
           </Text>
@@ -348,8 +334,30 @@ export default function SignUpScreen22() {
             />
           </Box>
 
-          <Flex flexDirection="column" mt={3} px="3">
+          <Flex flexDirection="column" mt={1} px="3">
             <Flex flexDirection="column" mt={3}>
+            <Text fontSize="md" m={1}>
+                Who are you?
+              </Text>
+              <Flex
+                flexDirection="row"
+                flexWrap="wrap"
+                justifyContent="space-evenly"
+              >
+                {WhoAreYouTags.map((tag, index) => (
+                  <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
+                    <Badge
+                      m={2}
+                      ml={0}
+                      backgroundColor={selectedTags[tag] ? "#fac8a2" : "white"}
+                      shadow={1}
+                      borderRadius={4}
+                    >
+                      {tag}
+                    </Badge>
+                  </Pressable>
+                ))}
+              </Flex>
               <Text fontSize="md" m={1}>
                 Fitness Goals:
               </Text>
@@ -394,40 +402,21 @@ export default function SignUpScreen22() {
                   </Pressable>
                 ))}
               </Flex>
-              <Text fontSize="md" m={1}>
-                Preferred Workout Times:
-              </Text>
-              <Flex
-                flexDirection="row"
-                flexWrap="wrap"
-                justifyContent="space-evenly"
-              >
-                {WhoAreYouTags.map((tag, index) => (
-                  <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
-                    <Badge
-                      m={2}
-                      ml={0}
-                      backgroundColor={selectedTags[tag] ? "#fac8a2" : "white"}
-                      shadow={1}
-                      borderRadius={4}
-                    >
-                      {tag}
-                    </Badge>
-                  </Pressable>
-                ))}
-              </Flex>
             </Flex>
-            <Flex alignItems={"center"}>
+            <Flex alignItems={"center"}  ml={4} mr={4}>
               <Button
-                mt={10}
+                mt={3} width="100%" pt="3.5" pb="3.5"
                 background={"#F97316"}
                 _pressed={{ opacity: 0.5 }}
                 onPress={finishSignUp}
                 rounded="md"
                 height={"12"}
-                width={"95%"}
+                shadow="3"
+                borderRadius="5"
               >
-                Next
+                <Heading color={"#FFF"} fontStyle="normal" fontSize="md">
+                  Next
+                </Heading>
               </Button>
             </Flex>
           </Flex>
