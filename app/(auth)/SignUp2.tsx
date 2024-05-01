@@ -72,14 +72,14 @@ export default function SignUpScreen22() {
   const [selectedTags, setSelectedTags] = useState<{ [key: string]: boolean }>(
     {}
   );
-  const [FitnessGoalTags] = useState([
+  const WhoAreYouTags = ["Wellness Guru", "Early Riser", "Adventurer", "Foodie", "Gym Rat", "Busy Bee", "Group Fitness Fan"]
+  const FitnessGoalTags = [
     "Muscle mass",
     "Bulking",
     "Strength",
     "Aesthetics",
-  ]);
-  const [ActivitiesTags] = useState(["Basic", "Powerlifting", "Cardio", "Recreational"]);
-  const [WorkoutTimeTags] = useState(["Morning", "Afternoon", "Night"]);
+  ];
+  const ActivitiesTags = ["Basic", "Powerlifting", "Cardio", "Recreational"];
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -144,7 +144,7 @@ export default function SignUpScreen22() {
       // Verify each category has at most one tag
       const isValidFitnessGoal = checkCategoryTags(FitnessGoalTags);
       const isValidActivity = checkCategoryTags(ActivitiesTags);
-      const isValidWorkoutTime = checkCategoryTags(WorkoutTimeTags);
+      const isValidWorkoutTime = checkCategoryTags(WhoAreYouTags);
 
       if (!isValidFitnessGoal || !isValidActivity || !isValidWorkoutTime) {
         Alert.alert("Error", "You can select at most one tag from each category.");
@@ -194,33 +194,33 @@ export default function SignUpScreen22() {
           justifyContent="space-between"
           alignItems="center"
         >
-            <Pressable
-              padding={"2"}
-              onPress={() => router.back()}
-              _pressed={{ opacity: 0.5 }}
-            >
-              <ChevronLeftIcon size="md" color="#171717" />
-            </Pressable>
-            <Text
-              fontSize="20"
-              fontWeight="bold"
-              textAlign="center"
-              flex="1"
-              mr="10"
-              p="2"
-            >
-              Registration
-            </Text>
-          </Flex>
-          <Box ml={"3"} mr={"3"} flex="1 ">
-            <Text
-              fontSize="28"
-              fontWeight="700"
-              lineHeight="28"
-              p="3"
-            >
-              Create your profile
-            </Text>
+          <Pressable
+            padding={"2"}
+            onPress={() => router.back()}
+            _pressed={{ opacity: 0.5 }}
+          >
+            <ChevronLeftIcon size="md" color="#171717" />
+          </Pressable>
+          <Text
+            fontSize="20"
+            fontWeight="bold"
+            textAlign="center"
+            flex="1"
+            mr="10"
+            p="2"
+          >
+            Registration
+          </Text>
+        </Flex>
+        <Box ml={"3"} mr={"3"} flex="1 ">
+          <Text
+            fontSize="28"
+            fontWeight="700"
+            lineHeight="28"
+            p="3"
+          >
+            Create your profile
+          </Text>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', padding: 2, marginTop: 8 }}>
             <Text
@@ -402,7 +402,7 @@ export default function SignUpScreen22() {
                 flexWrap="wrap"
                 justifyContent="space-evenly"
               >
-                {WorkoutTimeTags.map((tag, index) => (
+                {WhoAreYouTags.map((tag, index) => (
                   <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
                     <Badge
                       m={2}
