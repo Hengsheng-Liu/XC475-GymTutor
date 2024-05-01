@@ -38,7 +38,7 @@ export default function TabLayout() {
           name="(MessagePage)"
           options={{
             href:"/MessageList",
-            title: "Message",
+            title: "",
             headerShown: false,
             tabBarIcon: ({focused, ...props}) => (focused ? 
               <ChatLogo width="40" height="40" scale="100%" {...props}/> : 
@@ -51,7 +51,7 @@ export default function TabLayout() {
           options={{
             href: (currUser.gym === "" || currUser.gymId === "") ? "/" : "/Home" , // Check if this helped. It blinks from one page to the other when it doesn't have a gym
             // href:"/Home", use this if not working
-            title: "SpotMe",
+            title: "",
             headerShown: false,
             tabBarIcon: ({focused, ...props}) => (focused ? 
               <Logo width="40" height="40" scale="100%" {...props}/> : 
@@ -62,7 +62,7 @@ export default function TabLayout() {
           name="(ProfilePage)"
           options={{
             href:"/ProfilePage",
-            title: "Profile",
+            title: "",
             headerShown: false,
             tabBarIcon: ({focused, ...props}) => (focused ? 
               <ProfileLogo width="40" height="40" scale="100%" {...props}/> : 
