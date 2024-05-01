@@ -46,9 +46,6 @@ export const expoConfig = {
     plugins: [
       [
         "expo-router",
-        {
-          origin: "https://spot-me",
-        },
       ],
       [
         "expo-location",
