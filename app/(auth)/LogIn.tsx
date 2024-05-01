@@ -147,9 +147,9 @@ export default function LogInScreen() {
             <Box style={styles.circularDivider} />
             <Flex flexDir={"row"} marginTop={"1/4"} alignItems={"center"} justifyContent={"left"}>
               <Heading mt={1.5} mr={1} size={"xl"} color={"#FAFAFA"}>
-                Welcome to  
+                Welcome to
               </Heading>
-              <Logo width={120} height={60}/>
+              <Logo width={120} height={60} />
             </Flex>
             <Box marginTop={"6"}>
               <Text color={"#FAFAFA"}>Email</Text>
@@ -164,7 +164,7 @@ export default function LogInScreen() {
                 backgroundColor={"#FAFAFA"}
                 borderRadius={5}
                 shadow={2}
-                autoCorrect={false} 
+                autoCorrect={false}
               />
               <Text color={"#FAFAFA"} marginTop={5}>
                 Password
@@ -188,30 +188,30 @@ export default function LogInScreen() {
               marginTop={"16"}
               borderRadius={5}
               shadow="3"
-              _pressed={{ opacity: 0.5}} 
+              _pressed={{ opacity: 0.5 }}
             >
-              <Heading color={"#F97316"} size={"md"}> 
+              <Heading color={"#F97316"} size={"md"}>
                 Log In
               </Heading>
-              </Button>
+            </Button>
             <Column flex={1} mb={2} alignItems="center" alignContent="center" justifyContent="flex-end">
-                <Text color={"#C2410C"} marginTop={"10"} fontSize="md">
-                  Don't have an account?
-                </Text>
+              <Text color={"#C2410C"} marginTop={"10"} fontSize="md">
+                Don't have an account?
+              </Text>
               <Button
-                  background={"#F97316"}
-                  onPress={() => router.navigate("SignUp")}
-                  mt={4} width="100%" pt="3.5" pb="3.5"                  
-                  borderRadius={5}
-                  shadow="3"
-                  _pressed={{ opacity: 0.5}} 
-                >
-                  <Heading color={"#FFF"} fontStyle="normal" fontSize="md">
-                    Sign up with Email
-                  </Heading>
-                </Button>
-              </Column>
-            </Flex>
+                background={"#F97316"}
+                onPress={() => router.navigate("SignUp")}
+                mt={4} width="100%" pt="3.5" pb="3.5"
+                borderRadius={5}
+                shadow="3"
+                _pressed={{ opacity: 0.5 }}
+              >
+                <Heading color={"#FFF"} fontStyle="normal" fontSize="md">
+                  Sign up with email
+                </Heading>
+              </Button>
+            </Column>
+          </Flex>
         </SafeAreaView>
       </Pressable>
     </NativeBaseProvider>

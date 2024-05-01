@@ -10,6 +10,7 @@ import {
   Button,
   extendTheme,
   ChevronLeftIcon,
+  Heading,
   HStack,
   Icon,
   Text,
@@ -24,7 +25,7 @@ import {
   View,
   SafeAreaView,
   Keyboard,
-  TextInput,
+  TextInput, TouchableOpacity
 } from "react-native";
 import { firestore } from "../../firebaseConfig";
 import { router, useLocalSearchParams } from "expo-router";
@@ -82,6 +83,7 @@ export default function SignUpScreen22() {
   const [selectedTags, setSelectedTags] = useState<{ [key: string]: boolean }>(
     {}
   );
+  const WhoAreYouTags = ["Wellness Guru", "Early Riser", "Adventurer", "Foodie", "Gym Rat", "Busy Bee", "Group Fitness Fan"]
   const [FitnessGoalTags] = useState([
     "Muscle mass",
     "Bulking",
@@ -154,7 +156,7 @@ export default function SignUpScreen22() {
       // Verify each category has at most one tag
       const isValidFitnessGoal = checkCategoryTags(FitnessGoalTags);
       const isValidActivity = checkCategoryTags(ActivitiesTags);
-      const isValidWorkoutTime = checkCategoryTags(WorkoutTimeTags);
+      const isValidWorkoutTime = checkCategoryTags(WhoAreYouTags);
 
       if (!isValidFitnessGoal || !isValidActivity || !isValidWorkoutTime) {
         Alert.alert("Error", "You can select at most one tag from each category.");
@@ -230,12 +232,11 @@ export default function SignUpScreen22() {
           flexDir={"row"}
           justifyContent="space-between"
           alignItems="center"
+          ml="3"
         >
-          <Button
-            bg="primary.400"
-            startIcon={<ChevronLeftIcon size="md" color="primary.200" />}
-            onPress={() => router.navigate("SignUp")}
-          ></Button>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => router.navigate("SignUp")}>
+            <ChevronLeftIcon size="md" color="primary.200" />
+          </TouchableOpacity>
           <Text
             fontSize="20"
             fontWeight="bold"
@@ -378,9 +379,6 @@ export default function SignUpScreen22() {
               w="90%"
               value={bio}
               h="50"
-              overflow={"wrap"}
-              flexWrap={"wrap"}
-              numberOfLines={3}
               onChangeText={(text) => setBio(text)}
               multiline={false}
               placeholder="Maximum 50 words"
@@ -393,6 +391,28 @@ export default function SignUpScreen22() {
 
           <Flex flexDirection="column" mt={3} px="3">
             <Flex flexDirection="column" mt={3}>
+              <Text fontSize="md" m={1}>
+                Who Are You?
+              </Text>
+              <Flex
+                flexDirection="row"
+                flexWrap="wrap"
+                justifyContent="space-evenly"
+              >
+                {WhoAreYouTags.map((tag, index) => (
+                  <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
+                    <Badge
+                      m={2}
+                      ml={0}
+                      backgroundColor={selectedTags[tag] ? "#fac8a2" : "white"}
+                      shadow={1}
+                      borderRadius={4}
+                    >
+                      {tag}
+                    </Badge>
+                  </Pressable>
+                ))}
+              </Flex>
               <Text fontSize="md" m={1}>
                 Fitness Goals:
               </Text>
@@ -437,40 +457,20 @@ export default function SignUpScreen22() {
                   </Pressable>
                 ))}
               </Flex>
-              <Text fontSize="md" m={1}>
-                Preferred Workout Times:
-              </Text>
-              <Flex
-                flexDirection="row"
-                flexWrap="wrap"
-                justifyContent="space-evenly"
-              >
-                {WorkoutTimeTags.map((tag, index) => (
-                  <Pressable key={tag} onPress={() => handleToggleTag(tag)}>
-                    <Badge
-                      m={2}
-                      ml={0}
-                      backgroundColor={selectedTags[tag] ? "#fac8a2" : "white"}
-                      shadow={1}
-                      borderRadius={4}
-                    >
-                      {tag}
-                    </Badge>
-                  </Pressable>
-                ))}
-              </Flex>
             </Flex>
-            <Flex alignItems={"center"}>
+            <Flex alignItems={"center"} ml={10} mt={10} mr={10} mb={1}>
               <Button
-                mt={10}
                 background={"#F97316"}
                 _pressed={{ opacity: 0.5 }}
                 onPress={finishSignUp}
                 rounded="md"
                 height={"12"}
-                width={"95%"}
-              >
-                Next
+                shadow="3"
+                width="100%" pt="3.5" pb="3.5"
+                borderRadius={5}>
+                <Heading color={"#FFF"} fontStyle="normal" fontSize="md">
+                  Next
+                </Heading>
               </Button>
             </Flex>
           </Flex>

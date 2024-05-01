@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   Keyboard,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { firestore, auth } from "../../firebaseConfig";
 import { router } from "expo-router";
@@ -17,18 +18,12 @@ import {
   Box,
   Button,
   NativeBaseProvider,
-  Pressable,
-  ScrollView,
-  Spacer,
-  Tag,
   extendTheme,
   Flex,
   Input,
   Text,
-  HStack,
-  IconButton,
-  Icon,
   ChevronLeftIcon,
+  Heading
 } from "native-base";
 
 
@@ -138,12 +133,11 @@ export default function SignUpScreen() {
           flexDir={"row"}
           justifyContent="space-between"
           alignItems="center"
+          ml="3"
         >
-          <Button
-            bg="primary.400"
-            startIcon={<ChevronLeftIcon size="md" color="primary.200" />}
-            onPress={() => router.navigate("LogIn")}
-          ></Button>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => router.navigate("LogIn")}>
+            <ChevronLeftIcon size="md" color="primary.200" />
+          </TouchableOpacity>
           <Text
             fontSize="20"
             fontWeight="bold"
@@ -269,16 +263,20 @@ export default function SignUpScreen() {
             </Text>
           )}
         </Box>
-        <Flex alignItems={"center"}>
+        <Flex alignItems={"center"} ml={10} mr={10} mb={1}>
           <Button
             background={"#F97316"}
             _pressed={{ opacity: 0.5 }}
             onPress={handleSignUp}
             rounded="md"
             height={"12"}
-            width={"95%"}
+            shadow="3"
+            mt={4} width="100%" pt="3.5" pb="3.5"
+            borderRadius={5}
           >
-            Next
+            <Heading color={"#FFF"} fontStyle="normal" fontSize="md">
+              Next
+            </Heading>
           </Button>
         </Flex>
       </SafeAreaView>
