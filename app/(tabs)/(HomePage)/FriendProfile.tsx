@@ -5,7 +5,7 @@ import Header from "../../../components/FriendsComponents/Header2";
 import Description from "../../../components/FriendsComponents/Description";
 import Achievement from "../../../components/FriendsComponents/Achievement";
 import Attribute from "../../../components/FriendsComponents/Attribute";
-import History from "../../../components/ProfileComponents/History";
+import History from "../../../components/FriendsComponents/History";
 import DropdownButton from "@/components/FriendsComponents/dropDownButton";
 import { IUser } from "../../../components/FirebaseUserFunctions";
 import { SafeAreaView } from "react-native";
