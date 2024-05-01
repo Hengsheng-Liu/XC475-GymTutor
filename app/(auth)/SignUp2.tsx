@@ -59,7 +59,6 @@ export const AddUserToDB = async (
 
 export default function SignUpScreen22() {
   const { CreateUser } = useAuth();
-  const emptyData = [];
   const { name, email, password } = useLocalSearchParams();
   const [month, setMonth] = useState<string>("");
   const [date, setDate] = useState<string>("");
