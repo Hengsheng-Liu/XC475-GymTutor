@@ -395,7 +395,7 @@ export default function SignUpScreen22() {
                 ))}
               </Flex>
               <Text fontSize="md" m={1}>
-                Preferred Workout Times:
+                Who Are You?:
               </Text>
               <Flex
                 flexDirection="row"
