@@ -49,7 +49,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(HomePage)"
           options={{
-            href: (currUser.gym === "" || currUser.gymId === "") ? "/Home" : "/", // Check if this helped. It blinks from one page to the other when it doesn't have a gym
+            href: (currUser.gym === "" || currUser.gymId === "") ? "/" : "/Home" , // Check if this helped. It blinks from one page to the other when it doesn't have a gym
             // href:"/Home", use this if not working
             title: "SpotMe",
             headerShown: false,

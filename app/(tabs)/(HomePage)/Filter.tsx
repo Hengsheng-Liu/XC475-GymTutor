@@ -53,7 +53,7 @@ const FilterScreen = () => {
     const [ageRange, setAgeRange] = useState(filters.age);
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    const [applyNewFilters, setApplyNewFilters] = useState(filters.applyFilters[0]);
+    const [applyNewFilters, setApplyNewFilters] = useState(true);
 
   // Update filters of user
   const updateUserFilters = async (filters: Filters) => {
@@ -140,10 +140,6 @@ const FilterScreen = () => {
     if (!applyFilters[1] && !applyFilters[2] && !applyFilters[3]) {
       applyFilters[0] = false;
     } else {
-      // Check if there were any changes in apply filters selection
-      if (applyNewFilters !== filters.applyFilters[0]) {
-        madeChanges = true;
-      }
       applyFilters[0] = applyNewFilters;
     }
 
@@ -321,9 +317,9 @@ const FilterScreen = () => {
           </AlertDialog.Body>
           <AlertDialog.Footer>
             <Button.Group space={2}>
-              <Button bgColor="#0284C7" onPress={handleCloseDialog}>Cancel</Button>
-              <Button bgColor="#0284C7" onPress={() => router.back()}> Do not save </Button>
-              <Button bgColor="#0284C7" onPress={handleSaveFilters}> Save </Button>
+              <Button bgColor="#F97316" shadow="3" onPress={handleCloseDialog}><Text color="#FFF" fontWeight="bold">Cancel</Text></Button>
+              <Button bgColor="#F97316" shadow="3" onPress={() => router.back()}><Text color="#FFF" fontWeight="bold">Don't save</Text></Button>
+              <Button bgColor="#F97316" shadow="3" onPress={handleSaveFilters}><Text color="#FFF" fontWeight="bold">Save</Text></Button>
             </Button.Group>
           </AlertDialog.Footer>
         </AlertDialog.Content>

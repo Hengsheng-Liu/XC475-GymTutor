@@ -87,7 +87,7 @@ const NotificationScreen = () => {
   return (
     <NativeBaseProvider theme={theme} >
       <SafeAreaView style={{ backgroundColor: "#FFFFFF", flex: 1, overflow: "hidden" }}>
-        <Flex p={15} flexDirection={"row"} alignItems={"center"} justifyContent={"space-evenly"}>
+        <Flex p={15} pb={0} mb={2} flexDirection={"row"} alignItems={"center"} justifyContent={"space-evenly"}>
           <TouchableOpacity activeOpacity={0.7} onPress={() => handleGoBack()}>
             <FontAwesome name="chevron-left" size={24} color="black" />
           </TouchableOpacity>

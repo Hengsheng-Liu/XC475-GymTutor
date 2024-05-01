@@ -200,6 +200,7 @@ const MessageList = () => {
 
   const handleDeleteMessageSession = async (user) => {
     setLoading(true);
+    setUsers([]);
     try {
       if (!User || !User.uid) {
         console.error("No current user logged in!");

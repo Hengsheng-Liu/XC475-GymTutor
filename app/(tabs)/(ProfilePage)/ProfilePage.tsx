@@ -78,7 +78,7 @@ const ProfilePage = () => {
   const updateBio = async (newBio: string) => {
     if (User) {
       try {
-        await updateDoc(doc(firestore, "Users", User.uid), { bio: newBio });
+        await updateDoc(doc(firestore, "Users", User.uid), { bio: newBio.trim() });
       } catch (error) {
         console.error("Error updating bio: ", error);
       }
@@ -145,15 +145,14 @@ const signOutUser = async () => {
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView style={{ backgroundColor: "#FFF" }}>
-        <ScrollView backgroundColor={"#FFFFFF"}>
-          <Flex alignSelf={"flex-end"}>
+          <Flex alignSelf={"flex-end"} mt={1} mb={1}>
             <Popover
               placement="bottom"
               trigger={(triggerProps) => {
                 return (
                   <Flex alignItems="center">
                     <Button mb={1} mr={2.5} p={0} bgColor={"#FFF"} _pressed={{opacity:0.5}}{...triggerProps}>
-                      <Text fontSize="xl">三</Text>
+                      <Text fontSize="2xl">三</Text>
                     </Button>
                   </Flex>
                 );
@@ -164,7 +163,7 @@ const signOutUser = async () => {
                   <Pressable onPress={() => NewBackground()} mb={1} _pressed={{opacity:0.5}}>
                     <Text>Edit Background</Text>
                   </Pressable>
-                  <Pressable onPress={() => router.push({pathname:"/AchievementPage",params:{edit:true,display:userInfo?.display}})} _pressed={{opacity:0.5}}>
+                  <Pressable onPress={() => router.push({pathname:"/AchievementPage",params:{edit:true,display:userInfo?.display}})} mb={1}  _pressed={{opacity:0.5}}>
                     <Text>Edit Achievements</Text>
                   </Pressable>
                   <Pressable onPress={signOutUser}  _pressed={{opacity:0.5}}>                  
@@ -175,6 +174,7 @@ const signOutUser = async () => {
             </Popover.Content>
           </Popover>
         </Flex>
+        <ScrollView backgroundColor={"#FFFFFF"}>
           <Box>
             {userInfo && (
               <Flex>

@@ -24,7 +24,11 @@ export default function Achievement(
             alignItems={"center"}
             justifyContent={"center"}
           >
-            {getSVG(name,true)}
+            <Flex width="100%" height="100%" borderRadius={10} overflow="hidden"
+            justifyContent={"center"} alignItems={"center"} backgroundColor={"muted.200"}
+            >
+              {getSVG(name,true)}
+            </Flex>
           </Flex>
         );
       }
