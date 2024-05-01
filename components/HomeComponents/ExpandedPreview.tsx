@@ -16,6 +16,8 @@ import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { findOrCreateChat } from "@/app/(tabs)/(MessagePage)/data.js";
 import { globalState } from '@/app/(tabs)/(MessagePage)/globalState';
 
+import { getUserIcon } from "../FirebaseUserFunctions";
+
 interface Props {
     users: IUser[];
     user: IUser;
@@ -28,12 +30,38 @@ interface Props {
     const [selectedUser, setSelectedUser] = useState<IUser>(user); // State to hold updated friend data
     const {currUser, updateFriend, friend } = useAuth();
     const [currentIndex, setCurrentIndex] = useState<number>( users.findIndex(u => u.uid === user.uid));
+    const [friendIcon, setFriendIcon] = useState<string>();
 
     if (!currUser) return;
 
     useEffect(() => {
       setSelectedUser(users[currentIndex]);
+      const friend = users[currentIndex];
+        async function fetchIcon() {
+          if (currUser && friend.icon !== "") {
+            try {
+              const url = await getUserIcon(friend.icon);
+              // console.log("Found Icon URL: ", url);
+              setFriendIcon(url);
+            } catch (error) {
+              console.error("Failed to fetch friend icon:", error);
+              // Handle the error e.g., set a default icon or state
+              const url = await getUserIcon("Icon/Default/Avatar.png");
+              console.log("Used default Icon URL: ", url)
+              setFriendIcon(url);
+            }
+          } else {
+          const url = await getUserIcon("Icon/Default/Avatar.png");
+          console.log("Found Icon URL: ", url)
+          setFriendIcon(url);
+        }
+      }
+    
+      if (currUser) {
+          fetchIcon();
+      }
     }, [currentIndex, users]);
+
   
     // Open the friend's profile
     const handleOpenProfile = async () =>{
@@ -91,42 +119,45 @@ interface Props {
           <Avatar
             mb={3}
             size="2xl"
-            source={selectedUser.icon ? { uri: selectedUser.icon } : require("@/assets/images/default-profile-pic.png")}
+            source={{ uri: friendIcon }}
           />
-          <Text fontSize="xl" fontWeight="bold">
+          <Text fontSize="xl" fontWeight="bold" isTruncated maxWidth="85%">
             {selectedUser.name}, {selectedUser.age}
           </Text>
-          <Text fontSize="sm" color="trueGray.500">{selectedUser.status}</Text>
-          <Row alignItems="center" mr="2" ml="2" p="3" justifyContent={"space-between"}>
+          {/* <Text fontSize="sm" color="trueGray.500">{selectedUser.status}</Text> */}
+          <Text color= "trueGray.900" fontSize="sm" height={20} numberOfLines={2} textAlign="center" isTruncated maxWidth="75%">
+            {selectedUser.bio}
+          </Text>
+          <Row alignItems="center" mr="2" ml="2" mb={0} p="3" pt="2" pb="0" justifyContent={"space-between"}>
             <TouchableOpacity activeOpacity={0.7} onPress={() => handlePreviousUser()}>
                 <FontAwesome name="chevron-left" size={24} color="black" />
             </TouchableOpacity>
             <Spacer/>
-            <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>
+            <Badge m = {2} colorScheme={"muted"} shadow={1} borderRadius={4}>
               {selectedUser.gymExperience.charAt(0).toUpperCase() + selectedUser.gymExperience.slice(1)}
             </Badge>
             <Spacer/>
             <TouchableOpacity activeOpacity={0.7} onPress={() => handleNextUser()}>
                 <FontAwesome name="chevron-right" size={24} color="black" />
             </TouchableOpacity>
-            </Row> 
-          <Box overflow="hidden" mb={3}>
+          </Row> 
+          <Box overflow="hidden" mb={3} marginX={9}>
             <Flex flexDirection="row" wrap="wrap" justifyContent="space-evenly">
-              {selectedUser.tags && selectedUser.tags.slice(0, 5).map((tag, index) => (
-                <Badge m = {2} ml={0} colorScheme={"muted"} shadow={1} borderRadius={4}>{tag}</Badge>
+              {selectedUser.tags && selectedUser.tags.slice(0, 4).map((tag, index) => (
+                <Badge m = {2} colorScheme={"muted"} shadow={1} borderRadius={4}>{tag}</Badge>
               ))}
             </Flex>
           </Box>
           <Flex direction="row" justifyContent="space-between" width="90%" m={3}>
-            <Button onPress={() => handleOpenProfile()} size="lg" width="45%" backgroundColor="#FAFAFA" borderColor="#0284C7" borderWidth={2} borderRadius={16}>
-              <Text fontSize="md" color="#0284C7" fontWeight="bold">View Profile</Text>
+            <Button onPress={() => handleOpenProfile()} size="lg" width="45%" backgroundColor="#FAFAFA" borderColor="#F97316" borderWidth={2} borderRadius={16}>
+              <Text fontSize="md" color="#F97316" fontWeight="bold">View Profile</Text>
             </Button>
             { canAddFriend(currUser, selectedUser) ? (
               <Button
               onPress={() => handleSendFriendRequest(currUser.uid, selectedUser.uid)}
               size="lg"
               width="45%"
-              backgroundColor= "#0284C7"
+              backgroundColor= "#F97316"
               borderRadius={16}
             >
                 <Row>
@@ -140,7 +171,7 @@ interface Props {
                   onPress={() => openChat(selectedUser)}
                   size="lg"
                   width="45%"
-                  backgroundColor= "#0284C7"
+                  backgroundColor= "#F97316"
                   borderRadius={16}
                   >
                     <Row>
@@ -152,7 +183,7 @@ interface Props {
                   <Button
                     size="lg"
                     width="45%"
-                    backgroundColor= "#3F9443"
+                    backgroundColor= "#469DA5"
                     borderRadius={16}
                     >
                   <Row>

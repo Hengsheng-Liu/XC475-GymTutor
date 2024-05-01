@@ -19,11 +19,13 @@ export default function Description({bio}: DescriptionProps) {
       <Box 
         flexDirection="column"
         alignItems="flex-start"
-        shadow={3} 
+        shadow={1} 
         backgroundColor={"gray.100"} 
         mt={2} 
-        borderRadius={10}>
-          <Text color={"lightBlue.900"} mt={2} padding={3}>
+        borderRadius={10}
+        height={110}
+        maxHeight={110}>
+          <Text color={"trueGray.900"} mt={2} padding={3}>
             {bio}
           </Text>
       </Box>

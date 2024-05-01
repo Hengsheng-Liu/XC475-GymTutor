@@ -79,12 +79,12 @@ class Fire {
         user: { _id: userId },
         timestamp: this.timestamp,
       };
-      this.append(message, chatId);
+      this.append(message, chatId, userId, receiveUser);
     }
   };
 
 
-  append = async (message, chatId) => {
+  append = async (message, chatId, userId, receiveUser) => {
     try {
 
       // Reference to the specific chat document
@@ -102,9 +102,8 @@ class Fire {
         timestamp: serverTimestamp()
       });
 
-      const [senderId, receiveId] = chatId.split("_");
-      await updateMessaging(doc(this.db, "Users", senderId), receiveId);
-      await updateMessaging(doc(this.db, "Users", receiveId), senderId);
+      await updateMessaging(doc(this.db, "Users", userId), receiveUser.uid, true);
+      await updateMessaging(doc(this.db, "Users", receiveUser.uid), userId, false);
 
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -126,18 +125,36 @@ export function generateChatId(userId1, userId2) {
 
 
 // Helper function to update the currentlyMessaging field
-export const updateMessaging = async (userDocRef, otherUserId) => {
+export const updateMessaging = async (userDocRef, otherUserId, readStatus) => {
   const userDoc = await getDoc(userDocRef);
 
   const userData = userDoc.data();
-  const currentlyMessaging = userData.CurrentlyMessaging || [];
+  const currentlyMessaging = userData.currentlyMessaging || [];
 
   // Create a new array for updated currentlyMessaging data
   let updatedMessaging = currentlyMessaging.filter(entry => entry.userId !== otherUserId);
-  updatedMessaging.push({ userId: otherUserId, timeAsNumber: Date.now() });
+  updatedMessaging.push({ userId: otherUserId, timeAsNumber: Date.now(), haveRead: readStatus });
 
   // Update the document with the modified currentlyMessaging array
-  await updateDoc(userDocRef, { CurrentlyMessaging: updatedMessaging });
+  await updateDoc(userDocRef, { currentlyMessaging: updatedMessaging });
+};
+
+// Helper function to update the haveRead field in the currentlyMessaging array
+export const updateHaveReadStatus = async (userDocRef, otherUserId) => {
+  const userDoc = await getDoc(userDocRef);
+  const userData = userDoc.data();
+  const currentlyMessaging = userData.currentlyMessaging || [];
+
+  // Map through the currentlyMessaging data to update the haveRead status for a specific userId
+  const updatedMessaging = currentlyMessaging.map(entry => {
+    if (entry.userId === otherUserId) {
+      return { ...entry, haveRead: true }; // Set haveRead to true
+    }
+    return entry; // Return unmodified entry if not the target user
+  });
+
+  // Update the document with the modified currentlyMessaging array
+  await updateDoc(userDocRef, { currentlyMessaging: updatedMessaging });
 };
 
 
@@ -166,11 +183,13 @@ export async function findOrCreateChat(userId1, userId2) {
 
     // Save each others chatId in the currentlyMessaging
 
-    await updateMessaging(user1DocRef, userId2);
-    await updateMessaging(user2DocRef, userId1);
+    await updateMessaging(user1DocRef, userId2, true);
+    await updateMessaging(user2DocRef, userId1, false);
 
-    console.log("Updated Currently messaging for both users", userId1, userId2);
+    console.log("Updated currently messaging for both users", userId1, userId2);
   } else {
+    // If session already exists, once the user press into the chat page, change the readStatus to mark read.
+    updateHaveReadStatus(doc(firestore, "Users", userId1), userId2, true);
     console.log('Chat found with ID:', chatId);
   }
 

@@ -12,7 +12,7 @@ import {
   Progress,
 } from "native-base";
 import { Achievementprops } from "../FirebaseUserFunctions";
-import { getSVG } from "./AchievementFunction";
+import  getSVG  from "./AchievementFunction";
 import { router } from "expo-router";
 interface DailyProgressProps {
   Inprogress: Achievementprops[];
@@ -30,7 +30,6 @@ export function DailyProgress({
     <Center>
       <Modal isOpen={ModalVisible} onClose={() => setModalVisible(false)}>
         <Modal.Content>
-          <Modal.CloseButton />
           <Center>
             <Modal.Header>Daily Achievements!</Modal.Header>
           </Center>
@@ -51,13 +50,14 @@ export function DailyProgress({
           <Modal.Footer>
             <Button.Group space={2}>
               <Button
-                bgColor={"#EA580C"}
+                background={"#EA580C"}
+                _pressed={{opacity: 0.5}}
                 onPress={() => {
                   setModalVisible(false);
-                  router.push("/CheckInSubmit");
+                  router.replace("/Home");
                 }}
               >
-                Let's Go
+                <Text fontSize="md" color="#FFFFFF">Let's Go!</Text>
               </Button>
             </Button.Group>
           </Modal.Footer>

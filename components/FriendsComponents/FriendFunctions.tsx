@@ -10,7 +10,17 @@ export const canAddFriend = (User: IUser, Friend: IUser): boolean => {
     
     const isFriend = Friend.friends.includes(userUID);
     const hasSentRequest = Friend.friendRequests.findIndex(request => request.friend === userUID) !== -1;
-    const hasRequest = User.friendRequests.findIndex(request => request.friend === Friend.uid) !== -1;
+    let hasRequest = false;
+    if (User.friendRequests.findIndex(request => request.friend === Friend.uid) !== -1) {
+        const user = User.friendRequests.find(request => request.friend === Friend.uid);
+        if (user) {
+            hasRequest = user.status === "pending";
+        } else {
+            hasRequest = false;
+        }
+    } else {
+        hasRequest = false;
+    };
     const isRejected = Friend.rejectedRequests.includes(userUID);
     const isBlocked = Friend.blockedUsers.includes(userUID);
 

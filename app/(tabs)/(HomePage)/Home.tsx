@@ -5,8 +5,9 @@ import { ScrollView, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "@/Context/AuthContext";
-import { IUser, getUsers, updateUsers, removeFieldFromUsers, Gym } from "@/components/FirebaseUserFunctions";
+import { IUser, getUsers, updateUsers, removeFieldFromUsers, getCurrUser, Gym } from "@/components/FirebaseUserFunctions";
 import UserPreview from "../../../components/HomeComponents/UserContainer";
+import CheckedUserPreview from "../../../components/HomeComponents/CheckedUserContainer";
 import Header from "../../../components/HomeComponents/Header";
 import theme from "@/components/theme";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -17,22 +18,24 @@ import { Octicons } from "@expo/vector-icons";
 import { defaultFilters } from "./Filter";
 import UserExpandedPreview from "@/components/HomeComponents/ExpandedPreview";
 import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
-
-
+import { CalendarUtils } from "react-native-calendars";
+import { updateCurrentUser } from "firebase/auth";
+//import { handleCheckIn } from "@/components/GeolocationFunction";
 export default function HomeScreen() {
   // const [gym, setGym] = useState<Gym>(); // State to store the gym
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [users, setUsers] = useState<IUser[]>([]); // State to store users
+  const [checkedUsers, setCheckedUsers] = useState<IUser[]>([]); // State to store users that have a photo
+  const [otherUsers, setOtherUsers] = useState<IUser[]>([]); // State to store the rest of the users
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
   const [firstLoad, setFirstLoad] = useState<boolean>(true); // State to track first load
   const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
-  const { User, currUser, userGym } = useAuth();
+  const { User, currUser, updateCurrUser, userGym } = useAuth();
   const [location, setLocation] = useState<number[]>([]);
   const bound = useRef<number[][]>([]); // State to store the gym boundary
   const [checkIn, setCheckIn] = useState<boolean>(false); // State to store the gym boundary
   const Day = new Date();
-  const Today =
-    Day.getFullYear() + "-" + (Day.getMonth() + 1) + "-" + Day.getDate();
+  const Today = CalendarUtils.getCalendarDateString(Day);
 
 
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
@@ -42,20 +45,23 @@ export default function HomeScreen() {
 
   // Initialize gym data
   useEffect(() => {
+    if (!userGym || userGym[0] === "" || userGym[1] === "") {
+      router.push("/");
+    }
     if (currUser) {
-        // updateUsers(); // Uncomment when we want to update users with new fields / random values
-        handleSearchUsers();
-        fetchGym();
-        setFirstLoad(false);
-        checkUser();
-      };
+      // updateUsers(); // Uncomment when we want to update users with new fields / random values
+      handleSearchUsers();
+      fetchGym();
+      setFirstLoad(false);
+      checkUser();
+    };
   }, [isFocused]);
 
   const checkUser = () => {
     if (currUser) {
-      const History = currUser.checkInHistory;
+      const History = currUser.checkInHistory.map((each) => each.day);
       if (History && History.includes(Today)) {
-        setCheckIn(true); 
+        setCheckIn(true);
       };
     };
   };
@@ -82,7 +88,7 @@ export default function HomeScreen() {
     }
   };
 
-  // TODO: Display user preview when clicked
+  // Display user preview when clicked
   const handlePreviewClick = (friend: IUser) => {
     setSelectedUser(friend);
     setIsOpen(true);
@@ -97,7 +103,12 @@ export default function HomeScreen() {
   const handleSearchUsers = async () => {
     if (currUser && userGym) {
       setUsers([]);
+      setCheckedUsers([]);
+      setOtherUsers([]);
       setLoading(true);
+
+      const currUser2 = await getCurrUser(User.uid);
+      updateCurrUser(currUser2);
 
       let fetchedUsers: IUser[];
       if (searchTerm === "") {
@@ -112,99 +123,136 @@ export default function HomeScreen() {
         // Testing keyword to show all users on their gym
         fetchedUsers = await getUsers(currUser.uid, userGym[0], defaultFilters);
         console.log("Fetched all gym users!");
-      } else { 
+      } else {
         // Search by name
         fetchedUsers = await getUsers(currUser.uid, userGym[0], defaultFilters, searchTerm);
         console.log("Fetched users with name: ", searchTerm);
       }
 
+      fetchedUsers = fetchedUsers.filter((user) => user.uid !== currUser.uid);
+      fetchedUsers = fetchedUsers.filter((user) => !currUser2.blockedUsers.includes(user.uid));
+
+      // Filter users that have checked in today
+      const checkedUsers = fetchedUsers.filter((user) => {
+        if (user.checkInHistory.length !== 0) {
+          const lastCheckIn = user.checkInHistory[user.checkInHistory.length - 1];
+          if (lastCheckIn && lastCheckIn.day && lastCheckIn.day === Today && lastCheckIn.photo) {
+            return user;
+          }
+        }
+        return;
+      });
+      console.log("Checked users: ", checkedUsers.map((user) => [user.name, user.checkInHistory[user.checkInHistory.length - 1].day]));
+      setCheckedUsers(checkedUsers);
+      const otherUsers = fetchedUsers.filter((user) => !checkedUsers.includes(user));
+      setOtherUsers(otherUsers);
+      console.log("Other users", otherUsers.map((user) => user.name));
       setUsers(fetchedUsers);
       setLoading(false);
     };
   };
-  
+
   const handleCheckIn = async () => {
-    const location = await GetUserLocation(); {
-      if (location) {
-        console.log(location);
-        setLocation(location);
-        if (pointInPolygon(location, bound.current)) {
-          router.push("/CheckIn");
-        } else {
-          router.push("/CheckIn");
-          alert(
-            "You are not at the gym location, please check in at the gym location"
-          );
-        }
-      } else {
-        alert("Please enable location services to check in");
-      }
+    if (checkIn) {
+      alert("You have already checked in today");
+      return;
     }
+    router.replace("/DailyPicture");
   };
-  
+
+
   // Function to update the users list after sending a friend request
   const updateFetchedUsers = (updatedUser: IUser) => {
     const updatedUsers = users.map((user) => (user.uid === updatedUser.uid ? updatedUser : user));
     setUsers(updatedUsers);
   };
-    
-  return ( 
+
+  return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView
-        style={{ backgroundColor: "#FFF", flex: 1, padding: 15}}
+        style={{ backgroundColor: "#FFF", flex: 1, padding: 10, paddingHorizontal: 5 }}
       >
-        { userGym && <Header GymName={userGym[1]} />}
-        <Row mb={1} space={2} alignItems="center">
-        <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/Filter")} >
-          <Octicons name="filter" size={35} color="#0284C7" />
-        </TouchableOpacity>
-        <Input flex={1}
-          InputLeftElement={
-            <Box paddingLeft={2}>
-              <TouchableOpacity activeOpacity={0.7} onPress={handleSearchUsers} >
-                <FontAwesome name="search" size={24} color="#0284C7" />
-              </TouchableOpacity>
-            </Box>
-          }
-          placeholder="Spot someone in this gym"
-          bgColor="trueGray.100"
-          onChangeText={setSearchTerm}
-          borderRadius="md"
-          borderWidth={1}
-          fontSize="md"
-        />
+        {userGym && <Header GymName={userGym[1]} />}
+        <Row mb={1} mr="1" ml="1" space={2} alignItems="center">
+          <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/Filter")} >
+            <Octicons name="filter" size={35} color="#F97316" />
+          </TouchableOpacity>
+          <Input flex={1} mb="1.5"
+            InputLeftElement={
+              <Box paddingLeft={2}>
+                <TouchableOpacity activeOpacity={0.7} onPress={handleSearchUsers} >
+                  <FontAwesome name="search" size={24} color="#A3A3A3" />
+                </TouchableOpacity>
+              </Box>
+            }
+            placeholder="Spot someone in this gym"
+            bgColor="trueGray.100"
+            onChangeText={setSearchTerm}
+            borderRadius="md"
+            borderWidth={1}
+            fontSize="md"
+            onSubmitEditing={handleSearchUsers}
+          />
         </Row>
-        {loading && 
-            <Column flex={1} alignItems="center" alignContent="center" justifyContent="center">
-              <Spacer/>
-              <Spinner size="md" mb={2} color="#0284C7" accessibilityLabel="Loading posts" />
-              <Heading color="#0284C7" fontSize="md"> Loading</Heading>
-            </Column>}
+        {loading &&
+          <Column flex={1} alignItems="center" alignContent="center" justifyContent="center">
+            <Spacer />
+            <Spinner size="md" mb={2} color="#F97316" accessibilityLabel="Loading posts" />
+            <Heading color="#F97316" fontSize="md"> Loading</Heading>
+          </Column>}
         {!firstLoad && !loading && users.length === 0 ? (
-          <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
-            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
               Oops! There are no users matching your search. 🤔
-            </Text> 
-            < Text/>
-            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
+            </Text>
+            < Text />
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
               Try broadening your search to discover more amazing users!
-            </Text>   
+            </Text>
           </View>
-          ) : (
-          <ScrollView style={{flex:1, zIndex:0}}>
-            {users.map((user) => (
-            <Pressable onPress={()=> handlePreviewClick(user)}>
-              {({ isPressed }) => {
-              return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} 
-                          style={{transform: [{ scale: isPressed ? 0.96 : 1 }]}} 
-                          shadow="3" borderRadius="xl" mb ={3} ml={1} mr={1} pr={1}>
-                        <UserPreview friend={user} key={user.uid} />
-                      </Box>}}
-            </Pressable>))}
+        ) : (
+          <ScrollView style={{ flex: 1, zIndex: 0 }}>
+            <Row>
+              <Column flex={1} mr={1}>
+                {checkedUsers.slice(0, Math.ceil(checkedUsers.length / 2)).map((user) => (
+                  <Pressable onPress={() => handlePreviewClick(user)} key={user.uid}>
+                    {({ isPressed }) => {
+                      return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"}
+                        style={{ transform: [{ scale: isPressed ? 0.96 : 1 }] }}
+                        shadow="3" borderRadius="xl" mb={3} ml={1} mr={1} pl={0.5} pr={0.5}>
+                        <CheckedUserPreview friend={user} key={user.uid} />
+                      </Box>
+                    }}
+                  </Pressable>))}
+              </Column>
+              <Column flex={1} ml={1}>
+                {checkedUsers.slice(Math.ceil(checkedUsers.length / 2)).map((user) => (
+                  <Pressable onPress={() => handlePreviewClick(user)} key={user.uid}>
+                    {({ isPressed }) => {
+                      return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"}
+                        style={{ transform: [{ scale: isPressed ? 0.96 : 1 }] }}
+                        shadow="3" borderRadius="xl" mb={3} mr={0.5} pl={0.5} pr={0.5}>
+                        <CheckedUserPreview friend={user} key={user.uid} />
+                      </Box>
+                    }}
+                  </Pressable>))}
+              </Column>
+            </Row>
+
+            {otherUsers.map((user) => (
+              <Pressable onPress={() => handlePreviewClick(user)} key={user.uid}>
+                {({ isPressed }) => {
+                  return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"}
+                    style={{ transform: [{ scale: isPressed ? 0.96 : 1 }] }}
+                    shadow="1" borderRadius="xl" mb={3}>
+                    <UserPreview friend={user} key={user.uid} />
+                  </Box>
+                }}
+              </Pressable>))}
           </ScrollView>
-          )}
-        {selectedUser && 
-          <UserExpandedPreview users={users} user={selectedUser} isOpen={isOpen} onClose={handleCloseModal} updateFetchedUsers={updateFetchedUsers}/>
+        )}
+        {selectedUser &&
+          <UserExpandedPreview users={users} user={selectedUser} isOpen={isOpen} onClose={handleCloseModal} updateFetchedUsers={updateFetchedUsers} />
         }
         <Button
           size={"lg"}
@@ -214,21 +262,19 @@ export default function HomeScreen() {
           height={16}
           bottom={5}
           right={3}
-          background={"#0284C7"}
+          shadow="3"
+          background={"#F97316"}
           justifyContent={"center"}
           alignItems={"center"}
-          onPress={handleCheckIn}
+          _pressed={{ opacity: 0.5 }}
+          onPress={() => handleCheckIn()}
         >
-          <Text fontWeight="bold" fontSize="lg" color="#FFF"> Check In </Text> 
+          <Text fontWeight="bold" fontSize="lg" color="#FFF"> Check In </Text>
         </Button>
       </SafeAreaView>
     </NativeBaseProvider>
   );
 }
-//insde the gym: 42.352057232511406, -71.11682641206473
-// outside the gym: 42.35249135900813, -71.11565509642959
-//42.35193439884672, -71.11673198835226
-//42.352164385569864, -71.11695979401712
 /*
     const location = await GetUserLocation();
     if (checkIn) {

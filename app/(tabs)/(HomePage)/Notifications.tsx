@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, TouchableOpacity } from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
+
 import { NativeBaseProvider } from 'native-base';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Flex, Text, Column, Spacer, Spinner, Heading, Divider, Box} from "native-base";
+import { Flex, Text, Column, Spacer, Spinner, Heading, Divider, Box } from "native-base";
 import { FontAwesome } from '@expo/vector-icons';
 import theme from '@/components/theme';
-import { IUser } from '@/components/FirebaseUserFunctions'; 
+import { IUser } from '@/components/FirebaseUserFunctions';
 import { useAuth } from "@/Context/AuthContext";
 import FriendRequest from '../../../components/FriendsComponents/RequestContainer';
 import fetchUsers from '../../../components/FriendsComponents/FetchUsers';
@@ -14,39 +14,48 @@ import { getCurrUser } from '@/components/FirebaseUserFunctions';
 import { firestore } from '@/firebaseConfig';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { router } from 'expo-router';
+import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
 
-type Props = {
-  navigation: StackNavigationProp<any>;
-};
 
-const NotificationScreen: React.FC<Props> = ({ navigation }) => {
+
+const NotificationScreen = () => {
   const [requests, setRequests] = useState<IUser[]>([]); // State to store friends requests
   const [pendingRequests, setPendingRequests] = useState<IUser[]>([]); // State to store pending friend requests
   const [historyRequests, setHistoryRequests] = useState<IUser[]>([]); // State to store history friend requests
   const [rejectedRequests, setRejectedRequests] = useState<IUser[]>([]); // State to store rejected friend requests
   const [acceptedRequests, setAcceptedRequests] = useState<IUser[]>([]); // State to store accepted friend requests
-  const {User} = useAuth(); 
+  const { User, currUser, updateCurrUser } = useAuth();
   const [loading, setLoading] = useState<boolean>(true); // State to track loading status
-  
+  const [firstLoad, setFirstLoad] = useState<boolean>(false); // State to track first load
+  const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
+  const db = firestore;
+
   if (!User) return; // Check if user is null
 
   useEffect(() => {
-    fetchData();
-    
+    if (!firstLoad) {
+      setFirstLoad(true);
+      fetchData();
+    }
+    if (!loading) {
+      fetchData();
+    }
+
     const userDocRef = doc(firestore, 'Users', User.uid);
     const unsubscribe = onSnapshot(userDocRef, () => { // Set up listener for changes in user's document
-      fetchData(); // Fetch data whenever the document changes
+        fetchData(); // Fetch data whenever the document changes
+
     });
 
     return () => unsubscribe();
-  }, [User]);
+  }, [User, isFocused]);
 
   const fetchData = async () => {
     setLoading(true);
-    const currUser = await getCurrUser(User.uid);
-    if (!currUser) return;
-
     setRequests([]);
+    const currUser = await getCurrUser(User.uid);
+    updateCurrUser(currUser);
+    if (!currUser) return;
     try {
       const friendRequests = currUser.friendRequests;
 
@@ -72,53 +81,56 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
       setAcceptedRequests(fetchAccepted);
 
     } catch (error) {
-        console.error('Error fetching friend requests:', error);
+      console.error('Error fetching friend requests:', error);
     }
     setLoading(false);
   };
 
   // Handle navigation. 
   const handleGoBack = () => {
-    router.replace("/Home");
+    router.back();
   };
 
   return (
-    <NativeBaseProvider theme = {theme} >
-      <SafeAreaView style= {{backgroundColor:"#0284C7", flex:1}}>
-        <Flex p={15} flexDirection={"row"} alignItems={"center"} justifyContent={"space-evenly"}>
+    <NativeBaseProvider theme={theme} >
+      <SafeAreaView style={{ backgroundColor: "#FFFFFF", flex: 1, overflow: "hidden" }}>
+        <Flex p={15} pb={0} mb={2} flexDirection={"row"} alignItems={"center"} justifyContent={"space-evenly"}>
           <TouchableOpacity activeOpacity={0.7} onPress={() => handleGoBack()}>
-            <FontAwesome name="chevron-left" size={24} color="#FFF" />
+            <FontAwesome name="chevron-left" size={24} color="black" />
           </TouchableOpacity>
-          <Spacer/>
+          <Spacer />
           <Box>
-            <Heading fontSize="lg">Notifications</Heading> 
+            <Heading fontSize="lg" color="trueGray.800">Notifications</Heading>
           </Box>
           <Spacer/>
+          <TouchableOpacity>
+            <FontAwesome name="chevron-left" size={24} color="#FFF" />
+          </TouchableOpacity>
         </Flex>
-      <ScrollView style= {{flex:1, backgroundColor:"#FFF", padding:15 }}>
-        {loading && (
-          <Column flex={1} flexDirection={"column"} padding={50} alignItems="center" alignContent="center" justifyContent="center">
-            <Spacer/>
-            <Spinner size="md" mb={2} color="#0284C7" accessibilityLabel="Loading posts" />
-            <Heading color="#0284C7" fontSize="md"> Loading</Heading>
-            <Spacer/>
-          </Column>
-        )} 
-        {!loading && (
-          <>
-            <Text color="trueGray.900" fontSize="lg" fontWeight="bold">New Connections</Text>
-            <Spacer/>
-            <Divider my={2} />
-              {pendingRequests.length >0 ? (
+        <ScrollView style={{ flex: 1, backgroundColor: "#FFF", padding: 15, paddingTop: 0 }}>
+          {loading && (
+            <Column flex={1} flexDirection={"column"} padding={50} alignItems="center" alignContent="center" justifyContent="center">
+              <Spacer />
+              <Spinner size="md" mb={2} color="#F97316" accessibilityLabel="Loading posts" />
+              <Heading color="#F97316" fontSize="md"> Loading</Heading>
+              <Spacer />
+            </Column>
+          )}
+          {!loading && (
+            <>
+              <Text color="trueGray.900" fontSize="lg" fontWeight="bold">New Connections</Text>
+              <Spacer />
+              <Divider my={2} />
+              {pendingRequests.length > 0 ? (
                 <>
                   <Flex>
                     {pendingRequests.map((user) => (
-                      <FriendRequest friend={user} key={user.uid} status={"pending"}/>
+                      <FriendRequest friend={user} key={user.uid} status={"pending"} />
                     ))}
                   </Flex>
                 </>
               ) : (
-                <Box>  
+                <Box>
                   <Text color="trueGray.900" fontSize="sm" >No new notifications!</Text>
                   <Text> </Text>
                 </Box>
@@ -134,10 +146,10 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
                 <>
                   <Flex>
                     {acceptedRequests.map((user) => (
-                      <FriendRequest friend={user} key={user.uid} status={"accepted"}/>
+                      <FriendRequest friend={user} key={user.uid} status={"accepted"} />
                     ))}
                     {rejectedRequests.map((user) => (
-                      <FriendRequest friend={user} key={user.uid} status={"rejected"}/>
+                      <FriendRequest friend={user} key={user.uid} status={"rejected"} />
                     ))}
                   </Flex>
                 </>
@@ -146,10 +158,11 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
               )}
             </>
           )}
-      </ScrollView>
+        </ScrollView>
       </SafeAreaView>
     </NativeBaseProvider>
 
-)};
+  )
+};
 
 export default NotificationScreen;

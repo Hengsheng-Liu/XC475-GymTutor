@@ -21,6 +21,8 @@ import { GeoPoint } from 'firebase/firestore';
 import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
 import Achievement from './ProfileComponents/Achievement';
 import { CalendarUtils } from 'react-native-calendars';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 type Birthday = { day: number, month: number, year: number };
 export interface Achievementprops {
@@ -29,6 +31,10 @@ export interface Achievementprops {
     max: number;
     achieved: boolean;
     description: string;
+}
+export interface DailyCheckIn {
+    day: string;
+    photo?: string;
 }
 export interface Achievements {
     Chest: Achievementprops[];
@@ -51,22 +57,23 @@ export const DefaultAchievement: Achievements = {
     Legs: [
         { name: "Leg Day Legend", curr: 0, max: 10, description: "Awarded for completing 10 check-ins with the leg day, showcasing dedication to lower body strength and development.", achieved: false },
     ],
-    Shoulder:[
-        {name:"Shoulder Sculptor", curr: 0, max: 10, description:"Awarded for accumulating 10 check-ins with the shoulder day, demonstrating commitment to shoulder muscle growth and definition.",achieved:false}
+    Shoulder: [
+        { name: "Shoulder Sculptor", curr: 0, max: 10, description: "Awarded for accumulating 10 check-ins with the shoulder day, demonstrating commitment to shoulder muscle growth and definition.", achieved: false }
     ],
-    Cardio:[
-        {name:"Cardio King", curr: 0, max: 10, description:"Awarded for achieving 10 check-ins with the cardio day, highlighting a focus on cardiovascular health and endurance.",achieved:false}
+    Cardio: [
+        { name: "Cardio King", curr: 0, max: 10, description: "Awarded for achieving 10 check-ins with the cardio day, highlighting a focus on cardiovascular health and endurance.", achieved: false }
     ],
-    Core:[
-        {name:"Core Crusher", curr: 0, max: 10, description:"Awarded for reaching 10 check-ins with the core day, showcasing dedication to core muscle strength and definition.",achieved:false}
+    Core: [
+        { name: "Core Crusher", curr: 0, max: 10, description: "Awarded for reaching 10 check-ins with the core day, showcasing dedication to core muscle strength and definition.", achieved: false }
     ],
-    FullBody:[
-        {name:"Full Body Fiend", curr: 0, max: 10, description:"Awarded for completing 10 check-ins with the full body day, demonstrating commitment to overall body strength and development.",achieved:false}
+    FullBody: [
+        { name: "Full Body Fiend", curr: 0, max: 10, description: "Awarded for completing 10 check-ins with the full body day, demonstrating commitment to overall body strength and development.", achieved: false }
     ],
     CheckIn: [
         { "name": "Check-In Champion", "curr": 0, "max": 15, "description": "Awarded for reaching 15 total check-ins.", "achieved": false },
         { "name": "Consistency Conqueror", "curr": 0, "max": 25, "description": "Awarded for making 25 check-ins in a single month.", "achieved": false },
         { "name": "Iron Dedication", "curr": 0, "max": 50, "description": "Awarded for hitting 50 consecutive check-ins without missing a day.", "achieved": false },
+        { "name": "SpotMe Superstar", "curr": 0, "max": 100, "description": "Awarded for achieving 100 total check-ins.", "achieved": false }
     ]
 };
 
@@ -90,16 +97,16 @@ export interface IUser {
     rejectedRequests: string[];
     blockedUsers: string[];
     gym: string;
-    checkInHistory: string[]; // Add proper type
+    checkInHistory: DailyCheckIn[]; // Add proper type
     icon: string;
     Achievement: Achievements;
     gymExperience: string;
-    currentlyMessaging: String[];
     gymId: string;
     filters: Filters;
     birthday: Birthday;
     display: string[];
-    CurrentlyMessaging: CurrentlyMessagingEntry[]
+    currentlyMessaging: CurrentlyMessagingEntry[]
+    background: string;
 
 }
 
@@ -125,41 +132,38 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters, n
                 if (gymData && gymData.members) {
                     memberIds = gymData.members;
                 }
+                if (memberIds.length === 0) {
+                    return [];
+                }
+            } else {
+                return [];
             }
-
+        } else {
+            return [];
         }
 
-        // Query  users from their gym. If they don't have one, query all users
+        // Query  users from their gym.
         // TODO: Maybe query only nearby users.
-        let usersQuery = memberIds.length > 0 ?
-            query(collection(db, 'Users'), where('uid', 'in', memberIds)) :
-            query(collection(db, 'Users'), where("gym", "!=", ""));
+        
+        let usersQuery = query(collection(db, 'Users'), where('uid', 'in', memberIds));
 
         // Apply additional filters if provided
         if (filters) {
             const { applyFilters, sex, age, gymExperience } = filters;
             // Check if filters should be applied in general
             if (applyFilters[0]) {
-                // Filter by sex if specified
-                if (applyFilters[1] && sex.length > 0) {
-                    usersQuery = query(usersQuery, where("sex", "in", sex));
-                }
+
 
                 // Filter by age if specified
                 if (applyFilters[2] && age.length === 2) {
                     usersQuery = query(usersQuery, where("age", ">=", age[0]), where("age", "<=", age[1]));
                 }
-
-                // Filter by gym experience if specified
-                if (applyFilters[3] && gymExperience.length > 0) {
-                    usersQuery = query(usersQuery, where("gymExperience", "in", gymExperience));
-                };
             };
         };
 
         // Get each user and save their data
         const querySnapshot = await getDocs(usersQuery);
-        const usersData: IUser[] = [];
+        let usersData: IUser[] = [];
 
         // Save user data if it is not the current User
         querySnapshot.forEach(snap => {
@@ -168,6 +172,19 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters, n
                 usersData.push(userData);
             }
         });
+
+        if (filters) {
+            const { applyFilters, sex, age, gymExperience } = filters;
+            // Filter by sex if specified
+            if (applyFilters[1] && sex.length > 0) {
+                usersData = usersData.filter(user => sex.includes(user.sex));
+            }
+
+            // Filter by gym experience if specified
+            if (applyFilters[3] && gymExperience.length > 0) {
+                usersData = usersData.filter(user => gymExperience.includes(user.gymExperience));
+            };
+        }
 
         // Filter list of users by name if provided
         if (name && name !== "" && usersData.length > 0) {
@@ -179,7 +196,8 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters, n
     } catch (error) {
         // Throw error for handling in the caller function
         console.error('Error querying users:', error);
-        throw error;
+        //throw error;
+        return [];
     }
 };
 
@@ -251,14 +269,14 @@ export async function addUser(
             gym: gym,
             gymId: gymId,
             checkInHistory: [],
-            icon: "",
-            achievements: [],
+            icon: sex === "female" ? "gs://spotme-8591a.appspot.com/Default/WomenProfile.png" : sex === "male" ? "gs://spotme-8591a.appspot.com/Default/MenProfile.png" : "gs://spotme-8591a.appspot.com/Default/default.png",
             gymExperience: gymExperience,
             currentlyMessaging: [],
             filters: filters,
             birthday: birthday,
             Achievement: DefaultAchievement,
-            display: []
+            display: [],
+            background: "gs://spotme-8591a.appspot.com/Default/background.jpg"
         });
 
         console.log("Document written for user: ", uid);
@@ -392,7 +410,11 @@ export async function updateUsers(): Promise<void> {
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
+                friends: [],
                 friendRequests: [],
+                rejectedRequests: [],
+                blockedUsers: [],
+                currentlyMessaging: [],
             };
 
             // Update document if any field is missing
@@ -534,19 +556,67 @@ async function randomIt(): Promise<void> {
     // Example usage
     const randomName: string = generateRandomName(randomSex);
 }
-export const AddDate = async (uid: string) => {
+export const AddDate = async (uid: string, url: string | undefined) => {
     const Day = new Date();
     const Today = CalendarUtils.getCalendarDateString(Day);
+    const newCheckIn: DailyCheckIn = {
+        day: Today,
+    };
+    if (url) {
+        newCheckIn.photo = url;
+    }
+
     try {
         const userRef = doc(firestore, "Users", uid);
         const userCheckHistory = (await getDoc(userRef)).data()?.checkInHistory;
         await updateDoc(userRef, {
-            checkInHistory: [...userCheckHistory, Today],
+            checkInHistory: [...userCheckHistory, newCheckIn],
         });
     } catch (error) {
         console.error("Error updating bio: ", error);
     }
 };
+export const getUserPicture = async (iconUrl: string, type: string): Promise<string | undefined> => {
+    try {
+        const storage = getStorage();
+        const storageRef = ref(storage, iconUrl);
+        const url = await getDownloadURL(storageRef);
+        return url;
+    } catch (error) {
+        console.error("Error getting user picture: ", error);
+        switch (type) {
+            case "Avatar":
+                return getUserPicture("gs://spotme-8591a.appspot.com/Default/default.png", "Avatar");
+            case "Background":
+                return getUserPicture("gs://spotme-8591a.appspot.com/Default/background.jpg", "Background");
+            default:
+                return undefined;
+        }
+    }
+};
+export const getUserIcon = async (iconUrl: string): Promise<string | undefined> => {
+    try {
+        const storage = getStorage();
+        const storageRef = ref(storage, iconUrl);
+        const url = await getDownloadURL(storageRef);
+        return url;
+    } catch (error) {
+        console.error("Error getting user icon: ", error);
+        return undefined;
+    }
+}
+export const getAchievement= async (AchievementUrl: string): Promise<string | null> => {
+    try {
+        const storage = getStorage();
+        const storageRef = ref(storage, AchievementUrl);
+        const url = await getDownloadURL(storageRef);
+        return url;
+    } catch (error) {
+        console.error("Error getting user icon: ", error);
+        return null;
+    }
+
+}
 
 // Attempt to do it automatically. Didn't work and gave up
 // Define a function to fetch all users and update them with missing fields

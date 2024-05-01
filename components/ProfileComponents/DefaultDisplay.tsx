@@ -13,7 +13,10 @@ export default function DefaultDisplay(
     return (
         <Pressable 
         width={"1/4"}
-        onPress={() => router.push({pathname:"/AchievementPage",params:{edit:true,display}})}>
+        onPress={() => router.push({pathname:"/AchievementPage",params:{edit:true,display}})}
+        _pressed={{ opacity: 0.5 }}
+        >
+        
         <Flex
        height={"24"}
        borderRadius={10}

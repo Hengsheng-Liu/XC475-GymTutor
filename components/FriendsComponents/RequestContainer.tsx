@@ -1,5 +1,5 @@
-import React, {useState} from 'react'
-import { Spacer, Button, Row, Column, Pressable, Text, Avatar} from 'native-base'
+import React, { useState, useEffect } from 'react'
+import { Spacer, Button, Row, Column, Pressable, Text, Avatar, Box} from 'native-base'
 import { IUser } from '@/components/FirebaseUserFunctions'; 
 import { useAuth } from "@/Context/AuthContext";
 import { router } from 'expo-router';
@@ -7,6 +7,7 @@ import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { firestore } from '@/firebaseConfig';
 import { globalState } from '@/app/(tabs)/(MessagePage)/globalState';
 import { findOrCreateChat } from '@/app/(tabs)/(MessagePage)/data';
+import { getUserIcon } from '@/components/FirebaseUserFunctions';
 
 interface FriendProps {
     friend: IUser;
@@ -16,13 +17,40 @@ interface FriendProps {
 const FriendRequest: React.FC<FriendProps> = ({ friend, status }) => {
     const [isPressed, setIsPressed] = useState<boolean>(false);
     const {currUser, updateCurrUser, updateFriend, } = useAuth();
+    const [friendIcon, setFriendIcon] = useState<string>(); 
 
+    useEffect(() => {
+        async function fetchIcon() {
+            if (currUser && friend.icon !== "") {
+              try {
+                const url = await getUserIcon(friend.icon);
+                // console.log("Found Icon URL: ", url);
+                setFriendIcon(url);
+              } catch (error) {
+                console.error("Failed to fetch friend icon:", error);
+                // Handle the error e.g., set a default icon or state
+                const url = await getUserIcon("Icon/Default/Avatar.png");
+                console.log("Used default Icon URL: ", url)
+                setFriendIcon(url);
+              }
+            } else {
+            const url = await getUserIcon("Icon/Default/Avatar.png");
+            // console.log("Used default Icon URL: ", url)
+            setFriendIcon(url);
+          }
+        }
+
+        if (currUser) {
+            fetchIcon();
+        }
+    }, [currUser, friend.uid,friend.icon]); // Depend on currUser and friend.uid
+    
     if (!currUser) return;
 
     // Display user profile when user clicks on notification
-    const handleUserClick  = async () =>{
-        await updateFriend(friend);
-        router.push("/FriendProfile2");
+    const handleUserClick  = () =>{
+        updateFriend(friend);
+        router.push("/FriendProfile");
     };
 
     // Function to add friends
@@ -44,7 +72,7 @@ const FriendRequest: React.FC<FriendProps> = ({ friend, status }) => {
                 updateFriend(updatedFriend);
             }
             // removeFriendRequest(userUID, friendUID);
-            updateFriendRequest(userUID, friendUID, "accepted");
+            await updateFriendRequest(userUID, friendUID, "accepted");
             updateDoc(userRef, { friends: arrayUnion(friendUID) });
             updateDoc(friendRef, { friends: arrayUnion(userUID) });
             console.log('Friend added successfully: ', friendUID, userUID);
@@ -69,7 +97,6 @@ const FriendRequest: React.FC<FriendProps> = ({ friend, status }) => {
                 updateCurrUser(updatedUser);
                 updateDoc(userRef, { rejectedRequests: arrayUnion(friendUID) });
             }
-            updateDoc(userRef, { rejectedRequests: arrayUnion(userUID) });
             console.log('Added User on friends rejection list: ', friendUID, userUID);
         } catch (error) {
             console.error('Error adding user on rejection list: ', error);
@@ -91,7 +118,7 @@ const FriendRequest: React.FC<FriendProps> = ({ friend, status }) => {
                 updateCurrUser(updatedUser);
     
                 // Update the user document to remove the friend request
-                updateDoc(userRef, { friendRequests: updatedFriendRequests});
+                await updateDoc(userRef, { friendRequests: updatedFriendRequests});
             }
             console.log('Friend request updated successfully');
         } catch (error) {
@@ -103,19 +130,17 @@ const FriendRequest: React.FC<FriendProps> = ({ friend, status }) => {
     const openChat = async (friend: any) => {
         console.log(findOrCreateChat(currUser.uid, friend.uid));
         globalState.user = friend; // Set the selected user in the global state
-        router.navigate("ChatPage"); // Then navigate to ChatPage
+        router.navigate("/ChatPage"); // Then navigate to ChatPage
     };
 
     return (
-        <Pressable 
-            onPress = {() => handleUserClick()}
-            onPressOut={() => setIsPressed(false)}
-            p = {3} mb ={1}
-            borderRadius="xl" borderWidth={1} borderColor="trueGray.50" shadow="3"
-            bg={isPressed ? "trueGray.200" : "trueGray.50"} // Change background color on hover
-            >
+        <Pressable onPress={() => handleUserClick()}> 
+          {({ isPressed }) => {
+              return <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} 
+                          style={{transform: [{ scale: isPressed ? 0.96 : 1 }]}} 
+                          shadow="3" borderRadius="xl" mb ={1} p={3}>
             <Row alignItems="center" justifyContent="left" space="sm">
-                <Avatar size= "lg" source={friend.icon ? {uri: friend.icon} : require("@/assets/images/default-profile-pic.png")} />
+                <Avatar size= "lg" source={{ uri: friendIcon }} />
                 <Column>    
                     <Text color= "trueGray.900" fontSize="md" fontWeight="bold">{friend.name}</Text>
                     <Text/>
@@ -147,6 +172,7 @@ const FriendRequest: React.FC<FriendProps> = ({ friend, status }) => {
                     </Row>
                 )}
             </Row>
+            </Box>}}
         </Pressable>
     );
   };

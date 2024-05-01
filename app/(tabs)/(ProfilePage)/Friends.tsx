@@ -15,29 +15,34 @@ import FriendContainer from '../../../components/FriendsComponents/FriendContain
 import fetchUsers from '../../../components/FriendsComponents/FetchUsers';
 import theme from '@/components/theme';
 import { getCurrUser } from '@/components/FirebaseUserFunctions';
+import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
 
 export default function FriendListScreen () {
   const [friends, setFriends] = useState<IUser[]>([]);
   const {User, currUser, updateCurrUser, friend, updateFriend} = useAuth(); 
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
+
 
   if (!User) return; // Check if user is null
 
   useEffect(() => {
     fetchData();
 
-    // const userDocRef = doc(firestore, 'Users', User.uid);
-    // const unsubscribe = onSnapshot(userDocRef, () => { // Set up listener for changes in user's document
-    //   fetchData(); // Fetch data whenever the document changes
-    // });
+    const userDocRef = doc(firestore, 'Users', User.uid);
+    const unsubscribe = onSnapshot(userDocRef, () => { // Set up listener for changes in user's document
+      fetchData(); // Fetch data whenever the document changes
+    });
 
-    // return () => unsubscribe();
-  }, [User]);
+    return () => unsubscribe();
+  }, [User, isFocused]);
 
   const fetchData = async () => {
-    setFriends([]);
+    const currUser2 = await getCurrUser(User.uid);
+    updateCurrUser(currUser2);
     setLoading(true);
+    setFriends([]);
     try {
       if (currUser){  
         const fetchedFriends = await fetchUsers(currUser, currUser.friends);
@@ -53,71 +58,82 @@ export default function FriendListScreen () {
   const searchFriends = async () => {
     // Filter list of users by name if provided
     setLoading(true);
+    await fetchData();
     if (searchTerm && searchTerm !== "" && friends.length > 0) {
         setFriends(filterUsersByName(friends, searchTerm));
-    } 
+    } else {
+      await fetchData();
+    }
     setLoading(false);
     }
 
   const handleGoBack = () => {
-    router.replace("/ProfilePage");
+    router.back();
   };
 
   return (
     <NativeBaseProvider theme = {theme} >
-      <SafeAreaView style= {{backgroundColor:"#0284C7", flex:1}}>
-      <Box p={15} alignItems="center">
-            <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"space-evenly"}>
+      <SafeAreaView style= {{backgroundColor:"#FFFFFF", flex:1}}>
+      <Box p={15} pb={3} alignItems="center" justifyContent="space-between" > 
+            <Row alignItems={"center"}>
               <TouchableOpacity activeOpacity={0.7} onPress={() => handleGoBack()}>
-                <FontAwesome name="chevron-left" size={24} color="#FFF" />
+                <FontAwesome name="chevron-left" size={24} color="black" />
               </TouchableOpacity>
               <Spacer/>
               <Box>
-                <Heading fontSize="lg">Friends</Heading> 
+                <Heading fontSize="lg" color="trueGray.800">Friends</Heading> 
               </Box>
               <Spacer/>
-            </Flex>
-          </Box>
-          <Row mb={1} space={2} alignItems="center">
-        <Input flex={1} marginX={4} mb={2}
-          InputLeftElement={
-            <Box paddingLeft={2}>
-              <TouchableOpacity activeOpacity={0.7} onPress={searchFriends} >
-                <FontAwesome name="search" size={24} color="#0284C7" />
+              <TouchableOpacity>
+                <FontAwesome name="chevron-left" size={24} color="#FFFFFF" />
               </TouchableOpacity>
-            </Box>
-          }
-          placeholder="Type and look for your partner"
-          bgColor="trueGray.100"
-          onChangeText={setSearchTerm}
-          borderRadius="md"
-          borderWidth={1}
-          fontSize="md"
-        />
+            </Row>
+      </Box>
+        <Row alignItems="center">
+          <Input flex={1} marginX={4} mb={2}
+            InputLeftElement={
+              <Box paddingLeft={2}>
+                <TouchableOpacity activeOpacity={0.7} onPress={searchFriends} >
+                  <FontAwesome name="search" size={24} color="#A3A3A3" />
+                </TouchableOpacity>
+              </Box>
+            }
+            placeholder="Look for your friend here!"
+            bgColor="trueGray.100"
+            onChangeText={setSearchTerm}
+            onSubmitEditing={searchFriends}
+            borderRadius="md"
+            borderWidth={1}
+            fontSize="md"
+          />
         </Row>
       <ScrollView style={{backgroundColor:"#FFF"}}>
         {loading ? (
-          <Column flex={1} alignItems="center" alignContent="center" justifyContent="center">
+          <Box flex={1} pt={20}>
             <Spacer/>
-            <Spinner size="md" mb={2} color="#0284C7" accessibilityLabel="Loading posts" />
-            <Heading color="#0284C7" fontSize="md"> Loading</Heading>
+            <Column flex={1} alignItems="center" alignContent="center" justifyContent="center">
+            <Spacer/>
+            <Spinner size="md" mb={2} color="#F97316" accessibilityLabel="Loading posts" />
+            <Heading color="#F97316" fontSize="md"> Loading</Heading>
           </Column>
-        ) : friends.length === 0 ? (
-          <View style={{flex:1, justifyContent:"center", alignItems:"center", paddingLeft:3, paddingRight:3}}>
-            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
-              Oops! It seems like there are no friends to display.
-            </Text> 
-            < Text/>
-            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#0284C7">
-              Try exploring and discover more amazing users!
-            </Text>   
-          </View>
-        ) : (
+          </Box>
+        ) : friends.length !== 0 ? (
           <Flex p={1} pt={3} >
             {friends.map((user) => (
               <FriendContainer friend= {user} fetchData={fetchData} key={user.uid}/>
             ))}
-          </Flex>  
+          </Flex> 
+        ) : (
+          <View style={{flex:1, justifyContent:"center", alignItems:"center", paddingLeft:3, paddingRight:3}}>
+            <Text/>
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
+              Oops! It seems like there are no friends to display.
+            </Text> 
+            < Text/>
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
+              Try exploring and discover more amazing users!
+            </Text>   
+          </View>
         )}
       </ScrollView>
       </SafeAreaView>

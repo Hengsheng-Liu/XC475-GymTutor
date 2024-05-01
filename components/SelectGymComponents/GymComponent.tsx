@@ -25,7 +25,7 @@ function GetPhotoURL(photo: GymIcon | undefined) {
       <FontAwesome
         name="question-circle"
         size={55}
-        color="white"
+        color="#171717"
         style={{ marginRight: 4 }}
       />
     );
@@ -57,12 +57,15 @@ export default function Gym({ title, Address, photo,Geometry,place_id }: props) 
               {GetPhotoURL(photo)}
               <Flex flex={1}>
                 <Heading size="md"> {title}</Heading>
-                <Text fontSize="sm">{Address}</Text>
+                <Text fontSize="sm" ml={1}>{Address}</Text>
               </Flex>
             </Flex>
-            <Box>
-              <FontAwesome5 name="chevron-right" size={24} color="#F0F9FF" />
-            </Box>
+            <FontAwesome5
+              name="chevron-right"
+              size={25}
+              color="#171717"
+            />
+
           </Flex>
         </Box>
       </Pressable>

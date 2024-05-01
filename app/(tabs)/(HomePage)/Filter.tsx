@@ -14,12 +14,12 @@ import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 
 
-const defaultValues = {ageRange: [18, 100], gymExperience: ["beginner", "intermediate", "advanced"], sex: ["male", "female"]};
+const defaultValues = {ageRange: [18, 100], gymExperience: ["beginner", "intermediate", "advanced"], sex: ["male", "female", "other"]};
 
 export type Filters = {
   applyFilters: boolean[]; // Save which filters are to be applied. 0: All, 1: Age, 2: Sex, 3: Gym Experience
   age: number[]; // Save age range: 0: Min, 1: Max
-  sex: string[]; // Male / Female
+  sex: string[]; // Male / Female / Other
   gymExperience: string[]; // Options: Beginner, Intermediate, Advanced
 };
 
@@ -40,7 +40,7 @@ const FilterScreen = () => {
 
     const [male, setMale] = useState<boolean>(filters.sex.includes("male")); // stores whether male box is checked
     const [female, setFemale] = useState<boolean>(filters.sex.includes("female")); // stores whether female box is checked
-
+    const [other, setOther] = useState<boolean>(filters.sex.includes("other")); // stores whether other box is checked
     const [beginner, setBeginner] = useState<boolean>(filters.gymExperience.includes("beginner")); // stores whether beginner box is checked
     const [intermediate, setIntermediate] = useState<boolean>(filters.gymExperience.includes("intermediate")); // stores whether intermediate box is checked
     const [advanced, setAdvanced] = useState<boolean>(filters.gymExperience.includes("advanced")); // stores whether advanced box is checked
@@ -53,7 +53,7 @@ const FilterScreen = () => {
     const [ageRange, setAgeRange] = useState(filters.age);
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    const [applyNewFilters, setApplyNewFilters] = useState(filters.applyFilters[0]);
+    const [applyNewFilters, setApplyNewFilters] = useState(true);
 
   // Update filters of user
   const updateUserFilters = async (filters: Filters) => {
@@ -81,11 +81,14 @@ const FilterScreen = () => {
     let [newMinAge, newMaxAge] = defaultValues.ageRange;
 
     // Check if it's necessary to filter by sex
-    if ((male && female) || (!male && !female)) {
+    if ((male && female && other) || (!male && !female && !other)) {
       applyFilters[1] = false;
     } else {
       applyFilters[1] = true;
-      newSex = male? ["male"] : ["female"];
+      newSex = [];
+      if (male) newSex.push("male");
+      if (female) newSex.push("female");
+      if (other) newSex.push("other");
     };
 
     // Check if there were any changes in sex selection
@@ -140,10 +143,6 @@ const FilterScreen = () => {
     if (!applyFilters[1] && !applyFilters[2] && !applyFilters[3]) {
       applyFilters[0] = false;
     } else {
-      // Check if there were any changes in apply filters selection
-      if (applyNewFilters !== filters.applyFilters[0]) {
-        madeChanges = true;
-      }
       applyFilters[0] = applyNewFilters;
     }
 
@@ -174,7 +173,7 @@ const FilterScreen = () => {
     if (changed) {
       applyChanges(newFilters);
     };
-    router.replace("/Home");
+    router.back();
   };
 
   // Handle navigation. Ask user if they want to save changes before leaving
@@ -183,7 +182,7 @@ const FilterScreen = () => {
     if (changed) {
       setDialogOpen(true);
     } else {
-      router.replace("/Home");
+      router.back();
     }
   };
 
@@ -214,52 +213,58 @@ const FilterScreen = () => {
     if(changed){
       applyChanges(newFilters);
     }
-    router.replace("/Home");
+    router.back();
   };
 
   return (
     <NativeBaseProvider theme={theme}>
-      <SafeAreaView style={{backgroundColor:"#0284C7", flex: 1}}>
-      <Box p={15} alignItems="center" shadow="1">
+      <SafeAreaView style={{backgroundColor:"#FFF", flex: 1}}>
+      <Box p={15} alignItems="center">
             <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"space-evenly"}>
               <TouchableOpacity activeOpacity={0.7} onPress={() => handleGoBack()}>
-                <FontAwesome name="chevron-left" size={24} color="#FFF" />
+                <FontAwesome name="chevron-left" size={24} color="black" />
               </TouchableOpacity>
               <Spacer/>
               <Box>
-                <Heading fontSize="lg">Filters</Heading> 
+                <Heading fontSize="lg" color="black" pl="3"> Filters</Heading> 
               </Box>
               <Spacer/>
               <TouchableOpacity activeOpacity={0.7} onPress={() => handleResetFilters()} >
-                <Text color= "#FFF" fontSize="md" fontWeight="bold">Reset</Text>
+                <Text color="black" fontSize="md" fontWeight="bold">Reset</Text>
               </TouchableOpacity>
             </Flex>
           </Box>
         <ScrollView style={{flex:1, backgroundColor:"#FFF"}}>
         <View bgColor="#FFF" flex={1} paddingLeft={15} paddingRight={15} >
-          <Heading pt={2} pb={2} fontSize="md" color="trueGray.900">BASIC INFO</Heading>
-          <Text pt={2} pb={2} fontSize="sm">Sex </Text>
+          <Heading pt={2} pb={4} fontSize="lg" color="trueGray.700">Basic Information</Heading>
+          <Text pt={3} pb={3} fontSize="md">Sex </Text>
           <Row justifyContent="space-evenly">
             <Checkbox 
               value="male"
               isChecked={male}
               defaultIsChecked={male}
-              colorScheme="lightBlue"
+              colorScheme="orange"
               onChange={() => setMale(!male)}>Male</Checkbox>
             <Checkbox 
               value="female"
               isChecked={female}
               defaultIsChecked={female}
-              colorScheme="lightBlue"
+              colorScheme="orange"
               onChange={() => setFemale(!female)}>Female</Checkbox>
+            <Checkbox 
+              value="other"
+              isChecked={other}
+              defaultIsChecked={other}
+              colorScheme="orange"
+              onChange={() => setOther(!other)}>Other</Checkbox>
           </Row>
           <Row justifyContent={'left'} pt={5}>
-            <Text fontSize="sm">Age </Text>
+            <Text fontSize="md">Age </Text>
             <Spacer/>
             <Text>{ageRange[0]} - {ageRange[1]}</Text>
           </Row>
           <Spacer/>
-          <Row justifyContent={"center"} >
+          <Row justifyContent={"center"} pt={3} >
           <MultiSlider
             values={ageRange}
             onValuesChange={(values) => setAgeRange(values)}
@@ -268,28 +273,28 @@ const FilterScreen = () => {
             step={1}
             allowOverlap={false}
             snapped
-            selectedStyle= {{backgroundColor: "#0284C7"}}
+            selectedStyle= {{backgroundColor: "#F97316"}}
           />
         </Row>
-          <Text pt={4} pb={2}>Experience Level </Text>
-          <Row justifyContent="space-evenly">
+          <Text pt={4} pb={5} fontSize="md">Experience Level </Text>
+          <Row justifyContent="space-evenly" pt={3}>
             <Checkbox 
               value="beginnner"
               isChecked={beginner}
               defaultIsChecked={beginner}
-              colorScheme="lightBlue"
+              colorScheme="orange"
               onChange={() => setBeginner(!beginner)}>Beginner</Checkbox>
             <Checkbox 
               value="intermediate"
               isChecked={intermediate}
               defaultIsChecked={intermediate}
-              colorScheme="lightBlue"
+              colorScheme="orange"
               onChange={() => setIntermediate(!intermediate)}>Intermediate</Checkbox>
             <Checkbox 
               value="advanced"
               isChecked={advanced}
               defaultIsChecked={advanced}
-              colorScheme="lightBlue"
+              colorScheme="orange"
               onChange={() => setAdvanced(!advanced)}>Advanced</Checkbox>
           </Row>
           <Spacer/>
@@ -300,10 +305,10 @@ const FilterScreen = () => {
               value="applyNewFilters"
               isChecked={applyNewFilters}
               defaultIsChecked={applyNewFilters}
-              colorScheme="lightBlue"
+              colorScheme="orange"
               onChange={() => setApplyNewFilters(!applyNewFilters)}> Check to apply filters
             </Checkbox>
-          <Button onPress={handleSaveChanges} style={{ marginTop: 10, backgroundColor:"#0284C7" }}>
+          <Button onPress={handleSaveChanges} mt="2" backgroundColor="#F97316" _pressed={{ opacity: 0.4 }}>
             <Text color="#FFF" fontWeight="bold">Save Changes</Text>
           </Button>
           </View>
@@ -321,9 +326,9 @@ const FilterScreen = () => {
           </AlertDialog.Body>
           <AlertDialog.Footer>
             <Button.Group space={2}>
-              <Button bgColor="#0284C7" onPress={handleCloseDialog}>Cancel</Button>
-              <Button bgColor="#0284C7" onPress={() => router.push("/Home")}> Do not save </Button>
-              <Button bgColor="#0284C7" onPress={handleSaveFilters}> Save </Button>
+              <Button background="#F97316" shadow="3" _pressed={{opacity: 0.7}} onPress={handleCloseDialog}><Text color="#FFF" fontWeight="bold">Cancel</Text></Button>
+              <Button background="#F97316" shadow="3" _pressed={{opacity: 0.7}} onPress={() => router.back()}><Text color="#FFF" fontWeight="bold">Don't save</Text></Button>
+              <Button background="#F97316" shadow="3" _pressed={{opacity: 0.7}} onPress={handleSaveFilters}><Text color="#FFF" fontWeight="bold">Save</Text></Button>
             </Button.Group>
           </AlertDialog.Footer>
         </AlertDialog.Content>

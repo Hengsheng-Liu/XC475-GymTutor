@@ -1,40 +1,50 @@
 import React, { useEffect } from "react";
 import {
-  VStack,
   Heading,
-  Center,
-  Text,
   NativeBaseProvider,
   Flex,
   Box,
   Spacer,
   ScrollView,
-  HStack,
   Button,
+  Row,
 } from "native-base";
-import { SafeAreaView, StyleSheet,View} from "react-native";
+import { TouchableOpacity } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import { SafeAreaView, StyleSheet} from "react-native";
 import AchievementModal from "../../../components/ProfileComponents/AchievementsModal";
 import { firestore } from "../../../firebaseConfig";
 import {
   doc,
   updateDoc,
 } from "firebase/firestore";
-import { SvgUri } from "react-native-svg";
 import {
   Achievementprops,
   Achievements,
+  getAchievement,
   getCurrUser,
 } from "@/components/FirebaseUserFunctions";
 import { useAuth } from "@/Context/AuthContext";
 import { useLocalSearchParams,router } from "expo-router";
-import { getSVG } from "@/components/ProfileComponents/AchievementFunction";
+import { SvgUri } from "react-native-svg";
 const AchievementPage = () => {
+  const { User } = useAuth();
   const { edit } = useLocalSearchParams();
   const [Complete, SetComplete] = React.useState<Achievementprops[]>([]);
   const [Uncomplete, SetUncomplete] = React.useState<Achievementprops[]>([]);
   const [editDisplay, setEditDisplay] = React.useState<string[]>([]);
-  
-  const { User } = useAuth();
+  const [CompleteSVG, SetCompleteSVG] = React.useState<React.JSX.Element[]>([]);
+  const [UncompleteSVG, SetUncompleteSVG] = React.useState<React.JSX.Element[]>([]);
+  useEffect(() => {
+    GetUserAchievement();
+
+  }, []);
+  useEffect(() => {
+    console.log(Complete);
+    console.log(Uncomplete);  
+    AllSvgs();
+    console.log(CompleteSVG);
+}, [Complete, Uncomplete]);  
   const updateUserDisplay = async () => {
     if (User) {
       try {
@@ -53,6 +63,7 @@ const AchievementPage = () => {
         const Achievement = UserInfo.Achievement;
         const CompleteAchievements: Achievementprops[] = [];
         const UncompleteAchievements: Achievementprops[] = [];
+
         Object.keys(Achievement).forEach((muscleGroup) => {
           const achievements = Achievement[muscleGroup as keyof Achievements];
           if (achievements) {
@@ -65,29 +76,76 @@ const AchievementPage = () => {
             });
           }
         });
-
+  
+  
+  
         SetComplete(CompleteAchievements);
         SetUncomplete(UncompleteAchievements);
-        setEditDisplay(DisplayAchievement)
-        
+        setEditDisplay(DisplayAchievement);
       } catch (error) {
         console.error("Error fetching user achievements: ", error);
       }
     }
   };
-  useEffect(() => {
-    GetUserAchievement();
-  }, []);
+  const AllSvgs = async () =>{
+    const UnSVGs:  React.JSX.Element[] = [];
+    const ComSVGs:  React.JSX.Element[] = [];
+    let SVG;
+    for (let i = 0; i < Uncomplete.length; i++) {
+      const name = Uncomplete[i].name;
+      const achievementPath = `/Achievement/Incomplete/${name.replace(/\s/g, '')}Grey.svg`;
+      try{
+        SVG = await getAchievement(achievementPath);
+      }catch(error){
+        console.error("Error fetching achievement:", error);
+      }
+      UnSVGs.push(
+        <SvgUri uri={SVG} width="100%" height="100%" />
+      );
+    }
+    for (let i = 0; i < Complete.length; i++) {
+      const name = Complete[i].name;
+      const achievementPath = `/Achievement/Complete/${name.replace(/\s/g, '')}Colored.svg`;
+      try{
+        SVG = await getAchievement(achievementPath);
+      }catch(error){
+        console.error("Error fetching achievement:", error);
+      }
+      ComSVGs.push(
+        <SvgUri uri={SVG} width="100%" height="100%" />
+      );
+    }  
+    SetUncompleteSVG(UnSVGs);
+    SetCompleteSVG(ComSVGs);
+  }
+
   return (
     <NativeBaseProvider>
+      <SafeAreaView style= {{backgroundColor:"#FFFFFF", flex:1}}>
+      <Box p={15} pb={3} alignItems="center" justifyContent="space-between">
+            <Row alignItems={"center"}>
+              <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
+                <FontAwesome name="chevron-left" size={24} color="black" />
+              </TouchableOpacity>
+              <Spacer/>
+              <Box>
+                <Heading fontSize="lg" color="trueGray.800">Your Badges</Heading> 
+              </Box>
+              <Spacer/>
+              <TouchableOpacity activeOpacity={0.7}>
+                <FontAwesome name="chevron-left" size={24} color="#FFFFFF" />
+              </TouchableOpacity>
+            </Row>
+      </Box>
       <ScrollView style={styles.container}>
           <Flex justifyContent={"flex-end"}flexDir={"column"} margin={1}>
             {Complete.length > 0 && <Box marginBottom={5}>
             <Heading marginBottom={2} marginTop={3}> Earned Badges</Heading>
             <Flex flexDirection={"row"} flexWrap={"wrap"}>
-              {Complete.map((achievement) => (
+              {Complete.map((achievement,index) => (
                 <AchievementModal
-                  image={getSVG(achievement.name, achievement.achieved)}
+                  key = {achievement.name}
+                  image={CompleteSVG[index]}
                   name={achievement.name}
                   description={achievement.description}
                   current={achievement.curr}
@@ -111,9 +169,10 @@ const AchievementPage = () => {
             </Flex>
             <Heading marginTop={5} marginBottom={2}> More Badges</Heading>
             <Flex flexDirection={"row"} flexWrap={"wrap"}>
-              {Uncomplete.map((achievement) => (
+              {Uncomplete.map((achievement,index) => (
                 <AchievementModal
-                  image={getSVG(achievement.name, achievement.achieved)}
+                  key = {achievement.name}
+                  image={UncompleteSVG[index]}
                   name={achievement.name}
                   description={achievement.description}
                   current={achievement.curr}
@@ -124,8 +183,16 @@ const AchievementPage = () => {
             </Flex>
             </Box>}
           </Flex>
+
       </ScrollView>
-      {edit && <Button backgroundColor={"#F97316"} onPress={updateUserDisplay}>Submit</Button>}
+      {edit && 
+      <Flex flexDir={"row"} justifyContent={"space-around"} backgroundColor={"#FFF"} paddingBottom={5}>
+         <Button backgroundColor={"#F97316"} width = {"1/3"} borderRadius = {"15"}  onPress={updateUserDisplay}  _pressed={{ opacity: 0.5 }}>Submit</Button>
+       <Button backgroundColor={"#F97316"} width={"1/3"} borderRadius = {"15"} onPress={() => router.navigate("/ProfilePage")} _pressed={{ opacity: 0.5 }}>Cancel</Button>
+     
+      </Flex>
+      }
+      </SafeAreaView>
     </NativeBaseProvider>
   );
 };

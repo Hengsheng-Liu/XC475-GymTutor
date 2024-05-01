@@ -6,6 +6,7 @@ import { generateChatId } from '@/app/(tabs)/(MessagePage)/data';
 import { firestore } from '../../firebaseConfig'
 import { getDoc, doc, collection } from 'firebase/firestore'
 import { useFocusEffect } from '@react-navigation/native';
+import { getUserPicture } from '@/components/FirebaseUserFunctions';
 
 interface FriendProps {
     friend: IUser;
@@ -14,6 +15,34 @@ interface FriendProps {
 const ChatPreview: React.FC<FriendProps> = ({ friend }) => {
     const { currUser } = useAuth();
     const [newestMessage, setNewestMessage] = useState('');
+    const [friendIcon, setFriendIcon] = useState<string>();
+    if (!currUser) return;
+
+    useEffect(() => {
+        async function fetchIcon() {
+            if (currUser && friend.icon !== "") {
+                try {
+                    const url = await getUserPicture(friend.icon, "Avatar");
+                    // console.log("Found Icon URL: ", url);
+                    setFriendIcon(url);
+                } catch (error) {
+                    console.error("Failed to fetch friend icon:", error);
+                    // Handle the error e.g., set a default icon or state
+                    const url = await getUserPicture("Icon/Default/Avatar.png", "Avatar");
+                    console.log("Used default Icon URL: ", url)
+                    setFriendIcon(url);
+                }
+            } else {
+                const url = await getUserPicture("Icon/Default/Avatar.png", "Avatar");
+                // console.log("Used default Icon URL: ", url)
+                setFriendIcon(url);
+            }
+        }
+
+        if (currUser) {
+            fetchIcon();
+        }
+    }, [currUser, friend.uid, friend.icon]); // Depend on currUser and friend.uid
 
     useFocusEffect(
         useCallback(() => {
@@ -49,7 +78,7 @@ const ChatPreview: React.FC<FriendProps> = ({ friend }) => {
     return (
         <Flex>
             <Row alignItems="center" space="sm">
-                <Avatar m={2} size="xl" source={friend.icon ? { uri: friend.icon } : require("@/assets/images/default-profile-pic.png")} />
+                <Avatar m={2} mr={1} w={70} h={70} source={{ uri: friendIcon }} />
                 <Column>
                     <Row justifyContent={"space-between"} >
                         <Column overflow="hidden" width="190">
