@@ -1,106 +1,349 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Button,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import {
-  getUsers,
-  IUser,
-  updateUsers,
-} from "@/components/FirebaseUserFunctions";
+import { View, ScrollView, TouchableOpacity, Alert, Image } from "react-native";
+import { CurrentlyMessagingEntry, IUser } from "@/components/FirebaseUserFunctions";
 import { useAuth } from "@/Context/AuthContext";
 import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused hook
-import { styles } from "../../../components/HomeComponents/DisplayUsersStyles";
 import { router } from "expo-router";
+import { findOrCreateChat, generateChatId } from "./data";
+import { globalState } from './globalState';
+import { NativeBaseProvider, Spacer, Pressable, Text, Box, Column, Spinner, Heading, Input, Row } from "native-base";
+import { SafeAreaView } from "react-native-safe-area-context";
+import theme from "@/components/theme";
+import Header from "@/components/ChatComponents/Header";
+import { FontAwesome } from "@expo/vector-icons";
+import { getDocs, where, query, collection, doc, deleteDoc, getDoc, updateDoc, arrayRemove, writeBatch, onSnapshot } from "firebase/firestore";
+import { firestore } from "@/firebaseConfig";
+import { filterUsersByName } from "@/components/FirebaseUserFunctions";
+import ChatPreview from "@/components/ChatComponents/ChatContainer";
+import { FontAwesome5, Octicons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
-type Props = {
-  navigation: StackNavigationProp<any>;
-};
 
-const MessageList: React.FC<Props> = ({ navigation }) => {
+const MessageList = () => {
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const isFocused = useIsFocused(); // Use the useIsFocused hook to track screen focus
   const [users, setUsers] = useState<IUser[]>([]); // State to store users
   const [loading, setLoading] = useState<boolean>(false); // State to track loading state
-  const { User } = useAuth();
+  const [firstLoad, setFirstLoad] = useState<boolean>(true); // State to track first load
+  const { User, currUser } = useAuth();
+  const [currentUserCurrentlyMessaging, setCurrentUserCurrentlyMessaging] = useState([]);
+  const [deleteMessageTrigger, setDeleteMessageTrigger] = useState(0);
+
 
   useEffect(() => {
-    if (User && isFocused) {
-      handleGetUsers();
+
+    if (!User.uid) return;  // Ensure that User.uid is available
+
+    // Reference to the user's document in Firestore
+    const currentUserDocRef = doc(firestore, "Users", User.uid);
+
+    // Set up the real-time listener
+    const unsubscribe = onSnapshot(currentUserDocRef, (doc) => {
+      const userData = doc.data();
+      const CurrentlyMessagingData = userData?.currentlyMessaging;
+
+      // Update state with the latest data
+      setCurrentUserCurrentlyMessaging(CurrentlyMessagingData);
+
+      setFirstLoad(false);
+
+      // Optionally, log the timeAsNumber for debugging
+      if (CurrentlyMessagingData) {
+        console.log(CurrentlyMessagingData.map(entry => entry.timeAsNumber));
+      }
+    }, (error) => {
+      console.error("Failed to fetch user data:", error);
+    });
+
+    // Clean up the listener when the component unmounts or User.uid changes
+    return () => unsubscribe();
+  }, [User.uid, firestore]);
+
+
+  useEffect(() => {
+    // Only execute handleSearchUsers if:
+    // - The screen is focused, and
+    // - It is not the first load, or
+    // - The first load has just completed and this is a subsequent update.
+
+    if (isFocused && !firstLoad) {
+      handleSearchUsers();
     }
-  }, [User, isFocused]); // Dependency array includes User and isFocused
+  }, [isFocused, firstLoad, deleteMessageTrigger]); // Depend on both isFocused and firstLoad
 
-  // TODO: Display user preview when clicked
-  const handleUserClick = (user: IUser) => {
-    // Do something when user is clicked
-    // Open Profile
+  // Search currently messaged users
+  const handleSearchUsers = async () => {
+
+    if (firstLoad) {
+      return;
+    }
+    if (currUser) {
+      setUsers([]);
+      setLoading(true);
+
+      let messagedUsers: CurrentlyMessagingEntry[] = []
+      let db = firestore;
+
+      // You can use the currentlyMessaging field from the user
+      // You might need to save them into context if you save new ones
+      // For now I save them in your generateChatId function check it out and see how you would need to modify it
+      messagedUsers = currentUserCurrentlyMessaging;
+
+      // For now, I'll show all users if there are no users on the currentlyMessaging. 
+      // Hardcode a couple for testing and then you should remove this option
+      // Extract user IDs from the messagedUsers array of tuples
+      const userIds = messagedUsers.map(entry => entry.userId);
+
+      // If there are no user IDs, set users to an empty array and stop further execution
+      if (userIds.length === 0) {
+        setUsers([]);
+        setLoading(false);
+        console.log("No users currently being messaged.");
+        return;
+      }
+
+
+
+      let usersQuery = query(collection(db, 'Users'), where('uid', 'in', userIds));
+
+
+      // Testing trick. Search "all" to show all users
+      if (searchTerm === "all") {
+        usersQuery = query(collection(db, 'Users'), where("gym", "!=", ""));
+      }
+      // Get each user and save their data
+      const querySnapshot = await getDocs(usersQuery);
+      const usersData: IUser[] = [];
+
+      // Save user data if it is not the current User and it isn't blocked
+      querySnapshot.forEach(snap => {
+        const userData = snap.data() as IUser;
+        if (userData.uid !== currUser.uid) {
+          if (!currUser.blockedUsers.includes(userData.uid)) {
+            if (currUser.friends.includes(userData.uid)) {
+              usersData.push(userData);
+            }
+          }
+        }
+      });
+
+      // Sort the users based on the timeAsNumber, descending (most recent first)
+      const sortedUsers = usersData.sort((a, b) => {
+        // Find the corresponding timeAsNumber for each user
+        const timeAsNumberA = messagedUsers.find(entry => entry.userId === a.uid)?.timeAsNumber ?? 0;
+        const timeAsNumberB = messagedUsers.find(entry => entry.userId === b.uid)?.timeAsNumber ?? 0;
+        return timeAsNumberB - timeAsNumberA; // Sort in descending order
+      });
+
+
+      // Filter list of users by name if provided
+      if (searchTerm && searchTerm !== "" && usersData.length > 0) {
+        if (searchTerm !== "all") {
+          setUsers(filterUsersByName(sortedUsers, searchTerm));
+        } else {
+          setUsers(sortedUsers);
+        }
+      } else {
+        setUsers(sortedUsers);
+      };
+      setLoading(false);
+    };
+    console.log(users.map(entry => entry.name));
   };
 
-  // Get users from database using filters
-  const handleGetUsers = async () => {
-    // updateUsers(); // Uncomment when we want to use it to add fields
-    setLoading(true);
-    const fetchedUsers = await getUsers(User.uid);
-    setUsers(fetchedUsers);
-    setLoading(false);
-  };
+  const FriendHeader = () => {
+    const [isPressed, setIsPressed] = useState<boolean>(false);
 
-  let content = null;
-  if (User) {
-    content = (
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollViewContent}
-        scrollEnabled={true}
-        keyboardShouldPersistTaps="handled" // Ensures taps outside of text inputs dismiss the keyboard
-        keyboardDismissMode="on-drag" // Dismisses the keyboard when dragging the ScrollView
+    return (
+      <Row
+        mb={2}
+        ml={2}
+        justifyContent={"space-between"}
+        alignItems={"center"}
       >
-        <TextInput
-          placeholder="Looking for your chat history"
-          style={{
-            borderWidth: 1,
-            borderColor: "gray",
-            padding: 10,
-            marginBottom: 10,
-          }}
-        />
-        <Text> Explore new users! </Text>
-        {users.map((user, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.userContainer}
-            onPress={() => router.navigate("ChatPage")}
-          >
-            <View style={styles.profilePicture}></View>
-            {/* Once we have an image, I can put this */}
-            {/* <Image
-                              source={{ uri: user.profilePictureURL }}
-                              style={styles.profilePicture}
-                          /> */}
-            <View style={styles.userInfo}>
-              <Text>Name: {user.name}</Text>
-              <Text>Email: {user.email}</Text>
-              <Text>Gym: {user.gym}</Text>
-              <Text>UID: {user.uid}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-        {loading && <ActivityIndicator size="large" color="#0000ff" />}
-      </ScrollView>
+        <Column>
+          <Heading size="md" color="trueGray.900" > Message</Heading>
+          <Text> Keep in touch with your friends</Text>
+          <Spacer />
+        </Column>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/FriendsChatCopy")} >
+          <AntDesign name="contacts" size={45} color="#F97316" />
+        </TouchableOpacity>
+      </Row>
     );
-  } else {
-    content = <Text>No user signed in.</Text>;
-  }
+  };
 
-  return <View>{content}</View>;
+  const navigateToChatPage = (user) => {
+    console.log(findOrCreateChat(User?.uid, user.uid));
+    globalState.user = user; // Set the selected user in the global state
+    router.navigate("ChatPage"); // Then navigate to ChatPage
+  };
+
+  const confirmAndDelete = (user) => {
+    Alert.alert(
+      "Confirm Delete", // Dialog Title
+      "Are you sure you want to delete this chat?", // Dialog Message
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "Delete",
+          onPress: () => handleDeleteMessageSession(user),
+          style: "destructive"
+        }
+      ]
+    );
+  };
+
+  const handleDeleteMessageSession = async (user) => {
+    setLoading(true);
+    setUsers([]);
+    try {
+      if (!User || !User.uid) {
+        console.error("No current user logged in!");
+        return;
+      }
+
+      // Generate the chat document ID using your existing function
+      const chatId = generateChatId(User.uid, user.uid);
+
+      // Fetch current user document to get the timeAsNumber
+      const currentUserDocRef = doc(firestore, "Users", User.uid);
+
+      // Fetch other user document to get the timeAsNumber
+      const otherUserDocRef = doc(firestore, "Users", user.uid);
+      const otherUserDoc = await getDoc(otherUserDocRef);
+      const otherUserData = otherUserDoc.data();
+
+      const currentUserEntryToRemove = currentUserCurrentlyMessaging.find(entry => entry.userId === user.uid);
+      const otherUserEntryToRemove = otherUserData?.currentlyMessaging.find(entry => entry.userId === User.uid);
+
+      // Create a reference to the chat document
+      const chatDocRef = doc(firestore, "Chat", chatId);
+      const messagesColRef = collection(chatDocRef, "Messages");
+
+      // First, delete all documents in the Messages subcollection
+      const messagesSnapshot = await getDocs(messagesColRef);
+      const batch = writeBatch(firestore);
+
+      messagesSnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+
+      // Commit the batch
+      await batch.commit();
+      console.log("All messages deleted successfully");
+
+      // Delete the chat document
+      await deleteDoc(chatDocRef);
+
+      console.log(chatDocRef);
+
+      console.log("Chat session deleted successfully");
+
+      if (currentUserEntryToRemove && otherUserEntryToRemove) {
+        await updateDoc(currentUserDocRef, {
+          currentlyMessaging: arrayRemove(currentUserEntryToRemove)
+        });
+        await updateDoc(otherUserDocRef, {
+          currentlyMessaging: arrayRemove(otherUserEntryToRemove)
+        });
+
+        console.log("Both users' CurrentlyMessaging fields updated successfully");
+      }
+
+      // Change the state variable so that search function is triggered to show the change
+      setDeleteMessageTrigger(prev => prev + 1);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Failed to delete chat session:", error);
+    }
+  };
+
+
+  // Checks if there are unread messages for the user
+  const hasUnreadMessages = (user) => {
+    const messagingEntry = currentUserCurrentlyMessaging.find(entry => entry.userId === user.uid);
+    return messagingEntry && !messagingEntry.haveRead;
+  };
+
+  return (
+    <NativeBaseProvider theme={theme}>
+      <SafeAreaView
+        style={{ backgroundColor: "#FFF", flex: 1, paddingTop: 10 }}
+      // padding is set to 0 to make message records look like entries rather than boxes.
+      >
+        <FriendHeader />
+        <Row mb={1} mr="1" ml="1" space={2} alignItems="center">
+          <Input flex={1}
+            InputLeftElement={
+              <Box paddingLeft={2}>
+                <TouchableOpacity activeOpacity={0.7} onPress={handleSearchUsers} >
+                  <FontAwesome name="search" size={24} color="#A3A3A3" />
+                </TouchableOpacity>
+              </Box>
+            }
+            placeholder="Type and look for your partner"
+            bgColor="trueGray.100"
+            onChangeText={setSearchTerm}
+            onSubmitEditing={handleSearchUsers}
+            borderRadius="md"
+            borderWidth={1}
+            fontSize="md"
+          />
+        </Row>
+        {loading &&
+          <Column flex={1} pt={10} alignItems="center" alignContent="center" justifyContent="center">
+            <Spacer />
+            <Spinner size="md" mb={2} color="#F97316" accessibilityLabel="Loading posts" />
+            <Heading color="#F97316" fontSize="md"> Loading</Heading>
+          </Column>}
+        {!firstLoad && !loading && users.length === 0 ? (
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
+              No current chats found. 🤔
+            </Text>
+            < Text />
+            <Text textAlign="center" fontSize="lg" fontWeight="bold" color="#A3A3A3">
+              Try connecting with some people!
+            </Text>
+          </View>
+        ) : (
+          <ScrollView style={{ flex: 1, zIndex: 0 }}>
+            {users.map((user) => (
+              <Pressable onPress={() => navigateToChatPage(user)} onLongPress={() => confirmAndDelete(user)}>
+                {({ isPressed }) => (
+                  <Box bg={isPressed ? "coolGray.200" : "#FAFAFA"} // Static background color
+                    borderWidth="1px"
+                    borderColor="#E5E5E5"
+                    position="relative" // Needed to position the dot absolutely within the box
+                    p="1" // Add some padding inside the box
+                  >
+                    <ChatPreview friend={user} key={user.uid} />
+                    {hasUnreadMessages(user) && (
+                      <Box // Blue dot indicator
+                        position="absolute"
+                        right="4" // Positioning it to the right inside the box
+                        top="50%" // Vertically center
+
+                        size="12px" // Size of the dot
+                        bg="blue.500" // The color of the dot
+                        borderRadius="full" // Makes the box a circle
+                      />
+                    )}
+                  </Box>
+                )}
+              </Pressable>
+            ))}
+          </ScrollView>
+        )}
+      </SafeAreaView>
+    </NativeBaseProvider>
+  );
 };
 
 export default MessageList;

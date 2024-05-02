@@ -1,25 +1,92 @@
 // Import necessary modules for Firestore operations
 import { firestore } from '../firebaseConfig';
-import { 
-    where, 
-    query, 
-    collection, 
+import {
+    where,
+    query,
+    collection,
     addDoc,
-    setDoc, 
-    doc, 
+    setDoc,
+    doc,
     getDoc,
-    getDocs, 
-    updateDoc, 
-    arrayUnion} from 'firebase/firestore';
-import { useAuth } from "../Context/AuthContext";
+    getDocs,
+    updateDoc,
+    arrayUnion
+} from 'firebase/firestore';
+import { useAuth } from "@/Context/AuthContext";
 import { Geometry } from 'react-native-google-places-autocomplete';
 import { GeoPoint } from 'firebase/firestore';
 // Update this and addUsers function when adding new fields
 // Use updateUsers function to initialize new fields on all users.
 // Define User interface
+import { Filters, defaultFilters } from '@/app/(tabs)/(HomePage)/Filter';
+import Achievement from './ProfileComponents/Achievement';
+import { CalendarUtils } from 'react-native-calendars';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
+<<<<<<< HEAD
 
 type birthday =  { day: 1, month: 3, year: 1990 } ;
+=======
+type Birthday = { day: number, month: number, year: number };
+export interface Achievementprops {
+    name: string;
+    curr: number;
+    max: number;
+    achieved: boolean;
+    description: string;
+}
+export interface DailyCheckIn {
+    day: string;
+    photo?: string;
+}
+export interface Achievements {
+    Chest: Achievementprops[];
+    Back: Achievementprops[];
+    Legs: Achievementprops[];
+    Core: Achievementprops[];
+    Cardio: Achievementprops[];
+    FullBody: Achievementprops[];
+    Shoulder: Achievementprops[];
+    CheckIn: Achievementprops[];
+}
+
+export const DefaultAchievement: Achievements = {
+    Chest: [
+        { name: "Chest Champion", curr: 0, max: 10, description: " Awarded for achieving 10 check-ins with the chest day, highlighting a focus on chest muscle development and strength.", achieved: false },
+    ],
+    Back: [
+        { name: "Back Day Boss", curr: 0, max: 10, description: "Awarded for reaching 10 check-ins with the back day, indicating consistent effort towards back muscle strength and definition.", achieved: false },
+    ],
+    Legs: [
+        { name: "Leg Day Legend", curr: 0, max: 10, description: "Awarded for completing 10 check-ins with the leg day, showcasing dedication to lower body strength and development.", achieved: false },
+    ],
+    Shoulder: [
+        { name: "Shoulder Sculptor", curr: 0, max: 10, description: "Awarded for accumulating 10 check-ins with the shoulder day, demonstrating commitment to shoulder muscle growth and definition.", achieved: false }
+    ],
+    Cardio: [
+        { name: "Cardio King", curr: 0, max: 10, description: "Awarded for achieving 10 check-ins with the cardio day, highlighting a focus on cardiovascular health and endurance.", achieved: false }
+    ],
+    Core: [
+        { name: "Core Crusher", curr: 0, max: 10, description: "Awarded for reaching 10 check-ins with the core day, showcasing dedication to core muscle strength and definition.", achieved: false }
+    ],
+    FullBody: [
+        { name: "Full Body Fiend", curr: 0, max: 10, description: "Awarded for completing 10 check-ins with the full body day, demonstrating commitment to overall body strength and development.", achieved: false }
+    ],
+    CheckIn: [
+        { "name": "Check-In Champion", "curr": 0, "max": 15, "description": "Awarded for reaching 15 total check-ins.", "achieved": false },
+        { "name": "Consistency Conqueror", "curr": 0, "max": 25, "description": "Awarded for making 25 check-ins in a single month.", "achieved": false },
+        { "name": "Iron Dedication", "curr": 0, "max": 50, "description": "Awarded for hitting 50 consecutive check-ins without missing a day.", "achieved": false },
+        { "name": "SpotMe Superstar", "curr": 0, "max": 100, "description": "Awarded for achieving 100 total check-ins.", "achieved": false }
+    ]
+};
+
+export type CurrentlyMessagingEntry = {
+    userId: string;
+    timeAsNumber: number;
+};
+type friendRequest = { friend: string, date: number, status: string } // Status can be "pending", "accepted", "rejected"
+>>>>>>> 0ca9f13b832776f306c4207fc8b9000aa7c225df
 
 export interface IUser {
     uid: string;
@@ -27,24 +94,33 @@ export interface IUser {
     name: string;
     age: number;
     bio: string;
+    status: string; // Shorter bio (one liner to show on preview)
     sex: string;
     tags: string[];
     friends: string[];
-    friendRequests: string[];
+    friendRequests: friendRequest[];
     rejectedRequests: string[];
     blockedUsers: string[];
     gym: string;
-    checkInHistory: string[]; // Add proper type
+    checkInHistory: DailyCheckIn[]; // Add proper type
     icon: string;
-    achievements: string[]; // Add proper type
-    gymExperience: number;
-    currentlyMessaging: string[];
+    Achievement: Achievements;
+    gymExperience: string;
     gymId: string;
+<<<<<<< HEAD
     filters: string[][];
     birthday: birthday;
+=======
+    filters: Filters;
+    birthday: Birthday;
+    display: string[];
+    currentlyMessaging: CurrentlyMessagingEntry[]
+    background: string;
+
+>>>>>>> 0ca9f13b832776f306c4207fc8b9000aa7c225df
 }
 
-export interface Gym{
+export interface Gym {
     name: string;
     members: string[];
     Geometry: Geometry;
@@ -53,8 +129,7 @@ export interface Gym{
 }
 
 // Function to retrieve users data from Firestore with a filter of gym or any other
-export const getUsers = async (UID: string, gymId?: string, 
-        filters?: { field: string, operator: string, value: any }[]): Promise<IUser[]> => {
+export const getUsers = async (UID: string, gymId?: string, filters?: Filters, name?: string): Promise<IUser[]> => {
     const db = firestore;
 
     try {
@@ -67,37 +142,38 @@ export const getUsers = async (UID: string, gymId?: string,
                 if (gymData && gymData.members) {
                     memberIds = gymData.members;
                 }
-            } 
-
-        }
-
-        // Query  users from their gym. If they don't have one, query all users
-        // TODO: Maybe query only nearby users.
-        let usersQuery = memberIds.length > 0 ? 
-            query(collection(db, 'Users'), where('uid', 'in', memberIds)):
-            query(collection(db, 'Users'));
-        
-        // Apply additional filters if provided
-        if (filters && filters.length > 0) {
-            for (const filter of filters) {
-                if (filter.value == ""){
-                    continue
+                if (memberIds.length === 0) {
+                    return [];
                 }
-                if (filter.field == "gymExperience"){
-                    continue
-                    if (filter.operator == "<="){
-                        continue
-                    }
-                }
-                console.log("filter", filter.field, filter.operator, filter.value);
-                usersQuery = query(usersQuery, where(filter.field, filter.operator as any, filter.value));
-                
+            } else {
+                return [];
             }
+        } else {
+            return [];
         }
+
+        // Query  users from their gym.
+        // TODO: Maybe query only nearby users.
+        
+        let usersQuery = query(collection(db, 'Users'), where('uid', 'in', memberIds));
+
+        // Apply additional filters if provided
+        if (filters) {
+            const { applyFilters, sex, age, gymExperience } = filters;
+            // Check if filters should be applied in general
+            if (applyFilters[0]) {
+
+
+                // Filter by age if specified
+                if (applyFilters[2] && age.length === 2) {
+                    usersQuery = query(usersQuery, where("age", ">=", age[0]), where("age", "<=", age[1]));
+                }
+            };
+        };
 
         // Get each user and save their data
         const querySnapshot = await getDocs(usersQuery);
-        const usersData: IUser[] = [];
+        let usersData: IUser[] = [];
 
         // Save user data if it is not the current User
         querySnapshot.forEach(snap => {
@@ -107,16 +183,50 @@ export const getUsers = async (UID: string, gymId?: string,
             }
         });
 
+        if (filters) {
+            const { applyFilters, sex, age, gymExperience } = filters;
+            // Filter by sex if specified
+            if (applyFilters[1] && sex.length > 0) {
+                usersData = usersData.filter(user => sex.includes(user.sex));
+            }
+
+            // Filter by gym experience if specified
+            if (applyFilters[3] && gymExperience.length > 0) {
+                usersData = usersData.filter(user => gymExperience.includes(user.gymExperience));
+            };
+        }
+
+        // Filter list of users by name if provided
+        if (name && name !== "" && usersData.length > 0) {
+            return filterUsersByName(usersData, name);
+        };
+
         return usersData;
 
     } catch (error) {
         // Throw error for handling in the caller function
         console.error('Error querying users:', error);
-        throw error;
+        //throw error;
+        return [];
     }
 };
 
+<<<<<<< HEAD
 
+=======
+// Funtion to filter users given a full or part of a name
+export const filterUsersByName = (usersData: IUser[], name: string): IUser[] => {
+    // Convert the name to lowercase for case-insensitive matching
+    const lowerCaseName = name.toLowerCase();
+
+    // Filter users whose name matches the given name (case-insensitive)
+    const filteredUsers = usersData.filter(user =>
+        user.name.toLowerCase().includes(lowerCaseName)
+    );
+
+    return filteredUsers;
+};
+>>>>>>> 0ca9f13b832776f306c4207fc8b9000aa7c225df
 
 // Function to retrieve a user given their UID
 export const getUser = async (uid: string): Promise<IUser | null> => {
@@ -140,6 +250,7 @@ export const getUser = async (uid: string): Promise<IUser | null> => {
 
 // Function to add a new user to Firestore
 export async function addUser(
+<<<<<<< HEAD
         uid: string, 
         email: string = "", 
         gym: string = "", 
@@ -152,6 +263,22 @@ export async function addUser(
         birthday: birthday,
         tags: string[] = []): Promise<void> {
         
+=======
+    uid: string,
+    email: string = "",
+    gym: string = "",
+    gymId: string = "",
+    name: string = "",
+    age: number = 21,
+    bio: string = "",
+    sex: string = "",
+    status: string = "",
+    gymExperience: string = "beginner",
+    birthday: Birthday = { day: 1, month: 1, year: 2000 },
+    filters: Filters = defaultFilters,
+    tags: string[] = []): Promise<void> {
+
+>>>>>>> 0ca9f13b832776f306c4207fc8b9000aa7c225df
     const db = firestore;
     try {
         // Create new user
@@ -163,6 +290,7 @@ export async function addUser(
             sex: sex,
             tags: tags,
             bio: bio,
+            status: status,
             friends: [],
             friendRequests: [],
             rejectedRequests: [],
@@ -170,16 +298,24 @@ export async function addUser(
             gym: gym,
             gymId: gymId,
             checkInHistory: [],
-            icon: "",
-            achievements: [],
-            gymExperience: 0,
+            icon: sex === "female" ? "gs://spotme-8591a.appspot.com/Default/WomenProfile.png" : sex === "male" ? "gs://spotme-8591a.appspot.com/Default/MenProfile.png" : "gs://spotme-8591a.appspot.com/Default/default.png",
+            gymExperience: gymExperience,
             currentlyMessaging: [],
+<<<<<<< HEAD
             filters: [],
             birthday: birthday
+=======
+            filters: filters,
+            birthday: birthday,
+            Achievement: DefaultAchievement,
+            display: [],
+            background: "gs://spotme-8591a.appspot.com/Default/background.jpg"
+>>>>>>> 0ca9f13b832776f306c4207fc8b9000aa7c225df
         });
+
         console.log("Document written for user: ", uid);
     } catch (error) {
-      console.error("Error adding document: ", error);
+        console.error("Error adding document: ", error);
     }
 };
 
@@ -192,7 +328,7 @@ export async function getCurrUser(uid: string): Promise<IUser> {
     return currUser;
 }
 
-
+// Developer function to add new fields to users or initialize them with random values
 export async function updateUsers(): Promise<void> {
     const db = firestore;
     const usersRef = collection(db, 'Users');
@@ -205,19 +341,19 @@ export async function updateUsers(): Promise<void> {
         for (const doc1 of querySnapshot.docs) {
             const userData = doc1.data() as IUser;
             // Create random values for fields. Uncomment when used
-        const minAge = 18;
-        const maxAge = 60;
-        const randomAge = Math.floor(Math.random() * (maxAge - minAge + 1)) + minAge;
+            const minAge = 18;
+            const maxAge = 60;
+            const randomAge = Math.floor(Math.random() * (maxAge - minAge + 1)) + minAge;
 
-        const minExp = 0;
-        const maxExp = 10;
-        const randomExp = Math.floor(Math.random() * (maxExp - minExp + 1)) + minExp;
+            const minExp = 0;
+            const maxExp = 10;
+            const randomExp = Math.floor(Math.random() * (maxExp - minExp + 1)) + minExp;
 
-        function generateRandomSex(): 'male' | 'female' {
-        // Generate a random number between 0 and 1
-            const randomValue = Math.random();
-            // If the random number is less than 0.5, return 'male', otherwise return 'female'
-            return randomValue < 0.5 ? 'male' : 'female';
+            function generateRandomSex(): 'male' | 'female' {
+                // Generate a random number between 0 and 1
+                const randomValue = Math.random();
+                // If the random number is less than 0.5, return 'male', otherwise return 'female'
+                return randomValue < 0.5 ? 'male' : 'female';
             }
 
             const randomSex: 'male' | 'female' = generateRandomSex();
@@ -236,23 +372,93 @@ export async function updateUsers(): Promise<void> {
             const randomName: string = generateRandomName(randomSex);
 
             const tags = ['cardio', 'weightlift', 'yoga', 'crossfit', 'running', 'swim', 'cycle', 'boxing', 'pilates'];
-            
+
             function getRandomSubset<T>(array: T[], size: number): T[] {
                 const shuffled = array.sort(() => 0.5 - Math.random());
                 return shuffled.slice(0, Math.min(size, array.length));
             }
 
             const userTags = getRandomSubset(tags, 3);
-            
+
+            function chooseGymExperience(): string {
+                const experiences = ["beginner", "intermediate", "advanced"];
+                const randomIndex = Math.floor(Math.random() * experiences.length);
+                return experiences[randomIndex];
+            }
+
+            // Example usage
+            const randomExperience = chooseGymExperience();
+
+            function getRandomBirthday(): Birthday {
+                const day = Math.floor(Math.random() * 28) + 1;
+                const month = Math.floor(Math.random() * 12) + 1;
+                const year = Math.floor(Math.random() * 30) + 1974;
+
+                return { day, month, year };
+            }
+            const randomBirthday = getRandomBirthday();
+
+            function calculateAge(birthday: Birthday): number {
+                const today = new Date();
+                const birthDate = new Date(birthday.year, birthday.month - 1, birthday.day);
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+
+                // If the current month is less than the birth month, or if it's the same month but the current day
+                // is before the birth day, then subtract 1 from the age
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                return age;
+            }
+            const age = calculateAge(randomBirthday);
+
+            const fitnessStatusLines: string[] = [
+                "Back Squat Enthusiast",
+                "Protein Shake Connoisseur",
+                "Deadlift Dynamo",
+                "Yoga Warrior",
+                "Kettlebell Junkie",
+                "Swole Patrol Member",
+                "Flexibility Fanatic",
+                "Spin Class Addict",
+                "Gym Rat Extraordinaire",
+                "Burpee Boss",
+                "Muscle-up Maverick",
+                "CrossFit Crusader",
+                "Weightlifting Wizard",
+                "Plank Prodigy",
+                "Fitness Freak",
+                "Circuit Training Champ",
+                "Running Renegade",
+                "Powerlifting Powerhouse",
+                "HIIT Hero"
+            ];
+
+            function getRandomStatus(): string {
+                const randomIndex = Math.floor(Math.random() * fitnessStatusLines.length);
+                return fitnessStatusLines[randomIndex];
+            }
+
+            const randomStatus: string = getRandomStatus();
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
+<<<<<<< HEAD
                 birthday: { day: 1, month: 3, year: 1990 }, 
+=======
+                friends: [],
+                friendRequests: [],
+                rejectedRequests: [],
+                blockedUsers: [],
+                currentlyMessaging: [],
+>>>>>>> 0ca9f13b832776f306c4207fc8b9000aa7c225df
             };
 
             // Update document if any field is missing
             if (Object.keys(newUserFields).length > 0) {
                 await updateDoc(doc1.ref, newUserFields);
+                console.log("Document updated for user: ", doc1.id);
             }
         }
 
@@ -315,7 +521,7 @@ export async function updateUsersandGym(): Promise<void> {
             if (Object.keys(newUserFields).length > 0) {
                 await updateDoc(doc1.ref, newUserFields);
             }
-            
+
             const gymRef = doc(db, 'Gyms', randomGymId);
             const gymDocSnapshot = await getDoc(gymRef);
 
@@ -335,27 +541,28 @@ export async function updateUsersandGym(): Promise<void> {
     }
 }
 
-export async function  removeFieldFromUsers(): Promise<void> {
+// Developer function to remove a field from all users
+export async function removeFieldFromUsers(): Promise<void> {
     const db = firestore;
     const usersRef = collection(db, 'Users');
-    
+
     const snapshot = await getDocs(usersRef);
     console.log("remove in progress");
     // Iterate over each user document
     snapshot.forEach(async (doc) => {
-      // Remove the specified field from the user document
-      const userData = doc.data();
-      delete userData.sentRequests;
-      console.log(userData);
+        // Remove the specified field from the user document
+        const userData = doc.data();
+        delete userData.sentRequests;
+        console.log(userData);
 
-      // Update the document without the specified field
-      // await updateDoc(doc.ref, userData)
-      console.log(`Field removed from user document '${doc.id}'`);
+        // Update the document without the specified field
+        // await updateDoc(doc.ref, userData)
+        console.log(`Field removed from user document '${doc.id}'`);
     });
-  };
+};
 
 // Ways to randomize some things
-export async function randomIt(): Promise<void> {
+async function randomIt(): Promise<void> {
     // Create random values for fields. Uncomment when used
     const minAge = 18;
     const maxAge = 60;
@@ -386,6 +593,67 @@ export async function randomIt(): Promise<void> {
 
     // Example usage
     const randomName: string = generateRandomName(randomSex);
+}
+export const AddDate = async (uid: string, url: string | undefined) => {
+    const Day = new Date();
+    const Today = CalendarUtils.getCalendarDateString(Day);
+    const newCheckIn: DailyCheckIn = {
+        day: Today,
+    };
+    if (url) {
+        newCheckIn.photo = url;
+    }
+
+    try {
+        const userRef = doc(firestore, "Users", uid);
+        const userCheckHistory = (await getDoc(userRef)).data()?.checkInHistory;
+        await updateDoc(userRef, {
+            checkInHistory: [...userCheckHistory, newCheckIn],
+        });
+    } catch (error) {
+        console.error("Error updating bio: ", error);
+    }
+};
+export const getUserPicture = async (iconUrl: string, type: string): Promise<string | undefined> => {
+    try {
+        const storage = getStorage();
+        const storageRef = ref(storage, iconUrl);
+        const url = await getDownloadURL(storageRef);
+        return url;
+    } catch (error) {
+        console.error("Error getting user picture: ", error);
+        switch (type) {
+            case "Avatar":
+                return getUserPicture("gs://spotme-8591a.appspot.com/Default/default.png", "Avatar");
+            case "Background":
+                return getUserPicture("gs://spotme-8591a.appspot.com/Default/background.jpg", "Background");
+            default:
+                return undefined;
+        }
+    }
+};
+export const getUserIcon = async (iconUrl: string): Promise<string | undefined> => {
+    try {
+        const storage = getStorage();
+        const storageRef = ref(storage, iconUrl);
+        const url = await getDownloadURL(storageRef);
+        return url;
+    } catch (error) {
+        console.error("Error getting user icon: ", error);
+        return undefined;
+    }
+}
+export const getAchievement= async (AchievementUrl: string): Promise<string | null> => {
+    try {
+        const storage = getStorage();
+        const storageRef = ref(storage, AchievementUrl);
+        const url = await getDownloadURL(storageRef);
+        return url;
+    } catch (error) {
+        console.error("Error getting user icon: ", error);
+        return null;
+    }
+
 }
 
 // Attempt to do it automatically. Didn't work and gave up

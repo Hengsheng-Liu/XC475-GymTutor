@@ -5,15 +5,15 @@ import { useAuth } from "@/Context/AuthContext";
 import { sendFriendRequest, canAddFriend } from "../FriendsComponents/FriendFunctions"
 import { firestore } from '@/firebaseConfig';
 import { doc, onSnapshot } from 'firebase/firestore';
-
+import { getUserPicture } from '@/components/FirebaseUserFunctions';
 import Attribute from "@/components/HomeComponents/Attribute"
 interface FriendProps {
     friend: IUser;
 }
 
 const UserPreview: React.FC<FriendProps> = ({ friend }) => {
-    const [isPressed, setIsPressed] = useState<boolean>(false);
     const [updatedFriend, setUpdatedFriend] = useState<IUser>(friend); // State to hold updated friend data
+    const [friendIcon, setFriendIcon] = useState<string>(); 
     const {currUser} = useAuth();
     if (!currUser) return;
 
@@ -29,53 +29,47 @@ const UserPreview: React.FC<FriendProps> = ({ friend }) => {
             return unsubscribe; // Cleanup function
         };
 
+        async function fetchIcon() {
+            if (currUser && friend.icon !== "") {
+              try {
+                const url = await getUserPicture(friend.icon, "Avatar");
+                // console.log("Found Icon URL: ", url);
+                setFriendIcon(url);
+              } catch (error) {
+                console.error("Failed to fetch friend icon:", error);
+                // Handle the error e.g., set a default icon or state
+                const url = await getUserPicture("Icon/Default/Avatar.png","Avatar");
+                console.log("Used default Icon URL: ", url)
+                setFriendIcon(url);
+              }
+            } else {
+            const url = await getUserPicture("Icon/Default/Avatar.png","Avatar");
+            console.log("Found Icon URL: ", url)
+            setFriendIcon(url);
+          }
+        }
+
         if (currUser) {
+            fetchIcon();
             fetchUpdatedFriend();
         }
-    }, [currUser, friend.uid]); // Depend on currUser and friend.uid
-
-    // TODO: Display user preview when clicked
-    const handleUserClick  = async () =>{
-        setIsPressed(true)
-        console.log("User is pressed")
-        console.log(friend.tags);
-        // Do something when user is clicked
-        // Open Profile
-    };
+    }, [currUser, friend.uid,friend.icon]); // Depend on currUser and friend.uid
       
     return (
-        <Pressable 
-            onPress = {() => handleUserClick()}
-            onPressOut={() => setIsPressed(false)}
-            mb ={3} ml={1} mr={1} pr={1}// This okay?
-            borderRadius="xl" borderWidth={1} borderColor="trueGray.50" shadow="3"
-            bg={isPressed ? "trueGray.200" : "trueGray.50"} // Change background color on hover
-            >
-        <Flex>
-            <Row alignItems="center" space="sm">
-                <Avatar m={2} size= "xl" source={friend.icon ? {uri: friend.icon} : require("@/assets/images/default-profile-pic.png")} />
-                <Column>
-                <Row justifyContent= {"space-between"} >
-                    <Column overflow="hidden" width="170">    
-                        <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated maxW="160">{friend.name}, {friend.age}</Text>
-                        <Text color= "trueGray.900" fontSize="sm" isTruncated maxW="160">{friend.gym}</Text>
-                    </Column>
-                    <Spacer/>
-                    <Flex alignItems="center">
-                        <Button  
-                            p={1}
-                            backgroundColor= {canAddFriend(currUser, updatedFriend)? "blue.500" : "gray.200"} rounded="md" 
-                            onPress={() => canAddFriend(currUser, updatedFriend)? 
-                                sendFriendRequest(currUser.uid, friend.uid): handleUserClick()}>
-                            <Text fontSize="xs" fontWeight="bold"> {canAddFriend(currUser, updatedFriend)? "  Add   " : "Added"}</Text>
-                        </Button>
-                    </Flex>  
-                </Row>
-                <Attribute description={friend.tags} />
+        <Flex >
+            <Row alignItems="center" space="sm" >
+                <Avatar m={2} mr={0.5} size="xl" source={{ uri: friendIcon }} />
+                <Column justifyContent={"space-evenly"} flex={1} >   
+                    <Text color= "trueGray.900" fontSize="md" fontWeight="bold" isTruncated maxWidth="85%">{friend.name}</Text>
+                    <Text numberOfLines={1} color= "trueGray.900" fontSize="sm" isTruncated maxWidth="95%">{friend.bio}</Text>
+                    <Row justifyContent={"left"} >
+                        {friend.tags.length !== 0 ? <Attribute description={friend.tags} /> :
+                        <Text></Text>
+                        }
+                    </Row>
                 </Column>
             </Row>
         </Flex>
-        </Pressable>
     );
   };
 

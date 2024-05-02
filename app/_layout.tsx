@@ -1,11 +1,10 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AuthProvider } from '@/Context/AuthContext';
 import { Slot } from 'expo-router';
+import { NativeBaseProvider } from 'native-base';
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -26,6 +25,15 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
   });
+  const [loadingComplete, setLoadingComplete] = useState(false);
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+          setLoadingComplete(true);
+      }, 2000); // Wait 2 seconds
+      
+      return () => clearTimeout(timer); // Cleanup function
+    }, []);
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -33,10 +41,10 @@ export default function RootLayout() {
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
+    if (loaded && loadingComplete) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [loaded, loadingComplete]);
 
   if (!loaded) {
     return null;
@@ -49,7 +57,9 @@ function RootLayoutNav() {
 
   return (
       <AuthProvider>
+        <NativeBaseProvider>
         <Slot /> 
+        </NativeBaseProvider>
       </AuthProvider>
   );
 }

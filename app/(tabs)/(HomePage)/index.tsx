@@ -20,7 +20,6 @@ import {
   Point,
   Geometry
 } from "react-native-google-places-autocomplete";
-import * as Location from "expo-location";
 import { useAuth } from "@/Context/AuthContext";
 import { router } from "expo-router";
 
@@ -41,8 +40,11 @@ export default function SelectGym() {
     undefined
   );
   const [NearbyGyms, setNearbyGyms] = useState<Gym[]>([]);
+  const { userGym } = useAuth();
+  if (!userGym) return router.replace("/LoadingPage");
+
   useEffect(() => {
-    // Make sure SearchLocation is defined and has the necessary properties
+   
 
     if (
       !SearchLocation ||
@@ -86,12 +88,12 @@ export default function SelectGym() {
     components: {
       Text: {
         baseStyle: {
-          color: "#F0F9FF",
+          color: "#171717",
         },
       },
       Heading: {
         baseStyle: {
-          color: "#F0F9FF",
+          color: "#171717",
         },
       },
     },
@@ -101,20 +103,23 @@ export default function SelectGym() {
       <SafeAreaView style={styles.container}>
         <Box margin={2} mt={3}>
             <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"right"}>
-              <Pressable pr={2} onPress={() => router.push("./Home")}>
-                <FontAwesome name="chevron-left" size={30} color="#0C4A6E" />
+            { (userGym[0] !== "" && userGym[1] !== "") && 
+              <Pressable pr={2} onPress={() => router.back()}>
+                <FontAwesome name="chevron-left" size={30} color="#171717" />
               </Pressable>
+            }
               <Box>
                 <Heading> Select Your Gym </Heading>
                 <Text> Find the gym that you go most often </Text>
               </Box>
               <Spacer/>
-              <FontAwesome name="map-o" size={50} color="#F0F9FF" />
+              <FontAwesome name="map-o" size={50} color="#EA580C" />
             </Flex>
         </Box>
         <Box m={2}>
           <GooglePlacesAutocomplete
-            placeholder="Enter your zip code to search"
+            placeholder="Enter your zip code or nearby location to search"
+            
             onPress={(data, details = null) => {
               setSearchLocation(details?.geometry.location);
             }}
@@ -125,6 +130,9 @@ export default function SelectGym() {
             styles={{
               container: {
                 flex: 0,
+                borderWidth:1,
+                borderRadius: 5,
+                borderColor:"#A3A3A3"
               },
             }}
             fetchDetails
@@ -144,6 +152,6 @@ export default function SelectGym() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0369A1",
+    backgroundColor: "#FAFAFA",
   },
 });
