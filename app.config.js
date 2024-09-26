@@ -3,7 +3,7 @@ export const expoConfig = {
     scheme: "myapp",
     name: "SpotMe",
     slug: "spotme",
-    version: "1.0.0",
+    version: "1.0.1",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     userInterfaceStyle: "automatic",
@@ -15,6 +15,7 @@ export const expoConfig = {
     assetBundlePatterns: ["**/*"],
     ios: {
       bundleIdentifier: "com.spot-me.spotme",
+      buildNumber: "1.0.1",
       supportsTablet: true,
       infoPlist: {
         UIBackgroundModes: ["location", "fetch", "remote-notification"],

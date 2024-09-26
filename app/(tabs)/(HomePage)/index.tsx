@@ -44,8 +44,6 @@ export default function SelectGym() {
   if (!userGym) return router.replace("/LoadingPage");
 
   useEffect(() => {
-   
-
     if (
       !SearchLocation ||
       SearchLocation.lat === undefined ||
