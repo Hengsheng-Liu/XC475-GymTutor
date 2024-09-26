@@ -24,10 +24,6 @@ import { CalendarUtils } from 'react-native-calendars';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
-<<<<<<< HEAD
-
-type birthday =  { day: 1, month: 3, year: 1990 } ;
-=======
 type Birthday = { day: number, month: number, year: number };
 export interface Achievementprops {
     name: string;
@@ -86,7 +82,6 @@ export type CurrentlyMessagingEntry = {
     timeAsNumber: number;
 };
 type friendRequest = { friend: string, date: number, status: string } // Status can be "pending", "accepted", "rejected"
->>>>>>> 0ca9f13b832776f306c4207fc8b9000aa7c225df
 
 export interface IUser {
     uid: string;
@@ -107,17 +102,12 @@ export interface IUser {
     Achievement: Achievements;
     gymExperience: string;
     gymId: string;
-<<<<<<< HEAD
-    filters: string[][];
-    birthday: birthday;
-=======
     filters: Filters;
     birthday: Birthday;
     display: string[];
     currentlyMessaging: CurrentlyMessagingEntry[]
     background: string;
 
->>>>>>> 0ca9f13b832776f306c4207fc8b9000aa7c225df
 }
 
 export interface Gym {
@@ -211,9 +201,6 @@ export const getUsers = async (UID: string, gymId?: string, filters?: Filters, n
     }
 };
 
-<<<<<<< HEAD
-
-=======
 // Funtion to filter users given a full or part of a name
 export const filterUsersByName = (usersData: IUser[], name: string): IUser[] => {
     // Convert the name to lowercase for case-insensitive matching
@@ -226,7 +213,6 @@ export const filterUsersByName = (usersData: IUser[], name: string): IUser[] => 
 
     return filteredUsers;
 };
->>>>>>> 0ca9f13b832776f306c4207fc8b9000aa7c225df
 
 // Function to retrieve a user given their UID
 export const getUser = async (uid: string): Promise<IUser | null> => {
@@ -250,20 +236,6 @@ export const getUser = async (uid: string): Promise<IUser | null> => {
 
 // Function to add a new user to Firestore
 export async function addUser(
-<<<<<<< HEAD
-        uid: string, 
-        email: string = "", 
-        gym: string = "", 
-        gymId: string = "",
-        name: string = "", 
-        age: number = 21, 
-        bio: string = "",
-        sex: string = "", 
-        filters: [],
-        birthday: birthday,
-        tags: string[] = []): Promise<void> {
-        
-=======
     uid: string,
     email: string = "",
     gym: string = "",
@@ -278,7 +250,6 @@ export async function addUser(
     filters: Filters = defaultFilters,
     tags: string[] = []): Promise<void> {
 
->>>>>>> 0ca9f13b832776f306c4207fc8b9000aa7c225df
     const db = firestore;
     try {
         // Create new user
@@ -301,16 +272,11 @@ export async function addUser(
             icon: sex === "female" ? "gs://spotme-8591a.appspot.com/Default/WomenProfile.png" : sex === "male" ? "gs://spotme-8591a.appspot.com/Default/MenProfile.png" : "gs://spotme-8591a.appspot.com/Default/default.png",
             gymExperience: gymExperience,
             currentlyMessaging: [],
-<<<<<<< HEAD
-            filters: [],
-            birthday: birthday
-=======
             filters: filters,
             birthday: birthday,
             Achievement: DefaultAchievement,
             display: [],
             background: "gs://spotme-8591a.appspot.com/Default/background.jpg"
->>>>>>> 0ca9f13b832776f306c4207fc8b9000aa7c225df
         });
 
         console.log("Document written for user: ", uid);
@@ -444,15 +410,11 @@ export async function updateUsers(): Promise<void> {
             // Define an empty user object with all fields set to empty strings
             // Add fields to update
             const newUserFields: Partial<IUser> = {
-<<<<<<< HEAD
-                birthday: { day: 1, month: 3, year: 1990 }, 
-=======
                 friends: [],
                 friendRequests: [],
                 rejectedRequests: [],
                 blockedUsers: [],
                 currentlyMessaging: [],
->>>>>>> 0ca9f13b832776f306c4207fc8b9000aa7c225df
             };
 
             // Update document if any field is missing
