@@ -40,8 +40,34 @@ export default function SignUpScreen() {
 
   const { CreateUser } = useAuth();
 
+
+  const [passwordSecureError, setPasswordSecureError] = useState<string | null>(null);
+
   const handlePasswordChange = (text: string) => {
     setPassword(text);
+    
+    // Password security requirements
+    const minLength = 8;
+    const hasUppercase = /[A-Z]/.test(text);
+    const hasLowercase = /[a-z]/.test(text);
+    const hasNumber = /\d/.test(text);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(text);
+
+    if (text.length < minLength) {
+      setPasswordSecureError(`Password must be at least ${minLength} characters long.`);
+    } else if (!hasUppercase) {
+      setPasswordSecureError("Password must include at least one uppercase letter.");
+    } else if (!hasLowercase) {
+      setPasswordSecureError("Password must include at least one lowercase letter.");
+    } else if (!hasNumber) {
+      setPasswordSecureError("Password must include at least one number.");
+    } else if (!hasSpecialChar) {
+      setPasswordSecureError("Password must include at least one special character.");
+    } else {
+      setPasswordSecureError(null);
+    }
+
+    // Check for password match
     if (text !== confirmPassword) {
       setPasswordMatchError(true);
     } else {
@@ -67,7 +93,8 @@ export default function SignUpScreen() {
       email &&
       password &&
       confirmPassword &&
-      password === confirmPassword
+      !passwordMatchError &&
+      !passwordSecureError
     ) {
       if (!emailRegex.test(email)) {
         Alert.alert("Error", "Please enter a valid email address");
@@ -107,7 +134,12 @@ export default function SignUpScreen() {
       if (password !== confirmPassword) {
         Alert.alert("Error", "Passwords do not match");
       }
-      Alert.alert("Error", "Please fill in all fields");
+      else if (passwordSecureError) {
+        Alert.alert("Error", passwordSecureError);
+      }
+      else{
+        Alert.alert("Error", "Please fill in all fields");
+      }
     }
   };
 
@@ -249,6 +281,19 @@ export default function SignUpScreen() {
                 onSubmitEditing={() => {ConfirmPassword_focus.current.focus();}}
               />
             </Box>
+            {passwordSecureError && (
+              <Text
+                fontSize="16"
+                fontWeight="400"
+                color="primary.50"
+                lineHeight="20"
+                letterSpacing="0.25"
+                pl="3" pr="3" pt="2"
+                mt="0"
+              >
+                {passwordSecureError}
+              </Text>
+            )}
 
             <Text
               fontSize="16"
@@ -285,12 +330,13 @@ export default function SignUpScreen() {
                 color="primary.50"
                 lineHeight="20"
                 letterSpacing="0.25"
-                p="3"
-                mt="3"
+                pl="3" pr="3" pt="2"
+                mt="0"
               >
                 Passwords do not match
               </Text>
             )}
+            
           </Box>
           <Flex alignItems={"center"} ml={10} mr={10} mb={1}>
             <Button
