@@ -131,7 +131,7 @@ export default function LogInScreen() {
     }
   }, [googleResponse]);
   */
- 
+
   return (
     <NativeBaseProvider>
       <Pressable style={styles.contentView} onPress={Keyboard.dismiss}>
@@ -195,7 +195,7 @@ export default function LogInScreen() {
               </Text>
               <Button
                 background={"#F97316"}
-                onPress={() => router.navigate("SignUp")}
+                onPress={() => router.navigate("SignUp2")}
                 mt={4} width="100%" pt="3.5" pb="3.5"
                 borderRadius={5}
                 shadow="3"
