@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import {
+  ScrollView,
   NativeBaseProvider,
   Select,
   Box,
@@ -70,36 +71,38 @@ export default function SignUpScreen22() {
   const [Goal, setGoal] = useState<string | undefined>();
   const [Activity, setActivity] = useState<string | undefined>();
   const [WhoAreYou, setWhoAreYou] = useState<string | undefined>();
+  const [Purpose, setPurpose] = useState<string | undefined>();
+
   interface TagProps {
     tag: string;
     setTag: React.Dispatch<React.SetStateAction<string | undefined>>
     state: string | undefined
   }
-  const Tag = ({tag,setTag,state}:TagProps) => {
+  const Tag = ({ tag, setTag, state }: TagProps) => {
     const handlePress = () => {
-    if (tag === state) {
-      setTag(undefined);
-      return;
-    }
+      if (tag === state) {
+        setTag(undefined);
+        return;
+      }
       setTag(tag);
     };
-    return(
-    <Pressable key={tag} onPress={() => handlePress()}>
-    <Badge
-      m={1}
-      background={
-        tag === state ? "#FDBA74" : "#F7D2AB"
-      }
-      _text={{
-        fontSize: 14,
-        color: "#211912",
-      }}
-      shadow={1}
-      borderRadius={4}
-    >
-      {tag}
-    </Badge>
-  </Pressable>
+    return (
+      <Pressable key={tag} onPress={() => handlePress()}>
+        <Badge
+          m={1}
+          background={
+            tag === state ? "#FDBA74" : "#F7D2AB"
+          }
+          _text={{
+            fontSize: 14,
+            color: "#211912",
+          }}
+          shadow={1}
+          borderRadius={4}
+        >
+          {tag}
+        </Badge>
+      </Pressable>
     )
   }
   const WhoAreYouTags1 = [
@@ -113,7 +116,33 @@ export default function SignUpScreen22() {
   ];
   const FitnessGoalTags = ["Bulking", "Cutting", "Strength", "Aesthetics"];
   const ActivitiesTags = ["Powerlifting", "Cardio", "Recreational", "Sports", "Group Class", "Lifting", "Dance"];
-  
+  const PurposeTags = ["Track habit", "Find Friends", "Motivate myself"];
+
+  const TagScroll = ({ tags, selectedTag, setTag }) => {
+    return (
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <Flex direction="row">
+          {tags.map((tag) => (
+            <Pressable key={tag} onPress={() => setTag(tag === selectedTag ? undefined : tag)}>
+              <Badge
+                m={1}
+                background={tag === selectedTag ? "#FDBA74" : "#F7D2AB"}
+                _text={{
+                  fontSize: 14,
+                  color: "#211912",
+                }}
+                shadow={1}
+                borderRadius={4}
+              >
+                {tag}
+              </Badge>
+            </Pressable>
+          ))}
+        </Flex>
+      </ScrollView>
+    );
+  };
+
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setPickerDate(currentDate);
@@ -153,13 +182,13 @@ export default function SignUpScreen22() {
         Alert.alert("Error", "You must be at least 18 years old.");
         return;
       }
-      if (!Activity || !WhoAreYou) {
+      if (!Activity || !WhoAreYou || !Purpose) {
         Alert.alert(
           "Please select one tag for each category to continue."
         );
         return;
       }
-      const tags = [Activity, WhoAreYou];
+      const tags = [Activity, WhoAreYou, Purpose];
       if (
         year &&
         month &&
@@ -186,7 +215,7 @@ export default function SignUpScreen22() {
             month,
             day,
             tags
-          ); 
+          );
 
           router.replace("/LoadingPage");
         } else {
@@ -206,7 +235,7 @@ export default function SignUpScreen22() {
 
   return (
     <NativeBaseProvider theme={theme}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#FFF"}}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#FFF" }}>
         <Flex
           flexDir={"row"}
           justifyContent="space-between"
@@ -355,46 +384,40 @@ export default function SignUpScreen22() {
           </Box>
 
           <Flex flexDirection="column" mt={2} px="3">
-            <Flex flexDirection="column">
-            <Text fontSize="md" m={1} mt={2} mb={2} >
-                Who Are You?:
-              </Text>
-              <Flex flexDirection="row"
-              flexWrap={"wrap"} justifyContent="space-evenly"
-              >
-                {WhoAreYouTags1.map((tag, index) => (
-                  <Tag tag = {tag} setTag={setWhoAreYou} state ={WhoAreYou}/>
-                ))}
-              </Flex>
-              <Text fontSize="md" mt={2} mb={2} m={1}>
-                Activities:
-              </Text>
-              <Flex flexDirection="row" flexWrap={"wrap"} justifyContent="space-evenly">
-                {ActivitiesTags.map((tag, index) => (
-                  <Tag tag = {tag} setTag={setActivity} state={Activity}/>
-                ))}
-              </Flex>
-            </Flex>
+            <Text fontSize="md" m={1} mt={2} mb={2}>
+              Who Are You?:
+            </Text>
+            <TagScroll tags={WhoAreYouTags1} selectedTag={WhoAreYou} setTag={setWhoAreYou} />
+
+            <Text fontSize="md" m={1} mt={2} mb={2}>
+              Activities:
+            </Text>
+            <TagScroll tags={ActivitiesTags} selectedTag={Activity} setTag={setActivity} />
+
+            <Text fontSize="md" m={1} mt={2} mb={2}>
+              What's Your Purpose Using the App:
+            </Text>
+            <TagScroll tags={PurposeTags} selectedTag={Purpose} setTag={setPurpose} />
           </Flex>
         </Flex>
         <Flex flex={1} alignItems={"center"} justifyContent={"flex-end"} justifyItems={"flex-end"} pb={1}
         >
-              <Button
-                background={"#F97316"}
-                _pressed={{ opacity: 0.5 }}
-                onPress={finishSignUp}
-                rounded="md"
-                height={"12"}
-                shadow="3"
-                width="90%"
-                pt="3.5"
-                pb="3.5"
-                borderRadius="5"
-              >
-                <Heading color={"#FFF"} fontStyle="normal" fontSize="md">
-                  Next
-                </Heading>
-              </Button>
+          <Button
+            background={"#F97316"}
+            _pressed={{ opacity: 0.5 }}
+            onPress={finishSignUp}
+            rounded="md"
+            height={"12"}
+            shadow="3"
+            width="90%"
+            pt="3.5"
+            pb="3.5"
+            borderRadius="5"
+          >
+            <Heading color={"#FFF"} fontStyle="normal" fontSize="md">
+              Next
+            </Heading>
+          </Button>
         </Flex>
       </SafeAreaView>
     </NativeBaseProvider>
