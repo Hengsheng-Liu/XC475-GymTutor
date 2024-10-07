@@ -195,7 +195,7 @@ export default function LogInScreen() {
               </Text>
               <Button
                 background={"#F97316"}
-                onPress={() => router.navigate("SignUp2")}
+                onPress={() => router.navigate("SignUp")}
                 mt={4} width="100%" pt="3.5" pb="3.5"
                 borderRadius={5}
                 shadow="3"
