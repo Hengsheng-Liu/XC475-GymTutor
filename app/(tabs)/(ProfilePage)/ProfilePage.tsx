@@ -84,7 +84,7 @@ const ProfilePage = () => {
       }
     }
   };
-const signOutUser = async () => {
+  const signOutUser = async () => {
     try {
       await signOut(getAuth());
     } catch (error) {
@@ -117,7 +117,7 @@ const signOutUser = async () => {
       console.log("Error fetching camera permissions:", e);
     }
   };
-  const deleteTags = async (deleteTag: string)=>  {
+  const deleteTags = async (deleteTag: string) => {
 
     if (User) {
       try {
@@ -145,30 +145,33 @@ const signOutUser = async () => {
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaView style={{ backgroundColor: "#FFF" }}>
-          <Flex alignSelf={"flex-end"} mt={1} mb={1}>
-            <Popover
-              placement="bottom"
-              trigger={(triggerProps) => {
-                return (
-                  <Flex alignItems="center">
-                    <Button mb={1} mr={2.5} p={0} bgColor={"#FFF"} _pressed={{opacity:0.5}}{...triggerProps}>
-                      <Text fontSize="2xl">三</Text>
-                    </Button>
-                  </Flex>
-                );
-              }}
-            >
-              <Popover.Content w="56">
-                <Popover.Body>
-                  <Pressable onPress={() => NewBackground()} mb={1} _pressed={{opacity:0.5}}>
-                    <Text>Edit Background</Text>
-                  </Pressable>
-                  <Pressable onPress={() => router.push({pathname:"/AchievementPage",params:{edit:true,display:userInfo?.display}})} mb={1}  _pressed={{opacity:0.5}}>
-                    <Text>Edit Achievements</Text>
-                  </Pressable>
-                  <Pressable onPress={signOutUser}  _pressed={{opacity:0.5}}>                  
+        <Flex alignSelf={"flex-end"} mt={1} mb={1}>
+          <Popover
+            placement="bottom"
+            trigger={(triggerProps) => {
+              return (
+                <Flex alignItems="center">
+                  <Button mb={1} mr={2.5} p={0} bgColor={"#FFF"} _pressed={{ opacity: 0.5 }}{...triggerProps}>
+                    <Text fontSize="2xl">三</Text>
+                  </Button>
+                </Flex>
+              );
+            }}
+          >
+            <Popover.Content w="56">
+              <Popover.Body>
+                <Pressable onPress={() => NewBackground()} mb={1} _pressed={{ opacity: 0.5 }}>
+                  <Text>Edit Background</Text>
+                </Pressable>
+                <Pressable onPress={() => router.push({ pathname: "/AchievementPage", params: { edit: true, display: userInfo?.display } })} mb={1} _pressed={{ opacity: 0.5 }}>
+                  <Text>Edit Achievements</Text>
+                </Pressable>
+                <Pressable onPress={() => router.push({ pathname: "/FeedbackPage" })} mb={1} _pressed={{ opacity: 0.5 }}>
+                  <Text>Feedback</Text>
+                </Pressable>
+                <Pressable onPress={signOutUser} _pressed={{ opacity: 0.5 }}>
                   <Text>Logout</Text>
-                  </Pressable>
+                </Pressable>
 
               </Popover.Body>
             </Popover.Content>
@@ -183,22 +186,22 @@ const signOutUser = async () => {
                   gym={userInfo.gym}
                   icon={userInfo.icon}
                   background={userInfo.background}
-                  />
-                  <Box ml={"3"} mr={"3"} pb={6} mb={6}>
-                    <Attribute
-                      description={userInfo.tags}
-                      onSaveTag={updateTags}
-                      onDeleteTag={deleteTags}
-                    />
-                    <ButtonGroup
-                  friendCount={userInfo.friends.length + (userInfo.friends.length == 1 ? " Friend" : " Friends")}
-                  gym={userGym}
-                  History={history}
                 />
-                <Description bio={userInfo.bio} onSave={updateBio} />
-                <Achievement display={userInfo.display} />
-                <History history={userInfo.checkInHistory} />               
-                </Box>              
+                <Box ml={"3"} mr={"3"} pb={6} mb={6}>
+                  <Attribute
+                    description={userInfo.tags}
+                    onSaveTag={updateTags}
+                    onDeleteTag={deleteTags}
+                  />
+                  <ButtonGroup
+                    friendCount={userInfo.friends.length + (userInfo.friends.length == 1 ? " Friend" : " Friends")}
+                    gym={userGym}
+                    History={history}
+                  />
+                  <Description bio={userInfo.bio} onSave={updateBio} />
+                  <Achievement display={userInfo.display} />
+                  <History history={userInfo.checkInHistory} />
+                </Box>
               </Flex>
             )}
           </Box>
