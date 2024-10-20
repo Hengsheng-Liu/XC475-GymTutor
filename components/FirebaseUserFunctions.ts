@@ -35,6 +35,7 @@ export interface Achievementprops {
 export interface DailyCheckIn {
     day: string;
     photo?: string;
+    likes?: string[];
 }
 export interface Achievements {
     Chest: Achievementprops[];
@@ -233,7 +234,46 @@ export const getUser = async (uid: string): Promise<IUser | null> => {
         return null;
     }
 };
-
+export const getUserFromGym = async (gymId: string): Promise<IUser[]> => {
+    const db = firestore;
+    try {
+        const gymSnapshot = await getDoc(doc(db, 'Gyms', gymId));
+        if (gymSnapshot.exists()) {
+            const gymData = gymSnapshot.data();
+            if (gymData && gymData.members) {
+                const memberIds = gymData.members;
+                const usersQuery = query(collection(db, 'Users'), where('uid', 'in', memberIds));
+                const querySnapshot = await getDocs(usersQuery);
+                let usersData: IUser[] = [];
+                querySnapshot.forEach(snap => {
+                    const userData = snap.data() as IUser;
+                    usersData.push(userData);
+                });
+                return usersData;
+            }
+        }
+        return [];
+    } catch (error) {
+        console.error('Error fetching users from gym:', error);
+        return [];
+    }
+}
+export const getAllUsers = async (): Promise<IUser[]> => {
+    const db = firestore;
+    try {
+        const usersRef = collection(db, 'Users');
+        const querySnapshot = await getDocs(usersRef);
+        let usersData: IUser[] = [];
+        querySnapshot.forEach(snap => {
+            const userData = snap.data() as IUser;
+            usersData.push(userData);
+        });
+        return usersData;
+    } catch (error) {
+        console.error('Error fetching all users:', error);
+        return [];
+    }
+}
 // Function to add a new user to Firestore
 export async function addUser(
     uid: string,

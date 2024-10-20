@@ -1,0 +1,47 @@
+{
+    "Back Day Boss": {
+      "complete": "/assets/images/achievements/Complete/BackDayBoss.svg",
+      "uncomplete": "/assets/images/achievements/Uncomplete/BackDayBossGrey.svg"
+    },
+    "Cardio King": {
+      "complete": "/assets/images/achievements/Complete/CardioKing.svg",
+      "uncomplete": "/assets/images/achievements/Uncomplete/CardioKingGrey.svg"
+    },
+    "Check-In Champion": {
+      "complete": "/assets/images/achievements/Complete/CheckInChampion.svg",
+      "uncomplete": "/assets/images/achievements/Uncomplete/Check-InChampionGrey.svg"
+    },
+    "Chest Champion": {
+      "complete": "/assets/images/achievements/Complete/ChestChampion.svg",
+      "uncomplete": "/assets/images/achievements/Uncomplete/ChestChampionGrey.svg"
+    },
+    "Consistency Conqueror": {
+      "complete": "/assets/images/achievements/Complete/ConsistencyConqueror.svg",
+      "uncomplete": "/assets/images/achievements/Uncomplete/ConsistencyConquerorGrey.svg"
+    },
+    "Core Crusher": {
+      "complete": "/assets/images/achievements/Complete/CoreCrusher.svg",
+      "uncomplete": "/assets/images/achievements/Uncomplete/CoreCrusherGrey.svg"
+    },
+    "Full Body Fiend": {
+      "complete": "/assets/images/achievements/Complete/FullBodyFiend.svg",
+      "uncomplete": "/assets/images/achievements/Uncomplete/FullBodyFiendGrey.svg"
+    },
+    "Iron Dedication": {
+      "complete": "/assets/images/achievements/Complete/IronDedication.svg",
+      "uncomplete": "/assets/images/achievements/Uncomplete/IronDedicationGrey.svg"
+    },
+    "Leg Day Legend": {
+      "complete": "/assets/images/achievements/Complete/LegDayLegend.svg",
+      "uncomplete": "/assets/images/achievements/Uncomplete/LegDayLegendGrey.svg"
+    },
+    "Shoulder Sculptor": {
+      "complete": "/assets/images/achievements/Complete/ShoulderSculptor.svg",
+      "uncomplete": "/assets/images/achievements/Uncomplete/ShoulderSculptorGrey.svg"
+    },
+    "SpotMe Superstar": {
+      "complete": "/assets/images/achievements/Complete/SpotMeSuperstar.svg",
+      "uncomplete": "/assets/images/achievements/Uncomplete/SpotMeSuperstarGrey.svg"
+    }
+  }
+  

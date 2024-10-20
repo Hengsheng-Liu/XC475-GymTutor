@@ -8,6 +8,7 @@ import ChatLogo from "../../assets/images/filledChatLogo.svg";
 import ChatLogo2 from "../../assets/images/unfilledChatLogo.svg";
 import ProfileLogo from "../../assets/images/filledProfileLogo.svg";
 import ProfileLogo2 from "../../assets/images/unfilledProfileLogo.svg";
+import LeaderBoardLogo from "../../assets/images/LeaderBoardLogo.svg";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
@@ -69,6 +70,16 @@ export default function TabLayout() {
               <ProfileLogo2 width="40" height="40" scale="100%" {...props}/>),
             }}
         />
+        <Tabs.Screen
+          name="(LeaderBoardPage)"
+          options={{
+            href:"/LeaderBoard",
+            title: "",
+            headerShown: false,
+            tabBarIcon: ({focused, ...props}) => (
+              <LeaderBoardLogo width="40" height="40" scale="100%" {...props}/>
+            )
+          }}></Tabs.Screen>
       </Tabs>
 
 

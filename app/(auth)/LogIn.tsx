@@ -50,25 +50,23 @@ export default function LogInScreen() {
   const Password_focus = useRef();
 
   const handleLogIn = async () => {
-    // Skip credentials (Developer use only)
-    // const userCredential = await SignIn("a@gmail.com", "password"); // (to skip the email verification)
-    // const user = userCredential.user;
-    // if (user) {
-    //   router.replace("/LoadingPage");
-    // }
-
-    if (email && password) {
-      try {
-        const userCredential = await SignIn(email, password);
-        const user = userCredential.user;
-        if (user) {
-          router.replace("/LoadingPage");
-        }
-      } catch (error: any) {
-        const errorMessage = error.message;
-        Alert.alert("Error", errorMessage);
-      }
+    const userCredential = await SignIn("lhs7714@bu.edu", "Lxiaolaoshu123!"); // (to skip the email verification)
+    const user = userCredential.user;
+    if (user) {
+      router.replace("/LoadingPage");
     }
+    // if (email && password) {
+    //   try {
+    //     const userCredential = await SignIn(email, password);
+    //     const user = userCredential.user;
+    //     if (user) {
+    //       router.replace("/LoadingPage");
+    //     }
+    //   } catch (error: any) {
+    //     const errorMessage = error.message;
+    //     Alert.alert("Error", errorMessage);
+    //   }
+    // }
   };
 
   // Code below handles the login via the Google Provider

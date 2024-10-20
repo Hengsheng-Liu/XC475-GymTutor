@@ -36,6 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const SignIn = async (email: string, password: string) => {
+    
         return await signInWithEmailAndPassword(auth, email, password);
     };
 
@@ -73,7 +74,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
             if (currentUser) {
                 const userData = await getUser(currentUser.uid);
-                console.log("User Updated");
                 setCurrUser(userData);
                 if (userData){
                     setUserFilters(userData.filters);
