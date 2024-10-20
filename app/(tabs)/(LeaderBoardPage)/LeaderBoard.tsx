@@ -12,16 +12,20 @@ import {
   Pressable,
   Spacer,
   Button,
+  HStack,
 } from "native-base";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { getUserIcon, IUser } from "@/components/FirebaseUserFunctions";
 import { getAllUsers } from "@/components/FirebaseUserFunctions";
 import User from "@/components/LeaderComponents/User";
+interface UserWithRank extends IUser {
+  rank: number;
+}
 export default function LeaderBoard() {
   const [SortMethod, SetSortMethod] = useState(true);
   const [Users, SetUsers] = useState<IUser[]>([]);
-
+  const [TopThree, SetTopThree] = useState<UserWithRank[]>([]);
   useEffect(() => {
     const fetchUsers = async () => {
       const users = await getAllUsers();
@@ -42,7 +46,25 @@ export default function LeaderBoard() {
         }
       });
       SetUsers(users);
+      let TopThree = users.slice(0,3) as UserWithRank[];
+      TopThree.forEach((user, index) => {
+        user.rank = index + 1;
+      });
+      if (TopThree.length > 2) {
+        let tmp = TopThree[1];
+        TopThree[1] = TopThree[0];
+        TopThree[0] = tmp;
+        TopThree[0].rank = 2
+        TopThree[1].rank = 1;
+        
+      }
+      if(TopThree.length > 2){
+        TopThree[2].rank = 3;
+      }
+      SetTopThree(TopThree);
+
     };
+  
     fetchUsers();
   }, [SortMethod]);
 
@@ -57,7 +79,7 @@ export default function LeaderBoard() {
           <Spacer />
           <MaterialIcons name="sports-gymnastics" size={50} color="#EA580C" />
         </Flex>
-        <Box alignItems={"center"} marginTop={"3"} borderWidth={1} marginBottom={"3"}>
+        <Box alignItems={"center"} marginTop={"3"} marginBottom={"3"}>
           <Button.Group variant="solid" isAttached space={1}>
             <Button
               background={SortMethod ? "#FF8B3E" : "#FEEADD"}
@@ -77,15 +99,28 @@ export default function LeaderBoard() {
             </Button>
           </Button.Group>
         </Box>
-        {Users.length > 0 ? (
+        <HStack justifyContent="center" alignItems="center" space={4}>
+       {TopThree.map((user, index) => {
+          return (
+            <User
+              User={user}
+              rank={user.rank}
+              key={user.uid}
+              SortMethod={SortMethod}
+              MorethanTwo={TopThree.length > 2}
+            />
+          );
+        })}
+        </HStack>
+        {Users ? (
           <FlatList
-            data={Users}
+            data={Users.slice(3)}
             keyExtractor={(item) => item.uid}
             renderItem={({ item, index }) => {
               return (
                 <User
                   User={item}
-                  rank={index + 1}
+                  rank={index + TopThree.length + 1}
                   key={item.uid}
                   SortMethod={SortMethod}
                 />
