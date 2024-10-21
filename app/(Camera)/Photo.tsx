@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import mime from "mime";
-import { Camera, CameraType } from "expo-camera";
+import { Camera, CameraType } from 'expo-camera/legacy';
 import { useEffect, useState, useRef, useContext } from "react";
 import { Button, TouchableOpacity, Image } from "react-native";
 import { initializeApp } from "firebase/app";
