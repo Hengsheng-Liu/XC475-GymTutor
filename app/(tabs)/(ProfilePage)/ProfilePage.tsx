@@ -166,6 +166,9 @@ const ProfilePage = () => {
                 <Pressable onPress={() => router.push({ pathname: "/AchievementPage", params: { edit: true, display: userInfo?.display } })} mb={1} _pressed={{ opacity: 0.5 }}>
                   <Text>Edit Achievements</Text>
                 </Pressable>
+                <Pressable onPress={() => router.push({ pathname: "/StreakPage" })} mb={1} _pressed={{ opacity: 0.5 }}>
+                  <Text>Edit Workout Streaks</Text>
+                </Pressable>
                 <Pressable onPress={() => router.push({ pathname: "/FeedbackPage" })} mb={1} _pressed={{ opacity: 0.5 }}>
                   <Text>Feedback</Text>
                 </Pressable>

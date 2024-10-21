@@ -9,6 +9,7 @@ export default function authLayout() {
             <Stack.Screen name="FriendProfile2" options={{ headerShown: false }} />
             <Stack.Screen name="PastPhoto" options={{ headerShown: false }} />
             <Stack.Screen name="FeedbackPage" options={{ headerShown: false }} />
+            <Stack.Screen name="StreakPage" options={{ headerShown: false }} />
         </Stack>
     )
 }
